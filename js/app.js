@@ -38,23 +38,26 @@
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
     });
-    const flakes = Array.from({ length: 42 }, () => ({
+    const flakes = Array.from({ length: 88 }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
-      r: 0.8 + Math.random() * 2.1,
-      vy: 0.25 + Math.random() * 0.65,
-      vx: -0.25 + Math.random() * 0.5,
-      a: 0.25 + Math.random() * 0.55
+      r: 1.0 + Math.random() * 2.6,
+      vy: 0.35 + Math.random() * 0.95,
+      vx: -0.3 + Math.random() * 0.6,
+      sway: Math.random() * Math.PI * 2,
+      swaySpeed: 0.01 + Math.random() * 0.02,
+      a: 0.38 + Math.random() * 0.52
     }));
     function tick() {
       ctx.clearRect(0, 0, w, h);
       for (const f of flakes) {
+        f.sway += f.swaySpeed;
         f.y += f.vy;
-        f.x += f.vx;
-        if (f.y > h) { f.y = -4; f.x = Math.random() * w; }
+        f.x += f.vx + Math.sin(f.sway) * 0.25;
+        if (f.y > h) { f.y = -6; f.x = Math.random() * w; }
         if (f.x > w) f.x = 0;
         if (f.x < 0) f.x = w;
-        ctx.fillStyle = `rgba(226, 232, 240, ${f.a})`;
+        ctx.fillStyle = `rgba(241, 245, 249, ${f.a})`;
         ctx.beginPath();
         ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
         ctx.fill();

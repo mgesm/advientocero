@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v1.4.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v1.5.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -34,7 +34,7 @@
 
 Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 2 — Lacre de Medianoche**:
 * **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (guirnalda de bombillas, estrella dorada, copos y candados).
-* **Paleta Lacre de Medianoche (`css/liquid-christmas.css`):** Fondo nocturno pino-azul medianoche (`#132A24` → `#050B12`), guirnalda superior de bombillas cálidas animadas SVG, tarjetas cristal oscuro con borde dorado suave, puertas disponibles con **sello de lacre rojo redondo** y brillo dorado, puertas resueltas en verde abeto translúcido y dock inferior pino oscuro.
+* **Paleta Lacre de Medianoche (`css/liquid-christmas.css`):** Fondo nocturno pino-azul medianoche (`#132A24` → `#050B12`), cabecera limpia sin adornos colgantes, nevada invernal densa y suave en `<canvas>`, tarjetas cristal oscuro con borde dorado suave, puertas disponibles con **sello de lacre rojo redondo** y brillo dorado, puertas resueltas en verde abeto translúcido y dock inferior pino oscuro.
 * **Ergonomía Mobile-First (`css/mobile-ux.css`):** Navegación inferior fija en 4 pestañas (*Calendario*, *Día Activo*, *Sospechosos*, *Expediente*), soporte `safe-area-inset` y partículas de nieve atmosféricas respetando `prefers-reduced-motion`.
 
 ---
