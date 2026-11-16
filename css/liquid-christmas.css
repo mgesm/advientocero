@@ -341,16 +341,28 @@ body {
 /* Secciones de vista */
 .view-panel {
   display: none;
-  animation: fadeSlideIn 260ms var(--vg-spring);
+  opacity: 0;
 }
 
 .view-panel.active {
   display: block;
+  opacity: 1;
+  animation: fadeSlideIn 320ms var(--vg-spring) both;
 }
 
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px) scale(0.992); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: translateY(26px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Selector de Identidad (Pantalla Inicial Miguel / Patri) */
@@ -369,6 +381,7 @@ body {
 
 .identity-overlay.open {
   display: flex;
+  animation: backdropFadeIn 220ms ease both;
 }
 
 .identity-modal {
@@ -380,6 +393,7 @@ body {
   color: #F8FAFC;
   border: 1px solid rgba(251, 191, 36, 0.45);
   box-shadow: var(--vg-shadow-modal), var(--adv-gold-glow);
+  animation: modalPopIn 360ms var(--vg-spring) both;
 }
 
 .identity-cover {
@@ -469,6 +483,7 @@ body {
 
 .adv-modal-backdrop.open {
   display: flex;
+  animation: backdropFadeIn 200ms ease both;
 }
 
 @media (min-width: 680px) {
@@ -487,6 +502,13 @@ body {
   background: var(--vg-obsidian-800);
   border: var(--vg-border-specular-strong);
   box-shadow: var(--vg-shadow-modal);
+  animation: modalPopIn 320ms var(--vg-spring) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-panel.active, .identity-overlay.open, .identity-modal, .adv-modal-backdrop.open, .adv-modal-sheet {
+    animation: none !important;
+  }
 }
 
 .mono {

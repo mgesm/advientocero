@@ -48,6 +48,23 @@
       swaySpeed: 0.01 + Math.random() * 0.02,
       a: 0.38 + Math.random() * 0.52
     }));
+    const sparks = [];
+    window.triggerGoldBurst = (count = 36) => {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 1.6 + Math.random() * 4.4;
+        sparks.push({
+          x: w * 0.5,
+          y: h * 0.42,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd - 1.4,
+          r: 1.5 + Math.random() * 2.5,
+          life: 1.0,
+          color: i % 3 === 0 ? "253, 224, 71" : i % 3 === 1 ? "251, 191, 36" : "110, 231, 183"
+        });
+      }
+    };
+
     function tick() {
       ctx.clearRect(0, 0, w, h);
       for (const f of flakes) {
@@ -60,6 +77,21 @@
         ctx.fillStyle = `rgba(241, 245, 249, ${f.a})`;
         ctx.beginPath();
         ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vy += 0.06;
+        s.life -= 0.018;
+        if (s.life <= 0) {
+          sparks.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = `rgba(${s.color}, ${s.life})`;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
       }
       requestAnimationFrame(tick);
@@ -199,7 +231,7 @@
       else if (st === "solved") { icon = getSvg("check"); statusLabel = "Descubierta"; }
 
       return `
-        <button type="button" class="door-card state-${st} ${d.day === 24 ? "is-day24" : ""}" data-open-day="${d.day}">
+        <button type="button" class="door-card state-${st} ${d.day === 24 ? "is-day24" : ""}" style="--door-i:${d.day};" data-open-day="${d.day}">
           <div class="door-num-row">
             <span class="door-num">${numStr}</span>
             <span class="door-icon">${icon}</span>
@@ -491,10 +523,17 @@
       if (!ok) {
         window.AudioFX.error();
         fb.innerHTML = `<div class="feedback-banner error">Código incorrecto. Volved a contrastar los datos entre Miguel y Patri.</div>`;
+        const card = fb.closest(".answer-card");
+        if (card) {
+          card.classList.remove("shake-error");
+          void card.offsetWidth;
+          card.classList.add("shake-error");
+        }
         return;
       }
 
       window.AudioFX.success();
+      if (window.triggerGoldBurst) window.triggerGoldBurst(34);
       const decoded = window.PuzzleEngine.decodePayload(dayObj.unlockPayload);
       window.SyncEngine.pushUpdate((st) => {
         const key = String(dayObj.day);
@@ -535,10 +574,17 @@
       if (!ok1 || !ok2 || !ok3) {
         window.AudioFX.error();
         if (fb) fb.innerHTML = `<div class="feedback-banner error">Alguno de los tres elementos del veredicto no coincide con la prueba reina de ambos terminales.</div>`;
+        const card = fb?.closest(".answer-card");
+        if (card) {
+          card.classList.remove("shake-error");
+          void card.offsetWidth;
+          card.classList.add("shake-error");
+        }
         return;
       }
 
       window.AudioFX.success();
+      if (window.triggerGoldBurst) window.triggerGoldBurst(72);
       const decoded = window.PuzzleEngine.decodePayload(dayObj.unlockPayload);
       window.SyncEngine.pushUpdate((st) => {
         st.finalVerdictSolved = true;

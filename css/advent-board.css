@@ -197,8 +197,34 @@
   pointer-events: none;
 }
 
+.door-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(251, 191, 36, 0.42);
+}
+
 .door-card:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
+}
+
+.view-panel.active .door-card {
+  animation: doorRise 360ms var(--vg-spring) backwards;
+  animation-delay: calc(var(--door-i, 0) * 14ms);
+}
+
+@keyframes doorRise {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes waxPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(220, 38, 38, 0.65); }
+  50% { transform: scale(1.16); box-shadow: 0 0 14px rgba(251, 191, 36, 0.85); }
+}
+
+@keyframes shimmerSweep {
+  0%, 80% { transform: translateX(-120%) skewX(-18deg); opacity: 0; }
+  90% { opacity: 0.45; }
+  100% { transform: translateX(220%) skewX(-18deg); opacity: 0; }
 }
 
 .door-num-row {
@@ -281,6 +307,17 @@
   background: #DC2626;
   border: 1.5px solid #FDE68A;
   box-shadow: 0 0 8px rgba(220, 38, 38, 0.65);
+  animation: waxPulse 2.4s infinite ease-in-out;
+}
+
+.door-card.state-available::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 55%;
+  background: linear-gradient(90deg, transparent, rgba(253, 230, 138, 0.22), transparent);
+  animation: shimmerSweep 5.5s infinite ease-in-out;
+  pointer-events: none;
 }
 
 .door-card.state-available .door-icon {
