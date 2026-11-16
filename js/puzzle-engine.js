@@ -415,7 +415,7 @@ window.PuzzleEngine = (() => {
           const match = target.every((v, i) => v === current[i]);
           if (match) {
             window.AudioFX.success();
-            gauge.style.color = "#15803D";
+            gauge.style.color = "#6EE7B7";
             gauge.style.fontWeight = "700";
             gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
           } else {

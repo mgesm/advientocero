@@ -2,53 +2,53 @@
  * ADVIENTO CERO — TABLERO DE ADVIENTO (24 PUERTAS) & FICHAS DE SOSPECHOSOS
  */
 
-/* Hero Banner Postal de Nochebuena — Blanco & Oro */
+/* Hero Banner Lacre de Medianoche — Pino & Carmesí Nocturno */
 .hero-dossier {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 18px;
   margin-bottom: 18px;
-  background: #FFFFFF;
-  color: #1C1917;
-  border: 2px solid #D97706;
-  box-shadow: 0 10px 26px rgba(180, 83, 9, 0.12);
+  background: linear-gradient(160deg, rgba(127, 29, 29, 0.28), rgba(6, 24, 20, 0.88));
+  color: #F8FAFC;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
 }
 
 .hero-dossier .badge-gold {
-  background: #DCFCE7;
-  border-color: #16A34A;
-  color: #166534;
+  background: rgba(251, 191, 36, 0.16);
+  border-color: rgba(251, 191, 36, 0.45);
+  color: #FDE68A;
 }
 
 .hero-dossier .hero-title {
-  color: #7F1D1D;
+  color: #FFFBEB;
 }
 
 .hero-dossier .hero-summary {
-  color: #57534E;
+  color: #CBD5E1;
 }
 
 .hero-dossier .hero-summary strong {
-  color: #B91C1C;
+  color: #FDE68A;
 }
 
 .hero-dossier .stat-pill {
-  background: #FFF7ED;
-  border: 1.5px solid #FDE68A;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1px solid rgba(251, 191, 36, 0.22);
 }
 
 .hero-dossier .stat-lbl {
-  color: #78350F;
-  font-weight: 700;
+  color: #94A3B8;
+  font-weight: 600;
 }
 
 .hero-star-watermark {
   position: absolute;
   top: -14px;
   right: -14px;
-  opacity: 0.12;
-  color: #D97706;
+  opacity: 0.09;
+  color: #FBBF24;
   pointer-events: none;
 }
 
@@ -175,16 +175,15 @@
 .door-card {
   position: relative;
   min-height: 112px;
-  padding: 12px 10px;
+  padding: 12px;
   border-radius: 14px;
-  background: #FFF7ED;
-  border: 1.5px dashed #DC2626;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  text-align: center;
-  color: #1C1917;
+  text-align: left;
+  color: var(--vg-text-primary);
   cursor: pointer;
   overflow: hidden;
   transition: transform 180ms var(--vg-spring), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
@@ -247,96 +246,96 @@
   color: var(--vg-text-muted);
 }
 
-/* Estados de puerta — Nivel 5 Postal de Nochebuena */
+/* Estados de puerta — Nivel 2 Lacre de Medianoche */
 .door-card.state-locked {
-  opacity: 0.92;
-  background: #FFF7ED;
-  border: 1.5px dashed #DC2626;
+  opacity: 0.62;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   cursor: not-allowed;
 }
 
-.door-card.state-locked:nth-child(even) {
-  border-color: #15803D;
-}
-
 .door-card.state-locked .door-num {
-  color: #991B1B;
-}
-
-.door-card.state-locked:nth-child(even) .door-num {
-  color: #166534;
+  color: #E2E8F0;
 }
 
 .door-card.state-locked .door-title,
 .door-card.state-locked .door-status-txt {
-  color: #78716C;
+  color: #94A3B8;
 }
 
 .door-card.state-available {
-  border: 2px solid #FBBF24;
-  background: #B91C1C;
-  box-shadow: 0 8px 18px rgba(185, 28, 28, 0.28);
+  border: 1px solid rgba(251, 191, 36, 0.70);
+  background: linear-gradient(150deg, rgba(185, 28, 28, 0.45), rgba(120, 53, 15, 0.40));
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.22);
+}
+
+/* Sello de lacre rojo en puertas abiertas */
+.door-card.state-available::before {
+  content: "";
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #DC2626;
+  border: 1.5px solid #FDE68A;
+  box-shadow: 0 0 8px rgba(220, 38, 38, 0.65);
+}
+
+.door-card.state-available .door-icon {
+  opacity: 0;
 }
 
 .door-card.state-available .door-num {
-  color: #FFFFFF;
+  color: #FEF3C7;
 }
 
 .door-card.state-available .door-title,
 .door-card.state-available .door-status-txt {
   color: #FDE68A;
-  font-weight: 700;
-}
-
-.door-card.state-available .door-icon {
-  color: #FDE68A;
+  font-weight: 600;
 }
 
 .door-card.state-waiting {
-  border: 2px solid #0284C7;
-  background: #E0F2FE;
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  background: rgba(14, 116, 144, 0.34);
 }
 
 .door-card.state-waiting .door-num,
 .door-card.state-waiting .door-title,
 .door-card.state-waiting .door-status-txt,
 .door-card.state-waiting .door-icon {
-  color: #075985;
+  color: #BAE6FD;
 }
 
 .door-card.state-solved {
-  border: 2px solid #16A34A;
-  background: #DCFCE7;
+  border: 1px solid rgba(52, 211, 153, 0.45);
+  background: rgba(6, 78, 59, 0.48);
 }
 
-.door-card.state-solved .door-num {
-  color: #14532D;
-}
-
+.door-card.state-solved .door-num,
 .door-card.state-solved .door-title,
 .door-card.state-solved .door-icon,
 .door-card.state-solved .door-status-txt {
-  color: #15803D;
-  font-weight: 700;
+  color: #A7F3D0;
 }
 
 .door-card.is-day24.state-locked {
-  opacity: 1;
-  background: #FEF3C7;
-  border: 2px solid #D97706;
+  opacity: 0.85;
+  background: linear-gradient(150deg, rgba(127, 29, 29, 0.32), rgba(15, 23, 42, 0.72));
+  border: 1px solid rgba(251, 191, 36, 0.38);
 }
 
 .door-card.is-day24.state-locked .door-num,
-.door-card.is-day24.state-locked .door-title,
 .door-card.is-day24.state-locked .door-status-txt {
-  color: #92400E;
-  font-weight: 700;
+  color: #FDE68A;
 }
 
 .door-card.is-day24.state-available {
-  border: 2px solid #FDE047;
-  background: linear-gradient(145deg, #B91C1C 0%, #D97706 100%);
-  box-shadow: 0 10px 24px rgba(185, 28, 28, 0.34);
+  border: 1.5px solid #FDE047;
+  background: linear-gradient(150deg, rgba(185, 28, 28, 0.65), rgba(180, 83, 9, 0.55));
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.34);
 }
 
 /* Tablero de 25 Sospechosos */
@@ -351,9 +350,9 @@
 .filter-chip {
   padding: 7px 13px;
   border-radius: var(--vg-radius-pill);
-  border: 1.5px solid #E7E5E4;
-  background: #FFFFFF;
-  color: #57534E;
+  border: var(--vg-border-specular);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--vg-text-secondary);
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -361,9 +360,9 @@
 }
 
 .filter-chip.active {
-  background: #B91C1C;
-  border-color: #991B1B;
-  color: #FFFFFF;
+  background: var(--adv-gold-dim);
+  border: var(--vg-border-gold);
+  color: var(--adv-gold-soft);
 }
 
 .suspects-grid {
@@ -402,9 +401,9 @@
 }
 
 .suspect-card.is-discarded {
-  opacity: 0.68;
-  border-color: #FCA5A5;
-  background: #FEF2F2;
+  opacity: 0.56;
+  border-color: rgba(248, 113, 113, 0.28);
+  background: rgba(5, 11, 18, 0.65);
 }
 
 .suspect-card.is-culprit-final {

@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v1.3.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v1.4.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -30,11 +30,11 @@
 
 ---
 
-## 3. Reglas de Diseño (*Postal de Nochebuena · Nivel 5*)
+## 3. Reglas de Diseño (*Lacre de Medianoche · Nivel 2*)
 
-Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 5 — Postal de Nochebuena**:
-* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (abeto dorado, bolas navideñas, estrella, copos y candados).
-* **Paleta Postal de Nochebuena (`css/liquid-christmas.css`):** Fondo luminoso de pergamino nevado (`#FFFDF7` → `#FEF2F2`), barra superior bastón de caramelo, cabecera rojo Navidad (`#B91C1C` con borde `#FDE047`), tarjetas postales blancas con bordes dorados (`#D97706`), puertas estilo calendario físico (`#DCFCE7` resueltas, `#B91C1C` disponibles, `#FFF7ED` alternando borde rojo/verde cerradas, `#FEF3C7` Nochebuena) y dock inferior verde pino (`#15803D`).
+Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 2 — Lacre de Medianoche**:
+* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (guirnalda de bombillas, estrella dorada, copos y candados).
+* **Paleta Lacre de Medianoche (`css/liquid-christmas.css`):** Fondo nocturno pino-azul medianoche (`#132A24` → `#050B12`), guirnalda superior de bombillas cálidas animadas SVG, tarjetas cristal oscuro con borde dorado suave, puertas disponibles con **sello de lacre rojo redondo** y brillo dorado, puertas resueltas en verde abeto translúcido y dock inferior pino oscuro.
 * **Ergonomía Mobile-First (`css/mobile-ux.css`):** Navegación inferior fija en 4 pestañas (*Calendario*, *Día Activo*, *Sospechosos*, *Expediente*), soporte `safe-area-inset` y partículas de nieve atmosféricas respetando `prefers-reduced-motion`.
 
 ---
