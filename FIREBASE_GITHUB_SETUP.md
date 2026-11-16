@@ -32,8 +32,13 @@ Esta guía conecta la sincronización en tiempo real entre el móvil de **Miguel
    }
    ```
    *(Consejo: si cambias el `roomId` en `config/firebase-config.js`, usa exactamente el mismo nombre aquí).*
-6. Pulsa la rueda de **Configuración del proyecto** (arriba a la izquierda) → **Tus apps** → pulsa el icono web **`</>`**, ponle nombre `advientocero-web` y copia el objeto `firebaseConfig`.
-7. Abre [`config/firebase-config.js`](config/firebase-config.js), pega tus valores dentro de `firebaseConfig` y haz `git commit` + `git push` a `main`.
+6. Para obtener tus credenciales (`firebaseConfig`), tienes **dos caminos equivalentes**:
+   - **Camino rápido:** En el menú lateral izquierdo haz clic arriba del todo en **Descripción general del proyecto** (*Project Overview*). En el centro verás *"Comienza agregando Firebase a tu app"* con iconos redondos (`iOS`, `Android`, **`</>` Web**). Pulsa **`</>`**, escribe `advientocero-web` y haz clic en **Registrar app**.
+   - **Desde ajustes:** En el menú lateral izquierdo, justo al lado de **Descripción general del proyecto**, pulsa el **icono del engranaje** → **Configuración del proyecto**. Baja hasta el final a la sección **Tus apps** y pulsa **`</>`** (o **Agregar app → Web `</>`**).
+   - *(Nota: si el menú izquierdo está oculto, pulsa el icono de menú `≡` arriba a la izquierda para desplegarlo).*
+7. Copia el objeto `const firebaseConfig = { ... }` que te muestra el asistente.
+   - **Importante sobre `databaseURL`:** Si en ese bloque no viniera la línea `databaseURL`, vuelve a **Compilación → Realtime Database → Datos** y copia la URL `https://...firebasedatabase.app` que aparece justo encima de los datos.
+8. Abre [`config/firebase-config.js`](config/firebase-config.js), pega esos valores dentro de `firebaseConfig` y haz `git commit` + `git push` a `main`.
 
 ---
 
