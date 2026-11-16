@@ -1,26 +1,19 @@
 /**
  * ADVIENTO CERO — CONFIGURACIÓN DE FIREBASE REALTIME DATABASE
  * -----------------------------------------------------------
- * Sigue la guía FIREBASE_GITHUB_SETUP.md (2 minutos) y pega aquí
- * el objeto firebaseConfig de tu proyecto gratuito de Firebase.
- *
- * Mientras apiKey o databaseURL mantengan los valores de ejemplo,
- * la app funcionará automáticamente en "Modo Local" (localStorage)
- * para que puedas probarla sin errores de conexión.
+ * Conectado al proyecto Firebase adviento-62c87 (europe-west1).
  */
 
 window.ADVIENTO_FIREBASE_CONFIG = {
-  // Cambia este identificador si queréis reiniciar una sala desde cero
   roomId: "miguel-patri-ventisquero-2026",
-
-  // Pega aquí tu configuración web de Firebase Console:
   firebaseConfig: {
-    apiKey: "TU_API_KEY_AQUI",
-    authDomain: "TU_PROYECTO.firebaseapp.com",
-    databaseURL: "https://TU_PROYECTO-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "TU_PROYECTO",
-    storageBucket: "TU_PROYECTO.appspot.com",
-    messagingSenderId: "000000000000",
-    appId: "1:000000000000:web:0000000000000000"
+    apiKey: "AIzaSyD6bx_rFmcmODsWVijmDz6SQoSnl3wsbcI",
+    authDomain: "adviento-62c87.firebaseapp.com",
+    databaseURL: "https://adviento-62c87-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "adviento-62c87",
+    storageBucket: "adviento-62c87.firebasestorage.app",
+    messagingSenderId: "231120082868",
+    appId: "1:231120082868:web:b1e5471841207d0035c4e1",
+    measurementId: "G-1TS8PK0DPF"
   }
 };
