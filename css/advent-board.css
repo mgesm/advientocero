@@ -2,24 +2,53 @@
  * ADVIENTO CERO — TABLERO DE ADVIENTO (24 PUERTAS) & FICHAS DE SOSPECHOSOS
  */
 
-/* Hero Banner Salón Chimenea (Burdeos & Oro) */
+/* Hero Banner Mercadillo de Adviento — Tarjeta Cálida Crema */
 .hero-dossier {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 18px;
   margin-bottom: 18px;
-  background: linear-gradient(145deg, rgba(127, 29, 29, 0.68) 0%, rgba(69, 10, 10, 0.88) 100%);
-  border: 1.5px solid rgba(252, 211, 77, 0.55);
-  box-shadow: 0 14px 34px rgba(69, 10, 10, 0.55);
+  background: #FEF3C7;
+  color: #450A0A;
+  border: 2px solid #F59E0B;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+}
+
+.hero-dossier .badge-gold {
+  background: #15803D;
+  border-color: #166534;
+  color: #FFFFFF;
+}
+
+.hero-dossier .hero-title {
+  color: #450A0A;
+}
+
+.hero-dossier .hero-summary {
+  color: #78350F;
+}
+
+.hero-dossier .hero-summary strong {
+  color: #991B1B;
+}
+
+.hero-dossier .stat-pill {
+  background: rgba(180, 83, 9, 0.10);
+  border: 1px solid rgba(180, 83, 9, 0.28);
+}
+
+.hero-dossier .stat-lbl {
+  color: #78350F;
+  font-weight: 700;
 }
 
 .hero-star-watermark {
   position: absolute;
   top: -14px;
   right: -14px;
-  opacity: 0.16;
-  color: #FDE68A;
+  opacity: 0.14;
+  color: #D97706;
   pointer-events: none;
 }
 
@@ -145,15 +174,16 @@
 
 .door-card {
   position: relative;
-  min-height: 112px;
-  padding: 12px;
-  border-radius: var(--vg-radius-md);
-  background: var(--vg-glass-bg-card);
-  border: var(--vg-border-specular);
+  min-height: 114px;
+  padding: 12px 10px;
+  border-radius: 22px 22px 10px 10px;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1.5px dashed rgba(254, 243, 199, 0.38);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  text-align: left;
+  align-items: center;
+  text-align: center;
   color: var(--vg-text-primary);
   cursor: pointer;
   overflow: hidden;
@@ -217,116 +247,78 @@
   color: var(--vg-text-muted);
 }
 
-/* Estados de puerta — Nivel 3 Paquetes de Regalo */
+/* Estados de puerta — Nivel 4 Ventanas Iluminadas del Mercadillo */
 .door-card.state-locked {
-  opacity: 0.68;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(252, 211, 77, 0.20);
+  opacity: 0.78;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1.5px dashed rgba(254, 243, 199, 0.38);
   cursor: not-allowed;
 }
 
+.door-card.state-locked .door-num {
+  color: #FDE68A;
+}
+
 .door-card.state-available {
-  border: 2px solid #FBBF24;
-  background: linear-gradient(160deg, #B91C1C 0%, #7F1D1D 100%);
-  box-shadow: 0 0 18px rgba(251, 191, 36, 0.32);
+  border: 2px solid #FDE047;
+  background: #DC2626;
+  box-shadow: 0 0 20px rgba(253, 224, 71, 0.45);
 }
 
-/* Cinta dorada cruzada en puerta disponible */
-.door-card.state-available::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 3px;
-  transform: translateX(-50%);
-  background: rgba(251, 191, 36, 0.36);
-  pointer-events: none;
+.door-card.state-available .door-num {
+  color: #FEF9C3;
 }
 
-.door-card.state-available::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 3px;
-  transform: translateY(-50%);
-  background: rgba(251, 191, 36, 0.36);
-  pointer-events: none;
-}
-
-.door-card.state-available .door-num,
 .door-card.state-available .door-title,
 .door-card.state-available .door-status-txt {
-  position: relative;
-  z-index: 1;
-  color: #FFFBEB;
-}
-
-.door-card.state-available .door-icon {
-  position: relative;
-  z-index: 1;
-  color: #FDE68A;
-}
-
-.door-card.state-available .door-status-txt {
-  color: #FDE68A;
+  color: #FEF08A;
   font-weight: 700;
 }
 
+.door-card.state-available .door-icon {
+  color: #FEF08A;
+}
+
 .door-card.state-waiting {
-  border: 1.5px solid var(--adv-frost);
-  background: linear-gradient(155deg, rgba(14, 116, 144, 0.45), rgba(6, 24, 20, 0.90));
+  border: 2px solid #7DD3FC;
+  background: #0E7490;
 }
 
 .door-card.state-waiting .door-status-txt,
 .door-card.state-waiting .door-icon {
-  color: #BAE6FD;
+  color: #E0F2FE;
 }
 
 .door-card.state-solved {
-  border: 1.5px solid #34D399;
-  background: #064E3B;
-}
-
-.door-card.state-solved::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  transform: translateX(-50%);
-  background: rgba(252, 211, 77, 0.24);
-  pointer-events: none;
+  border: 2px solid #86EFAC;
+  background: #166534;
 }
 
 .door-card.state-solved .door-num,
 .door-card.state-solved .door-title {
-  color: #ECFDF5;
+  color: #FFFFFF;
 }
 
 .door-card.state-solved .door-icon,
 .door-card.state-solved .door-status-txt {
-  color: #6EE7B7;
+  color: #BBF7D0;
 }
 
 .door-card.is-day24.state-locked {
-  opacity: 0.88;
-  background: rgba(180, 83, 9, 0.28);
-  border: 1px solid rgba(251, 191, 36, 0.48);
+  opacity: 0.94;
+  background: linear-gradient(180deg, #B45309, #78350F);
+  border: 2px solid #FDE047;
 }
 
 .door-card.is-day24.state-locked .door-num,
 .door-card.is-day24.state-locked .door-status-txt {
-  color: #FDE68A;
+  color: #FEF9C3;
 }
 
 .door-card.is-day24.state-available {
-  border-color: #FDE047;
-  background: linear-gradient(145deg, #B91C1C 0%, #B45309 100%);
-  box-shadow: 0 0 24px rgba(251, 191, 36, 0.45);
+  border: 2px solid #FEF08A;
+  background: linear-gradient(180deg, #DC2626 0%, #B45309 100%);
+  box-shadow: 0 0 26px rgba(253, 224, 71, 0.58);
 }
 
 /* Tablero de 25 Sospechosos */

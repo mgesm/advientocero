@@ -6,61 +6,61 @@
  */
 
 :root {
-  /* Superficies Salón Chimenea (Burdeos Nocturno & Verde Abeto) */
-  --vg-obsidian-950: #040907;
-  --vg-obsidian-900: #06110E;
-  --vg-obsidian-850: #081C15;
-  --vg-obsidian-800: #0D231B;
-  --vg-obsidian-700: #162E24;
-  --vg-obsidian-600: #234234;
+  /* Superficies Mercadillo de Adviento (Rojo Vivo & Verde Bosque) */
+  --vg-obsidian-950: #031B0E;
+  --vg-obsidian-900: #052E16;
+  --vg-obsidian-850: #08381C;
+  --vg-obsidian-800: #0A3F20;
+  --vg-obsidian-700: #14532D;
+  --vg-obsidian-600: #166534;
 
-  /* Cristal Líquido Cálido */
-  --vg-glass-bg: rgba(10, 26, 20, 0.78);
-  --vg-glass-bg-elevated: rgba(105, 22, 22, 0.72);
-  --vg-glass-bg-card: rgba(9, 24, 18, 0.80);
-  --vg-glass-bg-input: rgba(5, 13, 10, 0.88);
-  --vg-glass-bg-pill: rgba(255, 251, 235, 0.08);
-  --vg-glass-blur: blur(26px) saturate(185%);
+  /* Cristal Líquido Festivo */
+  --vg-glass-bg: rgba(5, 46, 22, 0.84);
+  --vg-glass-bg-elevated: rgba(153, 27, 27, 0.88);
+  --vg-glass-bg-card: rgba(5, 38, 19, 0.84);
+  --vg-glass-bg-input: rgba(3, 24, 12, 0.90);
+  --vg-glass-bg-pill: rgba(254, 243, 199, 0.10);
+  --vg-glass-blur: blur(24px) saturate(185%);
   --vg-glass-blur-sm: blur(14px) saturate(160%);
 
   /* Micro-bordes especulares */
-  --vg-border-specular: 1px solid rgba(252, 211, 77, 0.16);
-  --vg-border-specular-strong: 1px solid rgba(252, 211, 77, 0.28);
-  --vg-border-gold: 1px solid rgba(251, 191, 36, 0.55);
-  --vg-border-crimson: 1px solid rgba(248, 113, 113, 0.52);
-  --vg-border-pine: 1px solid rgba(52, 211, 153, 0.48);
-  --vg-border-frost: 1px solid rgba(56, 189, 248, 0.45);
+  --vg-border-specular: 1px solid rgba(253, 224, 71, 0.24);
+  --vg-border-specular-strong: 1.5px solid rgba(251, 191, 36, 0.42);
+  --vg-border-gold: 1.5px solid #FBBF24;
+  --vg-border-crimson: 1.5px solid #F87171;
+  --vg-border-pine: 1.5px solid #86EFAC;
+  --vg-border-frost: 1.5px solid #7DD3FC;
 
-  /* Paleta Nivel 3: Salón Chimenea */
-  --adv-gold: #FBBF24;       /* Oro Lazo de Regalo */
-  --adv-gold-soft: #FDE68A;
-  --adv-gold-dim: rgba(245, 158, 11, 0.18);
-  --adv-gold-glow: 0 0 22px rgba(251, 191, 36, 0.30);
+  /* Paleta Nivel 4: Mercadillo de Adviento */
+  --adv-gold: #FBBF24;
+  --adv-gold-soft: #FDE047;
+  --adv-gold-dim: rgba(251, 191, 36, 0.22);
+  --adv-gold-glow: 0 0 22px rgba(253, 224, 71, 0.36);
 
-  --adv-crimson: #DC2626;    /* Rojo Navidad / Terciopelo */
-  --adv-crimson-deep: #7F1D1D;
-  --adv-crimson-dim: rgba(185, 28, 28, 0.24);
-  --adv-crimson-glow: 0 0 24px rgba(185, 28, 28, 0.38);
+  --adv-crimson: #DC2626;
+  --adv-crimson-deep: #991B1B;
+  --adv-crimson-dim: rgba(220, 38, 38, 0.28);
+  --adv-crimson-glow: 0 0 24px rgba(220, 38, 38, 0.42);
 
-  --adv-pine: #10B981;       /* Verde Abeto */
-  --adv-pine-deep: #064E3B;
-  --adv-pine-dim: rgba(6, 78, 59, 0.55);
-  --adv-pine-glow: 0 0 18px rgba(52, 211, 153, 0.30);
+  --adv-pine: #16A34A;
+  --adv-pine-deep: #14532D;
+  --adv-pine-dim: rgba(22, 101, 52, 0.65);
+  --adv-pine-glow: 0 0 18px rgba(134, 239, 172, 0.34);
 
-  --adv-frost: #38BDF8;      /* Cian UV / Telemetría */
+  --adv-frost: #38BDF8;
   --adv-cyan: #00E5FF;
-  --adv-frost-dim: rgba(56, 189, 248, 0.14);
-  --adv-frost-glow: 0 0 20px rgba(0, 229, 255, 0.30);
+  --adv-frost-dim: rgba(56, 189, 248, 0.16);
+  --adv-frost-glow: 0 0 20px rgba(0, 229, 255, 0.32);
 
   /* Tipografía */
   --vg-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
   --vg-font-mono: 'Courier Prime', 'Fira Code', ui-monospace, monospace;
   --vg-font-serif: 'Cormorant Garamond', Georgia, serif;
 
-  /* Texto Cálido Marfil */
+  /* Texto Cálido Crema */
   --vg-text-primary: #FFFBEB;
-  --vg-text-secondary: #E2E8F0;
-  --vg-text-muted: #94A3B8;
+  --vg-text-secondary: #FEF3C7;
+  --vg-text-muted: #CBD5E1;
 
   /* Radios & Curvas Apple Spring */
   --vg-radius-sm: 10px;
@@ -92,8 +92,47 @@ html, body {
 }
 
 body {
-  background: linear-gradient(180deg, #1F0B12 0%, #081C15 48%, #06110E 100%);
+  background: linear-gradient(180deg, #7F1D1D 0%, #14532D 52%, #052E16 100%);
   background-attachment: fixed;
+}
+
+/* Borde superior estilo bastón de caramelo */
+.candy-stripe-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  z-index: 95;
+  background: repeating-linear-gradient(
+    -45deg,
+    #DC2626,
+    #DC2626 10px,
+    #FEF2F2 10px,
+    #FEF2F2 20px,
+    #15803D 20px,
+    #15803D 30px
+  );
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+/* Bolas navideñas colgantes bajo el borde caramelo */
+.festive-baubles-wrap {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto 4px;
+  display: block;
+  pointer-events: none;
+}
+
+@keyframes festiveTwinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.72; transform: scale(0.95); }
+}
+
+.bauble-pulse {
+  animation: festiveTwinkle 2.6s infinite ease-in-out;
+  transform-origin: center;
 }
 
 /* Capa atmosférica de nieve sutil tras el cristal */
@@ -104,11 +143,12 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.50;
+  opacity: 0.56;
 }
 
 @media (prefers-reduced-motion: reduce) {
   #snow-canvas { display: none; }
+  .bauble-pulse { animation: none; }
 }
 
 .app-shell {
@@ -116,26 +156,26 @@ body {
   z-index: 2;
   max-width: 1120px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 98px);
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 98px);
 }
 
-/* Topbar Burdeos & Oro Salón Chimenea */
+/* Topbar Mercadillo Rojo & Oro */
 .adv-topbar {
   position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 8px);
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
   z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
   padding: 10px 14px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   border-radius: var(--vg-radius-lg);
-  background: linear-gradient(135deg, rgba(127, 29, 29, 0.72), rgba(69, 10, 10, 0.85));
+  background: linear-gradient(135deg, rgba(153, 27, 27, 0.88), rgba(127, 29, 29, 0.92));
   backdrop-filter: var(--vg-glass-blur);
   -webkit-backdrop-filter: var(--vg-glass-blur);
-  border: var(--vg-border-gold);
-  box-shadow: 0 12px 32px rgba(69, 10, 10, 0.45);
+  border: 1.5px solid #FBBF24;
+  box-shadow: 0 12px 32px rgba(69, 10, 10, 0.50);
 }
 
 .adv-brand {

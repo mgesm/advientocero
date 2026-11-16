@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v1.1.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v1.2.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -30,11 +30,11 @@
 
 ---
 
-## 3. Reglas de Diseño (*Salón Chimenea · Liquid Noir Navideño*)
+## 3. Reglas de Diseño (*Mercadillo de Adviento · Nivel 4*)
 
-Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 3 — Salón Chimenea**:
-* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (acebo navideño, estrella, copos y candados).
-* **Paleta Salón Chimenea (`css/liquid-christmas.css`):** Fondo nocturno cálido burdeos-abeto (`#1F0B12` → `#081C15` → `#06110E`), tarjetas hero burdeos-oro, puertas disponibles tipo paquete regalo carmesí con cinta dorada cruzada (`#B91C1C` + `#FBBF24`), puertas resueltas en verde abeto (`#064E3B` + `#34D399`) y dock inferior degradado burdeos-pino.
+Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 4 — Mercadillo de Adviento**:
+* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (bolas colgantes, estrella dorada, acebo navideño, copos y candados).
+* **Paleta Mercadillo de Adviento (`css/liquid-christmas.css`):** Borde superior estilo bastón de caramelo, bolas navideñas colgantes SVG, fondo rojo-bosque (`#7F1D1D` → `#14532D` → `#052E16`), tarjeta hero cálida crema (`#FEF3C7` con borde `#F59E0B`), ventanas de Adviento arqueadas iluminadas (`#DC2626` disponible, `#166534` resuelta, dorado en Nochebuena) y dock inferior rojo Navidad con borde oro.
 * **Ergonomía Mobile-First (`css/mobile-ux.css`):** Navegación inferior fija en 4 pestañas (*Calendario*, *Día Activo*, *Sospechosos*, *Expediente*), soporte `safe-area-inset` y partículas de nieve atmosféricas respetando `prefers-reduced-motion`.
 
 ---

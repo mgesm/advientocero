@@ -1,12 +1,12 @@
-const CACHE_NAME = "adviento-cero-v1.1.0";
+const CACHE_NAME = "adviento-cero-v1.2.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./css/liquid-christmas.css?v=1.1.0",
-  "./css/advent-board.css?v=1.1.0",
-  "./css/puzzles.css?v=1.1.0",
-  "./css/mobile-ux.css?v=1.1.0",
+  "./css/liquid-christmas.css?v=1.2.0",
+  "./css/advent-board.css?v=1.2.0",
+  "./css/puzzles.css?v=1.2.0",
+  "./css/mobile-ux.css?v=1.2.0",
   "./config/gift-config.js?v=1.0.0",
   "./config/firebase-config.js?v=1.0.0",
   "./data/case-lore.js?v=1.0.0",
