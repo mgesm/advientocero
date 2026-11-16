@@ -1,0 +1,421 @@
+/**
+ * ADVIENTO CERO — TABLERO DE ADVIENTO (24 PUERTAS) & FICHAS DE SOSPECHOSOS
+ */
+
+/* Hero Banner Compacto */
+.hero-dossier {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+@media (min-width: 768px) {
+  .hero-dossier {
+    grid-template-columns: 280px 1fr;
+    align-items: center;
+    padding: 20px;
+  }
+}
+
+.hero-thumb-wrap {
+  position: relative;
+  border-radius: var(--vg-radius-md);
+  overflow: hidden;
+  border: var(--vg-border-specular-strong);
+  aspect-ratio: 16 / 9;
+}
+
+.hero-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-thumb-tag {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 9px;
+  border-radius: var(--vg-radius-pill);
+  background: rgba(2, 4, 8, 0.78);
+  backdrop-filter: blur(10px);
+  border: var(--vg-border-gold);
+  color: var(--adv-gold-soft);
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.hero-title {
+  font-family: var(--vg-font-serif);
+  font-size: 1.65rem;
+  line-height: 1.12;
+  margin: 8px 0 8px;
+  color: var(--vg-text-primary);
+}
+
+.hero-summary {
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--vg-text-secondary);
+  margin-bottom: 14px;
+}
+
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stat-pill {
+  padding: 10px 12px;
+  border-radius: var(--vg-radius-md);
+  background: rgba(255, 255, 255, 0.035);
+  border: var(--vg-border-specular);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-val {
+  font-family: var(--vg-font-mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--vg-text-primary);
+}
+
+.stat-lbl {
+  font-size: 0.68rem;
+  color: var(--vg-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Cabecera de sección */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Rejilla de 24 Puertas de Adviento */
+.advent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 560px) {
+  .advent-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (min-width: 900px) {
+  .advent-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+}
+
+.door-card {
+  position: relative;
+  min-height: 112px;
+  padding: 12px;
+  border-radius: var(--vg-radius-md);
+  background: var(--vg-glass-bg-card);
+  border: var(--vg-border-specular);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+  color: var(--vg-text-primary);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 180ms var(--vg-spring), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.door-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06), transparent 55%);
+  pointer-events: none;
+}
+
+.door-card:active {
+  transform: scale(0.96);
+}
+
+.door-num-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.door-num {
+  font-family: var(--vg-font-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.door-icon {
+  color: var(--vg-text-muted);
+  display: grid;
+  place-items: center;
+}
+
+.door-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.door-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--vg-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.door-status-txt {
+  font-family: var(--vg-font-mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vg-text-muted);
+}
+
+/* Estados de puerta */
+.door-card.state-locked {
+  opacity: 0.56;
+  background: rgba(7, 11, 20, 0.62);
+  cursor: not-allowed;
+}
+
+.door-card.state-available {
+  border: var(--vg-border-gold);
+  background: linear-gradient(155deg, rgba(245, 158, 11, 0.14), rgba(15, 23, 42, 0.88));
+  box-shadow: var(--adv-gold-glow);
+}
+
+.door-card.state-available .door-num {
+  color: var(--adv-gold-soft);
+}
+
+.door-card.state-available .door-icon {
+  color: var(--adv-gold);
+}
+
+.door-card.state-available .door-status-txt {
+  color: var(--adv-gold-soft);
+}
+
+.door-card.state-waiting {
+  border: var(--vg-border-frost);
+  background: linear-gradient(155deg, rgba(56, 189, 248, 0.13), rgba(15, 23, 42, 0.88));
+}
+
+.door-card.state-waiting .door-status-txt,
+.door-card.state-waiting .door-icon {
+  color: var(--adv-frost);
+}
+
+.door-card.state-solved {
+  border: var(--vg-border-pine);
+  background: linear-gradient(155deg, rgba(16, 185, 129, 0.14), rgba(9, 14, 26, 0.88));
+}
+
+.door-card.state-solved .door-num,
+.door-card.state-solved .door-icon,
+.door-card.state-solved .door-status-txt {
+  color: #6EE7B7;
+}
+
+.door-card.is-day24.state-available {
+  border-color: rgba(255, 45, 85, 0.65);
+  background: linear-gradient(145deg, rgba(190, 18, 60, 0.24), rgba(245, 158, 11, 0.14));
+  box-shadow: var(--adv-crimson-glow);
+}
+
+/* Tablero de 25 Sospechosos */
+.suspect-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+}
+
+.filter-chip {
+  padding: 7px 13px;
+  border-radius: var(--vg-radius-pill);
+  border: var(--vg-border-specular);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--vg-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter-chip.active {
+  background: var(--adv-gold-dim);
+  border: var(--vg-border-gold);
+  color: var(--adv-gold-soft);
+}
+
+.suspects-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .suspects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .suspects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.suspect-card {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--vg-radius-lg);
+  background: var(--vg-glass-bg-card);
+  border: var(--vg-border-specular);
+  cursor: pointer;
+  transition: transform 160ms var(--vg-spring), border-color 160ms ease, opacity 200ms ease;
+}
+
+.suspect-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.suspect-card.is-discarded {
+  opacity: 0.54;
+  border-color: rgba(255, 45, 85, 0.25);
+  background: rgba(7, 10, 18, 0.6);
+}
+
+.suspect-card.is-culprit-final {
+  border: 1.5px solid var(--adv-gold);
+  box-shadow: var(--adv-gold-glow);
+}
+
+.suspect-avatar-wrap {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: var(--vg-radius-md);
+  overflow: hidden;
+  border: var(--vg-border-specular-strong);
+  background: var(--vg-obsidian-950);
+  flex-shrink: 0;
+}
+
+.suspect-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.suspect-card.is-discarded .suspect-avatar {
+  filter: grayscale(100%) contrast(1.1);
+}
+
+.suspect-stamp {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(159, 18, 57, 0.45);
+  font-family: var(--vg-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #FFE4E6;
+  text-transform: uppercase;
+  transform: rotate(-12deg);
+}
+
+.suspect-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.suspect-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.suspect-num {
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  color: var(--adv-gold-soft);
+}
+
+.suspect-room {
+  font-family: var(--vg-font-mono);
+  font-size: 0.66rem;
+  color: var(--vg-text-muted);
+}
+
+.suspect-name {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--vg-text-primary);
+}
+
+.suspect-card.is-discarded .suspect-name {
+  text-decoration: line-through;
+  text-decoration-color: var(--adv-crimson);
+  text-decoration-thickness: 2px;
+}
+
+.suspect-role {
+  font-size: 0.76rem;
+  color: var(--vg-text-secondary);
+}
+
+.suspect-alibi {
+  font-size: 0.74rem;
+  line-height: 1.38;
+  color: var(--vg-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

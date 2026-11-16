@@ -1,0 +1,80 @@
+/**
+ * ADVIENTO CERO — MOBILE-FIRST DOCK & SAFE AREAS
+ */
+
+.mobile-dock {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  z-index: 60;
+  max-width: 640px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 6px;
+  border-radius: 22px;
+  background: rgba(9, 14, 26, 0.88);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.78);
+}
+
+.dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 6px 4px;
+  border-radius: 16px;
+  border: none;
+  background: transparent;
+  color: var(--vg-text-muted);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 140ms var(--vg-spring);
+}
+
+.dock-item:active {
+  transform: scale(0.95);
+}
+
+.dock-item.active {
+  background: linear-gradient(155deg, rgba(245, 158, 11, 0.22), rgba(190, 18, 60, 0.18));
+  color: var(--adv-gold-soft);
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
+}
+
+.dock-badge {
+  position: relative;
+}
+
+.dock-dot {
+  position: absolute;
+  top: -2px;
+  right: -6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--adv-crimson);
+  box-shadow: 0 0 8px var(--adv-crimson);
+}
+
+@media (max-width: 420px) {
+  .adv-brand-sub {
+    display: none;
+  }
+  .stats-strip {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .stat-val {
+    font-size: 1rem;
+  }
+}

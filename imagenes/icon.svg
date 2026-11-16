@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B1120"/>
+      <stop offset="1" stop-color="#04070D"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="120" y1="80" x2="392" y2="432" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FCD34D"/>
+      <stop offset="0.5" stop-color="#F59E0B"/>
+      <stop offset="1" stop-color="#BE123C"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <rect x="24" y="24" width="464" height="464" rx="92" stroke="url(#gold)" stroke-opacity="0.45" stroke-width="4"/>
+  <!-- Copo forense + cerradura -->
+  <path d="M256 88V424M110.5 172L401.5 340M401.5 172L110.5 340" stroke="#38BDF8" stroke-opacity="0.35" stroke-width="8" stroke-linecap="round"/>
+  <path d="M256 124L228 96M256 124L284 96M256 388L228 416M256 388L284 416" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="102" fill="#070B14" stroke="url(#gold)" stroke-width="8"/>
+  <!-- Ojo de cerradura de Adviento -->
+  <circle cx="256" cy="232" r="28" fill="url(#gold)"/>
+  <path d="M240 250L226 312H286L272 250H240Z" fill="url(#gold)"/>
+  <circle cx="256" cy="232" r="10" fill="#04070D"/>
+</svg>
