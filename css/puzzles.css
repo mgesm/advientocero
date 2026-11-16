@@ -37,12 +37,12 @@
 /* Tarjeta exclusiva del jugador (Miguel vs Patri) */
 .terminal-card {
   padding: 18px;
-  border: var(--vg-border-frost);
-  background: linear-gradient(175deg, rgba(11, 17, 32, 0.88), rgba(7, 11, 20, 0.92));
+  border: 2px solid #0284C7;
+  background: #FFFFFF;
 }
 
 .terminal-card.role-patri {
-  border-color: rgba(245, 158, 11, 0.42);
+  border-color: #D97706;
 }
 
 .terminal-banner {
@@ -52,33 +52,35 @@
   gap: 10px;
   padding-bottom: 12px;
   margin-bottom: 14px;
-  border-bottom: var(--vg-border-specular);
+  border-bottom: 1.5px solid #E7E5E4;
 }
 
 .terminal-role-label {
   font-family: var(--vg-font-mono);
   font-size: 0.74rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--adv-frost);
+  color: #0369A1;
 }
 
 .terminal-card.role-patri .terminal-role-label {
-  color: var(--adv-gold-soft);
+  color: #B45309;
 }
 
 .clue-box {
   padding: 14px;
   border-radius: var(--vg-radius-md);
-  background: rgba(2, 4, 8, 0.65);
-  border: var(--vg-border-specular);
+  background: #FFFBF2;
+  border: 1.5px solid #FDE68A;
+  color: #1C1917;
   margin-bottom: 14px;
   font-size: 0.87rem;
   line-height: 1.55;
 }
 
 .clue-box strong {
-  color: var(--vg-text-primary);
+  color: #7F1D1D;
 }
 
 .clue-list {
@@ -92,8 +94,9 @@
 .clue-list li {
   padding: 9px 11px;
   border-radius: var(--vg-radius-sm);
-  background: rgba(255, 255, 255, 0.03);
-  border-left: 2px solid var(--adv-gold);
+  background: #FFF7ED;
+  border-left: 3px solid #B91C1C;
+  color: #292524;
   font-size: 0.83rem;
 }
 
@@ -103,11 +106,11 @@
   gap: 10px;
   padding: 12px 14px;
   border-radius: var(--vg-radius-md);
-  background: rgba(245, 158, 11, 0.09);
-  border: var(--vg-border-gold);
+  background: #FEF3C7;
+  border: 1.5px solid #D97706;
   font-size: 0.82rem;
   line-height: 1.48;
-  color: #FDE68A;
+  color: #78350F;
   margin-bottom: 14px;
 }
 
@@ -115,8 +118,9 @@
 .widget-panel {
   padding: 14px;
   border-radius: var(--vg-radius-md);
-  background: rgba(4, 7, 13, 0.78);
-  border: var(--vg-border-specular-strong);
+  background: #FFFDF7;
+  border: 1.5px solid #E7E5E4;
+  color: #1C1917;
   margin-bottom: 14px;
 }
 
@@ -175,15 +179,15 @@
   height: 56px;
   border-radius: 50%;
   margin: 10px auto;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.14);
+  background: #F5F5F4;
+  border: 2px solid #D6D3D1;
   transition: background 60ms ease, box-shadow 60ms ease;
 }
 
 .morse-lamp.lit {
-  background: var(--adv-gold);
-  border-color: #FEF3C7;
-  box-shadow: 0 0 28px rgba(245, 158, 11, 0.9);
+  background: #F59E0B;
+  border-color: #B45309;
+  box-shadow: 0 0 28px rgba(245, 158, 11, 0.85);
 }
 
 .morse-strip {
@@ -191,7 +195,8 @@
   font-size: 1.25rem;
   letter-spacing: 0.2em;
   text-align: center;
-  color: var(--adv-gold-soft);
+  color: #B45309;
+  font-weight: 700;
   margin-top: 8px;
 }
 
@@ -208,9 +213,9 @@
   width: 48px;
   height: 48px;
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(15, 23, 42, 0.8);
-  color: var(--vg-text-primary);
+  border: 1.5px solid #D6D3D1;
+  background: #FFFFFF;
+  color: #1C1917;
   font-family: var(--vg-font-mono);
   font-size: 1.05rem;
   font-weight: 700;
@@ -218,20 +223,20 @@
 }
 
 .sudoku-cell.given {
-  background: rgba(245, 158, 11, 0.16);
-  border-color: rgba(245, 158, 11, 0.45);
-  color: var(--adv-gold-soft);
+  background: #FEF3C7;
+  border-color: #D97706;
+  color: #92400E;
 }
 
 .sudoku-cell.masked {
-  background: rgba(2, 4, 8, 0.9);
-  color: var(--vg-text-muted);
+  background: #F5F5F4;
+  color: #78716C;
   border-style: dashed;
 }
 
 .sudoku-cell.target-cell {
-  border-color: var(--adv-frost);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+  border-color: #0284C7;
+  background: #E0F2FE;
 }
 
 .nonogram-wrap {
@@ -251,15 +256,15 @@
   width: 42px;
   height: 42px;
   border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(15, 23, 42, 0.72);
+  border: 1.5px solid #D6D3D1;
+  background: #FFFFFF;
   cursor: pointer;
 }
 
 .nono-cell.on {
-  background: var(--adv-gold);
-  border-color: #FEF3C7;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+  background: #B91C1C;
+  border-color: #7F1D1D;
+  box-shadow: 0 3px 10px rgba(185, 28, 28, 0.28);
 }
 
 /* Rueda César & Válvulas & Rayos X */
@@ -279,9 +284,9 @@
   text-align: center;
   padding: 12px;
   border-radius: var(--vg-radius-sm);
-  background: rgba(0, 229, 255, 0.08);
-  border: var(--vg-border-frost);
-  color: #A5F3FC;
+  background: #E0F2FE;
+  border: 1.5px solid #0284C7;
+  color: #075985;
 }
 
 .valve-row {
@@ -294,9 +299,9 @@
 .valve-btn {
   padding: 12px 6px;
   border-radius: var(--vg-radius-md);
-  border: var(--vg-border-specular-strong);
-  background: rgba(15, 23, 42, 0.8);
-  color: var(--vg-text-secondary);
+  border: 1.5px solid #D6D3D1;
+  background: #FFF7ED;
+  color: #57534E;
   font-family: var(--vg-font-mono);
   font-size: 0.82rem;
   font-weight: 700;
@@ -304,9 +309,9 @@
 }
 
 .valve-btn.open {
-  background: rgba(16, 185, 129, 0.22);
-  border-color: var(--adv-pine);
-  color: #6EE7B7;
+  background: #DCFCE7;
+  border-color: #16A34A;
+  color: #166534;
 }
 
 /* Formulario de validación */
@@ -362,15 +367,15 @@
 }
 
 .feedback-banner.error {
-  background: rgba(255, 45, 85, 0.14);
-  border: var(--vg-border-crimson);
-  color: #FECDD3;
+  background: #FEE2E2;
+  border: 1.5px solid #DC2626;
+  color: #991B1B;
 }
 
 .feedback-banner.success {
-  background: rgba(16, 185, 129, 0.14);
-  border: var(--vg-border-pine);
-  color: #A7F3D0;
+  background: #DCFCE7;
+  border: 1.5px solid #16A34A;
+  color: #166534;
 }
 
 /* Pistas progresivas */
@@ -384,11 +389,11 @@
 .hint-item {
   padding: 11px 13px;
   border-radius: var(--vg-radius-md);
-  background: rgba(255, 255, 255, 0.03);
-  border: var(--vg-border-specular);
+  background: #FFF7ED;
+  border: 1.5px solid #FDE68A;
   font-size: 0.82rem;
   line-height: 1.48;
-  color: var(--vg-text-secondary);
+  color: #44403C;
 }
 
 /* Tabla lógica (Día 17) y otros helpers */
@@ -400,14 +405,14 @@
 }
 
 .logic-matrix th, .logic-matrix td {
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid #E7E5E4;
   padding: 8px 6px;
   text-align: center;
 }
 
 .logic-matrix th {
-  color: var(--adv-gold-soft);
-  background: rgba(245, 158, 11, 0.08);
+  color: #92400E;
+  background: #FEF3C7;
 }
 
 .logic-cell-btn {
@@ -415,7 +420,7 @@
   min-height: 30px;
   background: transparent;
   border: none;
-  color: var(--vg-text-primary);
+  color: #1C1917;
   font-family: var(--vg-font-mono);
   font-weight: 700;
   cursor: pointer;
@@ -424,8 +429,8 @@
 /* Sobre de Regalo Final */
 .gift-reveal-card {
   padding: 22px;
-  border: 1.5px solid rgba(245, 158, 11, 0.65);
-  background: linear-gradient(155deg, rgba(190, 18, 60, 0.20), rgba(11, 17, 32, 0.94) 55%, rgba(245, 158, 11, 0.16));
+  border: 2px solid #D97706;
+  background: linear-gradient(155deg, #FFFDF7 0%, #FEF3C7 100%);
   box-shadow: var(--adv-gold-glow);
 }
 
@@ -433,6 +438,6 @@
   margin-top: 14px;
   padding: 16px;
   border-radius: var(--vg-radius-md);
-  border: 1px dashed rgba(252, 211, 77, 0.65);
-  background: rgba(2, 4, 8, 0.65);
+  border: 2px dashed #B91C1C;
+  background: #FFFFFF;
 }

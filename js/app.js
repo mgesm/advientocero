@@ -54,7 +54,7 @@
         if (f.y > h) { f.y = -4; f.x = Math.random() * w; }
         if (f.x > w) f.x = 0;
         if (f.x < 0) f.x = w;
-        ctx.fillStyle = `rgba(226, 232, 240, ${f.a})`;
+        ctx.fillStyle = `rgba(148, 163, 184, ${f.a * 0.72})`;
         ctx.beginPath();
         ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
         ctx.fill();
@@ -636,11 +636,11 @@
           <h3 style="font-size:1rem;margin-bottom:12px;">Escenas del Complejo</h3>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
             ${lore.scenes.map((sc) => `
-              <div style="border-radius:14px;overflow:hidden;border:var(--vg-border-specular);background:rgba(2,4,8,0.6);">
+              <div style="border-radius:14px;overflow:hidden;border:1.5px solid #E7E5E4;background:#FFF7ED;">
                 <img src="${esc(sc.src)}" alt="${esc(sc.title)}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
                 <div style="padding:10px 12px;">
-                  <div style="font-weight:600;font-size:0.86rem;">${esc(sc.title)}</div>
-                  <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-top:3px;">${esc(sc.caption)}</div>
+                  <div style="font-weight:700;font-size:0.86rem;color:#7F1D1D;">${esc(sc.title)}</div>
+                  <div style="font-size:0.75rem;color:#57534E;margin-top:3px;">${esc(sc.caption)}</div>
                 </div>
               </div>`).join("")}
           </div>

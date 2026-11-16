@@ -2,40 +2,40 @@
  * ADVIENTO CERO — TABLERO DE ADVIENTO (24 PUERTAS) & FICHAS DE SOSPECHOSOS
  */
 
-/* Hero Banner Mercadillo de Adviento — Tarjeta Cálida Crema */
+/* Hero Banner Postal de Nochebuena — Blanco & Oro */
 .hero-dossier {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 18px;
   margin-bottom: 18px;
-  background: #FEF3C7;
-  color: #450A0A;
-  border: 2px solid #F59E0B;
-  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.40);
+  background: #FFFFFF;
+  color: #1C1917;
+  border: 2px solid #D97706;
+  box-shadow: 0 10px 26px rgba(180, 83, 9, 0.12);
 }
 
 .hero-dossier .badge-gold {
-  background: #15803D;
-  border-color: #166534;
-  color: #FFFFFF;
+  background: #DCFCE7;
+  border-color: #16A34A;
+  color: #166534;
 }
 
 .hero-dossier .hero-title {
-  color: #450A0A;
+  color: #7F1D1D;
 }
 
 .hero-dossier .hero-summary {
-  color: #78350F;
+  color: #57534E;
 }
 
 .hero-dossier .hero-summary strong {
-  color: #991B1B;
+  color: #B91C1C;
 }
 
 .hero-dossier .stat-pill {
-  background: rgba(180, 83, 9, 0.10);
-  border: 1px solid rgba(180, 83, 9, 0.28);
+  background: #FFF7ED;
+  border: 1.5px solid #FDE68A;
 }
 
 .hero-dossier .stat-lbl {
@@ -47,7 +47,7 @@
   position: absolute;
   top: -14px;
   right: -14px;
-  opacity: 0.14;
+  opacity: 0.12;
   color: #D97706;
   pointer-events: none;
 }
@@ -174,17 +174,17 @@
 
 .door-card {
   position: relative;
-  min-height: 114px;
+  min-height: 112px;
   padding: 12px 10px;
-  border-radius: 22px 22px 10px 10px;
-  background: rgba(0, 0, 0, 0.30);
-  border: 1.5px dashed rgba(254, 243, 199, 0.38);
+  border-radius: 14px;
+  background: #FFF7ED;
+  border: 1.5px dashed #DC2626;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  color: var(--vg-text-primary);
+  color: #1C1917;
   cursor: pointer;
   overflow: hidden;
   transition: transform 180ms var(--vg-spring), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
@@ -247,78 +247,96 @@
   color: var(--vg-text-muted);
 }
 
-/* Estados de puerta — Nivel 4 Ventanas Iluminadas del Mercadillo */
+/* Estados de puerta — Nivel 5 Postal de Nochebuena */
 .door-card.state-locked {
-  opacity: 0.78;
-  background: rgba(0, 0, 0, 0.32);
-  border: 1.5px dashed rgba(254, 243, 199, 0.38);
+  opacity: 0.92;
+  background: #FFF7ED;
+  border: 1.5px dashed #DC2626;
   cursor: not-allowed;
 }
 
+.door-card.state-locked:nth-child(even) {
+  border-color: #15803D;
+}
+
 .door-card.state-locked .door-num {
-  color: #FDE68A;
+  color: #991B1B;
+}
+
+.door-card.state-locked:nth-child(even) .door-num {
+  color: #166534;
+}
+
+.door-card.state-locked .door-title,
+.door-card.state-locked .door-status-txt {
+  color: #78716C;
 }
 
 .door-card.state-available {
-  border: 2px solid #FDE047;
-  background: #DC2626;
-  box-shadow: 0 0 20px rgba(253, 224, 71, 0.45);
+  border: 2px solid #FBBF24;
+  background: #B91C1C;
+  box-shadow: 0 8px 18px rgba(185, 28, 28, 0.28);
 }
 
 .door-card.state-available .door-num {
-  color: #FEF9C3;
+  color: #FFFFFF;
 }
 
 .door-card.state-available .door-title,
 .door-card.state-available .door-status-txt {
-  color: #FEF08A;
+  color: #FDE68A;
   font-weight: 700;
 }
 
 .door-card.state-available .door-icon {
-  color: #FEF08A;
+  color: #FDE68A;
 }
 
 .door-card.state-waiting {
-  border: 2px solid #7DD3FC;
-  background: #0E7490;
+  border: 2px solid #0284C7;
+  background: #E0F2FE;
 }
 
+.door-card.state-waiting .door-num,
+.door-card.state-waiting .door-title,
 .door-card.state-waiting .door-status-txt,
 .door-card.state-waiting .door-icon {
-  color: #E0F2FE;
+  color: #075985;
 }
 
 .door-card.state-solved {
-  border: 2px solid #86EFAC;
-  background: #166534;
+  border: 2px solid #16A34A;
+  background: #DCFCE7;
 }
 
-.door-card.state-solved .door-num,
-.door-card.state-solved .door-title {
-  color: #FFFFFF;
+.door-card.state-solved .door-num {
+  color: #14532D;
 }
 
+.door-card.state-solved .door-title,
 .door-card.state-solved .door-icon,
 .door-card.state-solved .door-status-txt {
-  color: #BBF7D0;
+  color: #15803D;
+  font-weight: 700;
 }
 
 .door-card.is-day24.state-locked {
-  opacity: 0.94;
-  background: linear-gradient(180deg, #B45309, #78350F);
-  border: 2px solid #FDE047;
+  opacity: 1;
+  background: #FEF3C7;
+  border: 2px solid #D97706;
 }
 
 .door-card.is-day24.state-locked .door-num,
+.door-card.is-day24.state-locked .door-title,
 .door-card.is-day24.state-locked .door-status-txt {
-  color: #FEF9C3;
+  color: #92400E;
+  font-weight: 700;
 }
 
 .door-card.is-day24.state-available {
-  border: 2px solid #FEF08A;
-  background: linear-gradient(180deg, #DC2626 0%, #B45309 100%);
-  box-shadow: 0 0 26px rgba(253, 224, 71, 0.58);
+  border: 2px solid #FDE047;
+  background: linear-gradient(145deg, #B91C1C 0%, #D97706 100%);
+  box-shadow: 0 10px 24px rgba(185, 28, 28, 0.34);
 }
 
 /* Tablero de 25 Sospechosos */
@@ -333,9 +351,9 @@
 .filter-chip {
   padding: 7px 13px;
   border-radius: var(--vg-radius-pill);
-  border: var(--vg-border-specular);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--vg-text-secondary);
+  border: 1.5px solid #E7E5E4;
+  background: #FFFFFF;
+  color: #57534E;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -343,9 +361,9 @@
 }
 
 .filter-chip.active {
-  background: var(--adv-gold-dim);
-  border: var(--vg-border-gold);
-  color: var(--adv-gold-soft);
+  background: #B91C1C;
+  border-color: #991B1B;
+  color: #FFFFFF;
 }
 
 .suspects-grid {
@@ -384,9 +402,9 @@
 }
 
 .suspect-card.is-discarded {
-  opacity: 0.54;
-  border-color: rgba(255, 45, 85, 0.25);
-  background: rgba(7, 10, 18, 0.6);
+  opacity: 0.68;
+  border-color: #FCA5A5;
+  background: #FEF2F2;
 }
 
 .suspect-card.is-culprit-final {

@@ -309,9 +309,9 @@ window.PuzzleEngine = (() => {
             <button type="button" class="btn btn-frost btn-sm" style="width:100%;" data-action="toggle-xray" data-day="${dayNum}">
               Activar filtro espectral (${widget.mode === "metal" ? "Metales" : "Orgánico"})
             </button>
-            <div id="xray-box-${dayNum}" style="display:none;margin-top:10px;padding:12px;border-radius:10px;background:rgba(0,229,255,0.1);border:var(--vg-border-frost);">
+            <div id="xray-box-${dayNum}" style="display:none;margin-top:10px;padding:12px;border-radius:10px;background:#0B1120;border:1.5px solid #0284C7;">
               <div class="mono" style="font-size:0.88rem;font-weight:700;color:#67E8F9;">${escapeHtml(widget.reveal)}</div>
-              <div style="font-size:0.76rem;color:var(--vg-text-secondary);margin-top:4px;">${escapeHtml(widget.sub)}</div>
+              <div style="font-size:0.76rem;color:#CBD5E1;margin-top:4px;">${escapeHtml(widget.sub)}</div>
             </div>
           </div>`;
 
@@ -415,7 +415,8 @@ window.PuzzleEngine = (() => {
           const match = target.every((v, i) => v === current[i]);
           if (match) {
             window.AudioFX.success();
-            gauge.style.color = "#6EE7B7";
+            gauge.style.color = "#15803D";
+            gauge.style.fontWeight = "700";
             gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
           } else {
             gauge.style.color = "var(--vg-text-muted)";
