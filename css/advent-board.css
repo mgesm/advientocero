@@ -2,13 +2,25 @@
  * ADVIENTO CERO — TABLERO DE ADVIENTO (24 PUERTAS) & FICHAS DE SOSPECHOSOS
  */
 
-/* Hero Banner Compacto */
+/* Hero Banner Salón Chimenea (Burdeos & Oro) */
 .hero-dossier {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
   padding: 18px;
   margin-bottom: 18px;
+  background: linear-gradient(145deg, rgba(127, 29, 29, 0.68) 0%, rgba(69, 10, 10, 0.88) 100%);
+  border: 1.5px solid rgba(252, 211, 77, 0.55);
+  box-shadow: 0 14px 34px rgba(69, 10, 10, 0.55);
+}
+
+.hero-star-watermark {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  opacity: 0.16;
+  color: #FDE68A;
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {
@@ -205,56 +217,116 @@
   color: var(--vg-text-muted);
 }
 
-/* Estados de puerta */
+/* Estados de puerta — Nivel 3 Paquetes de Regalo */
 .door-card.state-locked {
-  opacity: 0.56;
-  background: rgba(7, 11, 20, 0.62);
+  opacity: 0.68;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(252, 211, 77, 0.20);
   cursor: not-allowed;
 }
 
 .door-card.state-available {
-  border: var(--vg-border-gold);
-  background: linear-gradient(155deg, rgba(245, 158, 11, 0.14), rgba(15, 23, 42, 0.88));
-  box-shadow: var(--adv-gold-glow);
+  border: 2px solid #FBBF24;
+  background: linear-gradient(160deg, #B91C1C 0%, #7F1D1D 100%);
+  box-shadow: 0 0 18px rgba(251, 191, 36, 0.32);
 }
 
-.door-card.state-available .door-num {
-  color: var(--adv-gold-soft);
+/* Cinta dorada cruzada en puerta disponible */
+.door-card.state-available::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  background: rgba(251, 191, 36, 0.36);
+  pointer-events: none;
+}
+
+.door-card.state-available::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 3px;
+  transform: translateY(-50%);
+  background: rgba(251, 191, 36, 0.36);
+  pointer-events: none;
+}
+
+.door-card.state-available .door-num,
+.door-card.state-available .door-title,
+.door-card.state-available .door-status-txt {
+  position: relative;
+  z-index: 1;
+  color: #FFFBEB;
 }
 
 .door-card.state-available .door-icon {
-  color: var(--adv-gold);
+  position: relative;
+  z-index: 1;
+  color: #FDE68A;
 }
 
 .door-card.state-available .door-status-txt {
-  color: var(--adv-gold-soft);
+  color: #FDE68A;
+  font-weight: 700;
 }
 
 .door-card.state-waiting {
-  border: var(--vg-border-frost);
-  background: linear-gradient(155deg, rgba(56, 189, 248, 0.13), rgba(15, 23, 42, 0.88));
+  border: 1.5px solid var(--adv-frost);
+  background: linear-gradient(155deg, rgba(14, 116, 144, 0.45), rgba(6, 24, 20, 0.90));
 }
 
 .door-card.state-waiting .door-status-txt,
 .door-card.state-waiting .door-icon {
-  color: var(--adv-frost);
+  color: #BAE6FD;
 }
 
 .door-card.state-solved {
-  border: var(--vg-border-pine);
-  background: linear-gradient(155deg, rgba(16, 185, 129, 0.14), rgba(9, 14, 26, 0.88));
+  border: 1.5px solid #34D399;
+  background: #064E3B;
+}
+
+.door-card.state-solved::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: rgba(252, 211, 77, 0.24);
+  pointer-events: none;
 }
 
 .door-card.state-solved .door-num,
+.door-card.state-solved .door-title {
+  color: #ECFDF5;
+}
+
 .door-card.state-solved .door-icon,
 .door-card.state-solved .door-status-txt {
   color: #6EE7B7;
 }
 
+.door-card.is-day24.state-locked {
+  opacity: 0.88;
+  background: rgba(180, 83, 9, 0.28);
+  border: 1px solid rgba(251, 191, 36, 0.48);
+}
+
+.door-card.is-day24.state-locked .door-num,
+.door-card.is-day24.state-locked .door-status-txt {
+  color: #FDE68A;
+}
+
 .door-card.is-day24.state-available {
-  border-color: rgba(255, 45, 85, 0.65);
-  background: linear-gradient(145deg, rgba(190, 18, 60, 0.24), rgba(245, 158, 11, 0.14));
-  box-shadow: var(--adv-crimson-glow);
+  border-color: #FDE047;
+  background: linear-gradient(145deg, #B91C1C 0%, #B45309 100%);
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.45);
 }
 
 /* Tablero de 25 Sospechosos */

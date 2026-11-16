@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v1.0.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v1.1.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -30,11 +30,11 @@
 
 ---
 
-## 3. Reglas de Diseño (*Liquid Noir Navideño*)
+## 3. Reglas de Diseño (*Salón Chimenea · Liquid Noir Navideño*)
 
-Hereda y adapta las reglas de diseño de VESTIGO (`vestigo-design-guardian`):
-* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino.
-* **Paleta Liquid Noir Navideña (`css/liquid-christmas.css`):** Superficies obsidiana (`#04070D`, `#0B1120`), cristal translúcido (`backdrop-filter: blur(26px)`), oro champán (`#F59E0B`), carmesí evidencia (`#FF2D55`), verde abeto (`#10B981`) y cian escarcha/UV (`#38BDF8` / `#00E5FF`).
+Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardian`) aplicadas al tema **Nivel 3 — Salón Chimenea**:
+* **Cero Emojis (Regla Absoluta):** Prohibido cualquier emoji Unicode en interfaz, datos o código; toda la iconografía usa SVG inline de trazo fino (acebo navideño, estrella, copos y candados).
+* **Paleta Salón Chimenea (`css/liquid-christmas.css`):** Fondo nocturno cálido burdeos-abeto (`#1F0B12` → `#081C15` → `#06110E`), tarjetas hero burdeos-oro, puertas disponibles tipo paquete regalo carmesí con cinta dorada cruzada (`#B91C1C` + `#FBBF24`), puertas resueltas en verde abeto (`#064E3B` + `#34D399`) y dock inferior degradado burdeos-pino.
 * **Ergonomía Mobile-First (`css/mobile-ux.css`):** Navegación inferior fija en 4 pestañas (*Calendario*, *Día Activo*, *Sospechosos*, *Expediente*), soporte `safe-area-inset` y partículas de nieve atmosféricas respetando `prefers-reduced-motion`.
 
 ---

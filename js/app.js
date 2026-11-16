@@ -183,10 +183,10 @@
       const st = getDayStatus(d.day);
       const numStr = String(d.day).padStart(2, "0");
       let icon = getSvg("lock");
-      let statusLabel = "Cerrada";
-      if (st === "available") { icon = getSvg("unlock"); statusLabel = "Disponible"; }
+      let statusLabel = d.day === 24 ? "Nochebuena" : "Cerrada";
+      if (st === "available") { icon = getSvg("unlock"); statusLabel = "Abrir hoy"; }
       else if (st === "waiting") { icon = getSvg("hourglass"); statusLabel = "1/2 Listo"; }
-      else if (st === "solved") { icon = getSvg("check"); statusLabel = "Descartado"; }
+      else if (st === "solved") { icon = getSvg("check"); statusLabel = "Descubierta"; }
 
       return `
         <button type="button" class="door-card state-${st} ${d.day === 24 ? "is-day24" : ""}" data-open-day="${d.day}">
@@ -195,7 +195,7 @@
             <span class="door-icon">${icon}</span>
           </div>
           <div class="door-meta">
-            <div class="door-title">${st === "locked" ? `Puerta ${numStr} Dic` : esc(d.title)}</div>
+            <div class="door-title">${st === "locked" ? (d.day === 24 ? "Gran Final 24 Dic" : `Puerta ${numStr} Dic`) : esc(d.title)}</div>
             <div class="door-status-txt">${statusLabel}</div>
           </div>
         </button>`;
@@ -203,6 +203,9 @@
 
     container.innerHTML = `
       <div class="glass-card hero-dossier">
+        <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/>
+        </svg>
         <div class="hero-thumb-wrap">
           <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb">
           <span class="hero-thumb-tag">${esc(window.CASE_LORE.caseCode)}</span>
