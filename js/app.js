@@ -427,6 +427,7 @@
             <span class="badge ${role === "miguel" ? "badge-frost" : "badge-gold"}">Exclusivo de ${role === "miguel" ? "Miguel" : "Patri"}</span>
           </div>
           <p style="font-size:0.84rem;color:var(--vg-text-secondary);margin-bottom:12px;">${esc(roleData.brief)}</p>
+          <div style="margin-bottom:14px;">${window.DayArtifacts ? window.DayArtifacts.render(dayObj.day, role) : ""}</div>
           <div class="clue-box">${roleData.clueHtml}</div>
           <div class="partner-callout">
             <span style="flex-shrink:0;margin-top:1px;">${getSvg("users")}</span>
