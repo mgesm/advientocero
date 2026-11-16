@@ -143,9 +143,12 @@
       return;
     }
     const sim = window.DateGate.getSimulatedDay();
+    const otherRole = currentRole === "miguel" ? "patri" : "miguel";
+    const otherLabel = otherRole === "miguel" ? "Miguel" : "Patri";
     bar.style.display = "flex";
     bar.innerHTML = `
       <span class="badge badge-gold">MODO TEST (Cero Spoilers)</span>
+      <button type="button" class="btn btn-sm btn-frost" id="admin-switch-role-btn">Cambiar a ${otherLabel}</button>
       <label class="mono" style="font-size:0.75rem;color:var(--vg-text-secondary);display:flex;align-items:center;gap:6px;">
         Simular día:
         <select id="admin-sim-select" class="adv-select" style="min-height:32px;padding:4px 8px;width:auto;font-size:0.76rem;">
@@ -156,6 +159,10 @@
       <button type="button" class="btn btn-sm btn-ghost" id="admin-reset-btn" style="color:#FDA4AF;border-color:rgba(255,45,85,0.4);">Resetear partida</button>
       <button type="button" class="btn btn-sm btn-ghost" id="admin-exit-btn">Salir test</button>
     `;
+
+    document.getElementById("admin-switch-role-btn")?.addEventListener("click", () => {
+      setRole(otherRole);
+    });
 
     document.getElementById("admin-sim-select")?.addEventListener("change", (e) => {
       window.DateGate.setSimulatedDay(e.target.value);

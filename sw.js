@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v1.6.0";
+const CACHE_NAME = "adviento-cero-v1.6.1";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -18,7 +18,7 @@ const PRECACHE_ASSETS = [
   "./js/sync-engine.js?v=1.0.0",
   "./js/puzzle-engine.js?v=1.4.0",
   "./js/day-artifacts.js?v=1.6.0",
-  "./js/app.js?v=1.6.0",
+  "./js/app.js?v=1.6.1",
   "./imagenes/icon.svg",
   "./imagenes/cover-hotel.jpg",
   "./imagenes/scene-lobby.jpg",
