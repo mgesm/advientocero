@@ -17,8 +17,7 @@ window.GIFT_CONFIG = {
     title: "Feliz Adviento!!!",
     body: [
       "En lugar de chocolate, chuches, cremas o cualquier cosa aburrida que se nos pueda ocurrir para un calendario de adviento, este diciembre nos hemos quedado atrapados en una tormenta de nieve con un crimen por resolver.",
-      "Cada día se abrirá una nueva puerta. Tú tendrás pistas que yo no puedo ver, y yo tendré datos que tú necesitas. Tendremos que hablar, cruzar pruebas y tachar sospechosos cada día hasta Nochebuena. Es decir, en vez de tener cada día de adviento un nuevo trozo de chocolate, vamos a tener una pista nueva para encontrar al culpable del crimen.",
-      "Cuando resolvamos el caso el día 24, te espera una última sorpresa al final del expediente."
+      "Cada día se abrirá una nueva puerta. Tú tendrás pistas que yo no puedo ver, y yo tendré datos que tú necesitas. Tendremos que hablar, cruzar pruebas y tachar sospechosos cada día hasta Nochebuena. Es decir, en vez de tener cada día de adviento un nuevo trozo de chocolate, vamos a tener una pista nueva para encontrar al culpable del crimen."
     ],
     signature: "Con todo mi cariño, Miguel"
   },
