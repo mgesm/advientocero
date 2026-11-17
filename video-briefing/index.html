@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADVIENTO CERO — Vídeo Briefing Oficial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Courier+Prime:wght@400;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #040907;
+      color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .player-shell {
+      width: 100%;
+      background: #050B12;
+      border: 1px solid rgba(251, 191, 36, 0.32);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .rec-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: #061814;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+    }
+    .rec-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #F87171;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #EF4444;
+      box-shadow: 0 0 8px #EF4444;
+      animation: recBlink 1s infinite alternate;
+    }
+    @keyframes recBlink {
+      from { opacity: 0.35; }
+      to { opacity: 1; }
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #020408;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .slide-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transform: scale(1);
+      transition: opacity 1.1s ease, transform 13s cubic-bezier(0.22, 1, 0.36, 1);
+      filter: contrast(1.06) brightness(0.76);
+    }
+    .slide-img.active {
+      opacity: 1;
+      transform: scale(1.09);
+    }
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 36%, rgba(2, 4, 8, 0.88) 100%);
+      z-index: 3;
+    }
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 1px, transparent 1px, transparent 3px);
+      z-index: 4;
+      opacity: 0.55;
+    }
+    .hud-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .hud-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      color: #A5F3FC;
+      text-shadow: 0 1px 4px #000;
+    }
+    .hud-tag {
+      padding: 3px 7px;
+      border-radius: 4px;
+      background: rgba(2, 4, 8, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+    }
+    .subtitle-bar {
+      background: rgba(2, 4, 8, 0.82);
+      border-left: 3px solid #FBBF24;
+      padding: 8px 11px;
+      border-radius: 6px;
+      backdrop-filter: blur(8px);
+    }
+    .act-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #FDE68A;
+      margin-bottom: 2px;
+    }
+    .subtitle-text {
+      font-size: 11.5px;
+      line-height: 1.42;
+      color: #F8FAFC;
+    }
+    .center-play {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      display: grid;
+      place-items: center;
+      background: rgba(2, 4, 8, 0.35);
+      transition: opacity 250ms ease;
+    }
+    .center-play.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .play-circle {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(185, 28, 28, 0.88);
+      border: 2px solid #FDE68A;
+      display: grid;
+      place-items: center;
+      color: #FFFBEB;
+      box-shadow: 0 0 24px rgba(251, 191, 36, 0.4);
+    }
+    .controls {
+      padding: 10px 12px;
+      background: #061814;
+      border-top: 1px solid rgba(251, 191, 36, 0.22);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 6px 11px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.06);
+      color: #F8FAFC;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-gold {
+      background: rgba(185, 28, 28, 0.72);
+      border-color: #FBBF24;
+      color: #FEF3C7;
+    }
+    .acts-rail {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .act-pill {
+      padding: 4px 9px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: transparent;
+      color: #94A3B8;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10.5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .act-pill.active {
+      background: rgba(251, 191, 36, 0.18);
+      border-color: #FBBF24;
+      color: #FDE68A;
+    }
+    .progress-track {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #DC2626, #FBBF24);
+      transition: width 250ms linear;
+    }
+    .blackout-veil {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+      transition: opacity 350ms ease;
+    }
+    .blackout-veil.on {
+      opacity: 0.92;
+    }
+  </style>
+</head>
+<body>
+  <div class="player-shell">
+    <div class="rec-bar">
+      <span class="rec-pill"><span class="rec-dot"></span> GRABACIÓN DE CAMPO · UOPJ VENTISQUERO</span>
+      <span id="timecode" style="color:#94A3B8;">30/11 23:55:00</span>
+    </div>
+
+    <div class="stage" id="stage">
+      <img src="../imagenes/cover-hotel.jpg" class="slide-img active" id="img-0" alt="Fachada Hotel">
+      <img src="../imagenes/scene-lobby.jpg" class="slide-img" id="img-1" alt="Salón Mirador">
+      <img src="../imagenes/scene-balcony.jpg" class="slide-img" id="img-2" alt="Terraza Norte">
+      <div class="blackout-veil" id="blackout-veil"></div>
+      <div class="vignette"></div>
+      <div class="scanlines"></div>
+
+      <div class="hud-overlay">
+        <div class="hud-top">
+          <span class="hud-tag" id="hud-cam">CAM-EXT-01 · COTA 1.940 M</span>
+          <span class="hud-tag" id="hud-temp">TEMP -11.4 °C · TELEFÉRICO BLOQUEADO</span>
+        </div>
+        <div class="subtitle-bar">
+          <div class="act-title" id="act-title">Acto I · Aislamiento en el Pirineo</div>
+          <div class="subtitle-text" id="act-text">Pulsa reproducir para iniciar el informe audiovisual del caso sin spoilers.</div>
+        </div>
+      </div>
+
+      <div class="center-play" id="center-play">
+        <div class="play-circle" aria-label="Reproducir">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="ctrl-row">
+        <div style="display:flex;gap:6px;">
+          <button type="button" class="btn btn-gold" id="play-btn">Reproducir</button>
+          <button type="button" class="btn" id="voice-btn">Voz: ON</button>
+          <button type="button" class="btn" id="music-btn">Ambiente: ON</button>
+        </div>
+        <span id="act-counter" style="font-family:'Courier Prime',monospace;font-size:11px;color:#CBD5E1;">Acto 1 / 6</span>
+      </div>
+      <div class="acts-rail" id="acts-rail"></div>
+    </div>
+  </div>
+
+  <script>
+    const ACTS = [
+      {
+        title: "Acto I · Aislamiento en el Pirineo",
+        cam: "CAM-EXT-01 · FACHADA VENTISQUERO",
+        temp: "30 NOV · 19:00 H · -11.4 °C",
+        tc: "30/11 19:00:00",
+        img: 0,
+        blackout: false,
+        dur: 12000,
+        narration: "Treinta de noviembre, siete de la tarde. Una ciclogénesis explosiva sepulta la carretera del Pirineo y detiene el teleférico del Hotel El Mirador del Ventisquero. Veinticinco personas quedan incomunicadas en su interior."
+      },
+      {
+        title: "Acto II · El Apagón de las 23:38",
+        cam: "CUADRO ELÉCTRICO · REGISTRO BTS",
+        temp: "30 NOV · 23:38 H · CORTE DE TENSIÓN",
+        tc: "30/11 23:38:04",
+        img: 1,
+        blackout: true,
+        dur: 11000,
+        narration: "Durante el brindis de bienvenida de Adviento, un apagón eléctrico sume el hotel en oscuridad total durante cuatro minutos exactos, entre las once y treinta y ocho y las once y cuarenta y dos."
+      },
+      {
+        title: "Acto III · Hallazgo en el Salón Mirador",
+        cam: "EVIDENCIA-01 · INSPECCIÓN OCULAR",
+        temp: "30 NOV · 23:55 H · ESCENA PRECINTADA",
+        tc: "30/11 23:55:12",
+        img: 1,
+        blackout: false,
+        dur: 13000,
+        narration: "A las once y cincuenta y cinco, junto al gran abeto navideño, aparece sin vida Arturo Valdivieso, copropietario del complejo. Su copa de ponche especiado yace volcada sobre la mesa de pizarra con signos de intoxicación aguda."
+      },
+      {
+        title: "Acto IV · El Perímetro Exterior",
+        cam: "CAM-NORTE · TERRAZA Y TELEFÉRICO",
+        temp: "VIENTO 92 KM/H · HUELLAS EN NIEVE",
+        tc: "30/11 23:57:40",
+        img: 2,
+        blackout: false,
+        dur: 11000,
+        narration: "La ventisca impide cualquier fuga por carretera o helicóptero. El asesino sigue bajo este mismo techo, mezclado entre huéspedes y personal de servicio."
+      },
+      {
+        title: "Acto V · Venticuatro Días, Veinticuatro Coartadas",
+        cam: "TERMINAL ADVIENTO CERO · MODO PAREJA",
+        temp: "1 AL 24 DE DICIEMBRE · 25 FICHAS",
+        tc: "01/12 00:00:00",
+        img: 0,
+        blackout: false,
+        dur: 12000,
+        narration: "Del uno al veinticuatro de diciembre recibiréis un parte diario. Cada puerta resuelta exonerará a un inocente en vuestro tablero compartido hasta dejar en pie únicamente al culpable en Nochebuena."
+      },
+      {
+        title: "Acto VI · Protocolo Cooperativo: Miguel y Patri",
+        cam: "CONEXIÓN ASIMÉTRICA ACTIVA",
+        temp: "TERMINAL A (MIGUEL) ↔ TERMINAL B (PATRI)",
+        tc: "01/12 00:01:00",
+        img: 1,
+        blackout: false,
+        dur: 12000,
+        narration: "Ninguna terminal contiene todas las pruebas. Miguel analizará planos y telemetría; Patri revisará tarjetas, coartadas y registros. Hablad, cruzad vuestras pantallas y resolved el misterio juntos."
+      }
+    ];
+
+    let idx = 0;
+    let playing = false;
+    let voiceOn = true;
+    let musicOn = true;
+    let timer = null;
+    let audioCtx = null;
+    let droneOsc = null;
+    let droneGain = null;
+
+    const rail = document.getElementById("acts-rail");
+    ACTS.forEach((a, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "act-pill" + (i === 0 ? " active" : "");
+      b.textContent = `Acto ${i + 1}`;
+      b.onclick = () => goToAct(i, true);
+      rail.appendChild(b);
+    });
+
+    function startDrone() {
+      if (!musicOn) return;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
+      if (droneOsc) return;
+      droneOsc = audioCtx.createOscillator();
+      droneGain = audioCtx.createGain();
+      droneOsc.type = "sine";
+      droneOsc.frequency.value = 55;
+      droneGain.gain.value = 0.04;
+      droneOsc.connect(droneGain);
+      droneGain.connect(audioCtx.destination);
+      droneOsc.start();
+    }
+
+    function stopDrone() {
+      if (droneOsc) {
+        try { droneOsc.stop(); } catch (_) {}
+        droneOsc = null;
+      }
+    }
+
+    function speak(text) {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      if (!voiceOn || !playing) return;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "es-ES";
+      u.rate = 0.98;
+      u.pitch = 0.95;
+      window.speechSynthesis.speak(u);
+    }
+
+    function renderAct(i) {
+      const a = ACTS[i];
+      document.getElementById("act-title").textContent = a.title;
+      document.getElementById("act-text").textContent = a.narration;
+      document.getElementById("hud-cam").textContent = a.cam;
+      document.getElementById("hud-temp").textContent = a.temp;
+      document.getElementById("timecode").textContent = a.tc;
+      document.getElementById("act-counter").textContent = `Acto ${i + 1} / ${ACTS.length}`;
+      document.getElementById("progress-fill").style.width = `${((i + 1) / ACTS.length) * 100}%`;
+      document.getElementById("blackout-veil").classList.toggle("on", a.blackout);
+      [0, 1, 2].forEach((n) => {
+        document.getElementById(`img-${n}`).classList.toggle("active", n === a.img);
+      });
+      rail.querySelectorAll(".act-pill").forEach((el, pIdx) => {
+        el.classList.toggle("active", pIdx === i);
+      });
+    }
+
+    function scheduleNext() {
+      clearTimeout(timer);
+      if (!playing) return;
+      timer = setTimeout(() => {
+        if (idx < ACTS.length - 1) {
+          goToAct(idx + 1, true);
+        } else {
+          togglePlay(false);
+        }
+      }, ACTS[idx].dur);
+    }
+
+    function goToAct(newIdx, keepPlaying) {
+      idx = newIdx;
+      renderAct(idx);
+      if (keepPlaying && playing) {
+        speak(ACTS[idx].narration);
+        scheduleNext();
+      }
+    }
+
+    function togglePlay(force) {
+      playing = typeof force === "boolean" ? force : !playing;
+      document.getElementById("play-btn").textContent = playing ? "Pausar" : "Reproducir";
+      document.getElementById("center-play").classList.toggle("hidden", playing);
+      if (playing) {
+        startDrone();
+        speak(ACTS[idx].narration);
+        scheduleNext();
+      } else {
+        clearTimeout(timer);
+        stopDrone();
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      }
+    }
+
+    document.getElementById("stage").onclick = () => togglePlay();
+    document.getElementById("play-btn").onclick = () => togglePlay();
+    document.getElementById("voice-btn").onclick = (e) => {
+      voiceOn = !voiceOn;
+      e.target.textContent = `Voz: ${voiceOn ? "ON" : "OFF"}`;
+      if (!voiceOn && "speechSynthesis" in window) window.speechSynthesis.cancel();
+      else if (playing) speak(ACTS[idx].narration);
+    };
+    document.getElementById("music-btn").onclick = (e) => {
+      musicOn = !musicOn;
+      e.target.textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
+      if (!musicOn) stopDrone();
+      else if (playing) startDrone();
+    };
+
+    renderAct(0);
+  </script>
+</body>
+</html>

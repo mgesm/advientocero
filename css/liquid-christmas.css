@@ -116,7 +116,7 @@ body {
   z-index: 2;
   max-width: 1120px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px calc(env(safe-area-inset-bottom, 0px) + 98px);
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px calc(env(safe-area-inset-bottom, 0px) + 74px);
 }
 
 /* Topbar Lacre de Medianoche */

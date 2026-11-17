@@ -244,53 +244,14 @@
     }).join("");
 
     container.innerHTML = `
-      <div class="glass-card hero-dossier">
-        <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/>
-        </svg>
-        <div class="hero-thumb-wrap">
-          <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb">
-          <span class="hero-thumb-tag">${esc(window.CASE_LORE.caseCode)}</span>
-        </div>
+      <div class="section-head" style="margin-bottom:14px;">
         <div>
-          <span class="badge badge-gold">${esc(gift.editionLabel)}</span>
-          <h1 class="hero-title">El Misterio del Ventisquero</h1>
-          <p class="hero-summary">
-            Nieve, 25 sospechosos incomunicados y 24 noches de investigación cooperativa.
-            ${maxOpen === 0 ? `<strong style="color:var(--adv-gold-soft);">${esc(window.DateGate.getCountdownText())}.</strong>` : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
-          </p>
-          <div class="stats-strip">
-            <div class="stat-pill">
-              <span class="stat-val" style="color:var(--adv-pine);">${solvedCount}/24</span>
-              <span class="stat-lbl">Puertas resueltas</span>
-            </div>
-            <div class="stat-pill">
-              <span class="stat-val" style="color:var(--adv-gold-soft);">${activeSuspects}</span>
-              <span class="stat-lbl">Sospechosos</span>
-            </div>
-            <div class="stat-pill">
-              <span class="stat-val" style="color:var(--adv-frost);">${currentRole === "miguel" ? "MIG" : "PAT"}</span>
-              <span class="stat-lbl">Tu terminal</span>
-            </div>
+          <h2 class="section-title">Calendario de Adviento (1–24 de diciembre)</h2>
+          <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:3px;">
+            ${maxOpen === 0 ? esc(window.DateGate.getCountdownText()) : `Puertas abiertas hasta el ${maxOpen} de diciembre · Toca una puerta`}
           </div>
         </div>
-      </div>
-
-      ${maxOpen >= 1 ? `
-        <div class="glass-card" style="padding:16px 18px;margin-bottom:18px;border:var(--vg-border-gold);">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <div>
-              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);">${esc(gift.openingDedication.badge)}</div>
-              <div style="font-weight:700;font-size:0.98rem;margin-top:2px;">${esc(gift.openingDedication.title)}</div>
-            </div>
-            <button type="button" class="btn btn-sm btn-primary" id="open-dedication-btn">${getSvg("gift")} Leer dedicatoria</button>
-          </div>
-        </div>
-      ` : ""}
-
-      <div class="section-head">
-        <h2 class="section-title">Calendario de Adviento (1–24 de diciembre)</h2>
-        <span class="mono" style="font-size:0.74rem;color:var(--vg-text-secondary);">Toca una puerta abierta para investigar</span>
+        <span class="badge badge-pine">${solvedCount}/24 resueltas</span>
       </div>
       <div class="advent-grid">${doorsHtml}</div>
     `;
@@ -308,8 +269,6 @@
         renderDayView();
       });
     });
-
-    document.getElementById("open-dedication-btn")?.addEventListener("click", openDedicationModal);
   }
 
   function renderDayView() {
@@ -460,6 +419,16 @@
           <p class="day-story">${esc(dayObj.story)}</p>
         </div>
 
+        ${dayObj.day === 1 ? `
+          <div class="glass-card" style="padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
+              <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
+              <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Informe grabado del caso</span>
+            </div>
+            <iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" style="width:100%;height:350px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>
+          </div>
+        ` : ""}
+
         <div class="glass-card terminal-card role-${role}">
           <div class="terminal-banner">
             <span class="terminal-role-label">${esc(roleData.roleBadge)}</span>
@@ -597,7 +566,13 @@
     const container = document.getElementById("view-suspects");
     if (!container) return;
     const discarded = syncState.discardedIds || [];
-    const list = (window.SUSPECTS_DATA || []).filter((s) => {
+    const solvedDays = Object.keys(syncState.days || {}).filter((k) => syncState.days[k]?.solved).map(Number);
+    const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDays.length ? solvedDays : [0]), 0);
+    const discovered = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit);
+    const discardedInView = discovered.filter((s) => discarded.includes(s.id)).length;
+    const activeInView = discovered.length - discardedInView;
+
+    const list = discovered.filter((s) => {
       const isOut = discarded.includes(s.id);
       if (suspectFilter === "pending") return !isOut;
       if (suspectFilter === "discarded") return isOut;
@@ -606,38 +581,49 @@
 
     container.innerHTML = `
       <div class="section-head">
-        <h2 class="section-title">Tablero de Sospechosos (${25 - discarded.length} activos)</h2>
-        <span class="badge badge-crimson">${discarded.length}/24 descartados</span>
+        <h2 class="section-title">Sospechosos descubiertos (${discovered.length}/25)</h2>
+        <span class="badge badge-crimson">${discardedInView} descartados · ${activeInView} activos</span>
       </div>
 
       <div class="suspect-filters">
-        <button type="button" class="filter-chip ${suspectFilter === "all" ? "active" : ""}" data-filter="all">Todos (25)</button>
-        <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Sospechosos (${25 - discarded.length})</button>
-        <button type="button" class="filter-chip ${suspectFilter === "discarded" ? "active" : ""}" data-filter="discarded">Descartados (${discarded.length})</button>
+        <button type="button" class="filter-chip ${suspectFilter === "all" ? "active" : ""}" data-filter="all">Descubiertos (${discovered.length})</button>
+        <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Sospechosos (${activeInView})</button>
+        <button type="button" class="filter-chip ${suspectFilter === "discarded" ? "active" : ""}" data-filter="discarded">Descartados (${discardedInView})</button>
       </div>
 
-      <div class="suspects-grid">
-        ${list.map((s) => {
-          const isOut = discarded.includes(s.id);
-          const isCulprit = syncState.finalVerdictSolved && !isOut;
-          return `
-            <article class="suspect-card ${isOut ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}">
-              <div class="suspect-avatar-wrap">
-                <img src="${esc(s.portrait)}" alt="${esc(s.name)}" class="suspect-avatar" loading="lazy">
-                ${isOut ? `<div class="suspect-stamp">Descartado</div>` : ""}
-              </div>
-              <div class="suspect-info">
-                <div class="suspect-top-row">
-                  <span class="suspect-num">FICHA #${esc(s.num)}</span>
-                  <span class="suspect-room">${esc(s.room)}</span>
+      ${discovered.length === 0 ? `
+        <div class="glass-card" style="padding:22px;text-align:center;">
+          <p class="day-story">Los implicados irán apareciendo progresivamente conforme se abran las puertas del calendario a partir del <strong>1 de diciembre</strong>.</p>
+        </div>
+      ` : `
+        <div class="suspects-grid">
+          ${list.map((s) => {
+            const isOut = discarded.includes(s.id);
+            const isCulprit = syncState.finalVerdictSolved && !isOut;
+            const statusPill = isCulprit
+              ? `<span class="badge badge-gold" style="padding:2px 7px;font-size:0.62rem;">CULPABLE</span>`
+              : isOut
+                ? `<span class="badge badge-crimson" style="padding:2px 7px;font-size:0.62rem;">DESCARTADO</span>`
+                : `<span class="badge badge-frost" style="padding:2px 7px;font-size:0.62rem;">SOSPECHOSO</span>`;
+            return `
+              <article class="suspect-card ${isOut ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}">
+                <div class="suspect-avatar-wrap">
+                  <img src="${esc(s.portrait)}" alt="${esc(s.name)}" class="suspect-avatar" loading="lazy">
+                  ${isOut ? `<div class="suspect-stamp">Descartado</div>` : ""}
                 </div>
-                <div class="suspect-name">${esc(s.name)}</div>
-                <div class="suspect-role">${esc(s.role)}</div>
-                <p class="suspect-alibi">${esc(s.alibiClaim)}</p>
-              </div>
-            </article>`;
-        }).join("")}
-      </div>
+                <div class="suspect-info">
+                  <div class="suspect-top-row">
+                    <span class="suspect-num">#${esc(s.num)} · Día ${s.discoveredDay || 1}</span>
+                    ${statusPill}
+                  </div>
+                  <div class="suspect-name">${esc(s.name)}</div>
+                  <div class="suspect-role">${esc(s.role)} · <span class="mono" style="font-size:0.68rem;">${esc(s.room)}</span></div>
+                  <p class="suspect-alibi">${esc(s.alibiClaim)}</p>
+                </div>
+              </article>`;
+          }).join("")}
+        </div>
+      `}
 
       <div class="glass-card" style="padding:18px;margin-top:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
@@ -701,6 +687,14 @@
                 </div>
               </div>`).join("")}
           </div>
+        </div>
+
+        <div class="glass-card" style="padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <h3 style="font-size:1rem;">Vídeo Briefing del Caso</h3>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener" class="btn btn-sm btn-gold">Abrir Dossier PDF</a>
+          </div>
+          <iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" style="width:100%;height:350px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>
         </div>
 
         <div class="glass-card" style="padding:18px;">

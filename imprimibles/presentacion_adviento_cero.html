@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ADVIENTO CERO — Dossier de Presentación e Instrucciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 12mm;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1C1917;
+      background: #F5F0E6;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page {
+      width: 100%;
+      max-width: 186mm;
+      margin: 0 auto 14px;
+      padding: 10mm 11mm;
+      background: #FFFDF8;
+      border: 1.5px solid #D97706;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      page-break-after: always;
+      position: relative;
+    }
+    .page:last-child { page-break-after: auto; }
+    .top-ribbon {
+      height: 5px;
+      margin-bottom: 10px;
+      background: repeating-linear-gradient(-45deg, #991B1B, #991B1B 10px, #FFFDF8 10px, #FFFDF8 20px, #065F46 20px, #065F46 30px);
+    }
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #991B1B;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .kicker {
+      font-family: 'Courier Prime', monospace;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      color: #991B1B;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 26px;
+      line-height: 1.08;
+      color: #1C1917;
+      margin-top: 2px;
+    }
+    .stamp {
+      padding: 4px 10px;
+      border: 2px solid #991B1B;
+      color: #991B1B;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      transform: rotate(-3deg);
+      border-radius: 4px;
+      text-align: center;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .photo-card {
+      border: 1.5px solid #D6D3D1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+    .photo-card img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-cap {
+      padding: 5px 8px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.5px;
+      color: #57534E;
+      background: #FEF3C7;
+      border-top: 1px solid #FDE68A;
+    }
+    .box {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #E7E5E4;
+      background: #FFFFFF;
+      margin-bottom: 10px;
+    }
+    .box-pine {
+      background: #ECFDF5;
+      border: 1.5px solid #059669;
+    }
+    .box-gold {
+      background: #FFFBEB;
+      border: 1.5px solid #D97706;
+    }
+    .box-crimson {
+      background: #FEF2F2;
+      border: 1.5px solid #DC2626;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16.5px;
+      color: #7F1D1D;
+      margin-bottom: 5px;
+      border-bottom: 1px solid rgba(180, 83, 9, 0.25);
+      padding-bottom: 2px;
+    }
+    p, li {
+      font-size: 10.5px;
+      line-height: 1.48;
+      color: #292524;
+    }
+    ul { padding-left: 16px; display: flex; flex-direction: column; gap: 4px; }
+    .meta-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9.8px;
+      margin-top: 4px;
+    }
+    .meta-table th, .meta-table td {
+      border: 1px solid #E7E5E4;
+      padding: 4.5px 7px;
+      text-align: left;
+    }
+    .meta-table th {
+      background: #FEF3C7;
+      color: #78350F;
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      width: 34%;
+    }
+    .qr-panel {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 2px solid #991B1B;
+      background: #FFFFFF;
+      margin-top: 10px;
+    }
+    .qr-box {
+      width: 124px;
+      height: 124px;
+      padding: 6px;
+      background: #FFFFFF;
+      border: 1.5px solid #064E3B;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .step-card {
+      padding: 8px 9px;
+      border-radius: 8px;
+      border: 1px solid #D97706;
+      background: #FFFDF7;
+    }
+    .step-num {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: #991B1B;
+    }
+    .footer-note {
+      margin-top: 8px;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.5px;
+      color: #78716C;
+    }
+    @media print {
+      body { background: none; }
+      .page { margin: 0; border: 1.5px solid #D97706; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- PÁGINA 1: PRESENTACIÓN EN PROFUNDIDAD DEL CRIMEN (SIN SPOILERS) -->
+  <section class="page">
+    <div class="top-ribbon"></div>
+    <header class="doc-header">
+      <div>
+        <div class="kicker">DILIGENCIAS PREVIAS 24-12/2026 · UOPJ VALLE DEL VENTISQUERO</div>
+        <h1>Expediente de Apertura: El Misterio del Ventisquero</h1>
+      </div>
+      <div class="stamp">CONFIDENCIAL<br>CERO SPOILERS</div>
+    </header>
+
+    <div class="two-col">
+      <div>
+        <div class="box box-crimson">
+          <h2>1. Atestado Inicial y Circunstancias del Hallazgo</h2>
+          <p style="margin-bottom:5px;">
+            A las <strong>19:00 horas del 30 de noviembre</strong>, una ciclogénesis explosiva dejó completamente incomunicado el exclusivo <strong>Hotel El Mirador del Ventisquero</strong> (Cota 1.940 m, Pirineo Aragonés). La carretera de acceso permanece sepultada por la ventisca y el teleférico bloqueado por el hielo.
+          </p>
+          <p>
+            Durante el brindis de bienvenida de Adviento, un <strong>apagón eléctrico de cuatro minutos (23:38–23:42 h)</strong> sumió el complejo en la oscuridad. A las <strong>23:55 h</strong>, junto al abeto central del Salón Mirador, fue hallado sin vida el copropietario del hotel, <strong>Arturo Valdivieso y Monreal (59 años)</strong>.
+          </p>
+        </div>
+
+        <div class="box">
+          <h2>2. Ficha Preliminar de Inspección Ocular</h2>
+          <table class="meta-table">
+            <tr><th>VÍCTIMA</th><td>Arturo Valdivieso y Monreal (59 años), Presidente Grupo Valdivieso.</td></tr>
+            <tr><th>ESCENARIO</th><td>Salón Mirador (Planta 1), junto al abeto navideño y mesa de pizarra.</td></tr>
+            <tr><th>INDICIOS CLAVE</th><td>Copa de ponche especiado volcada con signos de intoxicación aguda.</td></tr>
+            <tr><th>PERÍMETRO</th><td><strong>25 personas</strong> atrapadas en el edificio entre huéspedes VIP y personal.</td></tr>
+            <tr><th>FUGA IMPOSIBLE</th><td>Viento &gt; 90 km/h; ningún vehículo ni helicóptero pudo despegar.</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="photo-card">
+          <img src="../imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero">
+          <div class="photo-cap">FIG. 01 · HOTEL EL MIRADOR DEL VENTISQUERO (AISLAMIENTO 19:00 H)</div>
+        </div>
+        <div class="photo-card">
+          <img src="../imagenes/scene-lobby.jpg" alt="Salón Mirador Escena 01">
+          <div class="photo-cap">FIG. 02 · SALÓN MIRADOR · EVIDENCIA 01 JUNTO AL ABETO CENTRAL</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box box-gold">
+      <h2>3. Distribución Oficial del Complejo (Zonas de Investigación)</h2>
+      <table class="meta-table">
+        <tr><th>PLANTA 3 · SUITES</th><td>Suites Presidenciales 301 a 305 (familiares, abogados, acreedores y fondo inversor).</td></tr>
+        <tr><th>PLANTA 2 · ALA SUR</th><td>Habitaciones 201–208, Biblioteca y Archivo Histórico de obras de arte.</td></tr>
+        <tr><th>PLANTA 1 · PRINCIPAL</th><td>Salón Mirador, Recepción, Despacho de Dirección, Spa Termal y Capilla Alpina.</td></tr>
+        <tr><th>SÓTANO Y EXTERIOR</th><td>Cocina, Cava inferior, Sala de Calderas, Lavandería, Hangar y Cabaña Norte.</td></tr>
+      </table>
+    </div>
+
+    <div class="box box-pine" style="margin-bottom:0;">
+      <h2>4. Misión de Investigación (1 al 24 de Diciembre)</h2>
+      <p>
+        Alguien entre las <strong>25 personas aisladas</strong> aprovechó el apagón de las 23:38 h para ejecutar el crimen. Cada día hasta Nochebuena abriréis un nuevo parte oficial en la aplicación, descartando a un inocente por jornada hasta identificar al culpable y desprecintar el auto final.
+      </p>
+    </div>
+
+    <div class="footer-note">DOCUMENTO IMPRESO 1/2 · ADVIENTO CERO · EXPEDIENTE D.P. 24-12/2026</div>
+  </section>
+
+  <!-- PÁGINA 2: QUÉ ES ADVIENTO CERO, CÓMO SE JUEGA EN PAREJA Y CÓDIGO QR -->
+  <section class="page">
+    <div class="top-ribbon"></div>
+    <header class="doc-header">
+      <div>
+        <div class="kicker">REGALO DE ADVIENTO · EDICIÓN ESPECIAL PARA PATRI Y MIGUEL</div>
+        <h1>¿Qué es ADVIENTO CERO y cómo se juega?</h1>
+      </div>
+      <div class="stamp" style="border-color:#065F46;color:#065F46;">MODO<br>COOPERATIVO</div>
+    </header>
+
+    <div class="box box-gold">
+      <h2>Un Calendario de Adviento distinto: 24 días, 2 terminales, 1 mismo crimen</h2>
+      <p style="margin-bottom:6px;">
+        <strong>ADVIENTO CERO</strong> es un calendario de Adviento digital interactivo creado expresamente para jugarlo juntos del <strong>1 al 24 de diciembre</strong>. En lugar de abrir chocolatinas de cartón, cada día abriréis una puerta sellada de investigación en vuestro propio teléfono móvil (5–10 minutos al día).
+      </p>
+      <p>
+        A diferencia de un juego tradicional, <strong>no podéis resolver ningún día por separado</strong>: cada uno recibe pruebas distintas pero complementarias sobre el mismo suceso en el Hotel del Ventisquero.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">PASO 01 · CADA UNO EN SU MÓVIL</div>
+        <p style="margin-top:4px;">Al entrar por primera vez, <strong>Patri</strong> elige su terminal (<em>Campo y Testigos</em>) y <strong>Miguel</strong> elige la suya (<em>Análisis y Archivo</em>). Ambos tableros quedan sincronizados en tiempo real.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">PASO 02 · PONED PISTAS EN COMÚN</div>
+        <p style="margin-top:4px;">Patri verá tarjetas, registros o coartadas que Miguel no tiene; Miguel verá planos, luces UV, sensores o frecuencias que Patri necesita. Hablad para cruzar los datos.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">PASO 03 · 1 DESCARTE POR DÍA</div>
+        <p style="margin-top:4px;">Al validar la clave del día, el sistema tacha automáticamente a un sospechoso inocente en los dos móviles hasta acorralar al asesino el <strong>24 de diciembre</strong>.</p>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Estructura de la Aplicación (4 Pestañas)</h2>
+      <ul>
+        <li><strong>Calendario (1–24):</strong> Las 24 puertas selladas por fecha real de diciembre (si algún día no podéis jugar, las puertas pasadas quedan abiertas para poneros al día).</li>
+        <li><strong>Día Activo:</strong> Tu prueba exclusiva de la jornada, sus herramientas interactivas (linterna ultravioleta, Morse, cuadrantes, rayos X, calibre métrico...) y 3 pistas de ayuda por si os atascáis.</li>
+        <li><strong>Sospechosos:</strong> Tablero vivo con los sospechosos descubiertos hasta ese día, sus anotaciones de estado (<em>Sospechoso</em> / <em>Descartado</em>) y una libreta compartida sincronizada.</li>
+        <li><strong>Expediente:</strong> Escenas del crimen, planos del hotel e información inicial del caso.</li>
+      </ul>
+    </div>
+
+    <div class="box box-crimson">
+      <h2>El Desenlace de Nochebuena</h2>
+      <p>
+        Al resolver la Puerta 24 y emitir juntos la Orden de Detención Final el día de Nochebuena, el expediente desprecintará el epílogo del caso y desbloqueará un <strong>Sobre Secreto de Navidad</strong> con tu regalo final.
+      </p>
+    </div>
+
+    <div class="qr-panel">
+      <div>
+        <div class="kicker" style="color:#065F46;">ACCESO DIRECTO A LA APLICACIÓN WEB</div>
+        <h2 style="border:none;margin:3px 0 6px;font-size:18px;">Escanea este código QR para empezar</h2>
+        <p style="margin-bottom:6px;">
+          Enlace oficial: <strong style="font-family:'Courier Prime',monospace;">https://mgesm.github.io/advientocero/</strong>
+        </p>
+        <p style="font-size:9.5px;color:#57534E;">
+          <strong>Consejo para el móvil:</strong> Una vez abierta en Safari (iPhone) o Chrome (Android), pulsa <em>Compartir → Añadir a pantalla de inicio</em> para usarla como una app instalada.
+        </p>
+      </div>
+      <div class="qr-box" id="qr-mount" aria-label="Código QR de acceso a Adviento Cero">
+        <img src="qr_advientocero.svg" alt="Código QR hacia https://mgesm.github.io/advientocero/" style="width:110px;height:110px;display:block;">
+      </div>
+    </div>
+
+    <div class="footer-note">DOCUMENTO IMPRESO 2/2 · ADVIENTO CERO · HECHO PARA PATRI Y MIGUEL · DICIEMBRE 2026</div>
+  </section>
+</body>
+</html>

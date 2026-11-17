@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v1.7.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v2.0.0 | **Repositorio:** [https://github.com/migue\.gemini\antigravity\scratch\advientocero]
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -52,6 +52,8 @@ Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardi
 | `js/puzzle-engine.js` | Renderizador de los 15 tipos de widgets interactivos, validador y decodificador UTF-8 |
 | `js/day-artifacts.js` | Materiales visuales realistas por día y terminal (48 vistas: planos, tickets, chats, básculas, rayos X, extractos) |
 | `css/artifacts.css` | Estilos para planos arquitectónicos, papel térmico rasgado, burbujas de chat, tarjetas RFID y documentos |
+| `video-briefing/index.html` | Vídeo briefing audiovisual 16:9 de apertura del caso (6 actos, narración Web Speech y sonido ambiente) |
+| `imprimibles/PRESENTACION_ADVIENTO_CERO.pdf` | Dossier físico imprimible (2 págs. A4 claras) con briefing del caso, reglas cooperativas y QR |
 | `js/sync-engine.js` | Sincronización Firebase Realtime Database + fallback `localStorage` |
 | `js/date-gate.js` | Bloqueo por fecha de diciembre y Modo Test oculto |
 | `js/audio-fx.js` | Síntesis Web Audio API (efectos táctiles y señal Morse) |
