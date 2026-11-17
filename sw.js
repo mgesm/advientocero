@@ -1,9 +1,15 @@
-const CACHE_NAME = "adviento-cero-v2.2.0";
+const CACHE_NAME = "adviento-cero-v2.3.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./video-briefing/index.html",
+  "./video-briefing/audio/act-1.mp3",
+  "./video-briefing/audio/act-2.mp3",
+  "./video-briefing/audio/act-3.mp3",
+  "./video-briefing/audio/act-4.mp3",
+  "./video-briefing/audio/act-5.mp3",
+  "./video-briefing/audio/act-6.mp3",
   "./css/liquid-christmas.css",
   "./css/advent-board.css",
   "./css/puzzles.css",
