@@ -1130,12 +1130,8 @@
   }
 
   function maybeShowFirstDedication() {
-    if (currentRole !== "patri") return;
-    if (window.DateGate.getMaxOpenDay() < 1) return;
-    try {
-      if (localStorage.getItem(DEDICATION_SEEN_KEY) === "1") return;
-      localStorage.setItem(DEDICATION_SEEN_KEY, "1");
-    } catch (_) {}
+    if (!currentRole) return;
+    if (window.DateGate.getMaxOpenDay() !== 0) return;
     openDedicationModal();
   }
 
