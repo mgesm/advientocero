@@ -273,10 +273,16 @@ window.SyncEngine = (() => {
             notify();
           } else {
             const initData = normalizeState(state);
-            roomRef.update(buildDeltaPatch(initData)).then(() => {
+            const patch = buildDeltaPatch(initData);
+            if (Object.keys(patch).length > 0) {
+              roomRef.update(patch).then(() => {
+                setDirty(false);
+                syncError = null;
+              }).catch(handleWriteError);
+            } else {
               setDirty(false);
               syncError = null;
-            }).catch(handleWriteError);
+            }
           }
         }, (err) => {
           handleWriteError(err);
@@ -418,10 +424,16 @@ window.SyncEngine = (() => {
     state = normalizeState(state);
     saveLocal();
     if (mode === "firebase" && roomRef) {
-      roomRef.update(buildDeltaPatch(state)).then(() => {
+      const patch = buildDeltaPatch(state);
+      if (Object.keys(patch).length > 0) {
+        roomRef.update(patch).then(() => {
+          syncError = null;
+          setDirty(false);
+        }).catch(handleWriteError);
+      } else {
         syncError = null;
         setDirty(false);
-      }).catch(handleWriteError);
+      }
     } else {
       setDirty(true);
     }
