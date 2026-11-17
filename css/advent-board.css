@@ -15,6 +15,20 @@
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
 }
 
+.hero-dossier > div {
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .hero-dossier {
+    padding: 14px;
+  }
+  .hero-dossier .badge {
+    white-space: normal;
+    line-height: 1.25;
+  }
+}
+
 .hero-dossier .badge-gold {
   background: rgba(251, 191, 36, 0.16);
   border-color: rgba(251, 191, 36, 0.45);
@@ -217,8 +231,8 @@
 }
 
 @keyframes waxPulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(220, 38, 38, 0.65); }
-  50% { transform: scale(1.16); box-shadow: 0 0 14px rgba(251, 191, 36, 0.85); }
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.18); opacity: 1; }
 }
 
 @keyframes shimmerSweep {
@@ -274,14 +288,13 @@
 
 /* Estados de puerta — Nivel 2 Lacre de Medianoche */
 .door-card.state-locked {
-  opacity: 0.62;
-  background: rgba(15, 23, 42, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(15, 23, 42, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   cursor: not-allowed;
 }
 
 .door-card.state-locked .door-num {
-  color: #E2E8F0;
+  color: #CBD5E1;
 }
 
 .door-card.state-locked .door-title,
@@ -385,7 +398,8 @@
 }
 
 .filter-chip {
-  padding: 7px 13px;
+  min-height: 40px;
+  padding: 8px 14px;
   border-radius: var(--vg-radius-pill);
   border: var(--vg-border-specular);
   background: rgba(255, 255, 255, 0.05);
@@ -394,6 +408,12 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+}
+
+@media (pointer: coarse) {
+  .filter-chip {
+    min-height: 44px;
+  }
 }
 
 .filter-chip.active {
@@ -421,6 +441,10 @@
 }
 
 .suspect-card {
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
   display: grid;
   grid-template-columns: 78px 1fr;
   gap: 12px;
@@ -430,6 +454,10 @@
   border: var(--vg-border-specular);
   cursor: pointer;
   transition: transform 160ms var(--vg-spring), border-color 160ms ease, opacity 200ms ease;
+}
+
+.suspect-card.is-hidden-by-filter {
+  display: none;
 }
 
 .suspect-card:hover {

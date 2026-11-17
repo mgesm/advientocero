@@ -217,10 +217,10 @@ window.PuzzleEngine = (() => {
       case "manual-lookup":
         return `
           <div class="widget-panel">
-            <div style="display:flex;gap:8px;">
-              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="Ej. C7" style="min-height:40px;">
-              <button type="button" class="btn btn-frost btn-sm" data-action="lookup-manual" data-day="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}">Consultar</button>
-            </div>
+            <form data-manual-form="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}" style="display:flex;gap:8px;">
+              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="Ej. C7" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
+              <button type="submit" class="btn btn-frost btn-sm" style="flex-shrink:0;">Consultar</button>
+            </form>
             <div id="manual-res-${dayNum}" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
           </div>`;
 
@@ -249,7 +249,7 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-bottom:6px;">ESQUEMA CAJA FUERTE: [ D1 ] [ D2 ] [ D3=D2+2 ] [ D4 ]</div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+            <div class="keypad-grid" style="text-align:center;">
               <div class="stat-pill"><span class="stat-val">3</span><span class="stat-lbl">D1 (Plantas)</span></div>
               <div class="stat-pill"><span class="stat-val">?</span><span class="stat-lbl">D2 (Patri)</span></div>
               <div class="stat-pill"><span class="stat-val">D2+2</span><span class="stat-lbl">D3</span></div>
@@ -264,8 +264,12 @@ window.PuzzleEngine = (() => {
               <span>FILTRO PASABANDA</span>
               <span id="freq-val-${dayNum}">280 Hz</span>
             </div>
-            <input type="range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="280" style="width:100%;margin:12px 0;accent-color:var(--adv-cyan);" data-action="tune-freq" data-target="${widget.targetHz}" data-clear="${escapeHtml(widget.clearText)}" data-day="${dayNum}">
-            <div id="freq-msg-${dayNum}" class="mono" style="padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
+            <div class="adv-range-wrap">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="-${widget.stepHz}" aria-label="Bajar frecuencia">−</button>
+              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="280" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-target="${widget.targetHz}" data-clear="${escapeHtml(widget.clearText)}" data-day="${dayNum}">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="${widget.stepHz}" aria-label="Subir frecuencia">+</button>
+            </div>
+            <div id="freq-msg-${dayNum}" class="mono" style="margin-top:8px;padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
               [ #%&amp; RUIDO DE VENTISCA · SINTONIZA LA BANDA CORRECTA ##@ ]
             </div>
           </div>`;
@@ -293,12 +297,16 @@ window.PuzzleEngine = (() => {
               <svg viewBox="0 0 260 56" style="width:100%;height:48px;display:block;">
                 <rect x="20" y="14" width="170" height="28" rx="14" fill="rgba(56,189,248,0.16)" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 3"/>
                 <line x1="20" y1="6" x2="20" y2="50" stroke="#F59E0B" stroke-width="2"/>
-                <line id="caliper-bar-${dayNum}" x1="120" y1="6" x2="120" y2="50" stroke="#10B981" stroke-width="2.5"/>
+                <line id="caliper-bar-${dayNum}" x1="80" y1="6" x2="80" y2="50" stroke="#10B981" stroke-width="2.5"/>
               </svg>
-              <input type="range" min="22.0" max="29.0" step="0.5" value="22.0" style="width:100%;accent-color:var(--adv-pine);" data-action="slide-caliper" data-target="${widget.targetCm}" data-day="${dayNum}">
+              <div class="adv-range-wrap">
+                <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="-0.5" aria-label="Reducir medida">−</button>
+                <input id="caliper-range-${dayNum}" type="range" class="adv-range" min="22.0" max="29.0" step="0.5" value="22.0" style="accent-color:var(--adv-pine);" data-action="slide-caliper" data-target="${widget.targetCm}" data-day="${dayNum}">
+                <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="0.5" aria-label="Aumentar medida">+</button>
+              </div>
               <div id="caliper-status-${dayNum}" class="mono" style="font-size:0.76rem;color:var(--vg-text-muted);margin-top:4px;">Desliza la línea verde hasta el borde derecho de la suela</div>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:0.72rem;text-align:center;">
+            <div class="caliper-grid" style="font-size:0.72rem;text-align:center;">
               ${(widget.table || []).map((t) => `<div class="stat-pill"><span class="stat-val" style="font-size:0.86rem;">T.${escapeHtml(t.size)}</span><span class="stat-lbl">${escapeHtml(t.cm)}</span></div>`).join("")}
             </div>
           </div>`;
@@ -348,12 +356,38 @@ window.PuzzleEngine = (() => {
       el.addEventListener("pointerdown", (e) => updatePos(e.clientX, e.clientY));
     });
 
+    container.addEventListener("submit", (e) => {
+      const form = e.target.closest("[data-manual-form]");
+      if (!form) return;
+      e.preventDefault();
+      window.AudioFX.click();
+      const day = form.dataset.manualForm;
+      const inp = document.getElementById(`manual-code-${day}`);
+      const res = document.getElementById(`manual-res-${day}`);
+      if (!inp || !res) return;
+      if (normalizeAnswer(inp.value) === normalizeAnswer(form.dataset.trigger)) {
+        res.innerHTML = `<div class="feedback-banner success">${form.dataset.resp}</div>`;
+      } else {
+        res.innerHTML = `<div class="feedback-banner error">Circuito no reconocido. Revisa el código rojo en la pantalla de tu pareja.</div>`;
+      }
+    });
+
     container.addEventListener("click", (e) => {
       const btn = e.target.closest("[data-action]");
       if (!btn) return;
       const act = btn.dataset.action;
 
-      if (act === "play-morse") {
+      if (act === "step-range") {
+        window.AudioFX.click();
+        const range = document.getElementById(btn.dataset.targetId);
+        if (!range) return;
+        const step = Number(btn.dataset.delta || 0);
+        const min = Number(range.min);
+        const max = Number(range.max);
+        const next = Math.min(max, Math.max(min, Number(range.value) + step));
+        range.value = String(next);
+        range.dispatchEvent(new Event("input", { bubbles: true }));
+      } else if (act === "play-morse") {
         const lamp = document.getElementById(`morse-lamp-${btn.dataset.day}`);
         btn.disabled = true;
         window.AudioFX.playMorse(btn.dataset.seq, (lit) => {
@@ -475,7 +509,7 @@ window.PuzzleEngine = (() => {
         if (st) {
           if (Math.abs(val - target) < 0.01) {
             st.style.color = "#6EE7B7";
-            st.textContent = "ALINEADO EXACTO: 25.5 cm -> Consulta la talla equivalente en la tabla.";
+            st.textContent = `ALINEADO EXACTO: ${target.toFixed(1)} cm -> Consulta la talla equivalente en la tabla.`;
           } else {
             st.style.color = "var(--vg-text-muted)";
             st.textContent = "Desliza la línea verde hasta el borde derecho de la suela";

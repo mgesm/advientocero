@@ -4,8 +4,8 @@
 
 .mobile-dock {
   position: fixed;
-  left: 12px;
-  right: 12px;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  right: max(12px, env(safe-area-inset-right, 0px));
   bottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
   z-index: 60;
   max-width: 560px;
@@ -20,6 +20,13 @@
   -webkit-backdrop-filter: blur(28px) saturate(190%);
   border: 1px solid rgba(251, 191, 36, 0.28);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.72);
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+body.keyboard-open .mobile-dock {
+  transform: translateY(120%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .dock-item {
@@ -28,14 +35,14 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 4px;
   border-radius: 12px;
   border: none;
   background: transparent;
   color: #94A3B8;
   font-family: inherit;
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 160ms ease, color 160ms ease, transform 140ms var(--vg-spring);

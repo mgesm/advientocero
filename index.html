@@ -9,24 +9,24 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Adviento Cero">
-  <link rel="manifest" href="manifest.json?v=2.1.0">
-  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.1.0">
-  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.1.0">
+  <link rel="manifest" href="manifest.json?v=2.2.0">
+  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.2.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.2.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.0.0">
-  <link rel="stylesheet" href="css/advent-board.css?v=1.7.0">
-  <link rel="stylesheet" href="css/puzzles.css?v=1.7.0">
+  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.2.0">
+  <link rel="stylesheet" href="css/advent-board.css?v=2.2.0">
+  <link rel="stylesheet" href="css/puzzles.css?v=2.2.0">
   <link rel="stylesheet" href="css/artifacts.css?v=1.6.0">
-  <link rel="stylesheet" href="css/mobile-ux.css?v=2.0.0">
+  <link rel="stylesheet" href="css/mobile-ux.css?v=2.2.0">
 
   <!-- Firebase Realtime Database Compat SDK (para GitHub Pages sin bundler) -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head>
 <body>
   <canvas id="snow-canvas" aria-hidden="true"></canvas>
@@ -34,7 +34,7 @@
   <!-- Selector de Identidad Inicial: Miguel vs Patri -->
   <div id="identity-overlay" class="identity-overlay" role="dialog" aria-modal="true" aria-labelledby="id-title">
     <div class="identity-modal">
-      <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="identity-cover">
+      <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="identity-cover" width="1024" height="572" decoding="async">
       <div class="identity-kicker">ADVIENTO CERO · EDICIÓN COOPERATIVA</div>
       <h1 class="identity-title" id="id-title">¿Quién abre esta terminal?</h1>
       <p class="identity-desc">
@@ -52,6 +52,7 @@
           <span>Tarjetas, coartadas, partes de servicio y llaves.</span>
         </button>
       </div>
+      <button type="button" id="identity-cancel-btn" class="btn btn-ghost" style="display:none;width:100%;margin-top:12px;">Cancelar</button>
     </div>
   </div>
 
@@ -89,20 +90,20 @@
   </nav>
 
   <!-- Modal Ficha / Dedicatoria -->
-  <div id="adv-modal" class="adv-modal-backdrop" role="dialog" aria-modal="true">
+  <div id="adv-modal" class="adv-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="adv-modal-title">
     <div id="adv-modal-body" class="adv-modal-sheet"></div>
   </div>
 
-  <script src="config/gift-config.js?v=1.0.0"></script>
-  <script src="config/firebase-config.js?v=1.0.0"></script>
-  <script src="data/case-lore.js?v=1.0.0"></script>
-  <script src="data/suspects.js?v=2.0.0"></script>
-  <script src="data/days.js?v=1.0.0"></script>
-  <script src="js/audio-fx.js?v=1.0.0"></script>
-  <script src="js/date-gate.js?v=1.0.0"></script>
-  <script src="js/sync-engine.js?v=1.0.0"></script>
-  <script src="js/puzzle-engine.js?v=1.4.0"></script>
-  <script src="js/day-artifacts.js?v=1.6.0"></script>
-  <script src="js/app.js?v=2.1.0"></script>
+  <script defer src="config/gift-config.js?v=2.2.0"></script>
+  <script defer src="config/firebase-config.js?v=2.2.0"></script>
+  <script defer src="data/case-lore.js?v=2.2.0"></script>
+  <script defer src="data/suspects.js?v=2.2.0"></script>
+  <script defer src="data/days.js?v=2.2.0"></script>
+  <script defer src="js/audio-fx.js?v=2.2.0"></script>
+  <script defer src="js/date-gate.js?v=2.2.0"></script>
+  <script defer src="js/sync-engine.js?v=2.2.0"></script>
+  <script defer src="js/puzzle-engine.js?v=2.2.0"></script>
+  <script defer src="js/day-artifacts.js?v=2.2.0"></script>
+  <script defer src="js/app.js?v=2.2.0"></script>
 </body>
 </html>

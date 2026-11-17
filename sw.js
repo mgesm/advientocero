@@ -1,35 +1,58 @@
-const CACHE_NAME = "adviento-cero-v2.1.1";
+const CACHE_NAME = "adviento-cero-v2.2.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./manifest.json?v=2.1.0",
   "./video-briefing/index.html",
-  "./css/liquid-christmas.css?v=2.0.0",
-  "./css/advent-board.css?v=1.7.0",
-  "./css/puzzles.css?v=1.7.0",
-  "./css/artifacts.css?v=1.6.0",
-  "./css/mobile-ux.css?v=2.0.0",
-  "./config/gift-config.js?v=1.0.0",
-  "./config/firebase-config.js?v=1.0.0",
-  "./data/case-lore.js?v=1.0.0",
-  "./data/suspects.js?v=2.0.0",
-  "./data/days.js?v=1.0.0",
-  "./js/audio-fx.js?v=1.0.0",
-  "./js/date-gate.js?v=1.0.0",
-  "./js/sync-engine.js?v=1.0.0",
-  "./js/puzzle-engine.js?v=1.4.0",
-  "./js/day-artifacts.js?v=1.6.0",
-  "./js/app.js?v=2.1.0",
+  "./css/liquid-christmas.css",
+  "./css/advent-board.css",
+  "./css/puzzles.css",
+  "./css/artifacts.css",
+  "./css/mobile-ux.css",
+  "./config/gift-config.js",
+  "./config/firebase-config.js",
+  "./data/case-lore.js",
+  "./data/suspects.js",
+  "./data/days.js",
+  "./js/audio-fx.js",
+  "./js/date-gate.js",
+  "./js/sync-engine.js",
+  "./js/puzzle-engine.js",
+  "./js/day-artifacts.js",
+  "./js/app.js",
   "./imagenes/icon.svg",
-  "./imagenes/icon.svg?v=2.1.0",
   "./imagenes/icon-192.png",
-  "./imagenes/icon-192.png?v=2.1.0",
   "./imagenes/icon-512.png",
-  "./imagenes/apple-touch-icon.png?v=2.1.0",
+  "./imagenes/icon-512-maskable.png",
+  "./imagenes/apple-touch-icon.png",
   "./imagenes/cover-hotel.jpg",
   "./imagenes/scene-lobby.jpg",
-  "./imagenes/scene-balcony.jpg"
+  "./imagenes/scene-balcony.jpg",
+  "./imagenes/suspects/s01.jpg",
+  "./imagenes/suspects/s02.jpg",
+  "./imagenes/suspects/s03.jpg",
+  "./imagenes/suspects/s04.jpg",
+  "./imagenes/suspects/s05.jpg",
+  "./imagenes/suspects/s06.jpg",
+  "./imagenes/suspects/s07.jpg",
+  "./imagenes/suspects/s08.jpg",
+  "./imagenes/suspects/s09.jpg",
+  "./imagenes/suspects/s10.jpg",
+  "./imagenes/suspects/s11.jpg",
+  "./imagenes/suspects/s12.jpg",
+  "./imagenes/suspects/s13.jpg",
+  "./imagenes/suspects/s14.jpg",
+  "./imagenes/suspects/s15.jpg",
+  "./imagenes/suspects/s16.jpg",
+  "./imagenes/suspects/s17.jpg",
+  "./imagenes/suspects/s18.jpg",
+  "./imagenes/suspects/s19.jpg",
+  "./imagenes/suspects/s20.jpg",
+  "./imagenes/suspects/s21.jpg",
+  "./imagenes/suspects/s22.jpg",
+  "./imagenes/suspects/s23.jpg",
+  "./imagenes/suspects/s24.svg",
+  "./imagenes/suspects/s25.svg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -53,22 +76,28 @@ self.addEventListener("fetch", (event) => {
   if (req.mode === "navigate" || req.destination === "document") {
     event.respondWith(
       fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+        if (res && res.ok) {
+          const copy = res.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+        }
         return res;
-      }).catch(() => caches.match(req))
+      }).catch(() =>
+        caches.match(req, { ignoreSearch: true }).then((cached) => cached || caches.match("./index.html"))
+      )
     );
     return;
   }
 
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const network = fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(req, copy));
+    caches.match(req, { ignoreSearch: true }).then((cached) => {
+      if (cached) return cached;
+      return fetch(req).then((res) => {
+        if (res && res.ok) {
+          const copy = res.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+        }
         return res;
-      }).catch(() => cached);
-      return cached || network;
+      });
     })
   );
 });

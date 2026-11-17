@@ -70,6 +70,10 @@ window.DateGate = (() => {
     if (diff <= 0) return "Calendario de Adviento activo";
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    if (days === 0 && hours === 0) {
+      return `Apertura de la Puerta 01 en ${Math.max(1, mins)}m`;
+    }
     return `Apertura de la Puerta 01 en ${days}d ${hours}h`;
   }
 

@@ -325,9 +325,15 @@
 
 .valve-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin: 10px 0;
+}
+
+@media (max-width: 420px) {
+  .valve-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .valve-btn {
@@ -375,7 +381,7 @@
   border: var(--vg-border-specular-strong);
   color: var(--vg-text-primary);
   font-family: var(--vg-font-mono);
-  font-size: 0.96rem;
+  font-size: 16px;
   outline: none;
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -388,7 +394,7 @@
 .adv-textarea {
   min-height: 110px;
   font-family: var(--vg-font-sans);
-  font-size: 0.88rem;
+  font-size: 16px;
   resize: vertical;
 }
 
@@ -451,13 +457,44 @@
 
 .logic-cell-btn {
   width: 100%;
-  min-height: 30px;
+  min-height: 42px;
   background: transparent;
   border: none;
   color: #F8FAFC;
   font-family: var(--vg-font-mono);
   font-weight: 700;
   cursor: pointer;
+}
+
+.keypad-grid, .caliper-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 440px) {
+  .keypad-grid, .caliper-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.adv-range-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.adv-range {
+  flex: 1;
+  min-height: 44px;
+  accent-color: var(--adv-gold);
+  cursor: pointer;
+}
+
+.adv-range::-webkit-slider-thumb {
+  width: 28px;
+  height: 28px;
 }
 
 /* Sobre de Regalo Final */

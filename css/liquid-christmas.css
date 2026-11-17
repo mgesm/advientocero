@@ -92,8 +92,20 @@ html, body {
 }
 
 body {
+  background: #050B12;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
   background: radial-gradient(circle at 50% 0%, #132A24 0%, #050B12 58%);
-  background-attachment: fixed;
+}
+
+body.modal-open {
+  overflow: hidden;
 }
 
 /* Capa atmosférica de nieve navideña tras el cristal */
@@ -116,92 +128,13 @@ body {
   z-index: 2;
   max-width: 1120px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px calc(env(safe-area-inset-bottom, 0px) + 74px);
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 80px) max(16px, env(safe-area-inset-left, 0px));
 }
 
-/* Topbar Lacre de Medianoche */
-.adv-topbar {
-  position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 8px);
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  border-radius: var(--vg-radius-lg);
-  background: rgba(10, 25, 22, 0.78);
-  backdrop-filter: var(--vg-glass-blur);
-  -webkit-backdrop-filter: var(--vg-glass-blur);
-  border: 1px solid rgba(251, 191, 36, 0.28);
-  color: #FEF3C7;
-  box-shadow: var(--vg-shadow-card);
-}
-
-.adv-topbar .adv-brand-title {
-  color: #FEF3C7;
-}
-
-.adv-topbar .adv-brand-sub {
-  color: #94A3B8;
-}
-
-.adv-topbar .btn-ghost {
-  color: #CBD5E1;
-  border-color: rgba(255, 255, 255, 0.14);
-  background: transparent;
-}
-
-.adv-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-.adv-brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  background: rgba(185, 28, 28, 0.35);
-  border: 1px solid rgba(251, 191, 36, 0.45);
-  color: #FDE68A;
-  flex-shrink: 0;
-}
-
-.adv-brand-text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.adv-brand-title {
-  font-family: var(--vg-font-serif);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--vg-text-primary);
-  white-space: nowrap;
-}
-
-.adv-brand-sub {
-  font-size: 0.70rem;
-  color: var(--vg-text-secondary);
-  font-family: var(--vg-font-mono);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.adv-topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+@media (max-width: 768px) {
+  :root {
+    --vg-glass-blur: blur(12px) saturate(140%);
+  }
 }
 
 /* Badges Translúcidos Satinados */
@@ -310,11 +243,24 @@ body {
   color: var(--vg-text-secondary);
 }
 
+.btn-gold {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.25), rgba(180, 83, 9, 0.35));
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  color: #FEF3C7;
+}
+
 .btn-sm {
   min-height: 34px;
   padding: 5px 10px;
   font-size: 0.76rem;
   border-radius: var(--vg-radius-sm);
+}
+
+@media (pointer: coarse) {
+  .btn-sm {
+    min-height: 40px;
+    padding: 7px 12px;
+  }
 }
 
 /* Tarjetas Glass */
@@ -371,9 +317,11 @@ body {
   inset: 0;
   z-index: 100;
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
   background: rgba(5, 11, 18, 0.90);
   backdrop-filter: blur(26px);
   -webkit-backdrop-filter: blur(26px);
@@ -387,7 +335,11 @@ body {
 .identity-modal {
   width: 100%;
   max-width: 520px;
-  padding: 26px 22px;
+  margin: auto;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 18px;
   border-radius: var(--vg-radius-xl);
   background: linear-gradient(165deg, rgba(19, 42, 36, 0.95), rgba(5, 11, 18, 0.97));
   color: #F8FAFC;
@@ -398,11 +350,13 @@ body {
 
 .identity-cover {
   width: 100%;
+  height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: var(--vg-radius-md);
   border: 1px solid rgba(251, 191, 36, 0.35);
-  margin-bottom: 18px;
+  margin-bottom: 16px;
+  display: block;
 }
 
 .identity-kicker {
@@ -433,16 +387,18 @@ body {
 
 .identity-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
 .identity-choice {
+  min-width: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  padding: 16px;
+  padding: 14px;
   border-radius: var(--vg-radius-lg);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -450,6 +406,24 @@ body {
   text-align: left;
   cursor: pointer;
   transition: transform 160ms var(--vg-spring), border-color 160ms ease, background 160ms ease;
+}
+
+.identity-choice .badge {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+@media (max-width: 480px) {
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+  .identity-cover {
+    max-height: 150px;
+    margin-bottom: 12px;
+  }
+  .identity-title {
+    font-size: 1.6rem;
+  }
 }
 
 .identity-choice:hover, .identity-choice:active {
@@ -476,9 +450,10 @@ body {
   display: none;
   align-items: flex-end;
   justify-content: center;
-  padding: 12px;
+  padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
   background: rgba(2, 4, 8, 0.78);
   backdrop-filter: blur(14px);
+  overscroll-behavior: contain;
 }
 
 .adv-modal-backdrop.open {
@@ -497,6 +472,7 @@ body {
   max-width: 580px;
   max-height: 88dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 20px;
   border-radius: var(--vg-radius-xl);
   background: var(--vg-obsidian-800);

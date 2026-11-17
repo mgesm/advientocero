@@ -36,7 +36,7 @@ window.DayArtifacts = (() => {
             </svg>
           </div>
           <div class="cctv-frame">
-            <img src="imagenes/scene-lobby.jpg" alt="Salón Mirador" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
+            <img src="imagenes/scene-lobby.jpg" alt="Salón Mirador" width="1024" height="572" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
             <div class="cctv-hud"><span>INSPECCIÓN OCULAR · SALÓN MIRADOR</span><span>REF: ESCENA-01</span></div>
           </div>`;
       case "1-patri":
@@ -115,10 +115,10 @@ window.DayArtifacts = (() => {
             <div class="blueprint-cap">PLANO PLANTA 2 · ANTENAS RFID (23:30–23:45 H)</div>
             <svg viewBox="0 0 320 110" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="10" y="18" width="300" height="74" fill="none" stroke="#38BDF8" stroke-width="1.2"/>
-              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="54" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="8">PASILLO</text><text x="50" y="65" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="7">23:31 A1</text>
-              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="54" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="8">ASCENSOR</text><text x="120" y="65" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="7">23:34 B4</text>
-              <rect x="160" y="28" width="70" height="54" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.8"/><text x="195" y="50" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="8" font-weight="700">BIBLIOTECA</text><text x="195" y="63" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8">23:39 TAG-C7</text>
-              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="54" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="8">ESC. NORTE</text><text x="270" y="65" text-anchor="middle" fill="#64748B" font-family="monospace" font-size="7">23:43 D2</text>
+              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">PASILLO</text><text x="50" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:31 A1</text>
+              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">ASCENSOR</text><text x="120" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:34 B4</text>
+              <rect x="160" y="28" width="70" height="54" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.8"/><text x="195" y="50" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="8.5" font-weight="700">BIBLIOTECA</text><text x="195" y="64" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8.5">23:39 TAG-C7</text>
+              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">ESC. NORTE</text><text x="270" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:43 D2</text>
             </svg>
           </div>`;
       case "5-patri":
