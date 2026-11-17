@@ -143,28 +143,13 @@
     return "available";
   }
 
-  function renderTopbar() {
-    const rolePill = document.getElementById("topbar-role-pill");
-    const syncPill = document.getElementById("topbar-sync-pill");
-    const muteBtn = document.getElementById("topbar-mute-btn");
-    if (rolePill) {
-      rolePill.textContent = currentRole === "miguel" ? "Terminal: Miguel" : currentRole === "patri" ? "Terminal: Patri" : "Sin perfil";
-      rolePill.className = `badge ${currentRole === "patri" ? "badge-gold" : "badge-frost"}`;
+  function getSyncBadgeHtml() {
+    const partnerRole = currentRole === "miguel" ? "patri" : "miguel";
+    const partnerOnline = syncState.presence?.[partnerRole]?.online;
+    if (syncMode === "firebase") {
+      return `<span class="badge badge-pine"><span class="pulse-dot"></span> ${partnerOnline ? "En pareja online" : "Nube activa"}</span>`;
     }
-    if (syncPill) {
-      const partnerRole = currentRole === "miguel" ? "patri" : "miguel";
-      const partnerOnline = syncState.presence?.[partnerRole]?.online;
-      if (syncMode === "firebase") {
-        syncPill.className = "badge badge-pine";
-        syncPill.innerHTML = `<span class="pulse-dot"></span> ${partnerOnline ? "En pareja online" : "Nube activa"}`;
-      } else {
-        syncPill.className = "badge badge-crimson";
-        syncPill.textContent = "Modo Local";
-      }
-    }
-    if (muteBtn) {
-      muteBtn.textContent = window.AudioFX.isMuted() ? "Audio OFF" : "Audio ON";
-    }
+    return `<span class="badge badge-crimson">Modo Local</span>`;
   }
 
   function renderAdminBar() {
@@ -244,6 +229,44 @@
     }).join("");
 
     container.innerHTML = `
+      <div class="glass-card hero-dossier">
+        <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/>
+        </svg>
+        <div class="hero-thumb-wrap">
+          <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb">
+          <span class="hero-thumb-tag">${esc(window.CASE_LORE.caseCode)}</span>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-gold">${esc(gift.editionLabel)}</span>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              ${getSyncBadgeHtml()}
+              <button type="button" id="hero-mute-btn" class="btn btn-sm btn-ghost" style="min-height:26px;padding:3px 8px;font-size:0.68rem;">${window.AudioFX.isMuted() ? "Audio OFF" : "Audio ON"}</button>
+            </div>
+          </div>
+          <h1 class="hero-title">El Misterio del Ventisquero</h1>
+          <p class="hero-summary">
+            Nieve, 25 sospechosos incomunicados y 24 noches de investigación cooperativa.
+            ${maxOpen === 0 ? `<strong style="color:var(--adv-gold-soft);">${esc(window.DateGate.getCountdownText())}.</strong>` : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
+          </p>
+          <div class="stats-strip">
+            <div class="stat-pill">
+              <span class="stat-val" style="color:var(--adv-pine);">${solvedCount}/24</span>
+              <span class="stat-lbl">Puertas resueltas</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-val" style="color:var(--adv-gold-soft);">${activeSuspects}</span>
+              <span class="stat-lbl">Sospechosos</span>
+            </div>
+            <button type="button" id="hero-role-btn" class="stat-pill" style="cursor:pointer;text-align:left;" title="Cambiar terminal">
+              <span class="stat-val" style="color:${currentRole === "patri" ? "var(--adv-gold-soft)" : "var(--adv-frost)"};">${currentRole === "miguel" ? "MIG" : currentRole === "patri" ? "PAT" : "---"}</span>
+              <span class="stat-lbl">Tu terminal</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="section-head" style="margin-bottom:14px;">
         <div>
           <h2 class="section-title">Calendario de Adviento (1–24 de diciembre)</h2>
@@ -255,6 +278,15 @@
       </div>
       <div class="advent-grid">${doorsHtml}</div>
     `;
+
+    document.getElementById("hero-role-btn")?.addEventListener("click", () => {
+      document.getElementById("identity-overlay")?.classList.add("open");
+    });
+
+    document.getElementById("hero-mute-btn")?.addEventListener("click", (e) => {
+      window.AudioFX.toggleMute();
+      e.currentTarget.textContent = window.AudioFX.isMuted() ? "Audio OFF" : "Audio ON";
+    });
 
     container.querySelectorAll("[data-open-day]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -771,7 +803,6 @@
   }
 
   function renderAll() {
-    renderTopbar();
     renderAdminBar();
     renderCalendarView();
     renderDayView();
@@ -788,15 +819,6 @@
 
     document.querySelectorAll("[data-choose-role]").forEach((btn) => {
       btn.addEventListener("click", () => setRole(btn.dataset.chooseRole));
-    });
-
-    document.getElementById("topbar-role-pill")?.addEventListener("click", () => {
-      document.getElementById("identity-overlay")?.classList.add("open");
-    });
-
-    document.getElementById("topbar-mute-btn")?.addEventListener("click", () => {
-      window.AudioFX.toggleMute();
-      renderTopbar();
     });
 
     document.querySelectorAll(".dock-item").forEach((btn) => {
