@@ -4,20 +4,32 @@
   "description": "Calendario de Adviento criminalístico cooperativo y asimétrico para Miguel y Patri.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#04070D",
-  "theme_color": "#04070D",
+  "background_color": "#03070A",
+  "theme_color": "#050B12",
   "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "imagenes/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "imagenes/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "imagenes/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
     {
       "src": "imagenes/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "imagenes/cover-hotel.jpg",
-      "sizes": "512x512",
-      "type": "image/jpeg",
       "purpose": "any"
     }
   ]

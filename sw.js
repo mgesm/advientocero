@@ -1,8 +1,9 @@
-const CACHE_NAME = "adviento-cero-v2.0.0";
+const CACHE_NAME = "adviento-cero-v2.1.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./manifest.json?v=2.1.0",
   "./video-briefing/index.html",
   "./css/liquid-christmas.css?v=2.0.0",
   "./css/advent-board.css?v=1.7.0",
@@ -21,6 +22,11 @@ const PRECACHE_ASSETS = [
   "./js/day-artifacts.js?v=1.6.0",
   "./js/app.js?v=2.0.0",
   "./imagenes/icon.svg",
+  "./imagenes/icon.svg?v=2.1.0",
+  "./imagenes/icon-192.png",
+  "./imagenes/icon-192.png?v=2.1.0",
+  "./imagenes/icon-512.png",
+  "./imagenes/apple-touch-icon.png?v=2.1.0",
   "./imagenes/cover-hotel.jpg",
   "./imagenes/scene-lobby.jpg",
   "./imagenes/scene-balcony.jpg"
