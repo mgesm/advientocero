@@ -22,8 +22,8 @@ foreach ($f in $files) {
 }
 Write-Host "[OK] Escaneo UTF-8 sin BOM y Cero Emojis completado sobre $($files.Count) archivos."
 
-# 2. Verificar imágenes en disco (3 escenas + icon + 25 sospechosos)
-foreach ($req in @("imagenes\icon.svg", "imagenes\cover-hotel.jpg", "imagenes\scene-lobby.jpg", "imagenes\scene-balcony.jpg")) {
+# 2. Verificar imágenes en disco (3 escenas + 3 evidencias + icon + 25 sospechosos)
+foreach ($req in @("imagenes\icon.svg", "imagenes\cover-hotel.jpg", "imagenes\scene-lobby.jpg", "imagenes\scene-balcony.jpg", "imagenes\evidence\afis_huellas_final.jpg", "imagenes\evidence\viales_toxicologia_final.jpg", "imagenes\evidence\cuadro_electrico_final.jpg")) {
   if (!(Test-Path (Join-Path $root $req))) {
     Write-Host "[FAIL] Falta imagen $req" -ForegroundColor Red
     $errors++
@@ -58,6 +58,7 @@ $discardSet = New-Object 'System.Collections.Generic.HashSet[string]'
 $suspectIdSet = New-Object 'System.Collections.Generic.HashSet[string]'
 foreach ($s in $suspects) { [void]$suspectIdSet.Add($s.id) }
 
+$noDiscardDays = 0
 foreach ($d in $days) {
   if (-not $d.miguel -or -not $d.patri -or -not $d.hints -or $d.hints.Count -lt 3) {
     Write-Host "[FAIL] Estructura incompleta en día $($d.day)" -ForegroundColor Red
@@ -65,13 +66,17 @@ foreach ($d in $days) {
   }
   $payloadBytes = [System.Convert]::FromBase64String($d.unlockPayload)
   $payload = ([System.Text.Encoding]::UTF8.GetString($payloadBytes)) | ConvertFrom-Json
-  if (-not $suspectIdSet.Contains($payload.discardId)) {
-    Write-Host "[FAIL] discardId inválido en día $($d.day)" -ForegroundColor Red
-    $errors++
-  }
-  if (-not $discardSet.Add($payload.discardId)) {
-    Write-Host "[FAIL] discardId duplicado en día $($d.day)" -ForegroundColor Red
-    $errors++
+  if ([string]::IsNullOrWhiteSpace($payload.discardId)) {
+    $noDiscardDays++
+  } else {
+    if (-not $suspectIdSet.Contains($payload.discardId)) {
+      Write-Host "[FAIL] discardId inválido en día $($d.day)" -ForegroundColor Red
+      $errors++
+    }
+    if (-not $discardSet.Add($payload.discardId)) {
+      Write-Host "[FAIL] discardId duplicado en día $($d.day)" -ForegroundColor Red
+      $errors++
+    }
   }
   if ($d.mode -eq "dual-lock") {
     if ($d.miguel.acceptedHashes[0].Length -ne 64 -or $d.patri.acceptedHashes[0].Length -ne 64) {
@@ -86,11 +91,11 @@ foreach ($d in $days) {
   }
 }
 
-if ($discardSet.Count -ne 24) {
-  Write-Host "[FAIL] Total descartes únicos = $($discardSet.Count), esperado 24" -ForegroundColor Red
+if ($discardSet.Count -ne 22 -or $noDiscardDays -ne 2) {
+  Write-Host "[FAIL] Total descartes únicos = $($discardSet.Count) (esperado 22) y días sin descarte = $noDiscardDays (esperado 2)" -ForegroundColor Red
   $errors++
 } else {
-  Write-Host "[OK] Integridad matemática verificada: 24 días, 24 descartes únicos, 1 culpable restante, 72 pistas y todos los hashes SHA-256 válidos."
+  Write-Host "[OK] Integridad matemática verificada: 24 días, 22 descartes únicos + 2 diligencias abiertas, 3 sospechosos finalistas, 72 pistas y todos los hashes SHA-256 válidos."
 }
 
 if ($errors -gt 0) {

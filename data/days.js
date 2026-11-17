@@ -57,7 +57,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. N2",
                       "brief":  "Revisa las tarjetas de protocolo de las mesas en cuanto Miguel te indique la zona.",
-                      "acceptedHashes":  ["449777124b1466a8ed667d0dd4c0620993f59e20fb27b3fa8894e957f8762353"],
+                      "acceptedHashes":  [
+                                             "449777124b1466a8ed667d0dd4c0620993f59e20fb27b3fa8894e957f8762353"
+                                         ],
                       "roleBadge":  "Patri · Tarjetas de Sitio",
                       "clueHtml":  "\u003cp\u003eListado de invitados de la \u003cstrong\u003eMesa 4\u003c/strong\u003e:\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSilla 1:\u003c/strong\u003e Álvaro Roldán (Suite 303)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 2:\u003c/strong\u003e Teresa Alarcón (Hab. 202)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 3:\u003c/strong\u003e Óscar Llorente · Fotógrafo acreditado (Hab. 108) — salió al porche exterior a las 23:35 h\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 4:\u003c/strong\u003e Diego Aranda (Hab. 201)\u003c/li\u003e\u003c/ul\u003e",
                       "widget":  {
@@ -99,7 +101,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Código completo de verificación (4 dígitos)",
                            "placeholder":  "Ej. 1234",
-                           "acceptedHashes":  ["d114c819970461a9486c63dc47dab37a87b01144cef635b26a41c0d0b6a6272a"]
+                           "acceptedHashes":  [
+                                                  "d114c819970461a9486c63dc47dab37a87b01144cef635b26a41c0d0b6a6272a"
+                                              ]
                        },
         "title":  "Manchas bajo Luz UV",
         "patri":  {
@@ -142,7 +146,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Código de sector y extensión",
                            "placeholder":  "Ej. GAR12",
-                           "acceptedHashes":  ["3e4d43098405318c82d5a42589bca8c6327590ff9b509bdb038ff8debc611c3e"]
+                           "acceptedHashes":  [
+                                                  "3e4d43098405318c82d5a42589bca8c6327590ff9b509bdb038ff8debc611c3e"
+                                              ]
                        },
         "title":  "Morse en la Centralita",
         "patri":  {
@@ -165,7 +171,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. 21",
                        "brief":  "Solo ves las filas 1 y 2. Pide a Patri los valores clave de sus filas para deducir F1C4 y F2C1.",
-                       "acceptedHashes":  ["44cb730c420480a0477b505ae68af508fb90f96cf0ec54c6ad16949dd427f13a"],
+                       "acceptedHashes":  [
+                                              "44cb730c420480a0477b505ae68af508fb90f96cf0ec54c6ad16949dd427f13a"
+                                          ],
                        "roleBadge":  "Miguel · Mitad Superior del Cuadrante",
                        "clueHtml":  "\u003cp\u003eCompleta mentalmente o tocando tus casillas. Necesitas saber qué número va en \u003cstrong\u003eF1,C4\u003c/strong\u003e y en \u003cstrong\u003eF2,C1\u003c/strong\u003e (en ese orden, 2 dígitos).\u003c/p\u003e",
                        "widget":  {
@@ -221,7 +229,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. 12",
                       "brief":  "Solo ves las filas 3 y 4. Pide a Miguel sus datos superiores para deducir F4C1 y F4C4.",
-                      "acceptedHashes":  ["3d914f9348c9cc0ff8a79716700b9fcd4d2f3e711608004eb8f138bcba7f14d9"],
+                      "acceptedHashes":  [
+                                             "3d914f9348c9cc0ff8a79716700b9fcd4d2f3e711608004eb8f138bcba7f14d9"
+                                         ],
                       "roleBadge":  "Patri · Mitad Inferior del Cuadrante",
                       "clueHtml":  "\u003cp\u003eLa gobernanta Marta Quiroga selló el armario con el código de la última fila. Deduce \u003cstrong\u003eF4,C1\u003c/strong\u003e y \u003cstrong\u003eF4,C4\u003c/strong\u003e (2 dígitos seguidos).\u003c/p\u003e",
                       "widget":  {
@@ -270,7 +280,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. navarro",
                        "brief":  "Identifica qué código TAG fichó en la Biblioteca a las 23:39 h.",
-                       "acceptedHashes":  ["b74c3a133a11e1a0514c3841cd80b051cb6b18b28e58b2b0c9107cfdae9e9a06"],
+                       "acceptedHashes":  [
+                                              "b74c3a133a11e1a0514c3841cd80b051cb6b18b28e58b2b0c9107cfdae9e9a06"
+                                          ],
                        "roleBadge":  "Miguel · Log Técnico RFID",
                        "clueHtml":  "\u003cp\u003e\u003cstrong\u003eRegistro de antenas (Planta 2):\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e23:31:04 · TAG-A1 · Pasillo Sur\u003c/li\u003e\u003cli\u003e23:34:50 · TAG-B4 · Ascensor Central\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:39:12 · TAG-C7 · Puerta Biblioteca\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e23:43:18 · TAG-D2 · Escalera Norte\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
@@ -298,7 +310,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. A131",
                       "brief":  "Busca a quién pertenece el TAG que te diga Miguel.",
-                      "acceptedHashes":  ["208213f825d268b65caf466cb4251405b34c6a85833fd5aa961710453bac5ff2"],
+                      "acceptedHashes":  [
+                                             "208213f825d268b65caf466cb4251405b34c6a85833fd5aa961710453bac5ff2"
+                                         ],
                       "roleBadge":  "Patri · Asignación de Tarjetas",
                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eTarjetas RFID entregadas en Recepción:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eTAG-A1: Diego Aranda\u003c/li\u003e\u003cli\u003eTAG-B4: Álvaro Roldán\u003c/li\u003e\u003cli\u003eTAG-C7: \u003cstrong\u003eLucía Montalvo\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eTAG-D2: Gabriel Serrano\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIntroduce el código compacto: los 2 caracteres del TAG + los 2 dígitos del minuto en Biblioteca (ej. A131).\u003c/p\u003e",
                       "widget":  {
@@ -318,7 +332,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. salon norte",
                        "brief":  "Gira la rueda interactiva hasta el desplazamiento que descubra Patri en su partitura.",
-                       "acceptedHashes":  ["c369395a81aa6bda3700513f6f4cf9b09335d7129344b7467d9b00ac0794d766"],
+                       "acceptedHashes":  [
+                                              "c369395a81aa6bda3700513f6f4cf9b09335d7129344b7467d9b00ac0794d766"
+                                          ],
                        "roleBadge":  "Miguel · Decodificador César",
                        "clueHtml":  "\u003cp\u003eTexto cifrado hallado: \u003cstrong class=\u0027mono\u0027\u003eFDPHULQR VXU\u003c/strong\u003e. Usa los botones + / - para retroceder las letras del abecedario.\u003c/p\u003e",
                        "widget":  {
@@ -341,7 +357,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. elena",
                       "brief":  "Cuenta las estrellas doradas de la partitura y cruza la sala descifrada por Miguel.",
-                      "acceptedHashes":  ["35f85825b9016fcc7818aca22298dc88a92ba6e4f029366ff8acbb3f823152d4"],
+                      "acceptedHashes":  [
+                                             "35f85825b9016fcc7818aca22298dc88a92ba6e4f029366ff8acbb3f823152d4"
+                                         ],
                       "roleBadge":  "Patri · Partitura de Gala",
                       "clueHtml":  "\u003cp\u003ePartitura de ensayo: \u003cem\u003e«Noche de Paz — Compás 3/4»\u003c/em\u003e. En la esquina superior hay exactamente \u003cstrong\u003e3 estrellas doradas\u003c/strong\u003e dibujadas a tinta (desplazamiento = \u003cstrong\u003e3\u003c/strong\u003e).\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eAsignación de camerinos:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eCamerino Norte: Invitados VIP\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eCamerino Sur: Claudia Benítez\u003c/strong\u003e (vocalizando 23:30–23:50 h)\u003c/li\u003e\u003cli\u003eCamerino Este: Equipo técnico\u003c/li\u003e\u003c/ul\u003e",
                       "widget":  {
@@ -384,7 +402,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Alias griego + Nº de ficha (2 dígitos)",
                            "placeholder":  "Ej. ALFA04",
-                           "acceptedHashes":  ["00f264f1b623260e47c6b411af992a7bb8a007d41f215af9510db717cd043d0a"]
+                           "acceptedHashes":  [
+                                                  "00f264f1b623260e47c6b411af992a7bb8a007d41f215af9510db717cd043d0a"
+                                              ]
                        },
         "title":  "Cuatro Coartadas, Un Reloj Parado",
         "patri":  {
@@ -425,7 +445,7 @@ window.ADVENT_DAYS = [
                   ],
         "kicker":  "DÍA 08 · TOXICOLOGÍA DE ESPECIAS",
         "day":  8,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTciLCJmb3JlbnNpY1RhZyI6IklORk9STUUgSEVSQkFMIE5FR0FUSVZPIiwiY29uY2x1c2lvbiI6IkxhIG1lemNsYSBkZSAyOCBnIGRlIFBhdWxhIE1lbmRvemEgcmVzdWx0w7Mgc2VyIGlub2N1YSB5IGxhIGZpY2hhIGRlIHJlc2VydmEgY29uZmlybWEgcXVlIGF0ZW5kacOzIHVuIG1hc2FqZSB0ZXJhcMOpdXRpY28gZW4gbGEgQ2FiaW5hIDIgaGFzdGEgbGFzIDIzOjUwIGguIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiTVVFU1RSQSBSRVRFTklEQSDCtyBTSU4gREVTQ0FSVEUiLCJjb25jbHVzaW9uIjoiRWwgcGVzYWplIGRlIDI4IGcgY3VhZHJhIGNvbiBlbCBjdWFkZXJubyBkZSBtZXpjbGFzIGRlbCBzcGEsIHBlcm8gc2UgaW5jYXV0YW4gZG9zIGZyYXNjb3MgYW1iYXIgc2luIGV0aXF1ZXRhIHBhcmEgYW5hbGlzaXMgdG94aWNvbG9naWNvIGRlIE5vY2hlYnVlbmEuIFBhdWxhIE1lbmRvemEgc2lndWUgYmFqbyBzb3NwZWNoYSBoYXN0YSBlbCBjYXJlbyBmaW5hbC4ifQ==",
         "story":  "En la sala de infusiones del spa han aparecido tres frascos de especias navideñas con pesos cifrados en una báscula de precisión.",
         "jointInput":  {
                            "label":  "Peso total de la mezcla en gramos (solo número)",
@@ -456,7 +476,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. 1234",
                        "brief":  "Inspecciona el visor térmico de la escena exterior para leer las iniciales y la temperatura.",
-                       "acceptedHashes":  ["7527ba85bdc16eaae6b3f475aaa3b4c030611a001614a53fa47b4bc37b8950f6"],
+                       "acceptedHashes":  [
+                                              "7527ba85bdc16eaae6b3f475aaa3b4c030611a001614a53fa47b4bc37b8950f6"
+                                          ],
                        "roleBadge":  "Miguel · Cámara Norte (Teleférico)",
                        "clueHtml":  "\u003cp\u003eEn el fotograma de la Cámara Norte se distingue al guía con chaqueta técnica y las iniciales bordadas \u003cstrong\u003eM.S.\u003c/strong\u003e en la manga. El termómetro digital del poste marca \u003cstrong\u003e-11 °C\u003c/strong\u003e.\u003c/p\u003e",
                        "widget":  {
@@ -480,7 +502,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. 05AB",
                       "brief":  "Revisa la puerta de la Cabaña Norte y cruza los datos térmicos de Miguel.",
-                      "acceptedHashes":  ["d9205122c9576688af993a08b3d27c50856a99b49b656c543981c1ebff5ed0a1"],
+                      "acceptedHashes":  [
+                                             "d9205122c9576688af993a08b3d27c50856a99b49b656c543981c1ebff5ed0a1"
+                                         ],
                       "roleBadge":  "Patri · Cámara Exterior B (Cabaña)",
                       "clueHtml":  "\u003cp\u003eLa Cámara B muestra al individuo despejando hielo de la polea con un piolet, justo frente al teclado de la Cabaña Norte cuya contraseña de acceso registrada a las 23:41 h fue \u003cstrong\u003e4819\u003c/strong\u003e.\u003c/p\u003e",
                       "widget":  {
@@ -520,7 +544,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Código de serie revelado en el manómetro (4 dígitos)",
                            "placeholder":  "Ej. 1020",
-                           "acceptedHashes":  ["33d9f4526b23543c77260989ff4439aca18cff76c61511b6987816f1e9fc6c32"]
+                           "acceptedHashes":  [
+                                                  "33d9f4526b23543c77260989ff4439aca18cff76c61511b6987816f1e9fc6c32"
+                                              ]
                        },
         "title":  "Válvulas de la Caldera",
         "patri":  {
@@ -568,7 +594,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Mesa (2 dígitos) + Hora (4 dígitos)",
                            "placeholder":  "Ej. 032115",
-                           "acceptedHashes":  ["912258ca546ffd791e39fef3f775a786a11ab4d512379087c0bfc1dbc77e19d3"]
+                           "acceptedHashes":  [
+                                                  "912258ca546ffd791e39fef3f775a786a11ab4d512379087c0bfc1dbc77e19d3"
+                                              ]
                        },
         "title":  "El Ticket Térmico Roto",
         "patri":  {
@@ -646,7 +674,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. 2315",
                        "brief":  "Lee tus mensajes alternándolos en voz alta con Patri.",
-                       "acceptedHashes":  ["ed3c9dc579bb8a9de33c72abb3d5230c3f81dfb332f9e93a2468b9828e718997"],
+                       "acceptedHashes":  [
+                                              "ed3c9dc579bb8a9de33c72abb3d5230c3f81dfb332f9e93a2468b9828e718997"
+                                          ],
                        "roleBadge":  "Miguel · Paquetes Impares (1, 3, 5)",
                        "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[Msg 1]:\u003c/strong\u003e Torre a Gabriel: el temporal empeora, el viento supera los 90 km/h.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 3]:\u003c/strong\u003e Gabriel: recibido, estoy en el hangar atando las palas y activando la baliza \u003cstrong\u003eHEL-902\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 5]:\u003c/strong\u003e Gabriel: imposible acercarme al hotel hasta que pare la ventisca.\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
@@ -673,7 +703,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. HEL100",
                       "brief":  "Alterna tus mensajes pares con los impares de Miguel.",
-                      "acceptedHashes":  ["ca97498a163f150d757b01e8ac59966f373377fc18186e23c1a380baa8e2a198"],
+                      "acceptedHashes":  [
+                                             "ca97498a163f150d757b01e8ac59966f373377fc18186e23c1a380baa8e2a198"
+                                         ],
                       "roleBadge":  "Patri · Paquetes Pares (2, 4, 6)",
                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[Msg 2 - 23:31]:\u003c/strong\u003e Torre: confirma si puedes despegar antes de medianoche.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 4 - 23:34]:\u003c/strong\u003e Torre: anota el código de tu baliza para el radar militar.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 6 - 23:37]:\u003c/strong\u003e Torre: baliza confirmada en pantalla a las \u003cstrong\u003e23:37\u003c/strong\u003e, quédate en el hangar.\u003c/li\u003e\u003c/ul\u003e",
                       "widget":  {
@@ -716,7 +748,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Habitación única + código AUD",
                            "placeholder":  "Ej. 204AUD",
-                           "acceptedHashes":  ["a1b590e638e3907a8d0215c4988ac4e95e4dddaf07190ed207fac23d205e7a75"]
+                           "acceptedHashes":  [
+                                                  "a1b590e638e3907a8d0215c4988ac4e95e4dddaf07190ed207fac23d205e7a75"
+                                              ]
                        },
         "title":  "Triangulación Wi-Fi",
         "patri":  {
@@ -758,7 +792,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Combinación de la caja fuerte (4 dígitos)",
                            "placeholder":  "Ej. 1234",
-                           "acceptedHashes":  ["32ec692a60618d8c17a808fbad9c27d4e5450c56fadbb7dab4f4af0fcb69a0d4"]
+                           "acceptedHashes":  [
+                                                  "32ec692a60618d8c17a808fbad9c27d4e5450c56fadbb7dab4f4af0fcb69a0d4"
+                                              ]
                        },
         "title":  "La Caja Fuerte de Recepción",
         "patri":  {
@@ -803,7 +839,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Palabra clave + número de suite",
                            "placeholder":  "Ej. CLAVE305",
-                           "acceptedHashes":  ["52cc43be5990b5ddf14bb95f37fbfbdc818e5f6b966e8a5028eec1d2125344a7"]
+                           "acceptedHashes":  [
+                                                  "52cc43be5990b5ddf14bb95f37fbfbdc818e5f6b966e8a5028eec1d2125344a7"
+                                              ]
                        },
         "title":  "Frecuencia en el Buzón",
         "patri":  {
@@ -826,7 +864,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. bodega",
                        "brief":  "Usa vuestras 4 pistas combinadas para averiguar en qué LUGAR estuvo el chef Héctor Salgado.",
-                       "acceptedHashes":  ["91ca29a365ca8d9ac4c4b0e36a2f02a9b6aab8208c2cb71432b01d1aed016061"],
+                       "acceptedHashes":  [
+                                              "91ca29a365ca8d9ac4c4b0e36a2f02a9b6aab8208c2cb71432b01d1aed016061"
+                                          ],
                        "roleBadge":  "Miguel · Pistas Lógicas A",
                        "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 1:\u003c/strong\u003e Quien estuvo en la \u003cstrong\u003eCocina\u003c/strong\u003e lo hizo a las \u003cstrong\u003e23:40\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 2:\u003c/strong\u003e \u003cstrong\u003eBeatriz\u003c/strong\u003e no pisó la Cocina ni estuvo en ningún sitio a las 23:30.\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
@@ -858,7 +898,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. 2330",
                       "brief":  "Combina tus pistas con las de Miguel para deducir a qué HORA estuvo Héctor allí.",
-                      "acceptedHashes":  ["f15a3a5d34619f23d79d4124224e69f757a36d8ffb90aa7c17bf085ceb6cd53a"],
+                      "acceptedHashes":  [
+                                             "f15a3a5d34619f23d79d4124224e69f757a36d8ffb90aa7c17bf085ceb6cd53a"
+                                         ],
                       "roleBadge":  "Patri · Pistas Lógicas B",
                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 3:\u003c/strong\u003e \u003cstrong\u003eNora\u003c/strong\u003e bajó a la \u003cstrong\u003eBodega\u003c/strong\u003e 10 minutos antes que la persona de la Cocina.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 4:\u003c/strong\u003e \u003cstrong\u003eHéctor\u003c/strong\u003e es el único con acceso al área de fogones y nunca entra en Bodega.\u003c/li\u003e\u003c/ul\u003e",
                       "widget":  {
@@ -920,7 +962,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Talla huella + Talla Adriana (4 dígitos)",
                            "placeholder":  "Ej. 4237",
-                           "acceptedHashes":  ["9c67d3b75b1e8364898454889940f9cb70b4022532d0aaaf1f1d979504b149f4"]
+                           "acceptedHashes":  [
+                                                  "9c67d3b75b1e8364898454889940f9cb70b4022532d0aaaf1f1d979504b149f4"
+                                              ]
                        },
         "title":  "Huellas en la Nieve del Patio",
         "patri":  {
@@ -961,12 +1005,14 @@ window.ADVENT_DAYS = [
                   ],
         "kicker":  "DÍA 19 · AUDITORÍA BANCARIA",
         "day":  19,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTQiLCJmb3JlbnNpY1RhZyI6IkZJUk1BIEJJT03DiVRSSUNBIEVOIFNVSVRFIDMwMyIsImNvbmNsdXNpb24iOiJMYSBmaXJtYSBiaW9tw6l0cmljYSBmYWNpYWwgeSBsYSBJUCBmaWphIGRlIGxhIFN1aXRlIDMwMyBjb25maXJtYW4gcXVlIMOBbHZhcm8gUm9sZMOhbiBvcGVyYWJhIGRlc2RlIHN1IGhhYml0YWNpw7NuIGEgbGFzIDIzOjM5OjE0IGguIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiU0VTScOTTiBFTiBBVURJVE9Sw41BIMK3IFNJTiBERVNDQVJURSIsImNvbmNsdXNpb24iOiJMYSByZWZlcmVuY2lhIFJYODg0MVogYWNyZWRpdGEgdW5hIG9yZGVuIGRlc2RlIGxhIHJlZCBkZWwgaG90ZWwsIHBlcm8gcXVlZGEgcGVuZGllbnRlIGRlIGNvdGVqbyBiYW5jYXJpbyBkaXJlY3RvIHNpIHNlIGZpcm1vIGVuIHZpdm8gbyBlbiBkaWZlcmlkbyBkZXNkZSBsYSBTdWl0ZSAzMDMuIEFsdmFybyBSb2xkYW4gcGVybWFuZWNlIGFjdGl2byBjb21vIGZpbmFsaXN0YS4ifQ==",
         "story":  "El banquero Álvaro Roldán aseguró estar firmando una operación millonaria por internet desde su suite. Su token de seguridad está partido en dos.",
         "jointInput":  {
                            "label":  "Token completo sin guiones",
                            "placeholder":  "Ej. AB1234C",
-                           "acceptedHashes":  ["7782c55477c6db8cf787696d8f3828b9eefafe9bb242354c8186ccf24c7061ba"]
+                           "acceptedHashes":  [
+                                                  "7782c55477c6db8cf787696d8f3828b9eefafe9bb242354c8186ccf24c7061ba"
+                                              ]
                        },
         "title":  "Transferencias de Medianoche",
         "patri":  {
@@ -989,7 +1035,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. 2004",
                        "brief":  "Activa el filtro de metales para leer el grabado de la llave de bodega.",
-                       "acceptedHashes":  ["d54123de468bd42ea00dafbd777f85fe5fa1ff6404d9838c007953c25c92a1c5"],
+                       "acceptedHashes":  [
+                                              "d54123de468bd42ea00dafbd777f85fe5fa1ff6404d9838c007953c25c92a1c5"
+                                          ],
                        "roleBadge":  "Miguel · Espectro Metálico",
                        "clueHtml":  "\u003cp\u003ePulsa el botón del escáner para filtrar los objetos metálicos dentro del maletín.\u003c/p\u003e",
                        "widget":  {
@@ -1014,7 +1062,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. CAV01",
                       "brief":  "Activa el filtro orgánico para leer el año en las botellas lacradas y la nota de cava.",
-                      "acceptedHashes":  ["02bb43b4328c0c089761aec7469b194eb5b479bcb74f06e82e21370034a39ed3"],
+                      "acceptedHashes":  [
+                                             "02bb43b4328c0c089761aec7469b194eb5b479bcb74f06e82e21370034a39ed3"
+                                         ],
                       "roleBadge":  "Patri · Espectro Orgánico",
                       "clueHtml":  "\u003cp\u003ePulsa el botón del escáner para filtrar los materiales orgánicos y etiquetas de papel.\u003c/p\u003e",
                       "widget":  {
@@ -1056,7 +1106,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Secuencia de 5 dígitos ordenada cronológicamente",
                            "placeholder":  "Ej. 12345",
-                           "acceptedHashes":  ["2fd2c50d7a07d99ef9f8147bf8ec05bf977d1edebf7c71bec7cc06d4a8195fdc"]
+                           "acceptedHashes":  [
+                                                  "2fd2c50d7a07d99ef9f8147bf8ec05bf977d1edebf7c71bec7cc06d4a8195fdc"
+                                              ]
                        },
         "title":  "Cronología de la Planta 3",
         "patri":  {
@@ -1098,7 +1150,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Hora de corte (4 dígitos) + CP",
                            "placeholder":  "Ej. 2210CP",
-                           "acceptedHashes":  ["693062f9b700c27dd77d568db0b1ffbb53683bb1970a891c6d4be39d64328da9"]
+                           "acceptedHashes":  [
+                                                  "693062f9b700c27dd77d568db0b1ffbb53683bb1970a891c6d4be39d64328da9"
+                                              ]
                        },
         "title":  "Pico de Voltaje en Planta 1",
         "patri":  {
@@ -1121,7 +1175,9 @@ window.ADVENT_DAYS = [
         "miguel":  {
                        "inputPlaceholder":  "Ej. 201X",
                        "brief":  "Extrae el número de protocolo notarial hallado en el abrigo de Arturo.",
-                       "acceptedHashes":  ["14577b51f90dcf31ca5db4b722b82bfca531c95e4f9f4aaedb79bf2159f81d19"],
+                       "acceptedHashes":  [
+                                              "14577b51f90dcf31ca5db4b722b82bfca531c95e4f9f4aaedb79bf2159f81d19"
+                                          ],
                        "roleBadge":  "Miguel · Borrador del Bolsillo",
                        "clueHtml":  "\u003cp\u003eEn el bolsillo interior de Arturo apareció un acuerdo mercantil que debía firmarse el 1 de diciembre con el \u003cstrong\u003eProtocolo Notarial Nº 774\u003c/strong\u003e.\u003c/p\u003e",
                        "widget":  {
@@ -1148,7 +1204,9 @@ window.ADVENT_DAYS = [
         "patri":  {
                       "inputPlaceholder":  "Ej. 100",
                       "brief":  "Comprueba la llamada continua de Valeria Domínguez y envía su clave a Miguel.",
-                      "acceptedHashes":  ["089ee14b926fabea6dd95890032d1a37e69c1011c710977af774ec3a7b5b39a6"],
+                      "acceptedHashes":  [
+                                             "089ee14b926fabea6dd95890032d1a37e69c1011c710977af774ec3a7b5b39a6"
+                                         ],
                       "roleBadge":  "Patri · Registro de Antena Celular",
                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eSábana de llamadas · Valeria Domínguez:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eLlamada saliente ininterrumpida a su bufete de Madrid de \u003cstrong\u003e23:28 a 23:54 h\u003c/strong\u003e desde la ventana de la Suite 304 (\u003cstrong\u003eClave de antena: 304V\u003c/strong\u003e) discutiendo el borrador que tiene Miguel.\u003c/p\u003e",
                       "widget":  {
@@ -1199,6 +1257,9 @@ window.ADVENT_DAYS = [
                                                   "fb4b4fa0e6034e97e308de8fed645cceec79c5815f98c3e2fd67c10b6344c61a",
                                                   "a6c8eb06d8cbb823d1be11d23bda3427467f31b6c692c4200bf99326cef3d911",
                                                   "c6ce5f796115921afe158021f045e7c6d6820383191907ff6add8b3f502082a1"
+                                              ],
+                             "reasonHashes":  [
+                                                  "fb01ef138f44fcfe4e13ea3956c6fbc6b8970abe5908735ce1ff514229f9e0f9"
                                               ]
                          },
         "kicker":  "DÍA 24 · RESOLUCIÓN FINAL",
@@ -1208,7 +1269,9 @@ window.ADVENT_DAYS = [
         "jointInput":  {
                            "label":  "Paso 1 · Código de llave maestra sin guiones",
                            "placeholder":  "Ej. KEY000",
-                           "acceptedHashes":  ["13eab8866f78bab6d6ed4a285c33c55d430fb102fc6399501696e83406e81dcc"]
+                           "acceptedHashes":  [
+                                                  "13eab8866f78bab6d6ed4a285c33c55d430fb102fc6399501696e83406e81dcc"
+                                              ]
                        },
         "title":  "Nochebuena: Juicio en el Ventisquero",
         "patri":  {

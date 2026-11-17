@@ -486,5 +486,46 @@ window.DayArtifacts = (() => {
     }
   }
 
-  return { render };
+  function renderFinalShowdown(role, remaining) {
+    const names = (remaining || []).map((s) => s.name).join(" · ");
+    if (role === "miguel") {
+      return `
+        <div class="glass-card" style="padding:14px;margin-bottom:14px;border:var(--vg-border-frost);background:rgba(5,11,18,0.72);">
+          <span class="badge badge-frost">CAREO FINAL · LABORATORIO AFIS (SOLO MIGUEL)</span>
+          <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Han llegado los resultados del laboratorio sobre los <strong>${(remaining || []).length} finalistas</strong> (${names}). Contrasta estas trazas físicas con las coartadas de Patri:</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px;">
+            <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;">
+              <img src="imagenes/evidence/cuadro_electrico_final.jpg" alt="Cuadro eléctrico 23:38 h" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+              <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#FDE68A;">MARCA 1: DISYUNTOR APAGÓN 23:38 · MARCA 2: LLAVE KEY-DIR-01</div>
+            </div>
+            <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;">
+              <img src="imagenes/evidence/afis_huellas_final.jpg" alt="Cotejo UV dactiloscópico AFIS" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+              <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#67E8F9;">HUELLA LATENTE EN PALANCA: PATRÓN VERTICILO W-14 + FIBRA LANA AZUL MARINO</div>
+            </div>
+          </div>
+          <ul class="clue-list" style="font-size:0.8rem;">
+            <li><strong>Álvaro Roldán (Suite 303):</strong> Dactiloscopia <em>Arco Simple (A-04)</em> — no coincide. Tarjeta RFID sin paso por Planta 1 entre 23:10 y 00:10 h; firma biométrica emitida en vivo desde IP local 10.14.3.303 a las 23:39:14 h.</li>
+            <li><strong>Paula Mendoza (Hab. 105):</strong> Dactiloscopia <em>Presilla Cubital (L-09)</em> — no coincide. Vestía uniforme blanco de algodón en el spa.</li>
+            <li><strong>Carmen Ibáñez (Hab. 102):</strong> Dactiloscopia <strong>Verticilo W-14 coincidente al 99,4%</strong> en el disyuntor del apagón, fibra compatible con su jersey de lana azul marino y única titular de la llave mecánica <strong>KEY-DIR-01</strong> usada en Hab. 206.</li>
+          </ul>
+        </div>`;
+    }
+
+    return `
+      <div class="glass-card" style="padding:14px;margin-bottom:14px;border:var(--vg-border-gold);background:rgba(5,11,18,0.72);">
+        <span class="badge badge-gold">CAREO FINAL · TOXICOLOGÍA Y TESTIGOS (SOLO PATRI)</span>
+        <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Parte final de testigos y toxicología LC-MS sobre los <strong>${(remaining || []).length} sospechosos activos</strong> (${names}). Contrasta las coartadas reales con las huellas de Miguel:</p>
+        <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;margin-bottom:12px;">
+          <img src="imagenes/evidence/viales_toxicologia_final.jpg" alt="Frascos incautados y torunda de copa" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+          <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#FDE68A;">BOLSA A: FRASCOS AMBAR DEL SPA (0,00 mg ALCALOIDES) · BOLSA B: TORUNDA COPA (ACONITINA)</div>
+        </div>
+        <ul class="clue-list" style="font-size:0.8rem;">
+          <li><strong>Álvaro Roldán:</strong> Coartada <strong>CONFIRMADA</strong> — el director financiero en Madrid valida videollamada y firma facial en directo a las 23:39:14 h.</li>
+          <li><strong>Paula Mendoza:</strong> Coartada <strong>CONFIRMADA</strong> — dos huéspedes (Hab. 203 y 205) certifican masaje continuo con ambos brazos entre 23:25 y 23:50 h. Sus frascos del Día 8 solo contenían romero y árnica inocuos.</li>
+          <li><strong>Carmen Ibáñez:</strong> Coartada <strong>ROTA</strong> — ningún testigo la vio entre 23:32 y 23:46 h y desconectó manualmente la cámara del pasillo de Planta 1 a las 23:36 h, minutos antes del apagón para verter aconitina en la copa.</li>
+        </ul>
+      </div>`;
+  }
+
+  return { render, renderFinalShowdown };
 })();

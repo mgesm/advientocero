@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.3.0";
+const CACHE_NAME = "adviento-cero-v2.4.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -34,6 +34,9 @@ const PRECACHE_ASSETS = [
   "./imagenes/cover-hotel.jpg",
   "./imagenes/scene-lobby.jpg",
   "./imagenes/scene-balcony.jpg",
+  "./imagenes/evidence/afis_huellas_final.jpg",
+  "./imagenes/evidence/viales_toxicologia_final.jpg",
+  "./imagenes/evidence/cuadro_electrico_final.jpg",
   "./imagenes/suspects/s01.jpg",
   "./imagenes/suspects/s02.jpg",
   "./imagenes/suspects/s03.jpg",

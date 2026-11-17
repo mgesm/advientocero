@@ -24,7 +24,7 @@
 
   const tabScrollY = { calendar: 0, day: 0, suspects: 0, expediente: 0 };
   const localInputDrafts = {};
-  const localVerdictDrafts = { suspect: "", poison: "", method: "" };
+  const localVerdictDrafts = { suspect: "", reason: "", poison: "", method: "" };
   let lastDaySignature = "";
   let lastSuspectsSignature = "";
 
@@ -550,11 +550,11 @@
           </div>`;
       }
     } else {
-      const suspect = (window.SUSPECTS_DATA || []).find((s) => s.id === dState.discardId);
+      const suspect = dState.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === dState.discardId) : null;
       validationHtml = `
-        <div class="glass-card answer-card" style="border:var(--vg-border-pine);">
-          <span class="badge badge-pine">${esc(dState.forensicTag || "DÍA RESUELTO")}</span>
-          <h3 style="margin:10px 0 6px;font-size:1.1rem;">Sospechoso descartado: ${suspect ? esc(suspect.name) : ""}</h3>
+        <div class="glass-card answer-card" style="border:${suspect ? "var(--vg-border-pine)" : "var(--vg-border-gold)"};">
+          <span class="badge ${suspect ? "badge-pine" : "badge-gold"}">${esc(dState.forensicTag || "DÍA RESUELTO")}</span>
+          <h3 style="margin:10px 0 6px;font-size:1.1rem;">${suspect ? `Sospechoso descartado: ${esc(suspect.name)}` : "Diligencia retenida en expediente (sin descarte hoy)"}</h3>
           <p class="day-story">${esc(dState.conclusion)}</p>
           <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
             <button type="button" class="btn btn-sm btn-ghost" data-back-cal-bottom>Volver al Calendario</button>
@@ -567,25 +567,37 @@
     if (dayObj.day === 24 && isSolved) {
       if (!syncState.finalVerdictSolved) {
         const remaining = (window.SUSPECTS_DATA || []).filter((s) => !(syncState.discardedIds || []).includes(s.id));
+        const showdownHtml = window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, remaining) : "";
         finalTrialHtml = `
+          ${showdownHtml}
           <div class="glass-card answer-card" style="border:var(--vg-border-crimson);">
-            <span class="badge badge-crimson">PASO 2 · ORDEN DE DETENCIÓN FINAL</span>
-            <h3 style="margin:10px 0 6px;font-size:1.15rem;">Emitir Acusación Conjunta</h3>
-            <p class="day-story" style="margin-bottom:12px;">Con 24 descartes completados, introducid juntos al culpable, el veneno usado y la maniobra realizada durante el crimen.</p>
+            <span class="badge badge-crimson">PASO 2 · CAREO FINAL ENTRE ${remaining.length} SOSPECHOSOS</span>
+            <h3 style="margin:10px 0 6px;font-size:1.15rem;">Emitir Acusación Conjunta y Justificada</h3>
+            <p class="day-story" style="margin-bottom:12px;">Con 22 descartes completados, quedan <strong>${remaining.length} sospechosos activos</strong>. Cruzad las pruebas finales de Miguel y Patri para elegir al culpable y justificar la detención:</p>
             <form id="final-verdict-form">
               <div class="input-group">
-                <label class="input-label" for="fv-suspect">Culpable del crimen</label>
+                <label class="input-label" for="fv-suspect">1. Culpable elegido entre los ${remaining.length} finalistas</label>
                 <select id="fv-suspect" class="adv-select" required>
-                  <option value="">Selecciona al sospechoso restante...</option>
+                  <option value="">Selecciona al sospechoso culpable...</option>
                   ${remaining.map((s) => `<option value="${esc(s.id)}" ${localVerdictDrafts.suspect === s.id ? "selected" : ""}>${esc(s.num)} · ${esc(s.name)} (${esc(s.role)})</option>`).join("")}
                 </select>
               </div>
               <div class="input-group">
-                <label class="input-label" for="fv-poison">Veneno hallado en la copa</label>
+                <label class="input-label" for="fv-reason">2. Prueba determinante y razón del descarte</label>
+                <select id="fv-reason" class="adv-select" required>
+                  <option value="">Selecciona la justificación forense...</option>
+                  <option value="viales-spa" ${localVerdictDrafts.reason === "viales-spa" ? "selected" : ""}>Alcaloides positivos en frascos del spa y estancia sin testigos en Cabina 2</option>
+                  <option value="huella-coartada" ${localVerdictDrafts.reason === "huella-coartada" ? "selected" : ""}>Huella AFIS W-14 en el disyuntor, llave KEY-DIR-01 y coartada rota (los otros dos confirmados)</option>
+                  <option value="ip-suite" ${localVerdictDrafts.reason === "ip-suite" ? "selected" : ""}>Transferencia bancaria programada en diferido con ausencia de red en Suite 303</option>
+                  <option value="llave-servicio" ${localVerdictDrafts.reason === "llave-servicio" ? "selected" : ""}>Tarjeta electrónica de servicio usada en Hab. 206 durante el brindis</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="fv-poison">3. Veneno hallado en la copa</label>
                 <input id="fv-poison" type="text" class="adv-input" value="${esc(localVerdictDrafts.poison)}" placeholder="Ej. nombre de la toxina o planta" autocomplete="off" required>
               </div>
               <div class="input-group">
-                <label class="input-label" for="fv-method">Maniobra ejecutada desde Planta 1 a las 23:38 h</label>
+                <label class="input-label" for="fv-method">4. Maniobra ejecutada desde Planta 1 a las 23:38 h</label>
                 <input id="fv-method" type="text" class="adv-input" value="${esc(localVerdictDrafts.method)}" placeholder="Ej. palabra clave de la maniobra" autocomplete="off" required>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;">Ejecutar Orden de Detención</button>
@@ -759,6 +771,9 @@
     document.getElementById("fv-suspect")?.addEventListener("change", (e) => {
       localVerdictDrafts.suspect = e.target.value;
     });
+    document.getElementById("fv-reason")?.addEventListener("change", (e) => {
+      localVerdictDrafts.reason = e.target.value;
+    });
     document.getElementById("fv-poison")?.addEventListener("input", (e) => {
       localVerdictDrafts.poison = e.target.value;
     });
@@ -770,6 +785,7 @@
       e.preventDefault();
       if (isSubmitting) return;
       const sVal = document.getElementById("fv-suspect")?.value || "";
+      const rVal = document.getElementById("fv-reason")?.value || "";
       const pVal = document.getElementById("fv-poison")?.value || "";
       const mVal = document.getElementById("fv-method")?.value || "";
       const fb = document.getElementById("final-feedback");
@@ -781,12 +797,13 @@
 
       try {
         const ok1 = await window.PuzzleEngine.matchesHashes(sVal, fv.suspectHashes);
+        const okR = !fv.reasonHashes || await window.PuzzleEngine.matchesHashes(rVal, fv.reasonHashes);
         const ok2 = await window.PuzzleEngine.matchesHashes(pVal, fv.poisonHashes);
         const ok3 = await window.PuzzleEngine.matchesHashes(mVal, fv.methodHashes);
 
-        if (!ok1 || !ok2 || !ok3) {
+        if (!ok1 || !okR || !ok2 || !ok3) {
           window.AudioFX.error();
-          if (fb) fb.innerHTML = `<div class="feedback-banner error">Alguno de los tres elementos del veredicto no coincide con la prueba reina de ambos terminales.</div>`;
+          if (fb) fb.innerHTML = `<div class="feedback-banner error">Alguno de los elementos de la acusación o la justificación forense no coincide con el careo de ambos terminales.</div>`;
           const card = fb?.closest(".answer-card");
           if (card) {
             card.classList.remove("shake-error");

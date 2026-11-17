@@ -307,21 +307,25 @@ window.SyncEngine = (() => {
 
       if (state.days[key].miguelSolved && state.days[key].patriSolved && decoded) {
         state.days[key].solved = true;
-        state.days[key].discardId = decoded.discardId;
+        state.days[key].discardId = decoded.discardId || null;
         state.days[key].forensicTag = decoded.forensicTag;
         state.days[key].conclusion = decoded.conclusion;
         state.days[key].solvedAt = Date.now();
-        if (!state.discardedIds.includes(decoded.discardId)) state.discardedIds.push(decoded.discardId);
-        state.discardedMap[decoded.discardId] = true;
+        if (decoded.discardId) {
+          if (!state.discardedIds.includes(decoded.discardId)) state.discardedIds.push(decoded.discardId);
+          state.discardedMap[decoded.discardId] = true;
+        }
       }
     } else if (decoded) {
       state.days[key].solved = true;
-      state.days[key].discardId = decoded.discardId;
+      state.days[key].discardId = decoded.discardId || null;
       state.days[key].forensicTag = decoded.forensicTag;
       state.days[key].conclusion = decoded.conclusion;
       state.days[key].solvedAt = Date.now();
-      if (!state.discardedIds.includes(decoded.discardId)) state.discardedIds.push(decoded.discardId);
-      state.discardedMap[decoded.discardId] = true;
+      if (decoded.discardId) {
+        if (!state.discardedIds.includes(decoded.discardId)) state.discardedIds.push(decoded.discardId);
+        state.discardedMap[decoded.discardId] = true;
+      }
     }
 
     saveLocal();
@@ -333,7 +337,7 @@ window.SyncEngine = (() => {
           else next.patriSolved = true;
           if (next.miguelSolved && next.patriSolved && decoded) {
             next.solved = true;
-            next.discardId = decoded.discardId;
+            next.discardId = decoded.discardId || null;
             next.forensicTag = decoded.forensicTag;
             next.conclusion = decoded.conclusion;
             next.solvedAt = next.solvedAt || Date.now();
@@ -356,7 +360,7 @@ window.SyncEngine = (() => {
       } else if (decoded) {
         const patch = {};
         patch[`days/${key}`] = state.days[key];
-        patch[`discardedMap/${decoded.discardId}`] = true;
+        if (decoded.discardId) patch[`discardedMap/${decoded.discardId}`] = true;
         roomRef.update(patch).then(() => {
           syncError = null;
           setDirty(false);
