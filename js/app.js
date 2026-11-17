@@ -329,6 +329,7 @@
         "Sí, resetear test",
         () => {
           window.SyncEngine.resetAll();
+          openDedicationModal();
         }
       );
     });
