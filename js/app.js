@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.9.1";
+  const APP_VERSION = "v2.9.2";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -2118,21 +2118,28 @@
     }
 
     if ("serviceWorker" in navigator) {
+      const hadController = Boolean(navigator.serviceWorker.controller);
+      let swRefreshing = false;
       navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then((reg) => {
+        reg.update().catch(() => {});
+        if (reg.waiting && navigator.serviceWorker.controller) {
+          reg.waiting.postMessage({ type: "SKIP_WAITING" });
+        }
         reg.addEventListener("updatefound", () => {
           const nw = reg.installing;
           if (!nw) return;
           nw.addEventListener("statechange", () => {
             if (nw.state === "installed" && navigator.serviceWorker.controller) {
-              showToast("Nueva versión disponible de Adviento Cero.", "Actualizar", () => {
-                nw.postMessage({ type: "SKIP_WAITING" });
-              });
+              nw.postMessage({ type: "SKIP_WAITING" });
             }
           });
         });
       }).catch(() => {});
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        window.location.reload();
+        if (hadController && !swRefreshing) {
+          swRefreshing = true;
+          window.location.reload();
+        }
       });
     }
   });
