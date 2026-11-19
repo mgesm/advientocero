@@ -163,6 +163,9 @@ window.PuzzleEngine = (() => {
             <button type="button" class="btn btn-frost btn-sm" style="margin-top:12px;" data-action="play-morse" data-seq="${escapeHtml(widget.sequence)}" data-day="${dayNum}">
               ${escapeHtml(widget.label || "Reproducir Morse")}
             </button>
+            <div id="morse-mute-note-${dayNum}" class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-top:6px;display:${window.AudioFX?.isMuted() ? "block" : "none"};">
+              Audio silenciado: sigue los destellos de la lámpara o activa el sonido.
+            </div>
           </div>`;
 
       case "sudoku4": {
@@ -188,6 +191,9 @@ window.PuzzleEngine = (() => {
           <div class="widget-panel">
             <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);text-align:center;">Toca tus casillas vacías (1–4). Las marcadas en cian son tu objetivo.</div>
             <div class="sudoku-grid">${cells}</div>
+            <div style="text-align:center;">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="reset-board" data-board="sudoku4">Reiniciar borrador</button>
+            </div>
           </div>`;
       }
 
@@ -205,10 +211,10 @@ window.PuzzleEngine = (() => {
       case "scene-zoom":
         return `
           <div class="widget-panel">
-            <div style="overflow:hidden;border-radius:12px;border:var(--vg-border-specular-strong);">
-              <img src="${escapeHtml(widget.imgSrc)}" alt="Fotograma cámara" id="zoom-img-${dayNum}" style="width:100%;display:block;transition:transform 260ms var(--vg-spring);transform-origin:70% 65%;">
+            <div id="zoom-viewport-${dayNum}" style="overflow:hidden;border-radius:12px;border:var(--vg-border-specular-strong);touch-action:none;">
+              <img src="${escapeHtml(widget.imgSrc)}" alt="Fotograma cámara" id="zoom-img-${dayNum}" style="width:100%;height:auto;display:block;transition:transform 260ms var(--vg-spring);transform-origin:70% 65%;">
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
               <span class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);">${escapeHtml(widget.caption)}</span>
               <button type="button" class="btn btn-sm btn-frost" data-action="toggle-zoom" data-day="${dayNum}">Zoom 1.8x</button>
             </div>
@@ -218,7 +224,7 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <form data-manual-form="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}" style="display:flex;gap:8px;">
-              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="Ej. C7" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
+              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="Ej. B4" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
               <button type="submit" class="btn btn-frost btn-sm" style="flex-shrink:0;">Consultar</button>
             </form>
             <div id="manual-res-${dayNum}" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
@@ -234,16 +240,31 @@ window.PuzzleEngine = (() => {
             <div id="valve-gauge-${dayNum}" class="mono" style="text-align:center;font-size:0.82rem;color:var(--vg-text-muted);margin-top:6px;">PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN</div>
           </div>`;
 
-      case "nonogram":
+      case "nonogram": {
+        const colClues = widget.clues?.cols || [];
+        const rowClues = widget.clues?.rows || [];
+        const hasClues = colClues.length === 5 && rowClues.length === 5;
         return `
           <div class="widget-panel">
             <div class="nonogram-wrap">
-              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);">BORRADOR TÁCTIL 5x5 (toca celdas para marcar)</div>
-              <div class="nono-grid" id="nono-grid-${dayNum}">
-                ${Array.from({ length: 25 }).map((_, i) => `<button type="button" class="nono-cell" data-action="toggle-nono" aria-label="Celda ${i + 1}"></button>`).join("")}
-              </div>
+              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);">BORRADOR TÁCTIL 5x5 (toca: relleno / X / vacío)</div>
+              <table class="nono-table" id="nono-grid-${dayNum}">
+                ${hasClues ? `<thead><tr><th></th>${colClues.map((c) => `<th class="nono-clue-col">${c.join("<br>")}</th>`).join("")}</tr></thead>` : ""}
+                <tbody>
+                  ${Array.from({ length: 5 }).map((_, r) => `
+                    <tr>
+                      ${hasClues ? `<th class="nono-clue-row">${rowClues[r].join(" ")}</th>` : ""}
+                      ${Array.from({ length: 5 }).map((__, c) => {
+                        const idxCell = r * 5 + c;
+                        return `<td><button type="button" class="nono-cell" data-action="toggle-nono" data-idx="${idxCell}" aria-label="Celda fila ${r + 1} columna ${c + 1}"></button></td>`;
+                      }).join("")}
+                    </tr>`).join("")}
+                </tbody>
+              </table>
+              <button type="button" class="btn btn-sm btn-ghost" data-action="reset-board" data-board="nonogram">Limpiar borrador</button>
             </div>
           </div>`;
+      }
 
       case "keypad":
         return `
@@ -284,9 +305,14 @@ window.PuzzleEngine = (() => {
                 ${widget.rows.map((r) => `<tr><th style="text-align:left;">${escapeHtml(r)}</th>${widget.cols.map(() => `<td><button type="button" class="logic-cell-btn" data-action="cycle-logic">·</button></td>`).join("")}</tr>`).join("")}
               </tbody>
             </table>
+            <div style="text-align:center;margin-top:8px;">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="reset-board" data-board="logic3x3">Reiniciar parrilla</button>
+            </div>
           </div>`;
 
-      case "caliper":
+      case "caliper": {
+        const targetCm = Number(widget.targetCm || 25.5);
+        const soleWidth = Math.round(((targetCm - 22.0) / 7.0) * 210);
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;">
@@ -295,9 +321,9 @@ window.PuzzleEngine = (() => {
             </div>
             <div style="margin:10px 0;padding:14px;border-radius:10px;background:rgba(2,4,8,0.85);border:var(--vg-border-specular);position:relative;">
               <svg viewBox="0 0 260 56" style="width:100%;height:48px;display:block;">
-                <rect x="20" y="14" width="170" height="28" rx="14" fill="rgba(56,189,248,0.16)" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <rect x="20" y="14" width="${soleWidth}" height="28" rx="14" fill="rgba(56,189,248,0.16)" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 3"/>
                 <line x1="20" y1="6" x2="20" y2="50" stroke="#F59E0B" stroke-width="2"/>
-                <line id="caliper-bar-${dayNum}" x1="80" y1="6" x2="80" y2="50" stroke="#10B981" stroke-width="2.5"/>
+                <line id="caliper-bar-${dayNum}" x1="20" y1="6" x2="20" y2="50" stroke="#10B981" stroke-width="2.5"/>
               </svg>
               <div class="adv-range-wrap">
                 <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="-0.5" aria-label="Reducir medida">−</button>
@@ -310,11 +336,12 @@ window.PuzzleEngine = (() => {
               ${(widget.table || []).map((t) => `<div class="stat-pill"><span class="stat-val" style="font-size:0.86rem;">T.${escapeHtml(t.size)}</span><span class="stat-lbl">${escapeHtml(t.cm)}</span></div>`).join("")}
             </div>
           </div>`;
+      }
 
       case "xray":
         return `
           <div class="widget-panel">
-            <button type="button" class="btn btn-frost btn-sm" style="width:100%;" data-action="toggle-xray" data-day="${dayNum}">
+            <button type="button" class="btn btn-frost btn-sm" style="width:100%;" data-action="toggle-xray" data-day="${dayNum}" data-label="${escapeHtml(`filtro espectral (${widget.mode === "metal" ? "Metales" : "Orgánico"})`)}" aria-expanded="false">
               Activar filtro espectral (${widget.mode === "metal" ? "Metales" : "Orgánico"})
             </button>
             <div id="xray-box-${dayNum}" style="display:none;margin-top:10px;padding:12px;border-radius:10px;background:#0B1120;border:1.5px solid #0284C7;">
@@ -339,21 +366,162 @@ window.PuzzleEngine = (() => {
     }
   }
 
-  function wireWidgetEvents(container) {
-    // Linterna UV por puntero/táctil
+  function serializeWidgetState(container) {
+    if (!container) return null;
+    const data = {};
+    const sudokus = container.querySelectorAll('[data-action="cycle-sudoku"]');
+    if (sudokus.length) data.sudoku = Array.from(sudokus).map((b) => b.textContent.trim());
+
+    const nonos = container.querySelectorAll('[data-action="toggle-nono"]');
+    if (nonos.length) data.nonogram = Array.from(nonos).map((b) => (b.classList.contains("on") ? 1 : b.classList.contains("x-mark") ? 2 : 0));
+
+    const logics = container.querySelectorAll('[data-action="cycle-logic"]');
+    if (logics.length) data.logic = Array.from(logics).map((b) => b.textContent.trim());
+
+    const caesarOut = container.querySelector('[id^="caesar-out-"]');
+    if (caesarOut) data.caesarShift = Number(caesarOut.dataset.shift || 0);
+
+    const valves = container.querySelectorAll('[data-action="toggle-valve"]');
+    if (valves.length) data.valves = Array.from(valves).map((b) => b.classList.contains("open"));
+
+    const range = container.querySelector('.adv-range');
+    if (range) data.range = range.value;
+
+    const xrayBox = container.querySelector('[id^="xray-box-"]');
+    if (xrayBox) data.xrayOpen = xrayBox.style.display !== "none";
+
+    const manualInp = container.querySelector('[id^="manual-code-"]');
+    if (manualInp) data.manualCode = manualInp.value;
+
+    return Object.keys(data).length ? data : null;
+  }
+
+  function restoreWidgetState(container, data) {
+    if (!container || !data) return;
+    if (Array.isArray(data.sudoku)) {
+      const cells = container.querySelectorAll('[data-action="cycle-sudoku"]');
+      cells.forEach((b, i) => { if (data.sudoku[i]) b.textContent = data.sudoku[i]; });
+    }
+    if (Array.isArray(data.nonogram)) {
+      const cells = container.querySelectorAll('[data-action="toggle-nono"]');
+      cells.forEach((b, i) => {
+        b.classList.remove("on", "x-mark");
+        b.textContent = "";
+        if (data.nonogram[i] === 1) b.classList.add("on");
+        else if (data.nonogram[i] === 2) { b.classList.add("x-mark"); b.textContent = "X"; }
+      });
+    }
+    if (Array.isArray(data.logic)) {
+      const cells = container.querySelectorAll('[data-action="cycle-logic"]');
+      cells.forEach((b, i) => {
+        if (data.logic[i]) {
+          b.textContent = data.logic[i];
+          b.style.color = data.logic[i] === "OK" ? "#6EE7B7" : data.logic[i] === "X" ? "#FDA4AF" : "#CBD5E1";
+        }
+      });
+    }
+    if (typeof data.caesarShift === "number") {
+      const out = container.querySelector('[id^="caesar-out-"]');
+      if (out) {
+        const day = out.id.replace("caesar-out-", "");
+        const lbl = document.getElementById(`caesar-shift-val-${day}`);
+        out.dataset.shift = String(data.caesarShift);
+        if (lbl) lbl.textContent = String(data.caesarShift);
+        const raw = out.dataset.cipher || "";
+        out.textContent = raw.replace(/[A-Z]/g, (ch) => String.fromCharCode(((ch.charCodeAt(0) - 65 - data.caesarShift + 26) % 26) + 65));
+      }
+    }
+    if (Array.isArray(data.valves)) {
+      const row = container.querySelector('[id^="valve-row-"]');
+      const btns = container.querySelectorAll('[data-action="toggle-valve"]');
+      btns.forEach((b, i) => {
+        const open = Boolean(data.valves[i]);
+        b.classList.toggle("open", open);
+        b.innerHTML = `V${i + 1}<br><span>${open ? "ABIERTA" : "CERRADA"}</span>`;
+      });
+      if (row) {
+        const day = row.id.replace("valve-row-", "");
+        const gauge = document.getElementById(`valve-gauge-${day}`);
+        const target = JSON.parse(row.dataset.target || "[]");
+        const match = target.every((v, i) => v === Boolean(data.valves[i]));
+        if (gauge && match) {
+          gauge.style.color = "#6EE7B7";
+          gauge.style.fontWeight = "700";
+          gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
+        }
+      }
+    }
+    if (data.range !== undefined) {
+      const range = container.querySelector('.adv-range');
+      if (range) {
+        range.value = data.range;
+        range.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }
+    if (data.xrayOpen) {
+      const btn = container.querySelector('[data-action="toggle-xray"]');
+      if (btn) btn.click();
+    }
+    if (data.manualCode) {
+      const inp = container.querySelector('[id^="manual-code-"]');
+      if (inp) inp.value = data.manualCode;
+    }
+  }
+
+  function wireWidgetEvents(container, onWidgetChange) {
+    const emitChange = () => {
+      if (typeof onWidgetChange === "function") onWidgetChange(serializeWidgetState(container));
+    };
+
+    // Linterna UV por puntero/táctil con offset sobre dedo y captura de puntero
     container.querySelectorAll(".uv-surface").forEach((el) => {
-      const updatePos = (clientX, clientY) => {
+      const updatePos = (clientX, clientY, pointerType) => {
         const rect = el.getBoundingClientRect();
+        const offsetY = pointerType === "touch" ? -38 : 0;
         const x = ((clientX - rect.left) / rect.width) * 100;
-        const y = ((clientY - rect.top) / rect.height) * 100;
+        const y = ((clientY + offsetY - rect.top) / rect.height) * 100;
         const sec = el.querySelector(".uv-secret-layer");
         if (sec) {
-          sec.style.setProperty("--uv-x", `${x}%`);
-          sec.style.setProperty("--uv-y", `${y}%`);
+          sec.style.setProperty("--uv-x", `${Math.max(0, Math.min(100, x))}%`);
+          sec.style.setProperty("--uv-y", `${Math.max(0, Math.min(100, y))}%`);
         }
       };
-      el.addEventListener("pointermove", (e) => updatePos(e.clientX, e.clientY));
-      el.addEventListener("pointerdown", (e) => updatePos(e.clientX, e.clientY));
+      el.addEventListener("pointerdown", (e) => {
+        try { el.setPointerCapture(e.pointerId); } catch (_) {}
+        updatePos(e.clientX, e.clientY, e.pointerType);
+      });
+      el.addEventListener("pointermove", (e) => {
+        if (e.buttons > 0 || e.pointerType !== "touch") {
+          updatePos(e.clientX, e.clientY, e.pointerType);
+        }
+      });
+    });
+
+    // Arrastre en scene-zoom
+    container.querySelectorAll('[id^="zoom-viewport-"]').forEach((vp) => {
+      const day = vp.id.replace("zoom-viewport-", "");
+      const img = document.getElementById(`zoom-img-${day}`);
+      if (!img) return;
+      let dragging = false, sx = 0, sy = 0, ox = 70, oy = 65;
+      vp.addEventListener("pointerdown", (e) => {
+        if (img.dataset.zoomed !== "1") return;
+        dragging = true;
+        sx = e.clientX;
+        sy = e.clientY;
+        try { vp.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+      vp.addEventListener("pointermove", (e) => {
+        if (!dragging || img.dataset.zoomed !== "1") return;
+        const dx = (e.clientX - sx) * -0.18;
+        const dy = (e.clientY - sy) * -0.18;
+        sx = e.clientX;
+        sy = e.clientY;
+        ox = Math.max(0, Math.min(100, ox + dx));
+        oy = Math.max(0, Math.min(100, oy + dy));
+        img.style.transformOrigin = `${ox.toFixed(1)}% ${oy.toFixed(1)}%`;
+      });
+      vp.addEventListener("pointerup", () => { dragging = false; });
+      vp.addEventListener("pointercancel", () => { dragging = false; });
     });
 
     container.addEventListener("submit", (e) => {
@@ -370,6 +538,7 @@ window.PuzzleEngine = (() => {
       } else {
         res.innerHTML = `<div class="feedback-banner error">Circuito no reconocido. Revisa el código rojo en la pantalla de tu pareja.</div>`;
       }
+      emitChange();
     });
 
     container.addEventListener("click", (e) => {
@@ -378,7 +547,7 @@ window.PuzzleEngine = (() => {
       const act = btn.dataset.action;
 
       if (act === "step-range") {
-        window.AudioFX.click();
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
         const range = document.getElementById(btn.dataset.targetId);
         if (!range) return;
         const step = Number(btn.dataset.delta || 0);
@@ -396,12 +565,13 @@ window.PuzzleEngine = (() => {
           btn.disabled = false;
         });
       } else if (act === "cycle-sudoku") {
-        window.AudioFX.click();
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
         const seq = ["·", "1", "2", "3", "4"];
         const cur = seq.indexOf(btn.textContent.trim());
         btn.textContent = seq[(cur + 1) % seq.length];
+        emitChange();
       } else if (act === "caesar-step") {
-        window.AudioFX.click();
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
         const day = btn.dataset.day;
         const delta = Number(btn.dataset.delta);
         const out = document.getElementById(`caesar-out-${day}`);
@@ -416,27 +586,17 @@ window.PuzzleEngine = (() => {
           return String.fromCharCode(((code - shift + 26) % 26) + 65);
         });
         out.textContent = decoded;
+        emitChange();
       } else if (act === "toggle-zoom") {
         window.AudioFX.click();
         const img = document.getElementById(`zoom-img-${btn.dataset.day}`);
         if (!img) return;
         const zoomed = img.dataset.zoomed === "1";
         img.dataset.zoomed = zoomed ? "0" : "1";
-        img.style.transform = zoomed ? "scale(1)" : "scale(1.85)";
+        img.style.transform = zoomed ? "scale(1)" : "scale(1.8)";
         btn.textContent = zoomed ? "Zoom 1.8x" : "Restablecer";
-      } else if (act === "lookup-manual") {
-        window.AudioFX.click();
-        const day = btn.dataset.day;
-        const inp = document.getElementById(`manual-code-${day}`);
-        const res = document.getElementById(`manual-res-${day}`);
-        if (!inp || !res) return;
-        if (normalizeAnswer(inp.value) === normalizeAnswer(btn.dataset.trigger)) {
-          res.innerHTML = `<div class="feedback-banner success">${btn.dataset.resp}</div>`;
-        } else {
-          res.innerHTML = `<div class="feedback-banner error">Circuito no reconocido. Revisa el código rojo en la pantalla de tu pareja.</div>`;
-        }
       } else if (act === "toggle-valve") {
-        window.AudioFX.click();
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
         btn.classList.toggle("open");
         const isOpen = btn.classList.contains("open");
         const idx = Number(btn.dataset.idx) + 1;
@@ -457,19 +617,50 @@ window.PuzzleEngine = (() => {
             gauge.textContent = "PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN";
           }
         }
+        emitChange();
       } else if (act === "toggle-nono") {
-        window.AudioFX.click();
-        btn.classList.toggle("on");
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        if (btn.classList.contains("on")) {
+          btn.classList.remove("on");
+          btn.classList.add("x-mark");
+          btn.textContent = "X";
+        } else if (btn.classList.contains("x-mark")) {
+          btn.classList.remove("x-mark");
+          btn.textContent = "";
+        } else {
+          btn.classList.add("on");
+          btn.textContent = "";
+        }
+        emitChange();
       } else if (act === "cycle-logic") {
         window.AudioFX.click();
         const states = ["·", "X", "OK"];
         const idx = states.indexOf(btn.textContent.trim());
         btn.textContent = states[(idx + 1) % states.length];
-        btn.style.color = btn.textContent === "OK" ? "#6EE7B7" : btn.textContent === "X" ? "#FDA4AF" : "var(--vg-text-primary)";
-      } else if (act === "toggle-xray") {
+        btn.style.color = btn.textContent === "OK" ? "#6EE7B7" : btn.textContent === "X" ? "#FDA4AF" : "#CBD5E1";
+        emitChange();
+      } else if (act === "reset-board") {
         window.AudioFX.click();
+        const board = btn.dataset.board;
+        if (board === "sudoku4") {
+          container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => { c.textContent = "·"; });
+        } else if (board === "nonogram") {
+          container.querySelectorAll('[data-action="toggle-nono"]').forEach((c) => { c.classList.remove("on", "x-mark"); c.textContent = ""; });
+        } else if (board === "logic3x3") {
+          container.querySelectorAll('[data-action="cycle-logic"]').forEach((c) => { c.textContent = "·"; c.style.color = "#CBD5E1"; });
+        }
+        emitChange();
+      } else if (act === "toggle-xray") {
+        window.AudioFX.radioSweep?.() || window.AudioFX.click();
         const box = document.getElementById(`xray-box-${btn.dataset.day}`);
-        if (box) box.style.display = box.style.display === "none" ? "block" : "none";
+        if (box) {
+          const open = box.style.display === "none";
+          box.style.display = open ? "block" : "none";
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          const lbl = btn.dataset.label || "filtro espectral";
+          btn.textContent = `${open ? "Ocultar" : "Activar"} ${lbl}`;
+        }
+        emitChange();
       }
     });
 
@@ -484,6 +675,7 @@ window.PuzzleEngine = (() => {
         if (lbl) lbl.textContent = `${val} Hz`;
         if (msg) {
           if (val === target) {
+            window.AudioFX.radioSweep?.();
             msg.style.color = "#67E8F9";
             msg.style.borderColor = "rgba(0,229,255,0.5)";
             msg.textContent = inp.dataset.clear || "";
@@ -493,6 +685,7 @@ window.PuzzleEngine = (() => {
             msg.textContent = "[ #%& RUIDO DE VENTISCA · SINTONIZA LA BANDA CORRECTA ##@ ]";
           }
         }
+        emitChange();
       } else if (inp.dataset.action === "slide-caliper") {
         const day = inp.dataset.day;
         const val = Number(inp.value);
@@ -502,9 +695,9 @@ window.PuzzleEngine = (() => {
         const st = document.getElementById(`caliper-status-${day}`);
         if (lbl) lbl.textContent = `${val.toFixed(1)} cm`;
         if (bar) {
-          const x = 20 + ((val - 22.0) / 7.0) * 220 + 60;
-          bar.setAttribute("x1", String(Math.min(250, x)));
-          bar.setAttribute("x2", String(Math.min(250, x)));
+          const x = 20 + ((val - 22.0) / 7.0) * 210;
+          bar.setAttribute("x1", String(Math.min(230, x)));
+          bar.setAttribute("x2", String(Math.min(230, x)));
         }
         if (st) {
           if (Math.abs(val - target) < 0.01) {
@@ -515,6 +708,9 @@ window.PuzzleEngine = (() => {
             st.textContent = "Desliza la línea verde hasta el borde derecho de la suela";
           }
         }
+        emitChange();
+      } else if (inp.id && inp.id.startsWith("manual-code-")) {
+        emitChange();
       }
     });
   }
@@ -525,6 +721,8 @@ window.PuzzleEngine = (() => {
     decodePayload,
     renderWidgetHtml,
     wireWidgetEvents,
+    serializeWidgetState,
+    restoreWidgetState,
     escapeHtml
   };
 })();

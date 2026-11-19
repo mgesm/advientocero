@@ -6,7 +6,7 @@ Calendario de Adviento criminalístico digital, cooperativo y asimétrico (1–2
 1. Abre la web en tu móvil e instala la app en pantalla de inicio (*Añadir a pantalla de inicio*).
 2. Elige tu terminal (**Miguel** o **Patri**).
 3. Cada día de diciembre se desbloquea una nueva puerta. Ninguno de los dos puede resolver el enigma diario sin contrastar en voz alta las pistas de la pantalla de su pareja.
-4. Cada prueba resuelta descarta automáticamente a 1 de los 25 sospechosos hasta atrapar al culpable en Nochebuena.
+4. A lo largo de las 24 puertas se van descartando inocentes y reteniendo diligencias clave hasta llegar al Careo Final de Nochebuena con 3 sospechosos finalistas para identificar al culpable.
 
 ## Configuración y Contexto
 * Contexto técnico y diseño: [CONTEXTO_PROYECTO.md](CONTEXTO_PROYECTO.md)

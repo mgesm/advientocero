@@ -26,6 +26,10 @@ Esta guía conecta la sincronización en tiempo real entre el móvil de **Miguel
          "miguel-patri-ventisquero-2026": {
            ".read": true,
            ".write": true
+         },
+         "miguel-patri-ventisquero-2026-test": {
+           ".read": true,
+           ".write": true
          }
        }
      }

@@ -87,12 +87,16 @@ html, body {
   color: var(--vg-text-primary);
   font-family: var(--vg-font-sans);
   min-height: 100dvh;
-  overflow-x: hidden;
+  overscroll-behavior-y: contain;
   -webkit-font-smoothing: antialiased;
 }
 
 body {
   background: #050B12;
+}
+
+body.font-boost {
+  font-size: 115%;
 }
 
 body::before {
@@ -104,8 +108,29 @@ body::before {
   background: radial-gradient(circle at 50% 0%, #132A24 0%, #050B12 58%);
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top, 0px);
+  background: linear-gradient(180deg, rgba(5, 11, 18, 0.92), rgba(5, 11, 18, 0.45));
+  pointer-events: none;
+  z-index: 50;
+}
+
 body.modal-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
   overflow: hidden;
+}
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--adv-gold);
+  outline-offset: 2px;
 }
 
 /* Capa atmosférica de nieve navideña tras el cristal */
@@ -128,7 +153,8 @@ body.modal-open {
   z-index: 2;
   max-width: 1120px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 80px) max(16px, env(safe-area-inset-left, 0px));
+  overflow-x: clip;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 86px) max(16px, env(safe-area-inset-left, 0px));
 }
 
 @media (max-width: 768px) {
@@ -258,8 +284,8 @@ body.modal-open {
 
 @media (pointer: coarse) {
   .btn-sm {
-    min-height: 40px;
-    padding: 7px 12px;
+    min-height: 44px;
+    padding: 8px 12px;
   }
 }
 
@@ -426,10 +452,40 @@ body.modal-open {
   }
 }
 
-.identity-choice:hover, .identity-choice:active {
-  transform: translateY(-2px);
+@media (hover: hover) and (pointer: fine) {
+  .identity-choice:hover {
+    transform: translateY(-2px);
+    background: rgba(251, 191, 36, 0.14);
+    border-color: rgba(251, 191, 36, 0.55);
+  }
+}
+.identity-choice:active {
+  transform: scale(0.98);
   background: rgba(251, 191, 36, 0.14);
   border-color: rgba(251, 191, 36, 0.55);
+}
+
+.identity-choice.is-miguel {
+  border-color: rgba(56, 189, 248, 0.28);
+}
+
+.identity-choice.is-patri {
+  border-color: rgba(251, 191, 36, 0.30);
+}
+
+.identity-choice.is-current {
+  box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.10);
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .identity-cover {
+    max-height: 110px;
+    margin-bottom: 10px;
+  }
+  .identity-modal {
+    padding: 16px;
+  }
 }
 
 .identity-choice strong {
@@ -450,9 +506,11 @@ body.modal-open {
   display: none;
   align-items: flex-end;
   justify-content: center;
+  touch-action: none;
   padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
-  background: rgba(2, 4, 8, 0.78);
+  background: rgba(2, 4, 8, 0.80);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   overscroll-behavior: contain;
 }
 
@@ -468,12 +526,15 @@ body.modal-open {
 }
 
 .adv-modal-sheet {
+  position: relative;
   width: 100%;
   max-width: 580px;
   max-height: 88dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   overscroll-behavior: contain;
-  padding: 20px;
+  padding: 14px 20px 20px;
   border-radius: var(--vg-radius-xl);
   background: var(--vg-obsidian-800);
   border: var(--vg-border-specular-strong);
@@ -481,10 +542,166 @@ body.modal-open {
   animation: modalPopIn 320ms var(--vg-spring) both;
 }
 
+.adv-modal-topstrip {
+  position: sticky;
+  top: -14px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  margin: -6px -10px 8px;
+  padding: 6px 10px 4px;
+  background: linear-gradient(180deg, rgba(10, 25, 22, 0.96) 65%, transparent);
+}
+
+.adv-modal-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.adv-modal-close {
+  position: absolute;
+  right: 4px;
+  top: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(5, 11, 18, 0.85);
+  color: #E2E8F0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+/* Radio-cards táctiles multilínea (Careo Final) */
+.radio-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-card {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 13px;
+  min-height: 48px;
+  border-radius: var(--vg-radius-md);
+  background: rgba(5, 11, 18, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #E2E8F0;
+  font-family: inherit;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.radio-card.selected {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.65);
+  color: #FEF3C7;
+}
+
+.radio-card-dot {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 2px solid rgba(251, 191, 36, 0.55);
+  display: grid;
+  place-items: center;
+}
+
+.radio-card.selected .radio-card-dot::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FBBF24;
+}
+
+/* Toast cooperativo no intrusivo */
+.adv-toast-host {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  width: min(92vw, 440px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.adv-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--vg-radius-md);
+  background: rgba(6, 24, 20, 0.96);
+  border: 1px solid rgba(251, 191, 36, 0.48);
+  color: #FEF3C7;
+  font-size: 0.8rem;
+  box-shadow: var(--vg-shadow-modal);
+  animation: fadeSlideIn 220ms ease both;
+}
+
+/* Lightbox fotográfico táctil */
+.lightbox-stage {
+  overflow: auto;
+  max-height: 62dvh;
+  border-radius: 12px;
+  border: var(--vg-border-specular-strong);
+  background: #020408;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.lightbox-stage img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: center center;
+  transition: transform 180ms ease;
+}
+
+/* Lectura nocturna suave */
+body.night-reading-soft .paper-receipt,
+body.night-reading-soft .paper-ledger {
+  background: #CBD5E1;
+  color: #0F172A;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .view-panel.active, .identity-overlay.open, .identity-modal, .adv-modal-backdrop.open, .adv-modal-sheet {
+  .view-panel.active, .identity-overlay.open, .identity-modal, .adv-modal-backdrop.open, .adv-modal-sheet,
+  .pulse-dot, .door-card, .door-card.state-available::before, .door-card.state-available::after, .shake-error {
     animation: none !important;
+    transition-duration: 0.01ms !important;
   }
+}
+
+body.Pref-reduced-motion * {
+  animation: none !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media print {
+  body { background: #FFFFFF !important; color: #111827 !important; }
+  body::before, body::after, #snow-canvas, .mobile-dock, .adv-toast-host, #admin-bar { display: none !important; }
+  .glass-card { background: #FFFFFF !important; color: #111827 !important; border: 1px solid #CBD5E1 !important; box-shadow: none !important; }
 }
 
 .mono {

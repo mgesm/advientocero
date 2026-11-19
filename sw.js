@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.4.0";
+const CACHE_NAME = "adviento-cero-v2.5.0";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -20,6 +20,8 @@ const PRECACHE_ASSETS = [
   "./data/case-lore.js",
   "./data/suspects.js",
   "./data/days.js",
+  "./js/vendor/firebase-app-compat.js",
+  "./js/vendor/firebase-database-compat.js",
   "./js/audio-fx.js",
   "./js/date-gate.js",
   "./js/sync-engine.js",
@@ -66,8 +68,14 @@ const PRECACHE_ASSETS = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", (event) => {
@@ -78,13 +86,73 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+async function handleRangeRequest(req, cachedResponse) {
+  const buf = await cachedResponse.arrayBuffer();
+  const total = buf.byteLength;
+  const rangeHeader = req.headers.get("range") || "";
+  const match = /bytes=(\d+)-(\d*)/.exec(rangeHeader);
+  const start = match ? Number(match[1]) : 0;
+  const end = match && match[2] ? Math.min(total - 1, Number(match[2])) : total - 1;
+  if (start >= total || start > end) {
+    return new Response(null, {
+      status: 416,
+      headers: { "Content-Range": `bytes */${total}` }
+    });
+  }
+  const sliced = buf.slice(start, end + 1);
+  return new Response(sliced, {
+    status: 206,
+    statusText: "Partial Content",
+    headers: {
+      "Content-Type": cachedResponse.headers.get("Content-Type") || "audio/mpeg",
+      "Content-Range": `bytes ${start}-${end}/${total}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": String(sliced.byteLength)
+    }
+  });
+}
+
+function fetchWithTimeout(req, ms) {
+  if (typeof AbortController === "undefined") return fetch(req);
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  return fetch(req, { signal: ctrl.signal }).finally(() => clearTimeout(t));
+}
+
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET" || !req.url.startsWith(self.location.origin)) return;
 
+  const url = new URL(req.url);
+  if (req.headers.has("range")) {
+    event.respondWith(
+      caches.match(req, { ignoreSearch: true }).then((cached) => {
+        if (cached) return handleRangeRequest(req, cached);
+        return fetch(req);
+      })
+    );
+    return;
+  }
+
+  if (url.pathname.toLowerCase().endsWith(".pdf")) {
+    event.respondWith(
+      caches.match(req, { ignoreSearch: true }).then((cached) => {
+        if (cached) return cached;
+        return fetch(req).then((res) => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+          }
+          return res;
+        });
+      })
+    );
+    return;
+  }
+
   if (req.mode === "navigate" || req.destination === "document") {
     event.respondWith(
-      fetch(req).then((res) => {
+      fetchWithTimeout(req, 2500).then((res) => {
         if (res && res.ok) {
           const copy = res.clone();
           event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));

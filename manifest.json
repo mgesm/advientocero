@@ -2,11 +2,13 @@
   "name": "ADVIENTO CERO",
   "short_name": "Adviento Cero",
   "description": "Calendario de Adviento criminalístico cooperativo y asimétrico para Miguel y Patri.",
+  "id": "./",
+  "scope": "./",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#03070A",
   "theme_color": "#050B12",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "icons": [
     {
       "src": "imagenes/icon-192.png",

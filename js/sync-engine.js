@@ -15,9 +15,11 @@ window.SyncEngine = (() => {
   let syncError = null;
   let initialSynced = false;
   let activeRole = "";
+  let activeRoomId = "";
   let connId = `c_${Math.random().toString(36).slice(2, 10)}`;
+  let writeSeq = 0;
   let listeners = [];
-  let onlineListenerBound = false;
+  let networkListenersBound = false;
 
   function isAdminRoom() {
     return Boolean(window.DateGate && typeof window.DateGate.isAdminEnabled === "function" && window.DateGate.isAdminEnabled());
@@ -53,10 +55,40 @@ window.SyncEngine = (() => {
       discardedMap: {},    // { "s16": true }
       finalVerdictSolved: false,
       finalEpilogue: null,
+      finalProposal: null, // { byRole, suspectId, reason, poison, method, miguelSigned, patriSigned }
       sharedNotes: "",
+      notesMeta: null,     // { updatedBy, updatedAt }
+      fieldDispatch: {},   // { "1": { miguel: { text, at }, patri: { text, at } } }
+      suspectNotes: {},    // { "s03": { miguel: { stance, note, at }, patri: { stance, note, at } } }
       hintsUnlocked: {},   // { "1": 0..3 }
       presence: {}
     };
+  }
+
+  function healDualLockDays(out) {
+    if (!out.days || typeof out.days !== "object") return;
+    const advDays = Array.isArray(window.ADVENT_DAYS) ? window.ADVENT_DAYS : [];
+    const decFn = window.PuzzleEngine && typeof window.PuzzleEngine.decodePayload === "function"
+      ? window.PuzzleEngine.decodePayload
+      : null;
+
+    Object.keys(out.days).forEach((k) => {
+      const d = out.days[k];
+      if (!d || typeof d !== "object") return;
+      if (d.miguelSolved && d.patriSolved && !d.solved) {
+        const dayObj = advDays.find((x) => String(x.day) === String(k));
+        if (dayObj && decFn) {
+          const decoded = decFn(dayObj.unlockPayload);
+          if (decoded) {
+            d.solved = true;
+            d.discardId = decoded.discardId || null;
+            d.forensicTag = decoded.forensicTag;
+            d.conclusion = decoded.conclusion;
+            d.solvedAt = d.solvedAt || Date.now();
+          }
+        }
+      }
+    });
   }
 
   function normalizeState(rawObj) {
@@ -65,6 +97,10 @@ window.SyncEngine = (() => {
     if (!out.hintsUnlocked || typeof out.hintsUnlocked !== "object") out.hintsUnlocked = {};
     if (!out.presence || typeof out.presence !== "object") out.presence = {};
     if (!out.discardedMap || typeof out.discardedMap !== "object") out.discardedMap = {};
+    if (!out.fieldDispatch || typeof out.fieldDispatch !== "object") out.fieldDispatch = {};
+    if (!out.suspectNotes || typeof out.suspectNotes !== "object") out.suspectNotes = {};
+
+    healDualLockDays(out);
 
     const idSet = new Set();
     if (Array.isArray(out.discardedIds)) {
@@ -122,6 +158,7 @@ window.SyncEngine = (() => {
 
     if (!r.sharedNotes && l.sharedNotes) {
       merged.sharedNotes = l.sharedNotes;
+      merged.notesMeta = l.notesMeta || null;
     } else if (l.sharedNotes && r.sharedNotes && l.sharedNotes !== r.sharedNotes && !r.sharedNotes.includes(l.sharedNotes)) {
       merged.sharedNotes = `${r.sharedNotes}\n\n[Sincronizado offline]\n${l.sharedNotes}`;
     }
@@ -171,6 +208,13 @@ window.SyncEngine = (() => {
     notify();
   }
 
+  function clearWriteOk(seq) {
+    syncError = null;
+    if (seq === writeSeq) {
+      setDirty(false);
+    }
+  }
+
   function applyPresenceConnection() {
     if (mode !== "firebase" || !roomRef || !activeRole || !connected) return;
     const roleRef = roomRef.child(`presence/${activeRole}`);
@@ -180,7 +224,6 @@ window.SyncEngine = (() => {
       syncError = null;
     }).catch(handleWriteError);
     myConnRef.onDisconnect().remove().catch(() => {});
-    roleRef.child("online").set(true).catch(() => {});
     roleRef.child("lastSeen").set(ts).catch(() => {});
     roleRef.child("lastSeen").onDisconnect().set(ts).catch(() => {});
   }
@@ -202,11 +245,15 @@ window.SyncEngine = (() => {
     }
     if (merged.sharedNotes) {
       patch.sharedNotes = merged.sharedNotes;
+      if (merged.notesMeta) patch.notesMeta = merged.notesMeta;
     }
     return patch;
   }
 
   function cleanupListeners() {
+    if (roomRef && activeRole && mode === "firebase") {
+      try { roomRef.child(`presence/${activeRole}/connections/${connId}`).remove().catch(() => {}); } catch (_) {}
+    }
     try { roomRef?.off(); } catch (_) {}
     try { connectedRef?.off(); } catch (_) {}
   }
@@ -214,15 +261,23 @@ window.SyncEngine = (() => {
   function init() {
     loadLocal();
     cleanupListeners();
+    initialSynced = false;
+    connected = false;
 
-    if (!onlineListenerBound) {
-      onlineListenerBound = true;
+    if (!networkListenersBound) {
+      networkListenersBound = true;
       window.addEventListener("online", () => {
         if (mode === "local" && isFirebaseConfigured()) {
           init();
-        } else if (mode === "firebase" && activeRole) {
-          applyPresenceConnection();
+        } else if (mode === "firebase") {
+          connected = true;
+          if (activeRole) applyPresenceConnection();
+          notify();
         }
+      });
+      window.addEventListener("offline", () => {
+        connected = false;
+        notify();
       });
     }
 
@@ -234,8 +289,8 @@ window.SyncEngine = (() => {
         }
         dbRef = window.firebase.database();
         const baseRoomId = cfg.roomId || "miguel-patri-ventisquero-2026";
-        const roomId = isAdminRoom() ? `${baseRoomId}-test` : baseRoomId;
-        roomRef = dbRef.ref(`rooms/${roomId}`);
+        activeRoomId = isAdminRoom() ? `${baseRoomId}-test` : baseRoomId;
+        roomRef = dbRef.ref(`rooms/${activeRoomId}`);
         mode = "firebase";
         syncError = null;
 
@@ -257,14 +312,12 @@ window.SyncEngine = (() => {
               const merged = mergeMonotone(state, remote);
               state = merged;
               saveLocal();
+              const seq = ++writeSeq;
               const patch = buildDeltaPatch(merged);
               if (Object.keys(patch).length > 0) {
-                roomRef.update(patch).then(() => {
-                  setDirty(false);
-                  syncError = null;
-                }).catch(handleWriteError);
+                roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
               } else {
-                setDirty(false);
+                clearWriteOk(seq);
               }
             } else {
               state = normalizeState(remote);
@@ -273,15 +326,12 @@ window.SyncEngine = (() => {
             notify();
           } else {
             const initData = normalizeState(state);
+            const seq = ++writeSeq;
             const patch = buildDeltaPatch(initData);
             if (Object.keys(patch).length > 0) {
-              roomRef.update(patch).then(() => {
-                setDirty(false);
-                syncError = null;
-              }).catch(handleWriteError);
+              roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
             } else {
-              setDirty(false);
-              syncError = null;
+              clearWriteOk(seq);
             }
           }
         }, (err) => {
@@ -329,6 +379,9 @@ window.SyncEngine = (() => {
     }
 
     saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+
     if (mode === "firebase" && roomRef) {
       if (dayMode === "dual-lock") {
         roomRef.child(`days/${key}`).transaction((cur) => {
@@ -353,21 +406,15 @@ window.SyncEngine = (() => {
             if (val && val.solved && val.discardId) {
               roomRef.child(`discardedMap/${val.discardId}`).set(true).catch(handleWriteError);
             }
-            syncError = null;
-            setDirty(false);
+            clearWriteOk(seq);
           }
         });
       } else if (decoded) {
         const patch = {};
         patch[`days/${key}`] = state.days[key];
         if (decoded.discardId) patch[`discardedMap/${decoded.discardId}`] = true;
-        roomRef.update(patch).then(() => {
-          syncError = null;
-          setDirty(false);
-        }).catch(handleWriteError);
+        roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
       }
-    } else {
-      setDirty(true);
     }
     notify();
   }
@@ -378,47 +425,98 @@ window.SyncEngine = (() => {
     if (cur >= 3) return;
     state.hintsUnlocked[key] = cur + 1;
     saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
 
     if (mode === "firebase" && roomRef) {
       roomRef.child(`hintsUnlocked/${key}`).transaction((remoteCur) => {
         return Math.min(3, (Number(remoteCur) || 0) + 1);
       }, (err) => {
         if (err) handleWriteError(err);
-        else { syncError = null; setDirty(false); }
+        else clearWriteOk(seq);
       });
-    } else {
-      setDirty(true);
     }
     notify();
   }
 
-  function saveNotes(text) {
+  function saveNotes(text, byRole) {
     state.sharedNotes = text;
+    state.notesMeta = { updatedBy: byRole || activeRole || "", updatedAt: Date.now() };
     saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
-      roomRef.update({ sharedNotes: text }).then(() => {
-        syncError = null;
-        setDirty(false);
-      }).catch(handleWriteError);
-    } else {
-      setDirty(true);
+      roomRef.update({
+        sharedNotes: text,
+        notesMeta: state.notesMeta
+      }).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
   }
 
-  function solveFinalVerdict(epilogue) {
+  function sendFieldDispatch(dayNum, role, text) {
+    const key = String(dayNum);
+    if (!state.fieldDispatch[key]) state.fieldDispatch[key] = {};
+    const entry = { text: String(text || "").trim(), at: Date.now() };
+    state.fieldDispatch[key][role] = entry;
+    saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+    if (mode === "firebase" && roomRef) {
+      const patch = {};
+      patch[`fieldDispatch/${key}/${role}`] = entry;
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
+    }
+    notify();
+  }
+
+  function saveSuspectNote(suspectId, role, stance, note) {
+    if (!state.suspectNotes[suspectId]) state.suspectNotes[suspectId] = {};
+    const entry = { stance: stance || "duda", note: String(note || "").trim(), at: Date.now() };
+    state.suspectNotes[suspectId][role] = entry;
+    saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+    if (mode === "firebase" && roomRef) {
+      const patch = {};
+      patch[`suspectNotes/${suspectId}/${role}`] = entry;
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
+    }
+    notify();
+  }
+
+  function setFinalProposal(proposal) {
+    state.finalProposal = proposal;
+    saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+    if (mode === "firebase" && roomRef) {
+      roomRef.update({ finalProposal: proposal }).then(() => clearWriteOk(seq)).catch(handleWriteError);
+    }
+    notify();
+  }
+
+  function solveFinalVerdict(epilogue, innocentIdsToDiscard = []) {
     state.finalVerdictSolved = true;
     state.finalEpilogue = epilogue || null;
+    state.finalProposal = null;
+    (innocentIdsToDiscard || []).forEach((id) => {
+      if (id && !state.discardedIds.includes(id)) state.discardedIds.push(id);
+      if (id) state.discardedMap[id] = true;
+    });
     saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+
     if (mode === "firebase" && roomRef) {
-      roomRef.update({
+      const patch = {
         finalVerdictSolved: true,
-        finalEpilogue: state.finalEpilogue
-      }).then(() => {
-        syncError = null;
-        setDirty(false);
-      }).catch(handleWriteError);
-    } else {
-      setDirty(true);
+        finalEpilogue: state.finalEpilogue,
+        finalProposal: null
+      };
+      (innocentIdsToDiscard || []).forEach((id) => {
+        if (id) patch[`discardedMap/${id}`] = true;
+      });
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
   }
@@ -427,19 +525,15 @@ window.SyncEngine = (() => {
     updaterFn(state);
     state = normalizeState(state);
     saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
       const patch = buildDeltaPatch(state);
       if (Object.keys(patch).length > 0) {
-        roomRef.update(patch).then(() => {
-          syncError = null;
-          setDirty(false);
-        }).catch(handleWriteError);
+        roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
       } else {
-        syncError = null;
-        setDirty(false);
+        clearWriteOk(seq);
       }
-    } else {
-      setDirty(true);
     }
     notify();
   }
@@ -453,13 +547,15 @@ window.SyncEngine = (() => {
     applyPresenceConnection();
   }
 
+  function setViewingDay(dayNum) {
+    if (mode !== "firebase" || !roomRef || !activeRole || !connected) return;
+    roomRef.child(`presence/${activeRole}/viewingDay`).set(dayNum || null).catch(() => {});
+  }
+
   function isRoleOnline(role) {
     const p = state.presence?.[role];
-    if (!p) return false;
-    if (p.connections && typeof p.connections === "object") {
-      return Object.keys(p.connections).length > 0;
-    }
-    return Boolean(p.online);
+    if (!p || !p.connections || typeof p.connections !== "object") return false;
+    return Object.keys(p.connections).length > 0;
   }
 
   function resetAll() {
@@ -473,6 +569,11 @@ window.SyncEngine = (() => {
       }).catch(handleWriteError);
     }
     notify();
+  }
+
+  function forceReconnect() {
+    init();
+    if (activeRole) markPresence(activeRole);
   }
 
   function subscribe(cb) {
@@ -489,7 +590,15 @@ window.SyncEngine = (() => {
   }
 
   function getStatus() {
-    return { mode, connected, syncError, initialSynced, isAdminRoom: isAdminRoom() };
+    return {
+      mode,
+      connected,
+      syncError,
+      initialSynced,
+      isAdminRoom: isAdminRoom(),
+      roomId: activeRoomId,
+      dirty: isDirty()
+    };
   }
 
   return {
@@ -499,10 +608,15 @@ window.SyncEngine = (() => {
     solveDayPart,
     unlockHint,
     saveNotes,
+    sendFieldDispatch,
+    saveSuspectNote,
+    setFinalProposal,
     solveFinalVerdict,
     markPresence,
+    setViewingDay,
     isRoleOnline,
     resetAll,
+    forceReconnect,
     getState,
     getMode,
     getStatus

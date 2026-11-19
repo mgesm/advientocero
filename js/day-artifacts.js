@@ -8,6 +8,21 @@
 
 window.DayArtifacts = (() => {
   function render(dayNum, role) {
+    const body = renderInner(dayNum, role);
+    if (!body) return "";
+    const unit = role === "miguel" ? "UOPJ · ANÁLISIS DIGITAL" : "UOPJ · CAMPO Y TESTIGOS";
+    const code = `IND-${String(dayNum).padStart(2, "0")}-${role === "miguel" ? "A" : "B"}`;
+    return `
+      <div class="artifact-envelope">
+        <div class="custody-strip">
+          <span><strong>${code}</strong> · ${unit} · ${String(dayNum).padStart(2, "0")} DIC</span>
+          <button type="button" class="btn btn-sm btn-ghost" data-zoom-artifact style="min-height:34px;padding:4px 9px;font-size:0.7rem;">Inspeccionar ampliado</button>
+        </div>
+        <div class="artifact-body">${body}</div>
+      </div>`;
+  }
+
+  function renderInner(dayNum, role) {
     const key = `${dayNum}-${role}`;
     switch (key) {
       // === DÍA 1 ===
@@ -18,21 +33,21 @@ window.DayArtifacts = (() => {
             <svg viewBox="0 0 320 190" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="12" y="12" width="296" height="166" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
               <!-- Brújula -->
-              <text x="160" y="27" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">NORTE (CHIMENEA)</text>
-              <text x="160" y="170" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">SUR (ACCESO HALL)</text>
-              <text x="22" y="98" fill="#94A3B8" font-family="monospace" font-size="9" transform="rotate(-90 22 98)">OESTE</text>
-              <text x="298" y="98" fill="#FDE68A" font-family="monospace" font-size="9" transform="rotate(90 298 98)">VENTANAL ESTE</text>
+              <text x="160" y="27" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">NORTE (CHIMENEA)</text>
+              <text x="160" y="170" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">SUR (ACCESO HALL)</text>
+              <text x="22" y="98" fill="#94A3B8" font-family="monospace" font-size="10.5" transform="rotate(-90 22 98)">OESTE</text>
+              <text x="298" y="98" fill="#FDE68A" font-family="monospace" font-size="10.5" transform="rotate(90 298 98)">VENTANAL ESTE</text>
               <!-- Abeto central -->
               <circle cx="160" cy="95" r="16" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.5"/>
-              <text x="160" y="98" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="8">ABETO</text>
+              <text x="160" y="98" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5">ABETO</text>
               <!-- 4 Mesas -->
-              <circle cx="160" cy="52" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="55" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="9">M1</text>
-              <circle cx="76" cy="95" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="76" y="98" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="9">M2</text>
-              <circle cx="160" cy="138" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="141" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="9">M3</text>
-              <circle cx="244" cy="95" r="15" fill="rgba(220,38,38,0.32)" stroke="#FBBF24" stroke-width="2"/><text x="244" y="98" text-anchor="middle" fill="#FEF3C7" font-family="monospace" font-size="9" font-weight="700">M4</text>
+              <circle cx="160" cy="52" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="55" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M1</text>
+              <circle cx="76" cy="95" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="76" y="98" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M2</text>
+              <circle cx="160" cy="138" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="141" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M3</text>
+              <circle cx="244" cy="95" r="15" fill="rgba(220,38,38,0.32)" stroke="#FBBF24" stroke-width="2"/><text x="244" y="98" text-anchor="middle" fill="#FEF3C7" font-family="monospace" font-size="10.5" font-weight="700">M4</text>
               <!-- Destello -->
               <polygon points="274,78 279,90 292,90 281,97 285,109 274,101 263,109 267,97 256,90 269,90" fill="#FDE047" opacity="0.85"/>
-              <text x="244" y="122" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8">FLASH 23:36</text>
+              <text x="244" y="122" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">FLASH 23:36</text>
             </svg>
           </div>
           <div class="cctv-frame">
@@ -88,6 +103,7 @@ window.DayArtifacts = (() => {
               <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">A: · −</div>
               <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">G: − − ·</div>
               <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">R: · − ·</div>
+              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">Z: − − · ·</div>
             </div>
             <div style="font-family:monospace;font-size:0.75rem;border-top:1px dashed #B45309;padding-top:6px;">
               <strong>RONDAS (Tomás Bermúdez):</strong> SOT = Ext. <strong>04</strong> · AZO = Ext. <strong>09</strong> · GAR = Ext. <strong>12</strong>
@@ -115,10 +131,10 @@ window.DayArtifacts = (() => {
             <div class="blueprint-cap">PLANO PLANTA 2 · ANTENAS RFID (23:30–23:45 H)</div>
             <svg viewBox="0 0 320 110" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="10" y="18" width="300" height="74" fill="none" stroke="#38BDF8" stroke-width="1.2"/>
-              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">PASILLO</text><text x="50" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:31 A1</text>
-              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">ASCENSOR</text><text x="120" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:34 B4</text>
-              <rect x="160" y="28" width="70" height="54" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.8"/><text x="195" y="50" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="8.5" font-weight="700">BIBLIOTECA</text><text x="195" y="64" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8.5">23:39 TAG-C7</text>
-              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="8.5">ESC. NORTE</text><text x="270" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="9">23:43 D2</text>
+              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">PASILLO</text><text x="50" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:31 A1</text>
+              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ASCENSOR</text><text x="120" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:34 B4</text>
+              <rect x="160" y="28" width="70" height="54" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.8"/><text x="195" y="50" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5" font-weight="700">BIBLIOTECA</text><text x="195" y="64" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">23:39 TAG-C7</text>
+              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ESC. NORTE</text><text x="270" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:43 D2</text>
             </svg>
           </div>`;
       case "5-patri":
@@ -176,7 +192,7 @@ window.DayArtifacts = (() => {
                 <circle cx="40" cy="40" r="34" fill="#0F172A" stroke="#FBBF24" stroke-width="2.5"/>
                 <line x1="40" y1="40" x2="24" y2="50" stroke="#F87171" stroke-width="3" stroke-linecap="round"/>
                 <line x1="40" y1="40" x2="62" y2="40" stroke="#FDE68A" stroke-width="2" stroke-linecap="round"/>
-                <text x="40" y="64" text-anchor="middle" fill="#FDA4AF" font-family="monospace" font-size="8">20:15 PARADO</text>
+                <text x="40" y="64" text-anchor="middle" fill="#FDA4AF" font-family="monospace" font-size="10.5">20:15 PARADO</text>
               </svg>
               <div style="font-size:0.77rem;color:#E2E8F0;line-height:1.45;">
                 <strong>Router Estudio Diseño:</strong><br>Tráfico continuo 23:25–23:52 h desde portátil de <strong>Diego Aranda (Ficha Nº 12)</strong>.
@@ -265,7 +281,7 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">NONOGRAMA 5x5 · PISTAS DE FILAS (ARRIBA → ABAJO)</div>
-            <div style="display:flex;justify-content:center;gap:8px;font-family:monospace;font-size:0.8rem;color:#FDE68A;">
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;font-family:monospace;font-size:0.8rem;color:#FDE68A;">
               <span>F1: 3</span><span>F2: 1,1</span><span>F3: 5</span><span>F4: 1,1</span><span>F5: 1,1</span>
             </div>
           </div>`;
@@ -310,7 +326,7 @@ window.DayArtifacts = (() => {
                 const hit = num === 204 || num === 205;
                 return `<rect x="${x}" y="30" width="38" height="44" rx="4" fill="${hit ? "rgba(0,229,255,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${hit ? "#00E5FF" : "#475569"}"/><text x="${x+19}" y="56" text-anchor="middle" fill="${hit ? "#67E8F9" : "#94A3B8"}" font-family="monospace" font-size="10">${num}</text>`;
               }).join("")}
-              <circle cx="117" cy="22" r="5" fill="#00E5FF"/><text x="117" y="14" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="8">REPETIDOR NORTE (203)</text>
+              <circle cx="117" cy="22" r="5" fill="#00E5FF"/><text x="117" y="14" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="10.5">REPETIDOR NORTE (203)</text>
             </svg>
           </div>`;
       case "14-patri":
@@ -323,7 +339,7 @@ window.DayArtifacts = (() => {
                 const hit = num === 205 || num === 206;
                 return `<rect x="${x}" y="30" width="38" height="44" rx="4" fill="${hit ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${hit ? "#FBBF24" : "#475569"}"/><text x="${x+19}" y="56" text-anchor="middle" fill="${hit ? "#FDE68A" : "#94A3B8"}" font-family="monospace" font-size="10">${num}</text>`;
               }).join("")}
-              <circle cx="285" cy="22" r="5" fill="#FBBF24"/><text x="255" y="14" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8">REPETIDOR SUR (207)</text>
+              <circle cx="285" cy="22" r="5" fill="#FBBF24"/><text x="255" y="14" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">REPETIDOR SUR (207)</text>
             </svg>
           </div>`;
 
@@ -341,8 +357,8 @@ window.DayArtifacts = (() => {
             <div class="blueprint-cap">CROQUIS ARQUITECTÓNICO · CHIMENEAS SALÓN</div>
             <svg viewBox="0 0 300 78" style="width:100%;display:block;background:#031019;border-radius:8px;">
               <rect x="20" y="14" width="260" height="50" fill="none" stroke="#FBBF24" stroke-width="1.2"/>
-              <rect x="55" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="77" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="9">CHIMENEA 1</text>
-              <rect x="201" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="223" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="9">CHIMENEA 2</text>
+              <rect x="55" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="77" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">CHIMENEA 1</text>
+              <rect x="201" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="223" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">CHIMENEA 2</text>
             </svg>
           </div>`;
 
@@ -380,13 +396,13 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">SUELA VIBRAM-ALPINE · ESCANEO EN NIEVE</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Desliza el calibre verde inferior hasta alinear el borde de la pisada en 25.5 cm.</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Desliza el calibre verde inferior hasta alinear el borde derecho de la pisada y lee la medida obtenida.</div>
           </div>`;
       case "18-patri":
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>GUARDABOTAS RECEPCIÓN · TAQUILLAS</span><span class="paper-stamp">30 NOV</span></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div class="rfid-cards-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
               <div style="padding:8px;border:1.5px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Hab. 107 · Adriana Orozco</strong><br>Talla <strong>37</strong> · Secas 23:32 h</div>
               <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Hab. 203 · Elena Valls</strong><br>Talla 38 · En taquilla</div>
             </div>
@@ -445,8 +461,8 @@ window.DayArtifacts = (() => {
             <div class="blueprint-cap">PLANO CAPILLA ALPINA · SENSOR PUERTA CP</div>
             <svg viewBox="0 0 300 66" style="width:100%;display:block;background:#031019;border-radius:8px;">
               <rect x="20" y="12" width="260" height="42" rx="6" fill="rgba(16,185,129,0.12)" stroke="#34D399"/>
-              <text x="150" y="31" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="9" font-weight="700">CAPILLA CP · PRESENCIA CONTINUA 23:25–23:50 H</text>
-              <text x="150" y="45" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="8">TERESA ALARCÓN · SIN SALIDAS DETECTADAS</text>
+              <text x="150" y="31" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5" font-weight="700">CAPILLA CP · PRESENCIA CONTINUA 23:25–23:50 H</text>
+              <text x="150" y="45" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">TERESA ALARCÓN · SIN SALIDAS DETECTADAS</text>
             </svg>
           </div>`;
 
@@ -494,14 +510,14 @@ window.DayArtifacts = (() => {
           <span class="badge badge-frost">CAREO FINAL · LABORATORIO AFIS (SOLO MIGUEL)</span>
           <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Han llegado los resultados del laboratorio sobre los <strong>${(remaining || []).length} finalistas</strong> (${names}). Contrasta estas trazas físicas con las coartadas de Patri:</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px;">
-            <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;">
+            <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/cuadro_electrico_final.jpg" data-lightbox-cap="MARCA 1: DISYUNTOR APAGÓN 23:38 · MARCA 2: LLAVE KEY-DIR-01" style="padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;cursor:pointer;">
               <img src="imagenes/evidence/cuadro_electrico_final.jpg" alt="Cuadro eléctrico 23:38 h" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
-              <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#FDE68A;">MARCA 1: DISYUNTOR APAGÓN 23:38 · MARCA 2: LLAVE KEY-DIR-01</div>
-            </div>
-            <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;">
+              <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#FDE68A;">[Toca para ampliar] MARCA 1: DISYUNTOR 23:38 · MARCA 2: KEY-DIR-01</div>
+            </button>
+            <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/afis_huellas_final.jpg" data-lightbox-cap="HUELLA LATENTE EN PALANCA: PATRÓN VERTICILO W-14 + FIBRA LANA AZUL MARINO" style="padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;cursor:pointer;">
               <img src="imagenes/evidence/afis_huellas_final.jpg" alt="Cotejo UV dactiloscópico AFIS" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
-              <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#67E8F9;">HUELLA LATENTE EN PALANCA: PATRÓN VERTICILO W-14 + FIBRA LANA AZUL MARINO</div>
-            </div>
+              <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#67E8F9;">[Toca para ampliar] HUELLA LATENTE: VERTICILO W-14 + FIBRA LANA</div>
+            </button>
           </div>
           <ul class="clue-list" style="font-size:0.8rem;">
             <li><strong>Álvaro Roldán (Suite 303):</strong> Dactiloscopia <em>Arco Simple (A-04)</em> — no coincide. Tarjeta RFID sin paso por Planta 1 entre 23:10 y 00:10 h; firma biométrica emitida en vivo desde IP local 10.14.3.303 a las 23:39:14 h.</li>
@@ -515,10 +531,10 @@ window.DayArtifacts = (() => {
       <div class="glass-card" style="padding:14px;margin-bottom:14px;border:var(--vg-border-gold);background:rgba(5,11,18,0.72);">
         <span class="badge badge-gold">CAREO FINAL · TOXICOLOGÍA Y TESTIGOS (SOLO PATRI)</span>
         <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Parte final de testigos y toxicología LC-MS sobre los <strong>${(remaining || []).length} sospechosos activos</strong> (${names}). Contrasta las coartadas reales con las huellas de Miguel:</p>
-        <div style="border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;margin-bottom:12px;">
+        <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/viales_toxicologia_final.jpg" data-lightbox-cap="BOLSA A: FRASCOS AMBAR DEL SPA (0,00 mg ALCALOIDES) · BOLSA B: TORUNDA COPA (ACONITINA)" style="width:100%;padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;margin-bottom:12px;cursor:pointer;display:block;">
           <img src="imagenes/evidence/viales_toxicologia_final.jpg" alt="Frascos incautados y torunda de copa" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
-          <div class="mono" style="padding:7px 9px;font-size:0.68rem;color:#FDE68A;">BOLSA A: FRASCOS AMBAR DEL SPA (0,00 mg ALCALOIDES) · BOLSA B: TORUNDA COPA (ACONITINA)</div>
-        </div>
+          <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#FDE68A;">[Toca para ampliar] BOLSA A: FRASCOS SPA (0,00 mg) · BOLSA B: TORUNDA (ACONITINA)</div>
+        </button>
         <ul class="clue-list" style="font-size:0.8rem;">
           <li><strong>Álvaro Roldán:</strong> Coartada <strong>CONFIRMADA</strong> — el director financiero en Madrid valida videollamada y firma facial en directo a las 23:39:14 h.</li>
           <li><strong>Paula Mendoza:</strong> Coartada <strong>CONFIRMADA</strong> — dos huéspedes (Hab. 203 y 205) certifican masaje continuo con ambos brazos entre 23:25 y 23:50 h. Sus frascos del Día 8 solo contenían romero y árnica inocuos.</li>

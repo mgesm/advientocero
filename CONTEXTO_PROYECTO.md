@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v2.0.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v2.5.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -13,7 +13,7 @@
 ### Pilares Fundamentales
 1. **Cooperación Asimétrica Bidireccional:** Al iniciar, cada jugador selecciona su terminal (`Miguel`: Análisis y Archivo · `Patri`: Campo y Testigos). En cada una de las 24 puertas, ambos móviles muestran mitades complementarias de la prueba; ninguno puede resolver el día en solitario sin comunicarse con su pareja.
 2. **Enigmas Breves y Tecnológicos (~5–15 min/día):** Combina la accesibilidad diaria de los calendarios de misterio en papel con herramientas interactivas estilo VESTIGO (linterna UV táctil, receptor Morse con Web Audio API, cuadrantes 4x4, rueda César, válvulas hidráulicas, nonograma 5x5, calibrador ABFO, ecualizador de frecuencias y escáner espectral).
-3. **1 Crimen · 25 Sospechosos · 24 Descartes:** Cada día resuelto exonera y tacha exactamente a 1 sospechoso del *Hotel El Mirador del Ventisquero*, dejando en pie al único culpable en Nochebuena junto con el sobre secreto del regalo real.
+3. **1 Crimen · 25 Sospechosos · 22 Descartes + 3 Finalistas:** A lo largo de las 24 puertas se resuelven 22 descartes únicos y 2 diligencias retenidas sin descarte, dejando en pie a 3 sospechosos finalistas en Nochebuena para el Careo Final justificado junto con el sobre secreto del regalo real.
 4. **Cero Spoilers:** Las respuestas se validan mediante hashes SHA-256 normalizados y las conclusiones diarias se decodifican en tiempo de ejecución desde cargas Base64-UTF8, permitiendo a Miguel probar la app antes del 1 de diciembre sin conocer al culpable.
 
 ---

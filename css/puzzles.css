@@ -162,13 +162,15 @@
 .uv-surface {
   position: relative;
   width: 100%;
-  min-height: 185px;
+  min-height: 196px;
   border-radius: var(--vg-radius-md);
   background: #060913;
   border: 1px dashed rgba(56, 189, 248, 0.35);
   overflow: hidden;
   touch-action: none;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -185,6 +187,7 @@
 }
 
 .uv-secret-layer {
+  --uv-r: 72px;
   position: absolute;
   inset: 0;
   display: flex;
@@ -192,10 +195,16 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: radial-gradient(circle 68px at var(--uv-x, 50%) var(--uv-y, 50%), rgba(0, 229, 255, 0.28), rgba(4, 7, 13, 0.98) 72%);
-  mask-image: radial-gradient(circle 72px at var(--uv-x, -999px) var(--uv-y, -999px), #000 45%, transparent 100%);
-  -webkit-mask-image: radial-gradient(circle 72px at var(--uv-x, -999px) var(--uv-y, -999px), #000 45%, transparent 100%);
+  background: radial-gradient(circle var(--uv-r) at var(--uv-x, 50%) var(--uv-y, 50%), rgba(0, 229, 255, 0.30), rgba(4, 7, 13, 0.98) 74%);
+  mask-image: radial-gradient(circle var(--uv-r) at var(--uv-x, -999px) var(--uv-y, -999px), #000 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle var(--uv-r) at var(--uv-x, -999px) var(--uv-y, -999px), #000 50%, transparent 100%);
   pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .uv-secret-layer {
+    --uv-r: 94px;
+  }
 }
 
 .uv-revealed-code {
@@ -237,10 +246,18 @@
 /* Grids (Sudoku 4x4 & Nonograma 5x5) */
 .sudoku-grid {
   display: grid;
-  grid-template-columns: repeat(4, 48px);
-  gap: 4px;
+  grid-template-columns: repeat(4, 50px);
+  gap: 5px;
   justify-content: center;
   margin: 12px auto;
+}
+
+.sudoku-cell:nth-child(4n+2) {
+  margin-right: 4px;
+}
+
+.sudoku-cell:nth-child(n+5):nth-child(-n+8) {
+  margin-bottom: 4px;
 }
 
 .sudoku-cell {
@@ -280,25 +297,53 @@
   gap: 10px;
 }
 
-.nono-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 42px);
-  gap: 5px;
+.nono-table {
+  border-collapse: separate;
+  border-spacing: 4px;
+}
+
+.nono-clue-col {
+  font-family: var(--vg-font-mono);
+  font-size: 0.7rem;
+  line-height: 1.15;
+  color: #93C5FD;
+  vertical-align: bottom;
+  text-align: center;
+  padding-bottom: 4px;
+}
+
+.nono-clue-row {
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  color: #93C5FD;
+  text-align: right;
+  padding-right: 6px;
+  white-space: nowrap;
 }
 
 .nono-cell {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 7px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(15, 23, 42, 0.72);
+  color: #94A3B8;
+  font-family: var(--vg-font-mono);
+  font-weight: 700;
   cursor: pointer;
 }
 
 .nono-cell.on {
   background: #FBBF24;
   border-color: #FEF3C7;
+  color: #050B12;
   box-shadow: 0 0 12px rgba(251, 191, 36, 0.45);
+}
+
+.nono-cell.x-mark {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(248, 113, 113, 0.42);
+  color: #FDA4AF;
 }
 
 /* Rueda César & Válvulas & Rayos X */
@@ -383,7 +428,12 @@
   font-family: var(--vg-font-mono);
   font-size: 16px;
   outline: none;
+  scroll-margin-bottom: 120px;
   transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.answer-card button[type="submit"] {
+  scroll-margin-bottom: 120px;
 }
 
 .adv-input:focus, .adv-select:focus, .adv-textarea:focus {
@@ -439,6 +489,7 @@
 /* Tabla lógica (Día 17) y otros helpers */
 .logic-matrix {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.78rem;
   margin: 8px 0;
@@ -457,11 +508,12 @@
 
 .logic-cell-btn {
   width: 100%;
-  min-height: 42px;
+  min-height: 44px;
   background: transparent;
   border: none;
-  color: #F8FAFC;
+  color: #CBD5E1;
   font-family: var(--vg-font-mono);
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
 }
@@ -486,15 +538,45 @@
 }
 
 .adv-range {
+  -webkit-appearance: none;
+  appearance: none;
   flex: 1;
   min-height: 44px;
+  background: transparent;
   accent-color: var(--adv-gold);
   cursor: pointer;
 }
 
+.adv-range::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
 .adv-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
   width: 28px;
   height: 28px;
+  margin-top: -10px;
+  border-radius: 50%;
+  background: var(--adv-gold);
+  border: 2px solid #FEF3C7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.adv-range::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.adv-range::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--adv-gold);
+  border: 2px solid #FEF3C7;
 }
 
 /* Sobre de Regalo Final */

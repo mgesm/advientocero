@@ -9,24 +9,24 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Adviento Cero">
-  <link rel="manifest" href="manifest.json?v=2.2.0">
-  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.2.0">
-  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.2.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.2.0">
+  <link rel="manifest" href="manifest.json?v=2.5.0">
+  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.5.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.5.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.5.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.2.0">
-  <link rel="stylesheet" href="css/advent-board.css?v=2.2.0">
-  <link rel="stylesheet" href="css/puzzles.css?v=2.2.0">
-  <link rel="stylesheet" href="css/artifacts.css?v=1.6.0">
-  <link rel="stylesheet" href="css/mobile-ux.css?v=2.2.0">
+  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.5.0">
+  <link rel="stylesheet" href="css/advent-board.css?v=2.5.0">
+  <link rel="stylesheet" href="css/puzzles.css?v=2.5.0">
+  <link rel="stylesheet" href="css/artifacts.css?v=2.5.0">
+  <link rel="stylesheet" href="css/mobile-ux.css?v=2.5.0">
 
-  <!-- Firebase Realtime Database Compat SDK (para GitHub Pages sin bundler) -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <!-- Firebase Realtime Database Compat SDK (cacheado localmente para arranque offline) -->
+  <script defer src="js/vendor/firebase-app-compat.js?v=2.5.0"></script>
+  <script defer src="js/vendor/firebase-database-compat.js?v=2.5.0"></script>
 </head>
 <body>
   <canvas id="snow-canvas" aria-hidden="true"></canvas>
@@ -56,6 +56,8 @@
     </div>
   </div>
 
+  <div id="adv-toast-host" class="adv-toast-host" aria-live="polite"></div>
+
   <!-- Contenedor Principal -->
   <div class="app-shell">
     <!-- Barra oculta de Modo Test / Admin -->
@@ -76,7 +78,10 @@
       <span>Calendario</span>
     </button>
     <button type="button" class="dock-item" data-tab="day">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="dock-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span id="day-dock-dot" class="dock-dot" aria-hidden="true"></span>
+      </span>
       <span>Día Activo</span>
     </button>
     <button type="button" class="dock-item" data-tab="suspects">
@@ -94,16 +99,16 @@
     <div id="adv-modal-body" class="adv-modal-sheet"></div>
   </div>
 
-  <script defer src="config/gift-config.js?v=2.2.0"></script>
-  <script defer src="config/firebase-config.js?v=2.2.0"></script>
-  <script defer src="data/case-lore.js?v=2.2.0"></script>
-  <script defer src="data/suspects.js?v=2.2.0"></script>
-  <script defer src="data/days.js?v=2.4.0"></script>
-  <script defer src="js/audio-fx.js?v=2.2.0"></script>
-  <script defer src="js/date-gate.js?v=2.2.0"></script>
-  <script defer src="js/sync-engine.js?v=2.4.0"></script>
-  <script defer src="js/puzzle-engine.js?v=2.2.0"></script>
-  <script defer src="js/day-artifacts.js?v=2.4.0"></script>
-  <script defer src="js/app.js?v=2.4.0"></script>
+  <script defer src="config/gift-config.js?v=2.5.0"></script>
+  <script defer src="config/firebase-config.js?v=2.5.0"></script>
+  <script defer src="data/case-lore.js?v=2.5.0"></script>
+  <script defer src="data/suspects.js?v=2.5.0"></script>
+  <script defer src="data/days.js?v=2.5.0"></script>
+  <script defer src="js/audio-fx.js?v=2.5.0"></script>
+  <script defer src="js/date-gate.js?v=2.5.0"></script>
+  <script defer src="js/sync-engine.js?v=2.5.0"></script>
+  <script defer src="js/puzzle-engine.js?v=2.5.0"></script>
+  <script defer src="js/day-artifacts.js?v=2.5.0"></script>
+  <script defer src="js/app.js?v=2.5.0"></script>
 </body>
 </html>

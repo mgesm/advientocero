@@ -121,12 +121,13 @@
 
 .stats-strip {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
 .stat-pill {
-  padding: 10px 12px;
+  min-width: 0;
+  padding: 10px 10px;
   border-radius: var(--vg-radius-md);
   background: rgba(255, 255, 255, 0.035);
   border: var(--vg-border-specular);
@@ -168,26 +169,37 @@
 /* Rejilla de 24 Puertas de Adviento */
 .advent-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+}
+
+@media (max-width: 380px) {
+  .advent-grid {
+    gap: 8px;
+  }
+  .door-card {
+    min-height: 102px;
+    padding: 9px;
+  }
 }
 
 @media (min-width: 560px) {
   .advent-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
   }
 }
 
 @media (min-width: 900px) {
   .advent-grid {
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 14px;
   }
 }
 
 .door-card {
   position: relative;
+  min-width: 0;
   min-height: 112px;
   padding: 12px;
   border-radius: 14px;
@@ -211,9 +223,11 @@
   pointer-events: none;
 }
 
-.door-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(251, 191, 36, 0.42);
+@media (hover: hover) and (pointer: fine) {
+  .door-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(251, 191, 36, 0.42);
+  }
 }
 
 .door-card:active {
@@ -280,9 +294,9 @@
 
 .door-status-txt {
   font-family: var(--vg-font-mono);
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--vg-text-muted);
 }
 
@@ -290,7 +304,7 @@
 .door-card.state-locked {
   background: rgba(15, 23, 42, 0.68);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  cursor: not-allowed;
+  cursor: pointer;
 }
 
 .door-card.state-locked .door-num {
@@ -391,10 +405,9 @@
 /* Tablero de 25 Sospechosos */
 .suspect-filters {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .filter-chip {
@@ -430,23 +443,24 @@
 
 @media (min-width: 600px) {
   .suspects-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 960px) {
   .suspects-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .suspect-card {
   width: 100%;
+  min-width: 0;
   text-align: left;
   font-family: inherit;
   color: inherit;
   display: grid;
-  grid-template-columns: 78px 1fr;
+  grid-template-columns: 78px minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
   border-radius: var(--vg-radius-lg);
@@ -460,15 +474,17 @@
   display: none;
 }
 
-.suspect-card:hover {
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .suspect-card:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+  }
 }
 
 .suspect-card.is-discarded {
-  opacity: 0.56;
-  border-color: rgba(248, 113, 113, 0.28);
-  background: rgba(5, 11, 18, 0.65);
+  opacity: 0.85;
+  border-color: rgba(248, 113, 113, 0.34);
+  background: rgba(5, 11, 18, 0.72);
 }
 
 .suspect-card.is-culprit-final {

@@ -166,46 +166,33 @@
 
 .bank-row {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  padding: 5px 0;
+  gap: 6px 12px;
+  padding: 6px 0;
   border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
 }
 
-.safe-keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  max-width: 210px;
-  margin: 10px auto 0;
-}
-
-.safe-key {
-  padding: 10px;
+.custody-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
   border-radius: 8px;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(251, 191, 36, 0.35);
-  color: #FEF3C7;
+  background: rgba(5, 11, 18, 0.72);
+  border: 1px solid rgba(251, 191, 36, 0.24);
   font-family: var(--vg-font-mono);
-  font-weight: 700;
-  cursor: pointer;
+  font-size: 0.72rem;
+  color: #CBD5E1;
 }
 
-.safe-key:active {
-  background: rgba(251, 191, 36, 0.25);
-}
-
-.safe-screen {
-  max-width: 210px;
-  margin: 0 auto 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: #020617;
-  border: 1px solid #38BDF8;
-  color: #67E8F9;
-  font-family: var(--vg-font-mono);
-  font-size: 1.05rem;
-  letter-spacing: 0.28em;
-  text-align: center;
+@media (max-width: 420px) {
+  .rfid-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .cctv-frame {
