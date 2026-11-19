@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.8.0";
+  const APP_VERSION = "v2.9.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -814,7 +814,7 @@
                 <input id="day-answer-input" type="text" class="adv-input" value="${esc(draftVal)}" placeholder="${esc(dayObj.jointInput.placeholder || "")}" ${attrs} required>
                 <div class="mono" style="font-size:0.68rem;color:var(--vg-text-muted);">Mayúsculas, minúsculas y tildes se normalizan automáticamente.</div>
               </div>
-              <button type="submit" class="btn btn-primary" style="width:100%;">Validar y Descartar Sospechoso</button>
+              <button type="submit" class="btn btn-primary" style="width:100%;">Validar Indicio del Día</button>
             </form>
             <div id="day-feedback"></div>
           </div>`;
@@ -1827,7 +1827,7 @@
       <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
         <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="82" height="82" style="width:82px;height:82px;border-radius:14px;object-fit:cover;border:var(--vg-border-specular-strong);">
         <div>
-          <span class="badge ${isCulprit ? "badge-gold" : (isOut || isExonerated) ? "badge-crimson" : "badge-gold"}">${isCulprit ? "CULPABLE" : (isOut || isExonerated) ? "DESCARTADO" : `FICHA #${esc(s.num)}`}</span>
+          <span class="badge ${isCulprit ? "badge-crimson" : isExonerated && !isOut ? "badge-pine" : isOut ? "badge-crimson" : "badge-gold"}">${isCulprit ? "CULPABLE" : isExonerated && !isOut ? "EXONERADO" : isOut ? "DESCARTADO" : `FICHA #${esc(s.num)}`}</span>
           <h3 id="adv-modal-title" style="font-size:1.25rem;margin-top:6px;">${esc(s.name)}</h3>
           <div style="font-size:0.82rem;color:var(--vg-text-secondary);">${esc(s.role)} · ${esc(s.room)}</div>
         </div>
