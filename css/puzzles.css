@@ -398,15 +398,95 @@
 
 .cipher-output {
   font-family: var(--vg-font-mono);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-align: center;
+  white-space: pre-line;
+  line-height: 1.75;
   padding: 12px;
   border-radius: var(--vg-radius-sm);
   background: rgba(0, 229, 255, 0.08);
   border: var(--vg-border-frost);
   color: #A5F3FC;
+}
+
+.day-focus-suspect {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: var(--vg-radius-md);
+  border: 1px solid rgba(56, 189, 248, 0.34);
+  background: rgba(15, 23, 42, 0.72);
+  color: var(--vg-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.day-focus-suspect img {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+}
+
+.sudoku-cell.has-notes {
+  font-size: 0.62rem;
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+  color: #7DD3FC;
+  font-weight: 600;
+  white-space: pre-line;
+}
+
+.nono-clue-btn {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  border: 1px dashed rgba(147, 197, 253, 0.45);
+  background: rgba(15, 23, 42, 0.65);
+  color: #93C5FD;
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.widget-scratchpad {
+  margin-top: 10px;
+  border-radius: var(--vg-radius-md);
+  border: var(--vg-border-specular);
+  background: rgba(2, 6, 14, 0.56);
+  padding: 8px 12px;
+}
+
+.widget-scratchpad summary {
+  cursor: pointer;
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  color: #94A3B8;
+  font-weight: 600;
+  list-style: none;
+}
+
+.widget-scratchpad summary::-webkit-details-marker { display: none; }
+
+.briefing-frame.briefing-fullscreen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  z-index: 9999 !important;
+  border-radius: 0 !important;
+  background: #040907 !important;
 }
 
 .valve-row {

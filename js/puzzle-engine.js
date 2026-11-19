@@ -184,15 +184,22 @@ window.PuzzleEngine = (() => {
             } else if (val > 0) {
               cells += `<div class="sudoku-cell given" style="display:grid;place-items:center;">${val}</div>`;
             } else {
-              cells += `<button type="button" class="sudoku-cell ${isTarget ? "target-cell" : ""}" data-action="cycle-sudoku" data-r="${r}" data-c="${c}">·</button>`;
+              cells += `<button type="button" class="sudoku-cell ${isTarget ? "target-cell" : ""}" data-action="cycle-sudoku" data-r="${r}" data-c="${c}" data-notes="">·</button>`;
             }
           }
         }
         return `
           <div class="widget-panel">
-            <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);text-align:center;">Toca tus casillas vacías (1–4). Las marcadas en cian son tu objetivo.</div>
+            <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);text-align:center;">Toca tus casillas vacías (1–4) o usa Modo Lápiz para anotar candidatos. Las casillas en cian son tu objetivo.</div>
             <div class="sudoku-grid">${cells}</div>
-            <div style="text-align:center;">
+            <div id="sudoku-pencil-bar-${dayNum}" style="display:none;margin:0 auto 10px;max-width:260px;padding:8px;border-radius:10px;border:1px solid rgba(56,189,248,0.4);background:rgba(56,189,248,0.08);text-align:center;">
+              <div class="mono" style="font-size:0.68rem;color:#7DD3FC;margin-bottom:6px;" id="sudoku-pencil-target-${dayNum}">Selecciona una casilla vacía para anotar candidatos:</div>
+              <div style="display:flex;justify-content:center;gap:6px;">
+                ${[1,2,3,4].map((n) => `<button type="button" class="btn btn-sm btn-frost" data-action="toggle-sudoku-note" data-note="${n}" data-day="${dayNum}" style="min-width:44px;">${n}</button>`).join("")}
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-frost" data-action="toggle-sudoku-pencil" data-day="${dayNum}" aria-pressed="false">Lápiz: OFF</button>
               <button type="button" class="btn btn-sm btn-ghost" data-action="reset-board" data-board="sudoku4">Reiniciar borrador</button>
             </div>
           </div>`;
@@ -206,7 +213,7 @@ window.PuzzleEngine = (() => {
               <button type="button" class="btn btn-sm" data-action="caesar-step" data-delta="-1" data-day="${dayNum}">− 1</button>
               <button type="button" class="btn btn-sm btn-frost" data-action="caesar-step" data-delta="1" data-day="${dayNum}">+ 1</button>
             </div>
-            <div class="cipher-output" id="caesar-out-${dayNum}" data-cipher="${escapeHtml(widget.cipherText)}" data-shift="0">${escapeHtml(widget.cipherText)}</div>
+            <div class="cipher-output" id="caesar-out-${dayNum}" data-cipher="${escapeHtml(widget.cipherText)}" data-shift="0">${escapeHtml(String(widget.cipherText || "").replace(/\s*·\s*/g, "\n"))}</div>
           </div>`;
 
       case "scene-zoom":
@@ -245,16 +252,29 @@ window.PuzzleEngine = (() => {
         const colClues = widget.clues?.cols || [];
         const rowClues = widget.clues?.rows || [];
         const hasClues = colClues.length === 5 && rowClues.length === 5;
+        const renderClueHeader = (axis, idx, arr) => {
+          const txt = arr.join(axis === "col" ? "<br>" : " ");
+          if (arr.length === 1 && String(arr[0]) === "?") {
+            return `<button type="button" class="nono-clue-btn" data-action="edit-nono-clue" data-axis="${axis}" data-idx="${idx}" data-day="${dayNum}" title="Anotar pista dictada">?</button>`;
+          }
+          return txt;
+        };
         return `
           <div class="widget-panel">
             <div class="nonogram-wrap">
-              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);">BORRADOR TÁCTIL 5x5 (toca: relleno / X / vacío)</div>
+              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);text-align:center;">BORRADOR TÁCTIL 5x5 (toca celda: relleno / X / vacío · toca «?» para anotar pistas)</div>
+              <div id="nono-clue-editor-${dayNum}" style="display:none;width:100%;max-width:290px;">
+                <form data-nono-clue-form="${dayNum}" style="display:flex;gap:6px;align-items:center;">
+                  <input type="text" id="nono-clue-inp-${dayNum}" class="adv-input" placeholder="Ej. 1,1" style="min-height:38px;padding:6px 10px;font-size:16px;" autocomplete="off">
+                  <button type="submit" class="btn btn-sm btn-frost">Fijar</button>
+                </form>
+              </div>
               <table class="nono-table" id="nono-grid-${dayNum}">
-                ${hasClues ? `<thead><tr><th></th>${colClues.map((c) => `<th class="nono-clue-col">${c.join("<br>")}</th>`).join("")}</tr></thead>` : ""}
+                ${hasClues ? `<thead><tr><th></th>${colClues.map((c, idx) => `<th class="nono-clue-col">${renderClueHeader("col", idx, c)}</th>`).join("")}</tr></thead>` : ""}
                 <tbody>
                   ${Array.from({ length: 5 }).map((_, r) => `
                     <tr>
-                      ${hasClues ? `<th class="nono-clue-row">${rowClues[r].join(" ")}</th>` : ""}
+                      ${hasClues ? `<th class="nono-clue-row">${renderClueHeader("row", r, rowClues[r])}</th>` : ""}
                       ${Array.from({ length: 5 }).map((__, c) => {
                         const idxCell = r * 5 + c;
                         return `<td><button type="button" class="nono-cell" data-action="toggle-nono" data-idx="${idxCell}" aria-label="Celda fila ${r + 1} columna ${c + 1}"></button></td>`;
@@ -405,10 +425,18 @@ window.PuzzleEngine = (() => {
     if (!container) return null;
     const data = {};
     const sudokus = container.querySelectorAll('[data-action="cycle-sudoku"]');
-    if (sudokus.length) data.sudoku = Array.from(sudokus).map((b) => b.textContent.trim());
+    if (sudokus.length) {
+      data.sudoku = Array.from(sudokus).map((b) => (b.classList.contains("has-notes") ? "·" : b.textContent.trim()));
+      data.sudokuNotes = Array.from(sudokus).map((b) => b.dataset.notes || "");
+    }
 
     const nonos = container.querySelectorAll('[data-action="toggle-nono"]');
     if (nonos.length) data.nonogram = Array.from(nonos).map((b) => (b.classList.contains("on") ? 1 : b.classList.contains("x-mark") ? 2 : 0));
+
+    const clueBtns = container.querySelectorAll('[data-action="edit-nono-clue"]');
+    if (clueBtns.length) {
+      data.nonoClues = Array.from(clueBtns).map((b) => ({ axis: b.dataset.axis, idx: Number(b.dataset.idx), val: b.dataset.custom || "" }));
+    }
 
     const logics = container.querySelectorAll('[data-action="cycle-logic"]');
     if (logics.length) data.logic = Array.from(logics).map((b) => b.textContent.trim());
@@ -435,7 +463,19 @@ window.PuzzleEngine = (() => {
     if (!container || !data) return;
     if (Array.isArray(data.sudoku)) {
       const cells = container.querySelectorAll('[data-action="cycle-sudoku"]');
-      cells.forEach((b, i) => { if (data.sudoku[i]) b.textContent = data.sudoku[i]; });
+      cells.forEach((b, i) => {
+        const val = data.sudoku[i] || "·";
+        const notes = Array.isArray(data.sudokuNotes) ? (data.sudokuNotes[i] || "") : "";
+        if (val !== "·") {
+          b.classList.remove("has-notes");
+          b.dataset.notes = "";
+          b.textContent = val;
+        } else if (notes) {
+          b.dataset.notes = notes;
+          b.classList.add("has-notes");
+          b.textContent = notes.split(",").join(" ");
+        }
+      });
     }
     if (Array.isArray(data.nonogram)) {
       const cells = container.querySelectorAll('[data-action="toggle-nono"]');
@@ -444,6 +484,15 @@ window.PuzzleEngine = (() => {
         b.textContent = "";
         if (data.nonogram[i] === 1) b.classList.add("on");
         else if (data.nonogram[i] === 2) { b.classList.add("x-mark"); b.textContent = "X"; }
+      });
+    }
+    if (Array.isArray(data.nonoClues)) {
+      data.nonoClues.forEach((item) => {
+        const b = container.querySelector(`[data-action="edit-nono-clue"][data-axis="${item.axis}"][data-idx="${item.idx}"]`);
+        if (b && item.val) {
+          b.dataset.custom = item.val;
+          b.innerHTML = item.axis === "col" ? escapeHtml(item.val).split(",").join("<br>") : escapeHtml(item.val).split(",").join(" ");
+        }
       });
     }
     if (Array.isArray(data.logic)) {
@@ -463,7 +512,8 @@ window.PuzzleEngine = (() => {
         out.dataset.shift = String(data.caesarShift);
         if (lbl) lbl.textContent = String(data.caesarShift);
         const raw = out.dataset.cipher || "";
-        out.textContent = raw.replace(/[A-Z]/g, (ch) => String.fromCharCode(((ch.charCodeAt(0) - 65 - data.caesarShift + 26) % 26) + 65));
+        const dec = raw.replace(/[A-Z]/g, (ch) => String.fromCharCode(((ch.charCodeAt(0) - 65 - data.caesarShift + 26) % 26) + 65));
+        out.textContent = dec.replace(/\s*·\s*/g, "\n");
       }
     }
     if (Array.isArray(data.valves)) {
@@ -559,7 +609,33 @@ window.PuzzleEngine = (() => {
       vp.addEventListener("pointercancel", () => { dragging = false; });
     });
 
+    let activePencilCell = null;
+    let pencilMode = false;
+    let activeNonoClueBtn = null;
+
     container.addEventListener("submit", (e) => {
+      const clueForm = e.target.closest("[data-nono-clue-form]");
+      if (clueForm) {
+        e.preventDefault();
+        window.AudioFX.click();
+        const day = clueForm.dataset.nonoClueForm;
+        const inp = document.getElementById(`nono-clue-inp-${day}`);
+        const ed = document.getElementById(`nono-clue-editor-${day}`);
+        if (activeNonoClueBtn && inp) {
+          const clean = inp.value.trim().replace(/\s+/g, ",").replace(/[^0-9,]/g, "");
+          activeNonoClueBtn.dataset.custom = clean;
+          if (clean) {
+            activeNonoClueBtn.innerHTML = activeNonoClueBtn.dataset.axis === "col" ? escapeHtml(clean).split(",").join("<br>") : escapeHtml(clean).split(",").join(" ");
+          } else {
+            activeNonoClueBtn.textContent = "?";
+          }
+          emitChange();
+        }
+        if (ed) ed.style.display = "none";
+        activeNonoClueBtn = null;
+        return;
+      }
+
       const form = e.target.closest("[data-manual-form]");
       if (!form) return;
       e.preventDefault();
@@ -599,12 +675,59 @@ window.PuzzleEngine = (() => {
         }).finally(() => {
           btn.disabled = false;
         });
+      } else if (act === "toggle-sudoku-pencil") {
+        window.AudioFX.click();
+        pencilMode = !pencilMode;
+        btn.textContent = `Lápiz: ${pencilMode ? "ON" : "OFF"}`;
+        btn.setAttribute("aria-pressed", pencilMode ? "true" : "false");
+        btn.classList.toggle("btn-gold", pencilMode);
+        const bar = document.getElementById(`sudoku-pencil-bar-${btn.dataset.day}`);
+        if (bar) bar.style.display = pencilMode ? "block" : "none";
+      } else if (act === "toggle-sudoku-note") {
+        if (!activePencilCell) return;
+        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        const digit = btn.dataset.note;
+        const curNotes = (activePencilCell.dataset.notes || "").split(",").filter(Boolean);
+        const pos = curNotes.indexOf(digit);
+        if (pos >= 0) curNotes.splice(pos, 1);
+        else curNotes.push(digit);
+        curNotes.sort();
+        activePencilCell.dataset.notes = curNotes.join(",");
+        if (curNotes.length) {
+          activePencilCell.classList.add("has-notes");
+          activePencilCell.textContent = curNotes.join(" ");
+        } else {
+          activePencilCell.classList.remove("has-notes");
+          activePencilCell.textContent = "·";
+        }
+        emitChange();
       } else if (act === "cycle-sudoku") {
         window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        if (pencilMode) {
+          activePencilCell = btn;
+          container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => { c.style.outline = c === btn ? "2px solid #FBBF24" : ""; });
+          const pLbl = container.querySelector('[id^="sudoku-pencil-target-"]');
+          if (pLbl) pLbl.textContent = `Casilla F${Number(btn.dataset.r) + 1}C${Number(btn.dataset.c) + 1} · Toca candidatos:`;
+          return;
+        }
+        btn.classList.remove("has-notes");
+        btn.dataset.notes = "";
         const seq = ["·", "1", "2", "3", "4"];
         const cur = seq.indexOf(btn.textContent.trim());
         btn.textContent = seq[(cur + 1) % seq.length];
         emitChange();
+      } else if (act === "edit-nono-clue") {
+        window.AudioFX.click();
+        activeNonoClueBtn = btn;
+        const day = btn.dataset.day;
+        const ed = document.getElementById(`nono-clue-editor-${day}`);
+        const inp = document.getElementById(`nono-clue-inp-${day}`);
+        if (ed && inp) {
+          ed.style.display = "block";
+          inp.placeholder = `Ej. 1,1 (${btn.dataset.axis === "col" ? "Columna" : "Fila"} ${Number(btn.dataset.idx) + 1})`;
+          inp.value = btn.dataset.custom || "";
+          inp.focus();
+        }
       } else if (act === "caesar-step") {
         window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
         const day = btn.dataset.day;
@@ -620,7 +743,7 @@ window.PuzzleEngine = (() => {
           const code = ch.charCodeAt(0) - 65;
           return String.fromCharCode(((code - shift + 26) % 26) + 65);
         });
-        out.textContent = decoded;
+        out.textContent = decoded.replace(/\s*·\s*/g, "\n");
         emitChange();
       } else if (act === "toggle-zoom") {
         window.AudioFX.click();
@@ -678,9 +801,16 @@ window.PuzzleEngine = (() => {
         window.AudioFX.click();
         const board = btn.dataset.board;
         if (board === "sudoku4") {
-          container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => { c.textContent = "·"; });
+          activePencilCell = null;
+          container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => {
+            c.classList.remove("has-notes");
+            c.dataset.notes = "";
+            c.style.outline = "";
+            c.textContent = "·";
+          });
         } else if (board === "nonogram") {
           container.querySelectorAll('[data-action="toggle-nono"]').forEach((c) => { c.classList.remove("on", "x-mark"); c.textContent = ""; });
+          container.querySelectorAll('[data-action="edit-nono-clue"]').forEach((c) => { c.dataset.custom = ""; c.textContent = "?"; });
         } else if (board === "logic3x3") {
           container.querySelectorAll('[data-action="cycle-logic"]').forEach((c) => { c.textContent = "·"; c.style.color = "#CBD5E1"; });
         }

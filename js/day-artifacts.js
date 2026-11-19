@@ -65,12 +65,6 @@ window.DayArtifacts = (() => {
       // === DÍA 2 ===
       case "2-miguel":
         return `
-          <div class="blueprint-box">
-            <div class="blueprint-cap">MUESTRA #B-02 · BANDEJA DE CRISTAL DE BARRA</div>
-            <p style="font-size:0.76rem;color:#CBD5E1;">Soporte recogido junto al grifo de cerveza. Inspecciona toda la bandeja con el haz UV 365 nm inferior para leer tanto la serie como la nota técnica de inversión.</p>
-          </div>`;
-      case "2-patri":
-        return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>CUADRANTE NOCTURNO · BARRA PRINCIPAL</span><span class="paper-stamp">30 NOV</span></div>
             <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
@@ -80,6 +74,12 @@ window.DayArtifacts = (() => {
               <tr style="background:#FEE2E2;font-weight:700;"><td>#5</td><td>Nicolás Ferrer</td><td>23:34–23:44 · Cámara de hielo</td></tr>
               <tr><td>#8</td><td>Mozo Almacén</td><td>Turno diurno (finalizado 19:00)</td></tr>
             </table>
+          </div>`;
+      case "2-patri":
+        return `
+          <div class="blueprint-box">
+            <div class="blueprint-cap">MUESTRA #B-02 · BANDEJA DE CRISTAL DE BARRA</div>
+            <p style="font-size:0.76rem;color:#CBD5E1;">Soporte recogido junto al grifo de cerveza. Inspecciona toda la bandeja con el haz UV 365 nm inferior para leer tanto la serie como la nota técnica de inversión.</p>
           </div>`;
 
       // === DÍA 3 ===
@@ -148,14 +148,6 @@ window.DayArtifacts = (() => {
       // === DÍA 6 ===
       case "6-miguel":
         return `
-          <div class="paper-ledger" style="margin-bottom:10px;">
-            <div class="paper-ledger-head"><span>TRES LINEAS CIFRADAS · PERCHERO</span><span class="paper-stamp">CIFRADO</span></div>
-            <div class="mono" style="font-size:0.95rem;font-weight:700;letter-spacing:0.12em;text-align:center;padding:6px;color:#7F1D1D;">
-              BJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU
-            </div>
-          </div>`;
-      case "6-patri":
-        return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>PARTITURA Y REGLA ACÚSTICA · GALA</span><span class="paper-stamp">CLAVE CÉSAR</span></div>
             <svg viewBox="0 0 300 72" style="width:100%;display:block;background:#FFFDF7;border-radius:6px;margin-bottom:6px;">
@@ -177,6 +169,14 @@ window.DayArtifacts = (() => {
               <polygon points="272,14 274,19 279,20 275,23 276,28 272,26 268,28 269,23 265,20 270,19" fill="#D97706"/>
             </svg>
             <div style="font-size:0.73rem;"><strong>Regla del maestro de capilla:</strong> Desplazamiento César = (Notas negras) + (Estrellas doradas).</div>
+          </div>`;
+      case "6-patri":
+        return `
+          <div class="paper-ledger" style="margin-bottom:10px;">
+            <div class="paper-ledger-head"><span>TRES LINEAS CIFRADAS · PERCHERO</span><span class="paper-stamp">CIFRADO</span></div>
+            <div class="mono" style="font-size:0.95rem;font-weight:700;letter-spacing:0.12em;text-align:center;padding:6px;line-height:1.6;color:#7F1D1D;">
+              BJUXW WXACN<br>LJVNARWX BDA<br>CNJCAX LNWCAJU
+            </div>
           </div>`;
 
       // === DÍA 7 ===
@@ -407,17 +407,17 @@ window.DayArtifacts = (() => {
       // === DÍA 16 ===
       case "16-miguel":
         return `
-          <div class="blueprint-box">
-            <div class="blueprint-cap">ESPECTRO INMARSAT · SUITE 305 (BARRER 200–740 Hz)</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Hay 3 portadoras activas ocultas bajo la estática. Observa el medidor S-Meter inferior hasta sintonizar todas y filtra la hora real con Patri.</div>
-          </div>`;
-      case "16-patri":
-        return `
           <div class="bank-slip">
             <div style="color:#67E8F9;font-weight:700;margin-bottom:6px;">INFORME ANTENA INMARSAT · SUITE 305</div>
             <div class="bank-row"><span>LLAMADA BREVE 23:12</span><span>Descartada (buzón de prueba)</span></div>
             <div class="bank-row"><span>TRAMO REAL 23:35–23:48</span><span>Canales válidos: SAT-A y SAT-B</span></div>
             <div class="bank-row"><span>FORMATO CÓDIGO</span><span>Palabra SAT-A + Token SAT-B invertido</span></div>
+          </div>`;
+      case "16-patri":
+        return `
+          <div class="blueprint-box">
+            <div class="blueprint-cap">ESPECTRO INMARSAT · SUITE 305 (BARRER 200–740 Hz)</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Hay 3 portadoras activas ocultas bajo la estática. Observa el medidor S-Meter inferior hasta sintonizar todas y filtra la hora real con Miguel.</div>
           </div>`;
 
       // === DÍA 17 ===
@@ -432,21 +432,24 @@ window.DayArtifacts = (() => {
       // === DÍA 18 ===
       case "18-miguel":
         return `
-          <div class="blueprint-box">
-            <div class="blueprint-cap">SUELA VIBRAM-ALPINE (ALP-40) · BIOMECÁNICA</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Mide la longitud total exterior con el calibre inferior. Regla técnica de goma perimetral: <strong>L_pie = L_suela - 1.5 cm</strong>.</div>
-          </div>`;
-      case "18-patri":
-        return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>TABLA HORMA INTERIOR + GUARDABOTAS</span><span class="paper-stamp">30 NOV</span></div>
-            <div class="mono" style="font-size:0.71rem;margin-bottom:8px;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">
-              <strong>L_pie interno:</strong> 23.5 cm=T.37 · 24.0=T.38 · 24.5=T.39 · 25.0=T.40 · 25.5=T.41 · 26.5=T.42
+            <div class="paper-ledger-head"><span>REGLA BIOMÉTRICA Y TAQUILLA GUARDABOTAS</span><span class="paper-stamp">30 NOV</span></div>
+            <div class="mono" style="font-size:0.72rem;margin-bottom:8px;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">
+              <strong>Margen Vibram ALP-40:</strong> L_pie = L_suela - <strong>1.5 cm</strong>
             </div>
             <div class="rfid-cards-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
               <div style="padding:8px;border:1.5px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Hab. 107 · Adriana Orozco</strong><br>Talla <strong>37</strong> · Secas 23:32 h</div>
               <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Hab. 203 · Elena Valls</strong><br>Talla 38 · En taquilla</div>
             </div>
+          </div>`;
+      case "18-patri":
+        return `
+          <div class="blueprint-box">
+            <div class="blueprint-cap">CALIBRE ABFO + TABLA DE HORMA INTERNA</div>
+            <div class="mono" style="font-size:0.71rem;margin-bottom:6px;color:#FDE68A;">
+              <strong>L_pie interno:</strong> 23.5=T.37 · 24.0=T.38 · 24.5=T.39 · 25.0=T.40 · 25.5=T.41 · 26.5=T.42
+            </div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Mide la suela en el calibre inferior, aplica la resta biomecánica que te dé Miguel y busca la talla europea exacta en esta tabla.</div>
           </div>`;
 
       // === DÍA 19 ===
@@ -507,16 +510,16 @@ window.DayArtifacts = (() => {
       case "22-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ANALIZADOR DE CARGA · CUADRO GENERAL</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Distingue entre oscilación gradual de tormenta, sai UPS continuo y caída cuadrada vertical por apertura manual de disyuntor.</div>
-          </div>`;
-      case "22-patri":
-        return `
-          <div class="blueprint-box">
             <div class="blueprint-cap">SENSOR MAGNÉTICO PUERTA CAPILLA (CP) · 30 NOV</div>
             <div class="bank-row" style="font-size:0.73rem;"><span>23:24:10 h · Teresa Alarcón</span><span>OPEN -&gt; CLOSED</span></div>
             <div class="bank-row" style="font-size:0.73rem;"><span>23:25:00 – 23:51:00 h</span><span><strong>0 aperturas</strong> (recinto sellado)</span></div>
             <div class="bank-row" style="font-size:0.73rem;"><span>23:52:18 h · Salida</span><span>OPEN</span></div>
+          </div>`;
+      case "22-patri":
+        return `
+          <div class="blueprint-box">
+            <div class="blueprint-cap">ANALIZADOR DE CARGA · CUADRO GENERAL</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Distingue en el osciloscopio inferior entre oscilación gradual de tormenta, SAI continuo y caída cuadrada vertical por apertura manual de disyuntor.</div>
           </div>`;
 
       // === DÍA 23 ===

@@ -18,7 +18,7 @@ window.CASE_LORE = {
   incidentSummary: [
     "Una ciclogénesis explosiva ha sepultado la carretera de acceso y bloqueado el teleférico desde las 19:00 h del 30 de noviembre.",
     "Nadie puede entrar ni salir del complejo hasta que amaine la ventisca. En el hotel permanecen exactamente 25 personas entre huéspedes VIP y plantilla.",
-    "Del 1 al 24 de diciembre analizaréis juntos los indicios diarios. Cada prueba requiere combinar la terminal de Miguel y la de Patri para descartar a un inocente cada día."
+    "Del 1 al 24 de diciembre analizaréis juntos los indicios diarios combinando las terminales de Miguel y Patri: resolveréis 22 descartes únicos y 2 diligencias abiertas hasta enfrentar a los 3 sospechosos finalistas en el Careo Final de Nochebuena."
   ],
   scenes: [
     {

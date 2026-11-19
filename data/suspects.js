@@ -171,13 +171,13 @@ window.SUSPECTS_DATA = [
     role: "Escolta privado", room: "Hab. 101", group: "Personal",
     motiveHint: "Arturo planeaba despedirlo esa misma semana por pérdida de confianza.",
     alibiClaim: "Sostiene que vigilaba la puerta principal tomando un café en barra.",
-    portrait: "imagenes/suspects/s24.svg"
+    portrait: "imagenes/suspects/s24.jpg"
   },
   {
     id: "s25", num: "25", name: "Adriana Orozco", age: 68, discoveredDay: 18,
     role: "Farmacéutica jubilada", room: "Hab. 107", group: "Huésped",
     motiveHint: "Posee conocimientos avanzados de alcaloides y dosis letales.",
     alibiClaim: "Afirma haber dejado sus botas mojadas en recepción antes de acostarse.",
-    portrait: "imagenes/suspects/s25.svg"
+    portrait: "imagenes/suspects/s25.jpg"
   }
 ];

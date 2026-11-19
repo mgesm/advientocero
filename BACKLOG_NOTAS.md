@@ -8,8 +8,6 @@
 ## Pendientes (Por implementar)
 
 - [ ] `2026-11-17` **[Cooperativo/Sync]** Recordatorio diario para resolver la puerta del día — Añadir una opción para enviar/programar un recordatorio diario (notificación PWA/Web Push, enlace rápido por WhatsApp o evento de calendario `.ics`) que avise a la pareja para abrir la puerta del día. Posibles archivos: `js/app.js`, `sw.js`, `index.html`.
-- [ ] `2026-11-17` **[Regalo/Personalización]** Dedicatoria automática al abrir como Patri por primera vez — Mostrar el modal de bienvenida «Para Patri» de `config/gift-config.js` automáticamente la primera vez que entre con el perfil de Patri (persistiendo un flag para que no vuelva a salir en cada carga ni ocupe sitio en la pantalla de puertas). Posibles archivos: `js/app.js`, `config/gift-config.js`.
-- [ ] `2026-11-17` **[Enigmas/Arte]** Sustituir los 2 últimos retratos SVG (`s24` y `s25`) — Completar los dos retratos restantes de sospechosos cuando se restablezca la cuota de generación de imágenes (los otros 23 ya son retratos realistas `.jpg`). Posibles archivos: `imagenes/suspects/s24.*`, `imagenes/suspects/s25.*`, `data/suspects.js`.
 - [ ] `2026-11-17` **[Regalo/Personalización]** Añadir guiños y menciones personales (gato Paco y otros detalles por definir) — Incorporar referencias a un gato llamado Paco y demás detalles personales que vayamos concretando más adelante en textos, fichas o dedicatorias. Posibles archivos: `config/gift-config.js`, `data/case-lore.js`, `data/days.js`.
 
 ---
@@ -21,6 +19,9 @@
 ---
 
 ## Completadas (Histórico)
+
+- [x] `2026-11-19` **Dedicatoria automática a Patri + reset completo en Modo Test (`v2.8.0`)** — Al elegir el perfil de Patri por primera vez se muestra automáticamente el modal «Para Patri» (con flag `DEDICATION_SEEN_KEY` en `localStorage`); además, resetear desde Modo Test limpia por completo estado, rol elegido y flags locales para que el mensaje vuelva a mostrarse al elegir Patri.
+- [x] `2026-11-19` **Retratos realistas completos (`25/25`) (`v2.8.0`)** — Sustituidos los últimos dos retratos vectoriales (`s24.svg` y `s25.svg`) por fotografías realistas `256x256` (`s24.jpg` y `s25.jpg`), actualizando `data/suspects.js` y `sw.js`.
 
 - [x] `2026-11-17` **Limpieza de portada y dock inferior compacto** — Eliminados el recuadro hero superior y el bloque fijo de dedicatoria en Calendario, y reducida la altura del dock inferior para ganar espacio en móvil (`v2.0.0`).
 - [x] `2026-11-17` **Descubrimiento progresivo en Sospechosos** — El tablero muestra únicamente los sospechosos descubiertos según el avance del calendario (`discoveredDay`), con etiquetas claras de estado (`SOSPECHOSO`, `DESCARTADO`, `CULPABLE`) (`v2.0.0`).

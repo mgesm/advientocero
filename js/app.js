@@ -3,11 +3,20 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.7.0";
+  const APP_VERSION = "v2.8.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
   const PREFS_KEY = "adviento_prefs_v1";
+
+  const DAY_SUSPECT_FOCUS = {
+    1: { id: "s16", hideBeforeSolve: true }, 2: { id: "s20" }, 3: { id: "s08" }, 4: { id: "s15" },
+    5: { id: "s05", hideBeforeSolve: true }, 6: { id: "s21" }, 7: { id: "s12" }, 8: { id: "s17" },
+    9: { id: "s04" }, 10: { id: "s10" }, 11: { id: "s24" }, 12: { id: "s19" },
+    13: { id: "s18" }, 14: { id: "s22" }, 15: { id: "s06" }, 16: { id: "s11" },
+    17: { id: "s02" }, 18: { id: "s25" }, 19: { id: "s14" }, 20: { id: "s07" },
+    21: { id: "s01" }, 22: { id: "s23" }, 23: { id: "s09" }, 24: { id: "s13" }
+  };
 
   let currentRole = localStorage.getItem(ROLE_KEY) || "";
   let activeTab = "calendar";
@@ -33,7 +42,7 @@
   let lockedScrollY = 0;
 
   const tabScrollY = { calendar: 0, day: 0, suspects: 0, expediente: 0 };
-  let draftsStore = loadJsonStorage(DRAFTS_KEY, { inputs: {}, widgets: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } });
+  let draftsStore = loadJsonStorage(DRAFTS_KEY, { inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } });
   let userPrefs = loadJsonStorage(PREFS_KEY, { fontBoost: false, nightSoft: false, reducedMotion: false });
   let lastCalendarSignature = "";
   let lastDaySignature = "";
@@ -494,17 +503,30 @@
         "¿Resetear todo el progreso en la sala de pruebas (puertas, descartes y notas)? La partida real no se verá afectada.",
         "Sí, resetear test",
         () => {
-          draftsStore = { inputs: {}, widgets: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
-          saveDrafts();
+          try {
+            localStorage.removeItem(DEDICATION_SEEN_KEY);
+            localStorage.removeItem(ROLE_KEY);
+            localStorage.removeItem(DRAFTS_KEY);
+          } catch (_) {}
+          currentRole = "";
+          draftsStore = { inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
           const ta = document.getElementById("shared-notes-area");
           if (ta) ta.value = "";
+          suspectFilter = "all";
+          suspectGroupFilter = "all";
+          suspectFloorFilter = "all";
+          suspectSearch = "";
+          calendarFilter = "all";
           userPickedDay = false;
+          prevSyncSnap = null;
           selectDefaultDay();
           lastCalendarSignature = "";
           lastDaySignature = "";
           lastSuspectsSignature = "";
           window.SyncEngine.resetAll();
-          openDedicationModal();
+          closeModal();
+          switchTab("calendar", { silent: true, force: true });
+          openIdentityOverlay(false);
         }
       );
     });
@@ -918,6 +940,20 @@
       </div>
     `).join("");
 
+    const focusMeta = DAY_SUSPECT_FOCUS[dayObj.day];
+    const focusSuspect = focusMeta && (!focusMeta.hideBeforeSolve || isSolved)
+      ? (window.SUSPECTS_DATA || []).find((x) => x.id === focusMeta.id)
+      : null;
+    const culpritIdFocus = syncState.finalEpilogue?.culpritId;
+    const focusIsDiscarded = focusSuspect ? (syncState.discardedIds || []).includes(focusSuspect.id) : false;
+    const focusIsCulprit = focusSuspect ? Boolean(syncState.finalVerdictSolved && culpritIdFocus && focusSuspect.id === culpritIdFocus) : false;
+    const focusStatusBadge = focusSuspect
+      ? (focusIsCulprit ? `<span class="badge badge-crimson">CULPABLE</span>`
+        : syncState.finalVerdictSolved ? `<span class="badge badge-pine">EXONERADO</span>`
+        : focusIsDiscarded ? `<span class="badge badge-pine">DESCARTADO</span>`
+        : `<span class="badge badge-gold">BAJO LUPA</span>`)
+      : "";
+
     container.innerHTML = `
       <div class="day-workspace">
         <div class="glass-card day-header-card">
@@ -943,6 +979,18 @@
                 <li><strong>Coartada en duda:</strong> ${esc(dayObj.dossierContext.alibi)}</li>
                 <li><strong>Objetivo de esta prueba:</strong> ${esc(dayObj.dossierContext.goal)}</li>
               </ul>
+              ${focusSuspect ? `
+                <button type="button" class="day-focus-suspect" data-day-focus-suspect="${esc(focusSuspect.id)}">
+                  <img src="${esc(focusSuspect.portrait)}" alt="${esc(focusSuspect.name)}" width="46" height="46" decoding="async">
+                  <div style="min-width:0;flex:1;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+                      <strong style="font-size:0.9rem;color:#FFFBEB;">${esc(focusSuspect.name)}</strong>
+                      ${focusStatusBadge}
+                    </div>
+                    <div style="font-size:0.74rem;color:var(--vg-text-secondary);margin-top:2px;">${esc(focusSuspect.role)} · ${esc(focusSuspect.room)} · Toca para abrir ficha</div>
+                  </div>
+                </button>
+              ` : ""}
             </div>
           ` : ""}
         </div>
@@ -953,7 +1001,7 @@
               <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
               <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Informe grabado del caso</span>
             </div>
-            <iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>
+            <iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>
           </div>
         ` : ""}
 
@@ -970,6 +1018,11 @@
             <div><strong>Qué hablar con ${partnerName}:</strong> ${esc(roleData.partnerHint)}</div>
           </div>
           <div id="widget-mount">${window.PuzzleEngine.renderWidgetHtml(dayObj.day, role, roleData.widget)}</div>
+
+          <details class="widget-scratchpad" ${(draftsStore.scratch?.[String(dayObj.day)]) ? "open" : ""}>
+            <summary>Bloc de cálculo local · Día ${String(dayObj.day).padStart(2, "0")} (solo este móvil)</summary>
+            <textarea id="widget-scratch-area" class="adv-textarea" style="min-height:78px;margin-top:8px;font-size:16px;" placeholder="Anota aquí pistas dictadas, cuentas o descartes rápidos para no necesitar papel...">${esc(draftsStore.scratch?.[String(dayObj.day)] || "")}</textarea>
+          </details>
 
           <details style="margin-top:12px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:10px;">
             <summary class="mono" style="font-size:0.74rem;color:var(--adv-frost);cursor:pointer;">Parte de Enlace Asimétrico con ${partnerName}</summary>
@@ -1010,6 +1063,18 @@
         window.PuzzleEngine.restoreWidgetState(widgetMount, draftsStore.widgets[draftKey]);
       }
     }
+
+    container.querySelectorAll("[data-day-focus-suspect]").forEach((btn) => {
+      btn.addEventListener("click", () => openSuspectModal(btn.dataset.dayFocusSuspect, btn));
+    });
+
+    document.getElementById("widget-scratch-area")?.addEventListener("input", (e) => {
+      if (!draftsStore.scratch) draftsStore.scratch = {};
+      const val = e.target.value;
+      if (val) draftsStore.scratch[String(dayObj.day)] = val;
+      else delete draftsStore.scratch[String(dayObj.day)];
+      saveDrafts();
+    });
 
     container.querySelectorAll("[data-zoom-artifact]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -1555,7 +1620,7 @@
     document.getElementById("exp-dedication-btn")?.addEventListener("click", (e) => openDedicationModal(e.currentTarget));
     document.getElementById("exp-load-briefing-btn")?.addEventListener("click", () => {
       const mount = document.getElementById("exp-briefing-mount");
-      if (mount) mount.innerHTML = `<iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>`;
+      if (mount) mount.innerHTML = `<iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>`;
     });
 
     container.querySelectorAll("[data-lightbox-img]").forEach((btn) => {
@@ -1820,19 +1885,12 @@
   }
 
   function maybeShowFirstDedication() {
-    if (!currentRole) return;
-    const maxOpen = window.DateGate.getMaxOpenDay();
-    if (maxOpen === 0) {
-      openDedicationModal();
-      return;
-    }
-    if (currentRole === "patri" && maxOpen >= 1) {
-      try {
-        if (localStorage.getItem(DEDICATION_SEEN_KEY) === "1") return;
-        localStorage.setItem(DEDICATION_SEEN_KEY, "1");
-      } catch (_) {}
-      openDedicationModal();
-    }
+    if (currentRole !== "patri") return;
+    try {
+      if (localStorage.getItem(DEDICATION_SEEN_KEY) === "1") return;
+      localStorage.setItem(DEDICATION_SEEN_KEY, "1");
+    } catch (_) {}
+    openDedicationModal();
   }
 
   function detectPartnerProgressToast(newSt) {
@@ -1900,6 +1958,13 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
+        const fsFrame = document.querySelector(".briefing-frame.briefing-fullscreen");
+        if (fsFrame) {
+          fsFrame.classList.remove("briefing-fullscreen");
+          unlockBodyScroll();
+          try { fsFrame.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+          return;
+        }
         if (document.getElementById("adv-modal")?.classList.contains("open")) {
           closeModal();
         } else if (document.getElementById("identity-overlay")?.classList.contains("open") && currentRole) {
@@ -1959,7 +2024,24 @@
       if (e.origin && e.origin !== window.location.origin && window.location.origin !== "null") return;
       if (e.data && e.data.type === "briefing-height" && Number(e.data.height) > 200) {
         document.querySelectorAll(".briefing-frame").forEach((fr) => {
-          fr.style.height = `${Math.ceil(Number(e.data.height))}px`;
+          if (!fr.classList.contains("briefing-fullscreen")) {
+            fr.style.height = `${Math.ceil(Number(e.data.height))}px`;
+          }
+        });
+      } else if (e.data && e.data.type === "toggle-fullscreen") {
+        document.querySelectorAll(".briefing-frame").forEach((fr) => {
+          if (fr.contentWindow === e.source || document.querySelectorAll(".briefing-frame").length === 1) {
+            const active = fr.classList.toggle("briefing-fullscreen");
+            if (active) {
+              lockBodyScroll();
+              if (window.history?.pushState) {
+                window.history.pushState({ briefingFs: true, tab: activeTab, day: selectedDayNum }, "");
+              }
+            } else {
+              unlockBodyScroll();
+            }
+            try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active }, "*"); } catch (_) {}
+          }
         });
       }
     });
@@ -1968,6 +2050,13 @@
       window.history.replaceState({ tab: "calendar", day: selectedDayNum }, "");
     }
     window.addEventListener("popstate", (e) => {
+      const fsFrame = document.querySelector(".briefing-frame.briefing-fullscreen");
+      if (fsFrame) {
+        fsFrame.classList.remove("briefing-fullscreen");
+        unlockBodyScroll();
+        try { fsFrame.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+        return;
+      }
       if (document.getElementById("adv-modal")?.classList.contains("open")) {
         closeModal();
         return;

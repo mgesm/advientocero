@@ -76,6 +76,25 @@
         max-height: 220px;
       }
     }
+    body.is-fullscreen {
+      min-height: 100dvh;
+      justify-content: center;
+      padding: env(safe-area-inset-top, 0px) 8px env(safe-area-inset-bottom, 0px);
+    }
+    body.is-fullscreen .stage {
+      max-height: 58dvh;
+    }
+    .seek-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .seek-range {
+      flex: 1;
+      accent-color: #FBBF24;
+      cursor: pointer;
+      min-height: 28px;
+    }
     .slide-img, .slide-video {
       position: absolute;
       inset: 0;
@@ -345,15 +364,28 @@
 
     <div class="controls">
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="seek-row">
+        <input type="range" id="seek-range" class="seek-range" min="0" max="1000" value="0" aria-label="Progreso del acto actual">
+        <span id="audio-time" style="font-family:'Courier Prime',monospace;font-size:11px;color:#94A3B8;min-width:74px;text-align:right;">00:00 / 00:00</span>
+      </div>
+      <div class="ctrl-row">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="btn" id="prev-act-btn" title="Acto anterior" aria-label="Acto anterior">|&lt;</button>
+          <button type="button" class="btn" id="rw-btn" title="Retroceder 8 segundos">-8s</button>
+          <button type="button" class="btn btn-gold" id="play-btn">Reproducir</button>
+          <button type="button" class="btn" id="ff-btn" title="Avanzar 8 segundos">+8s</button>
+          <button type="button" class="btn" id="next-act-btn" title="Acto siguiente" aria-label="Acto siguiente">&gt;|</button>
+        </div>
+        <span id="act-counter" style="font-family:'Courier Prime',monospace;font-size:11px;color:#CBD5E1;">Acto 1 / 6</span>
+      </div>
       <div class="ctrl-row">
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button type="button" class="btn btn-gold" id="play-btn">Reproducir</button>
           <button type="button" class="btn" id="voice-btn">Voz: ON</button>
           <button type="button" class="btn" id="music-btn">Ambiente: ON</button>
           <button type="button" class="btn" id="speed-btn">1.0x</button>
           <button type="button" class="btn" id="script-btn">Guion</button>
         </div>
-        <span id="act-counter" style="font-family:'Courier Prime',monospace;font-size:11px;color:#CBD5E1;">Acto 1 / 6</span>
+        <button type="button" class="btn" id="fs-btn">Pantalla completa</button>
       </div>
       <div class="acts-rail" id="acts-rail"></div>
     </div>
@@ -429,8 +461,8 @@
         clip: "",
         snowIntensity: 0.95,
         blackout: false,
-        dur: 13000,
-        narration: "Del uno al veinticuatro de diciembre recibiréis un parte diario. Cada puerta resuelta exonerará a un inocente en vuestro tablero compartido hasta dejar en pie únicamente al culpable en Nochebuena."
+        dur: 10000,
+        narration: "Del uno al veinticuatro de diciembre recibiréis un parte diario con nuevas pistas para investigar el tablero compartido, hasta descubrir al culpable el día veinticuatro."
       },
       {
         title: "Acto VI · Protocolo Cooperativo: Miguel y Patri",
@@ -661,6 +693,7 @@
 
       rail.querySelectorAll(".act-pill").forEach((el, pIdx) => el.classList.toggle("active", pIdx === i));
       scriptPanel.querySelectorAll(".script-item").forEach((el, pIdx) => el.classList.toggle("active", pIdx === i));
+      if (typeof updateAudioSeekUi === "function") updateAudioSeekUi();
       notifyParentHeight();
     }
 
@@ -690,6 +723,85 @@
         if (fxRaf) { cancelAnimationFrame(fxRaf); fxRaf = null; }
       }
     }
+
+    function fmtSec(sec) {
+      const s = Math.max(0, Math.floor(sec || 0));
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
+    }
+
+    function updateAudioSeekUi() {
+      const cur = Number.isFinite(voiceAudio.currentTime) ? voiceAudio.currentTime : 0;
+      const dur = Number.isFinite(voiceAudio.duration) && voiceAudio.duration > 0
+        ? voiceAudio.duration
+        : (ACTS[idx]?.dur || 12000) / 1000;
+      const pct = dur > 0 ? Math.min(1000, Math.max(0, Math.round((cur / dur) * 1000))) : 0;
+      const sr = document.getElementById("seek-range");
+      const tm = document.getElementById("audio-time");
+      if (sr) sr.value = String(pct);
+      if (tm) tm.textContent = `${fmtSec(cur)} / ${fmtSec(dur)}`;
+    }
+
+    voiceAudio.addEventListener("timeupdate", updateAudioSeekUi);
+    voiceAudio.addEventListener("loadedmetadata", updateAudioSeekUi);
+
+    function jumpRelative(deltaSec) {
+      const actObj = ACTS[idx];
+      if (!actObj) return;
+      if (!voiceAudio.src || currentAudioAct !== idx) {
+        if (deltaSec < 0 && idx > 0) {
+          goToAct(idx - 1, playing);
+        } else if (deltaSec > 0 && idx < ACTS.length - 1) {
+          goToAct(idx + 1, playing);
+        }
+        return;
+      }
+      const dur = Number.isFinite(voiceAudio.duration) && voiceAudio.duration > 0 ? voiceAudio.duration : actObj.dur / 1000;
+      const target = voiceAudio.currentTime + deltaSec;
+      if (target < 0 && idx > 0) {
+        goToAct(idx - 1, playing);
+      } else if (target >= dur && idx < ACTS.length - 1) {
+        goToAct(idx + 1, playing);
+      } else {
+        try { voiceAudio.currentTime = Math.max(0, Math.min(dur - 0.1, target)); } catch (_) {}
+        updateAudioSeekUi();
+      }
+    }
+
+    document.getElementById("prev-act-btn").onclick = () => {
+      if (idx > 0) goToAct(idx - 1, playing);
+      else jumpRelative(-8);
+    };
+    document.getElementById("next-act-btn").onclick = () => {
+      if (idx < ACTS.length - 1) goToAct(idx + 1, playing);
+    };
+    document.getElementById("rw-btn").onclick = () => jumpRelative(-8);
+    document.getElementById("ff-btn").onclick = () => jumpRelative(8);
+    document.getElementById("seek-range").oninput = (e) => {
+      const ratio = Number(e.target.value) / 1000;
+      const actObj = ACTS[idx];
+      if (!actObj) return;
+      if (!voiceAudio.src || currentAudioAct !== idx) {
+        voiceAudio.src = actObj.audio;
+        currentAudioAct = idx;
+      }
+      const dur = Number.isFinite(voiceAudio.duration) && voiceAudio.duration > 0 ? voiceAudio.duration : actObj.dur / 1000;
+      try { voiceAudio.currentTime = Math.max(0, Math.min(dur - 0.1, ratio * dur)); } catch (_) {}
+      updateAudioSeekUi();
+    };
+    document.getElementById("fs-btn").onclick = () => {
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: "toggle-fullscreen" }, "*");
+        return;
+      }
+      const el = document.documentElement;
+      if (!document.fullscreenElement) {
+        (el.requestFullscreen || el.webkitRequestFullscreen || (() => {})).call(el);
+      } else {
+        (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document);
+      }
+    };
 
     document.getElementById("stage").onclick = () => togglePlay();
     document.getElementById("play-btn").onclick = () => togglePlay();
@@ -728,6 +840,13 @@
       if (!e.data) return;
       if (e.data.type === "pause") {
         togglePlay(false);
+      } else if (e.data.type === "fullscreen-state") {
+        const isFs = Boolean(e.data.active);
+        document.body.classList.toggle("is-fullscreen", isFs);
+        const fsBtn = document.getElementById("fs-btn");
+        if (fsBtn) fsBtn.textContent = isFs ? "Salir pantalla completa" : "Pantalla completa";
+        resizeCanvas();
+        notifyParentHeight();
       } else if (e.data.type === "mute") {
         musicOn = !e.data.muted;
         document.getElementById("music-btn").textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;

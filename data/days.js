@@ -1,6 +1,6 @@
 /**
  * ADVIENTO CERO - 24 DIAS DE INVESTIGACION COOPERATIVA
- * Overhaul v2.7.0: dificultad progresiva de menos a mas + contexto de sospecha en cada dia (Cero Spoilers).
+ * Overhaul v2.8.0: Patri al frente de herramientas interactivas + contexto en los 24 dias (Cero Spoilers).
  */
 
 window.ADVENT_DAYS = [
@@ -91,31 +91,31 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Linterna Ultravioleta",
-                       "brief":  "Recorre toda la superficie oscura para revelar tanto el código parcial como la regla de lectura.",
-                       "clueHtml":  "\u003cp\u003eBajo luz UV 365 nm aparecen la hora de servicio, tres dígitos reactivos y una nota de inversión que deberás leer íntegramente a Patri.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Cuadrante Nocturno",
+                       "brief":  "Identifica el número de turno de quien estuvo en la cámara de hielo a las 23:34 h y aplica la regla UV.",
+                       "clueHtml":  "\u003cp\u003eEn el parte de barra aparecen cuatro turnos distintos, pero solo uno bajó al almacén frigorífico a las \u003cstrong\u003e23:34 h\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAplica la regla descubierta bajo la lámpara UV de Patri para construir el código de 4 cifras.\u003c/p\u003e",
                        "widget":  {
-                                      "type":  "uv-lamp",
-                                      "prompt":  "Arrastra sobre toda la bandeja para ver código y regla",
-                                      "secretSub":  "SERVICIO 23:34 H · PIN FRIG",
-                                      "secretCode":  "7 - 4 - 2",
-                                      "secretNote":  "REGLA: Nº TURNO + 3 DÍGITOS EN ORDEN INVERSO"
+                                      "type":  "dossier-card",
+                                      "caption":  "Construcción del Código de Almacén",
+                                      "items":  [
+                                                    "1 cifra: Nº turno del empleado que bajó a las 23:34 h",
+                                                    "3 cifras: Código UV de Miguel leído de derecha a izquierda"
+                                                ]
                                   },
-                       "partnerHint":  "Dicta a Patri los 3 dígitos luminol y la regla de orden inverso para que los combine con el cuadrante."
+                       "partnerHint":  "Pide a Patri los 3 dígitos UV y la regla oculta; identifica el turno de las 23:34 h en tu tabla."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Cuadrante Nocturno",
-                      "brief":  "Identifica el número de turno de quien estuvo en la cámara de hielo a las 23:34 h y aplica la regla UV.",
-                      "clueHtml":  "\u003cp\u003eEn el parte de barra aparecen cuatro turnos distintos, pero solo uno bajó al almacén frigorífico a las \u003cstrong\u003e23:34 h\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAplica la regla descubierta bajo la lámpara UV de Miguel para construir el código de 4 cifras.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Linterna Ultravioleta",
+                      "brief":  "Recorre toda la superficie oscura para revelar tanto el código parcial como la regla de lectura.",
+                      "clueHtml":  "\u003cp\u003eBajo luz UV 365 nm aparecen la hora de servicio, tres dígitos reactivos y una nota de inversión que deberás leer íntegramente a Miguel.\u003c/p\u003e",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Construcción del Código de Almacén",
-                                     "items":  [
-                                                   "1 cifra: Nº turno del empleado que bajó a las 23:34 h",
-                                                   "3 cifras: Código UV de Miguel leído de derecha a izquierda"
-                                               ]
+                                     "type":  "uv-lamp",
+                                     "prompt":  "Arrastra sobre toda la bandeja para ver código y regla",
+                                     "secretSub":  "SERVICIO 23:34 H · PIN FRIG",
+                                     "secretCode":  "7 - 4 - 2",
+                                     "secretNote":  "REGLA: Nº TURNO + 3 DÍGITOS EN ORDEN INVERSO"
                                  },
-                      "partnerHint":  "Pide a Miguel los 3 dígitos UV y la regla oculta; identifica el turno de las 23:34 h en tu tabla."
+                      "partnerHint":  "Dicta a Miguel los 3 dígitos luminol y la regla de orden inverso para que los combine con el cuadrante."
                   },
         "jointInput":  {
                            "label":  "Código de registro frigorífico (4 dígitos)",
@@ -126,7 +126,7 @@ window.ADVENT_DAYS = [
                        },
         "hints":  [
                       "En la bandeja UV aparece 7-4-2 junto a la regla \u0027Nº Turno + 3 dígitos en orden inverso\u0027.",
-                      "En el cuadrante de Patri, Nicolás Ferrer (Turno #5) bajó a las 23:34 h. Invertir 7-4-2 da 247.",
+                      "En el cuadrante de Miguel, Nicolás Ferrer (Turno #5) bajó a las 23:34 h. Invertir 7-4-2 da 247.",
                       "Solución del Día 2: 5247."
                   ],
         "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjAiLCJmb3JlbnNpY1RhZyI6IkNPQVJUQURBIERFIEFMTUFDw4lOIENPTkZJUk1BREEiLCJjb25jbHVzaW9uIjoiRWwgcmVnaXN0cm8gZnJpZ29yw61maWNvIDUyNDcgY29uZmlybWEgcXVlIE5pY29sw6FzIEZlcnJlciBlc3R1dm8gZW5jZXJyYWRvIGJ1c2NhbmRvIGhpZWxvIGVuIGVsIHPDs3Rhbm8gZW50cmUgbGFzIDIzOjM0IHkgbGFzIDIzOjQ0IGguIE5vIG1hbmlwdWzDsyBsYSBjb3BhIGR1cmFudGUgZWwgYXBhZ8Ozbi4ifQ=="
@@ -365,43 +365,43 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "dual-lock",
         "miguel":  {
-                       "roleBadge":  "Miguel · Decodificador César",
-                       "brief":  "Ajusta el desplazamiento calculado por Patri en la partitura y lee las 3 estancias descifradas.",
-                       "clueHtml":  "\u003cp\u003eCriptograma triple: \u003cstrong class=\u0027mono\u0027\u003eBJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eCuando descifres las tres salas con la clave de Patri, descríbeselas para filtrar cuál tiene la acústica del ensayo.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Partitura y Camerinos",
+                       "brief":  "Calcula el desplazamiento en la partitura y cruza las tres salas de Patri con el parte acústico.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eTestimonio técnico (23:35 h):\u003c/strong\u003e Claudia Benítez ensayaba en una sala cerrada con \u003cstrong\u003edoble cortina de terciopelo y piano vertical\u003c/strong\u003e.\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSalón Norte:\u003c/strong\u003e piano de cola abierto al pasillo.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eCamerino Sur:\u003c/strong\u003e doble cortina de terciopelo + piano vertical.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eTeatro Central:\u003c/strong\u003e escenario abierto sin cortinaje privado.\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
-                                      "type":  "caesar",
-                                      "cipherText":  "BJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU"
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato Validación Patri",
+                                      "items":  [
+                                                    "Primer apellido de la artista + desplazamiento (2 dígitos)",
+                                                    "Ejemplo orientativo: navarro03"
+                                                ]
                                   },
-                       "inputLabel":  "Sala real donde vocalizó la artista (2 palabras)",
-                       "inputPlaceholder":  "Ej. salon norte",
+                       "inputLabel":  "Apellido de la artista + Desplazamiento (2 dígitos)",
+                       "inputPlaceholder":  "Ej. navarro03",
                        "acceptedHashes":  [
-                                              "c369395a81aa6bda3700513f6f4cf9b09335d7129344b7467d9b00ac0794d766"
+                                              "a3c12abbf4fdec4fa2d0cd7185b353eb07a1a37a6fe1dd6a41c292d4d0904b5c"
                                           ],
-                       "partnerHint":  "Pide a Patri el desplazamiento César (notas negras + estrellas doradas) y pregúntale cuál de las 3 salas descifradas tiene doble cortina y piano vertical."
+                       "partnerHint":  "Cuenta en el pentagrama las 4 notas negras + 5 estrellas doradas (desplazamiento = 09), díselo a Patri e identifica su sala acústica."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Partitura y Camerinos",
-                      "brief":  "Calcula el desplazamiento en la partitura y cruza las tres salas de Miguel con el parte acústico.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eTestimonio técnico (23:35 h):\u003c/strong\u003e Claudia Benítez ensayaba en una sala cerrada con \u003cstrong\u003edoble cortina de terciopelo y piano vertical\u003c/strong\u003e.\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSalón Norte:\u003c/strong\u003e piano de cola abierto al pasillo.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eCamerino Sur:\u003c/strong\u003e doble cortina de terciopelo + piano vertical.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eTeatro Central:\u003c/strong\u003e escenario abierto sin cortinaje privado.\u003c/li\u003e\u003c/ul\u003e",
+                      "roleBadge":  "Patri · Decodificador César",
+                      "brief":  "Ajusta el desplazamiento calculado por Miguel en la partitura y lee las 3 estancias descifradas.",
+                      "clueHtml":  "\u003cp\u003eCriptograma triple: \u003cstrong class=\u0027mono\u0027\u003eBJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eCuando descifres las tres salas con la clave de Miguel, descríbeselas para filtrar cuál tiene la acústica del ensayo.\u003c/p\u003e",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Formato Validación Patri",
-                                     "items":  [
-                                                   "Primer apellido de la artista + desplazamiento (2 dígitos)",
-                                                   "Ejemplo orientativo: navarro03"
-                                               ]
+                                     "type":  "caesar",
+                                     "cipherText":  "BJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU"
                                  },
-                      "inputLabel":  "Apellido de la artista + Desplazamiento (2 dígitos)",
-                      "inputPlaceholder":  "Ej. navarro03",
+                      "inputLabel":  "Sala real donde vocalizó la artista (2 palabras)",
+                      "inputPlaceholder":  "Ej. salon norte",
                       "acceptedHashes":  [
-                                             "a3c12abbf4fdec4fa2d0cd7185b353eb07a1a37a6fe1dd6a41c292d4d0904b5c"
+                                             "c369395a81aa6bda3700513f6f4cf9b09335d7129344b7467d9b00ac0794d766"
                                          ],
-                      "partnerHint":  "Cuenta en el pentagrama las 4 notas negras + 5 estrellas doradas (desplazamiento = 09), díselo a Miguel e identifica su sala acústica."
+                      "partnerHint":  "Pide a Miguel el desplazamiento César (notas negras + estrellas doradas) y pregúntale cuál de las 3 salas descifradas tiene doble cortina y piano vertical."
                   },
         "hints":  [
                       "En la partitura hay 4 notas negras y 5 estrellas doradas: 4 + 5 = 9.",
                       "Con desplazamiento 9, las salas son SALON NORTE, CAMERINO SUR y TEATRO CENTRAL. El parte acústico señala Camerino Sur (Claudia Benítez).",
-                      "Solución del Día 6 — Miguel: camerino sur · Patri: benitez09."
+                      "Solución del Día 6 — Patri: camerino sur · Miguel: benitez09."
                   ],
         "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjEiLCJmb3JlbnNpY1RhZyI6IkVOU0FZTyBWT0NBTCBDT05GSVJNQURPIiwiY29uY2x1c2lvbiI6IkVsIHBlcnNvbmFsIHTDqWNuaWNvIGVzY3VjaMOzIGEgQ2xhdWRpYSBCZW7DrXRleiB2b2NhbGl6YXIgc2luIHBhdXNhIGRlbnRybyBkZWwgQ2FtZXJpbm8gU3VyIGFudGVzLCBkdXJhbnRlIHkgZGVzcHXDqXMgZGVsIGFwYWfDs24uIFF1ZWRhIGRlc2NhcnRhZGEuIn0="
     },
@@ -984,45 +984,45 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Sintonizador Multi-Banda",
-                       "brief":  "Desliza el dial observando el S-Meter hasta cazar los tres picos de señal al 100% y léelos a Patri.",
-                       "clueHtml":  "\u003cp\u003eCuando el medidor \u003cstrong\u003eSeñal\u003c/strong\u003e llegue al \u003cstrong\u003e100%\u003c/strong\u003e, anota el canal, su hora y su clave. Hay \u003cstrong\u003etres frecuencias activas\u003c/strong\u003e entre 200 y 740 Hz.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Informe Inmarsat",
+                       "brief":  "Indica a Patri qué horario pertenece a la llamada real y aplica la regla de inversión sobre SAT-B.",
+                       "clueHtml":  "\u003cp\u003eEl registro satelital valida únicamente el tramo continuo \u003cstrong\u003e23:35–23:48 h\u003c/strong\u003e (canales SAT-A y SAT-B). La señal de las 23:12 es una prueba previa.\u003c/p\u003e\u003cp\u003eConstruye el código uniendo \u003cstrong\u003ePalabra de SAT-A + Token de SAT-B invertido\u003c/strong\u003e.\u003c/p\u003e",
                        "widget":  {
-                                      "type":  "frequency",
-                                      "minHz":  200,
-                                      "maxHz":  740,
-                                      "stepHz":  20,
-                                      "initHz":  200,
-                                      "bands":  [
-                                                    {
-                                                        "hz":  260,
-                                                        "text":  "[AUX · 23:12 h] Llamada de prueba · Clave: CUMBRE · Sufijo: 19"
-                                                    },
-                                                    {
-                                                        "hz":  420,
-                                                        "text":  "[SAT-A · 23:35–23:48 h] Sofía con su madre · Clave SAT-A: VENTISCA"
-                                                    },
-                                                    {
-                                                        "hz":  640,
-                                                        "text":  "[SAT-B · 23:35–23:48 h] Telemetría buzón · Token SAT-B: 48"
-                                                    }
+                                      "type":  "dossier-card",
+                                      "caption":  "Regla de Ensamblado Inmarsat",
+                                      "items":  [
+                                                    "Tramo válido: 23:35–23:48 h (SAT-A y SAT-B)",
+                                                    "Invertir las 2 cifras del Token SAT-B detrás de la palabra"
                                                 ]
                                   },
-                       "partnerHint":  "Barre todo el dial de 200 a 740 Hz para encontrar las tres emisoras y pregunta a Patri cuál es falsa y cómo combinar los dos canales buenos."
+                       "partnerHint":  "Pide a Patri los mensajes de las bandas del tramo 23:35–23:48 h y recuerda invertir las dos cifras de SAT-B."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Informe Inmarsat",
-                      "brief":  "Indica a Miguel qué horario pertenece a la llamada real y aplica la regla de inversión sobre SAT-B.",
-                      "clueHtml":  "\u003cp\u003eEl registro satelital valida únicamente el tramo continuo \u003cstrong\u003e23:35–23:48 h\u003c/strong\u003e (canales SAT-A y SAT-B). La señal de las 23:12 es una prueba previa.\u003c/p\u003e\u003cp\u003eConstruye el código uniendo \u003cstrong\u003ePalabra de SAT-A + Token de SAT-B invertido\u003c/strong\u003e.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Sintonizador Multi-Banda",
+                      "brief":  "Desliza el dial observando el S-Meter hasta cazar los tres picos de señal al 100% y léelos a Miguel.",
+                      "clueHtml":  "\u003cp\u003eCuando el medidor \u003cstrong\u003eSeñal\u003c/strong\u003e llegue al \u003cstrong\u003e100%\u003c/strong\u003e, anota el canal, su hora y su clave. Hay \u003cstrong\u003etres frecuencias activas\u003c/strong\u003e entre 200 y 740 Hz.\u003c/p\u003e",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Regla de Ensamblado Inmarsat",
-                                     "items":  [
-                                                   "Tramo válido: 23:35–23:48 h (SAT-A y SAT-B)",
-                                                   "Invertir las 2 cifras del Token SAT-B detrás de la palabra"
+                                     "type":  "frequency",
+                                     "minHz":  200,
+                                     "maxHz":  740,
+                                     "stepHz":  20,
+                                     "initHz":  200,
+                                     "bands":  [
+                                                   {
+                                                       "hz":  260,
+                                                       "text":  "[AUX · 23:12 h] Llamada de prueba · Clave: CUMBRE · Sufijo: 19"
+                                                   },
+                                                   {
+                                                       "hz":  420,
+                                                       "text":  "[SAT-A · 23:35–23:48 h] Sofía con su madre · Clave SAT-A: VENTISCA"
+                                                   },
+                                                   {
+                                                       "hz":  640,
+                                                       "text":  "[SAT-B · 23:35–23:48 h] Telemetría buzón · Token SAT-B: 48"
+                                                   }
                                                ]
                                  },
-                      "partnerHint":  "Pide a Miguel los mensajes de las bandas del tramo 23:35–23:48 h y recuerda invertir las dos cifras de SAT-B."
+                      "partnerHint":  "Barre todo el dial de 200 a 740 Hz para encontrar las tres emisoras y pregunta a Miguel cuál es falsa y cómo combinar los dos canales buenos."
                   },
         "jointInput":  {
                            "label":  "Palabra SAT-A + Token SAT-B invertido",
@@ -1032,8 +1032,8 @@ window.ADVENT_DAYS = [
                                               ]
                        },
         "hints":  [
-                      "Los tres picos en el S-Meter de Miguel están en 260 Hz (23:12, descartado), 420 Hz (VENTISCA) y 640 Hz (48).",
-                      "Patri valida solo 23:35–23:48 (VENTISCA + 48) y aplica la regla de inversión a 48 -\u003e 84.",
+                      "Los tres picos en el S-Meter de Patri están en 260 Hz (23:12, descartado), 420 Hz (VENTISCA) y 640 Hz (48).",
+                      "Miguel valida solo 23:35–23:48 (VENTISCA + 48) y aplica la regla de inversión a 48 -\u003e 84.",
                       "Solución del Día 16: VENTISCA84."
                   ],
         "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTEiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgU0FURUxJVEFMIFZFUklGSUNBREEiLCJjb25jbHVzaW9uIjoiTGEgZ3JhYmFjacOzbiBzYXRlbGl0YWwgZGUgMTMgbWludXRvcyAoVkVOVElTQ0E4NCkgZGVtdWVzdHJhIHF1ZSBTb2bDrWEgTmF2YXJybyBwZXJtYW5lY2nDsyBlbiBsYSBTdWl0ZSAzMDUgaGFibGFuZG8gY29uIHN1IG1hZHJlIGR1cmFudGUgdG9kbyBlbCBhcGFnw7NuLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
@@ -1121,32 +1121,32 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Calibre Forense ABFO",
-                       "brief":  "Alinea el calibre sobre la suela exterior y aplica el descuento biomecánico de goma (-1.5 cm).",
-                       "clueHtml":  "\u003cp\u003eLa longitud que marca el calibre es el contorno exterior completo (\u003ccode\u003eL_suela\u003c/code\u003e). Resta \u003cstrong\u003e1.5 cm\u003c/strong\u003e del cerco Vibram para dar a Patri la longitud interior real del pie (\u003ccode\u003eL_pie\u003c/code\u003e).\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Tabla de Horma y Taquillas",
+                       "brief":  "Proporciona a Patri el descuento biomecánico de la goma (-1.5 cm) y los datos de la taquilla guardabotas de Adriana Orozco.",
+                       "clueHtml":  "\u003cp\u003eLa goma exterior de las botas ALP-40 añade \u003cstrong\u003e1.5 cm\u003c/strong\u003e de cerco (\u003ccode\u003eL_pie = L_suela - 1.5 cm\u003c/code\u003e). Comparte con Patri esta regla y la talla registrada de Adriana Orozco en recepción.\u003c/p\u003e",
                        "widget":  {
-                                      "type":  "caliper",
-                                      "targetCm":  26.5,
-                                      "hideTable":  true,
-                                      "table":  [
-
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato del Código",
+                                      "items":  [
+                                                    "Talla huella patio (2 díg.) + Talla Adriana (2 díg.) + Código suela",
+                                                    "Ejemplo orientativo: 3938URB10"
                                                 ]
                                   },
-                       "partnerHint":  "Mide exactamente la suela en tu calibre, réstale 1.5 cm y comunica a Patri L_pie junto al código ALP-40."
+                       "partnerHint":  "Dicta a Patri el descuento (-1.5 cm), la talla 37 de Adriana en taquilla y el código ALP-40 para que convierta la pisada y cierre la validación."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Tabla de Horma y Taquillas",
-                      "brief":  "Convierte el L_pie calculado por Miguel a talla europea y únelo a la talla real de Adriana y el modelo.",
-                      "clueHtml":  "\u003cp\u003eUsa tu tabla superior de conversión de \u003ccode\u003eL_pie\u003c/code\u003e para hallar la talla exacta de la pisada del patio y compárala con las botas secas de Adriana Orozco en la taquilla.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Calibre Forense ABFO",
+                      "brief":  "Mide la suela exterior con el calibre ABFO, resta el cerco que te indique Miguel y convierte L_pie en talla europea con tu tabla.",
+                      "clueHtml":  "\u003cp\u003eLa longitud que marca tu calibre es el contorno exterior completo (\u003ccode\u003eL_suela\u003c/code\u003e). Pide a Miguel el margen de goma a descontar y la talla guardada de Adriana, busca la talla europea de \u003ccode\u003eL_pie\u003c/code\u003e en tu tabla superior y arma el código final.\u003c/p\u003e",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Formato del Código",
-                                     "items":  [
-                                                   "Talla huella patio (2 díg.) + Talla Adriana (2 díg.) + Código suela",
-                                                   "Ejemplo orientativo: 3938URB10"
+                                     "type":  "caliper",
+                                     "targetCm":  26.5,
+                                     "hideTable":  true,
+                                     "table":  [
+
                                                ]
                                  },
-                      "partnerHint":  "Pide a Miguel el valor L_pie ya descontado, busca su talla en la tabla y concaténala con 37 y ALP40."
+                      "partnerHint":  "Pide a Miguel cuántos cm hay que restar por la goma exterior y qué talla entregó Adriana en taquilla; luego convierte L_pie en tu tabla."
                   },
         "jointInput":  {
                            "label":  "Talla huella + Talla Adriana + Modelo sin guion",
@@ -1157,7 +1157,7 @@ window.ADVENT_DAYS = [
                        },
         "hints":  [
                       "El calibre alinea la suela exterior en 26.5 cm. Descontando el cerco de 1.5 cm resulta L_pie = 25.0 cm.",
-                      "En la tabla de Patri, L_pie = 25.0 cm corresponde a Talla 40 (Adriana calza Talla 37).",
+                      "En la tabla de Miguel, L_pie = 25.0 cm corresponde a Talla 40 (Adriana calza Talla 37).",
                       "Solución del Día 18: 4037ALP40."
                   ],
         "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjUiLCJmb3JlbnNpY1RhZyI6IkNBTFpBRE8gU0VDTyBFTiBUQVFVSUxMQSAyMzozMiBIIiwiY29uY2x1c2lvbiI6IkFkcmlhbmEgT3JvemNvIGRlasOzIHN1cyBib3RhcyB0YWxsYSAzNyBzZWNhcyBlbiByZWNlcGNpw7NuIGEgbGFzIDIzOjMyIGggeSBudW5jYSBwaXPDsyBlbCBwYXRpbyBjb24gYm90YXMgQUxQLTQwIHRhbGxhIDQwLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
@@ -1334,49 +1334,49 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Osciloscopio 4 Circuitos",
-                       "brief":  "Identifica qué circuito cae verticalmente de forma cuadrada a 0 V y calcula su hora sumando minutos a 23:30 h.",
-                       "clueHtml":  "\u003cp\u003eLa escala horizontal empieza en \u003cstrong\u003eT0 = 23:30 h\u003c/strong\u003e con marcas verticales cada \u003cstrong\u003e+4 minutos\u003c/strong\u003e (+0m, +4m, +8m, +12m, +16m). Descarta caídas suaves o SAI continuo para hallar el corte manual.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Sensor Puerta Capilla (CP)",
+                       "brief":  "Verifica que no hubo aperturas en la Capilla Alpina durante el corte y combina el código completo.",
+                       "clueHtml":  "\u003cp\u003eEl contacto magnético \u003cstrong\u003eCP\u003c/strong\u003e certifica cero salidas de Teresa Alarcón durante el corte en Planta 1.\u003c/p\u003e\u003cp\u003eUne el \u003cstrong\u003eCódigo del circuito saboteado sin guion (3 car.)\u003c/strong\u003e + \u003cstrong\u003eHora exacta del corte (4 díg.)\u003c/strong\u003e + \u003cstrong\u003eCP\u003c/strong\u003e.\u003c/p\u003e",
                        "widget":  {
-                                      "type":  "voltage",
-                                      "traces":  [
-                                                     {
-                                                         "label":  "C-01 · Exterior (fluctuación lenta por tormenta)",
-                                                         "color":  "#38BDF8",
-                                                         "points":  "10,10 60,14 110,20 170,24 230,28 270,30"
-                                                     },
-                                                     {
-                                                         "label":  "C-02 · Cocina (carga estable con micro-bache)",
-                                                         "color":  "#34D399",
-                                                         "points":  "10,12 160,12 170,20 180,12 270,12"
-                                                     },
-                                                     {
-                                                         "label":  "C-03 · Dirección P1 (corte vertical abrupto)",
-                                                         "color":  "#FF2D55",
-                                                         "points":  "10,10 138,10 140,36 198,36 200,10 270,10"
-                                                     },
-                                                     {
-                                                         "label":  "C-04 · Calderas (respaldo SAI continuo)",
-                                                         "color":  "#FBBF24",
-                                                         "points":  "10,14 270,14"
-                                                     }
-                                                 ]
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato del Código",
+                                      "items":  [
+                                                    "Circuito (ej. C01) + Hora corte (4 díg.) + CP",
+                                                    "Ejemplo orientativo: C012334CP"
+                                                ]
                                   },
-                       "partnerHint":  "Indica a Patri qué circuito cae en escalón vertical exacto (entre +8m y +12m desde las 23:30 h) y calcula la hora real del disparo."
+                       "partnerHint":  "Verifica con Patri qué circuito hace caída vertical (C03) en la marca +8m (23:30 + 8 min = 23:38) y añade CP."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Sensor Puerta Capilla (CP)",
-                      "brief":  "Verifica que no hubo aperturas en la Capilla Alpina durante el corte y combina el código completo.",
-                      "clueHtml":  "\u003cp\u003eEl contacto magnético \u003cstrong\u003eCP\u003c/strong\u003e certifica cero salidas de Teresa Alarcón durante el corte en Planta 1.\u003c/p\u003e\u003cp\u003eUne el \u003cstrong\u003eCódigo del circuito saboteado sin guion (3 car.)\u003c/strong\u003e + \u003cstrong\u003eHora exacta del corte (4 díg.)\u003c/strong\u003e + \u003cstrong\u003eCP\u003c/strong\u003e.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Osciloscopio 4 Circuitos",
+                      "brief":  "Identifica qué circuito cae verticalmente de forma cuadrada a 0 V y calcula su hora sumando minutos a 23:30 h.",
+                      "clueHtml":  "\u003cp\u003eLa escala horizontal empieza en \u003cstrong\u003eT0 = 23:30 h\u003c/strong\u003e con marcas verticales cada \u003cstrong\u003e+4 minutos\u003c/strong\u003e (+0m, +4m, +8m, +12m, +16m). Descarta caídas suaves o SAI continuo para hallar el corte manual.\u003c/p\u003e",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Formato del Código",
-                                     "items":  [
-                                                   "Circuito (ej. C01) + Hora corte (4 díg.) + CP",
-                                                   "Ejemplo orientativo: C012334CP"
-                                               ]
+                                     "type":  "voltage",
+                                     "traces":  [
+                                                    {
+                                                        "label":  "C-01 · Exterior (fluctuación lenta por tormenta)",
+                                                        "color":  "#38BDF8",
+                                                        "points":  "10,10 60,14 110,20 170,24 230,28 270,30"
+                                                    },
+                                                    {
+                                                        "label":  "C-02 · Cocina (carga estable con micro-bache)",
+                                                        "color":  "#34D399",
+                                                        "points":  "10,12 160,12 170,20 180,12 270,12"
+                                                    },
+                                                    {
+                                                        "label":  "C-03 · Dirección P1 (corte vertical abrupto)",
+                                                        "color":  "#FF2D55",
+                                                        "points":  "10,10 138,10 140,36 198,36 200,10 270,10"
+                                                    },
+                                                    {
+                                                        "label":  "C-04 · Calderas (respaldo SAI continuo)",
+                                                        "color":  "#FBBF24",
+                                                        "points":  "10,14 270,14"
+                                                    }
+                                                ]
                                  },
-                      "partnerHint":  "Verifica con Miguel qué circuito hace caída vertical (C03) en la marca +8m (23:30 + 8 min = 23:38) y añade CP."
+                      "partnerHint":  "Indica a Miguel qué circuito cae en escalón vertical exacto (entre +8m y +12m desde las 23:30 h) y calcula la hora real del disparo."
                   },
         "jointInput":  {
                            "label":  "Circuito + Hora corte (4 díg.) + CP",
