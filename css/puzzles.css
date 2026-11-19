@@ -195,6 +195,8 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  padding: 12px;
+  text-align: center;
   background: radial-gradient(circle var(--uv-r) at var(--uv-x, 50%) var(--uv-y, 50%), rgba(0, 229, 255, 0.30), rgba(4, 7, 13, 0.98) 74%);
   mask-image: radial-gradient(circle var(--uv-r) at var(--uv-x, -999px) var(--uv-y, -999px), #000 50%, transparent 100%);
   -webkit-mask-image: radial-gradient(circle var(--uv-r) at var(--uv-x, -999px) var(--uv-y, -999px), #000 50%, transparent 100%);
@@ -214,6 +216,14 @@
   letter-spacing: 0.24em;
   color: #67E8F9;
   text-shadow: 0 0 14px rgba(0, 229, 255, 0.85);
+}
+
+.uv-rule-note {
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #FDE68A;
+  max-width: 260px;
 }
 
 /* Morse / Audio / Frecuencia */
@@ -499,6 +509,32 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   padding: 8px 6px;
   text-align: center;
+}
+
+@media (max-width: 420px) {
+  .logic-matrix {
+    font-size: 0.72rem;
+  }
+  .logic-matrix th, .logic-matrix td {
+    padding: 5px 2px;
+    word-break: break-word;
+  }
+}
+
+.freq-smeter-track {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.freq-smeter-fill {
+  height: 100%;
+  width: 8%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38BDF8, #10B981);
+  transition: width 120ms ease;
 }
 
 .logic-matrix th {

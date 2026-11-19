@@ -1,9 +1,8 @@
 /**
  * ADVIENTO CERO — MATERIALES VISUALES REALISTAS POR DÍA Y TERMINAL (48 VISTAS)
  * -----------------------------------------------------------------------------
- * Genera planos arquitectónicos, tickets térmicos, capturas de chat, documentos
- * bancarios, escáneres de rayos X, tarjetas RFID, partituras y partes oficiales
- * sin alterar la dificultad ni los hashes de validación.
+ * Overhaul progresivo v2.6.0: planos, cromatografías, oscilogramas, termografía IR,
+ * rejilla Cardano, matriz SWIFT 6x6, log biométrico BTS y actas forenses.
  */
 
 window.DayArtifacts = (() => {
@@ -29,40 +28,37 @@ window.DayArtifacts = (() => {
       case "1-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">PLANO ARQUITECTÓNICO · SALÓN MIRADOR (23:36 H)</div>
+            <div class="blueprint-cap">CROQUIS ORIENTACIÓN Y SENSORES · SALÓN MIRADOR</div>
             <svg viewBox="0 0 320 190" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="12" y="12" width="296" height="166" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
-              <!-- Brújula -->
-              <text x="160" y="27" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">NORTE (CHIMENEA)</text>
-              <text x="160" y="170" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">SUR (ACCESO HALL)</text>
-              <text x="22" y="98" fill="#94A3B8" font-family="monospace" font-size="10.5" transform="rotate(-90 22 98)">OESTE</text>
-              <text x="298" y="98" fill="#FDE68A" font-family="monospace" font-size="10.5" transform="rotate(90 298 98)">VENTANAL ESTE</text>
-              <!-- Abeto central -->
+              <text x="160" y="27" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">NORTE · CHIMENEA DOBLE</text>
+              <text x="160" y="170" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">SUR · ESCENARIO GALA</text>
+              <text x="22" y="98" fill="#94A3B8" font-family="monospace" font-size="10.5" transform="rotate(-90 22 98)">OESTE · COMEDOR</text>
+              <text x="298" y="98" fill="#FDE68A" font-family="monospace" font-size="10.5" transform="rotate(90 298 98)">ESTE · VENTANAL NIEVE</text>
               <circle cx="160" cy="95" r="16" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.5"/>
               <text x="160" y="98" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5">ABETO</text>
-              <!-- 4 Mesas -->
               <circle cx="160" cy="52" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="55" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M1</text>
               <circle cx="76" cy="95" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="76" y="98" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M2</text>
               <circle cx="160" cy="138" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="141" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M3</text>
-              <circle cx="244" cy="95" r="15" fill="rgba(220,38,38,0.32)" stroke="#FBBF24" stroke-width="2"/><text x="244" y="98" text-anchor="middle" fill="#FEF3C7" font-family="monospace" font-size="10.5" font-weight="700">M4</text>
-              <!-- Destello -->
-              <polygon points="274,78 279,90 292,90 281,97 285,109 274,101 263,109 267,97 256,90 269,90" fill="#FDE047" opacity="0.85"/>
-              <text x="244" y="122" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">FLASH 23:36</text>
+              <circle cx="244" cy="95" r="14" fill="rgba(255,255,255,0.06)" stroke="#FBBF24" stroke-width="1.5"/><text x="244" y="98" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">M4</text>
             </svg>
           </div>
           <div class="cctv-frame">
             <img src="imagenes/scene-lobby.jpg" alt="Salón Mirador" width="1024" height="572" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
-            <div class="cctv-hud"><span>INSPECCIÓN OCULAR · SALÓN MIRADOR</span><span>REF: ESCENA-01</span></div>
+            <div class="cctv-hud"><span>REGISTRO ÓPTICO · SALÓN MIRADOR</span><span>REF: ESCENA-01</span></div>
           </div>`;
       case "1-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>PROTOCOLO DE MESA 4 · GALA ADVIENTO</span><span class="paper-stamp">VERIFICADO</span></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 1</strong><br>Álvaro Roldán<br><span style="font-size:0.7rem;color:#78716C;">Suite 303</span></div>
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 2</strong><br>Teresa Alarcón<br><span style="font-size:0.7rem;color:#78716C;">Hab. 202</span></div>
-              <div style="padding:8px;border:2px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Silla 3 · PRENSA</strong><br>Óscar Llorente<br><span style="font-size:0.72rem;color:#B91C1C;font-weight:700;">Hab. 108 · Porche E</span></div>
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 4</strong><br>Diego Aranda<br><span style="font-size:0.7rem;color:#78716C;">Hab. 201</span></div>
+            <div class="paper-ledger-head"><span>PROTOCOLO MESA 4 · TARJETAS ANÓNIMAS</span><span class="paper-stamp">RECEPCIÓN</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 1</strong><br>A. Roldán (VIP)</div>
+              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 2</strong><br>T. Alarcón (VIP)</div>
+              <div style="padding:8px;border:2px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Silla 3 · PRENSA</strong><br>Iniciales: <strong>O.LL.</strong><br><span style="font-size:0.72rem;color:#B91C1C;">Salió al porche 23:35 h</span></div>
+              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 4</strong><br>D. Aranda (VIP)</div>
+            </div>
+            <div class="mono" style="font-size:0.72rem;border-top:1px dashed #B45309;padding-top:6px;">
+              <strong>Check-in VIP:</strong> D. Aranda (201) · T. Alarcón (202) · Ó. Llorente (108) · G. Serrano (208)
             </div>
           </div>`;
 
@@ -71,16 +67,18 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">MUESTRA #B-02 · BANDEJA DE CRISTAL DE BARRA</div>
-            <p style="font-size:0.76rem;color:#CBD5E1;">Soporte recogido junto al grifo de cerveza. Utiliza el haz UV 365 nm inferior sobre toda la superficie para revelar tinta reactiva invisible.</p>
+            <p style="font-size:0.76rem;color:#CBD5E1;">Soporte recogido junto al grifo de cerveza. Inspecciona toda la bandeja con el haz UV 365 nm inferior para leer tanto la serie como la nota técnica de inversión.</p>
           </div>`;
       case "2-patri":
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>CUADRANTE NOCTURNO · BARRA PRINCIPAL</span><span class="paper-stamp">30 NOV</span></div>
-            <table style="width:100%;border-collapse:collapse;font-size:0.75rem;">
-              <tr style="border-bottom:1px solid rgba(180,83,9,0.25);text-align:left;"><th>Turno</th><th>Empleado</th><th>Incidencia 23:34–23:44</th></tr>
-              <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#2</td><td>Sala Aux.</td><td>Servicio mesas sur</td></tr>
-              <tr style="background:#FEE2E2;font-weight:700;"><td>#5</td><td>Nicolás Ferrer</td><td>Almacén frigorífico hielo</td></tr>
+            <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
+              <tr style="border-bottom:1px solid rgba(180,83,9,0.25);text-align:left;"><th>Turno</th><th>Empleado</th><th>Horario e incidencia</th></tr>
+              <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#2</td><td>Ayudante Sala</td><td>22:00–23:15 · Salón Sur</td></tr>
+              <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#4</td><td>Pinche Frío</td><td>23:00–00:00 · Cocina interior</td></tr>
+              <tr style="background:#FEE2E2;font-weight:700;"><td>#5</td><td>Nicolás Ferrer</td><td>23:34–23:44 · Cámara de hielo</td></tr>
+              <tr><td>#8</td><td>Mozo Almacén</td><td>Turno diurno (finalizado 19:00)</td></tr>
             </table>
           </div>`;
 
@@ -90,23 +88,24 @@ window.DayArtifacts = (() => {
           <div class="bank-slip" style="margin-bottom:10px;">
             <div style="color:#FDE68A;margin-bottom:6px;font-weight:700;">CONSOLA CENTRALITA · REGISTRO 23:39:08 H</div>
             <div class="bank-row"><span>CANAL EMERGENCIA</span><span>PULSADOR INTERIOR</span></div>
-            <div class="bank-row"><span>TRAMA CAPTADA</span><span>3 CARACTERES MORSE</span></div>
+            <div class="bank-row"><span>TRAMA CAPTADA</span><span>5 CARACTERES MORSE</span></div>
           </div>`;
       case "3-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>DIRECTORIO DE EXTENSIONES Y TABLA MORSE</span><span class="paper-stamp">CONSERJERÍA</span></div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-family:monospace;font-size:0.74rem;margin-bottom:8px;">
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">S: · · ·</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">O: − − −</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">T: −</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">A: · −</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">G: − − ·</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">R: · − ·</div>
-              <div style="padding:5px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">Z: − − · ·</div>
+            <div class="paper-ledger-head"><span>TABLA MORSE INTERNACIONAL (A–Z)</span><span class="paper-stamp">CONSERJERÍA</span></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-family:monospace;font-size:0.68rem;margin-bottom:8px;">
+              <div><strong>A:</strong> .-</div><div><strong>B:</strong> -...</div><div><strong>C:</strong> -.-.</div><div><strong>D:</strong> -..</div>
+              <div><strong>E:</strong> .</div><div><strong>F:</strong> ..-.</div><div><strong>G:</strong> --.</div><div><strong>H:</strong> ....</div>
+              <div><strong>I:</strong> ..</div><div><strong>J:</strong> .---</div><div><strong>K:</strong> -.-</div><div><strong>L:</strong> .-..</div>
+              <div><strong>M:</strong> --</div><div><strong>N:</strong> -.</div><div><strong>O:</strong> ---</div><div><strong>P:</strong> .--.</div>
+              <div><strong>Q:</strong> --.-</div><div><strong>R:</strong> .-.</div><div><strong>S:</strong> ...</div><div><strong>T:</strong> -</div>
+              <div><strong>U:</strong> ..-</div><div><strong>V:</strong> ...-</div><div><strong>W:</strong> .--</div><div><strong>X:</strong> -..-</div>
+              <div><strong>Y:</strong> -.--</div><div><strong>Z:</strong> --..</div>
             </div>
-            <div style="font-family:monospace;font-size:0.75rem;border-top:1px dashed #B45309;padding-top:6px;">
-              <strong>RONDAS (Tomás Bermúdez):</strong> SOT = Ext. <strong>04</strong> · AZO = Ext. <strong>09</strong> · GAR = Ext. <strong>12</strong>
+            <div style="font-family:monospace;font-size:0.73rem;border-top:1px dashed #B45309;padding-top:6px;">
+              <strong>EXTENSIONES RONDA (T. Bermúdez):</strong><br>
+              Sótano (SOTAN) = <strong>04</strong> · Azotea (AZOTE) = <strong>09</strong> · Garaje (GARAJ) = <strong>12</strong> · Calderas (CALDE) = <strong>18</strong>
             </div>
           </div>`;
 
@@ -114,63 +113,70 @@ window.DayArtifacts = (() => {
       case "4-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ARMARIO MAESTRO LAVANDERÍA · PANEL SUPERIOR (F1–F2)</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Tapa inferior bloqueada. Comparte tus dígitos fijos (F1C1=1, F2C2=4, F2C4=2) con Patri.</div>
+            <div class="blueprint-cap">CUADRANTE DE LLAVES · PANEL SUPERIOR (F1–F2)</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Solo ves 2 dígitos fijos arriba (F1C2=2, F2C4=4). Intercambia tus posiciones con Patri para deducir todo el tablero 4x4 sin ambigüedad.</div>
           </div>`;
       case "4-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>PARTE DE GOBERNANTA · CIERRE 23:25 H</span><span class="paper-stamp">PRECINTADO</span></div>
-            <div>Titular: <strong>Marta Quiroga</strong>. Código de cierre basado en cuadrante inferior (F3–F4) cruzado con el panel de Miguel.</div>
+            <div class="paper-ledger-head"><span>PARTE DE GOBERNANTA · PANEL INFERIOR (F3–F4)</span><span class="paper-stamp">PRECINTADO</span></div>
+            <div>Titular: <strong>Marta Quiroga</strong>. Solo ves 2 dígitos fijos abajo (F3C1=1, F4C3=3). Cruza deducciones fila/columna/caja 2x2 con Miguel.</div>
           </div>`;
 
       // === DÍA 5 ===
       case "5-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">PLANO PLANTA 2 · ANTENAS RFID (23:30–23:45 H)</div>
+            <div class="blueprint-cap">PLANO PLANTA 2 · REGISTRO DE ANTENAS RFID</div>
             <svg viewBox="0 0 320 110" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="10" y="18" width="300" height="74" fill="none" stroke="#38BDF8" stroke-width="1.2"/>
-              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">PASILLO</text><text x="50" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:31 A1</text>
-              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ASCENSOR</text><text x="120" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:34 B4</text>
-              <rect x="160" y="28" width="70" height="54" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.8"/><text x="195" y="50" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5" font-weight="700">BIBLIOTECA</text><text x="195" y="64" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">23:39 TAG-C7</text>
-              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ESC. NORTE</text><text x="270" y="65" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">23:43 D2</text>
+              <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">PASILLO</text><text x="50" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">SUR</text>
+              <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ASCENSOR</text><text x="120" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">CENTRAL</text>
+              <rect x="160" y="28" width="70" height="54" fill="rgba(255,255,255,0.06)" stroke="#38BDF8" stroke-width="1.4"/><text x="195" y="52" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="10.5" font-weight="700">BIBLIOTECA</text><text x="195" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">ANTENA 02</text>
+              <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ESCALERA</text><text x="270" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">P1/P2</text>
             </svg>
           </div>`;
       case "5-patri":
         return `
           <div class="rfid-cards-grid">
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-A1</strong><span style="font-size:0.74rem;">Diego Aranda</span></div>
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-B4</strong><span style="font-size:0.74rem;">Álvaro Roldán</span></div>
-            <div class="rfid-card" style="border-color:#34D399;"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#6EE7B7;">TAG-C7</strong><span style="font-size:0.74rem;">Lucía Montalvo (Hab. 204)</span></div>
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-D2</strong><span style="font-size:0.74rem;">Gabriel Serrano</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-B2</strong><span style="font-size:0.73rem;">Anulada 22:10 (Reserva)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-C7</strong><span style="font-size:0.73rem;">Lucía Montalvo (Hab. 204)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-E4</strong><span style="font-size:0.73rem;">Elena Valls (Hab. 203)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-F9</strong><span style="font-size:0.73rem;">Inés Casado (Hab. 206)</span></div>
           </div>`;
 
       // === DÍA 6 ===
       case "6-miguel":
         return `
           <div class="paper-ledger" style="margin-bottom:10px;">
-            <div class="paper-ledger-head"><span>NOTA HALLADA EN PERCHERO</span><span class="paper-stamp">CIFRADO</span></div>
-            <div class="mono" style="font-size:1.15rem;font-weight:700;letter-spacing:0.16em;text-align:center;padding:8px;color:#7F1D1D;">FDPHULQR VXU</div>
+            <div class="paper-ledger-head"><span>TRES LINEAS CIFRADAS · PERCHERO</span><span class="paper-stamp">CIFRADO</span></div>
+            <div class="mono" style="font-size:0.95rem;font-weight:700;letter-spacing:0.12em;text-align:center;padding:6px;color:#7F1D1D;">
+              BJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU
+            </div>
           </div>`;
       case "6-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>PARTITURA · «NOCHE DE PAZ» (COMPÁS 3/4)</span><span class="paper-stamp">GALA</span></div>
-            <svg viewBox="0 0 300 72" style="width:100%;display:block;background:#FFFDF7;border-radius:6px;">
+            <div class="paper-ledger-head"><span>PARTITURA Y REGLA ACÚSTICA · GALA</span><span class="paper-stamp">CLAVE CÉSAR</span></div>
+            <svg viewBox="0 0 300 72" style="width:100%;display:block;background:#FFFDF7;border-radius:6px;margin-bottom:6px;">
               <line x1="12" y1="22" x2="288" y2="22" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="30" x2="288" y2="30" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="38" x2="288" y2="38" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="46" x2="288" y2="46" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="54" x2="288" y2="54" stroke="#78716C" stroke-width="1"/>
-              <circle cx="52" cy="38" r="5" fill="#1C1917"/><line x1="57" y1="38" x2="57" y2="16" stroke="#1C1917" stroke-width="1.5"/>
-              <circle cx="96" cy="34" r="5" fill="#1C1917"/><line x1="101" y1="34" x2="101" y2="14" stroke="#1C1917" stroke-width="1.5"/>
-              <circle cx="140" cy="42" r="5" fill="#1C1917"/><line x1="145" y1="42" x2="145" y2="20" stroke="#1C1917" stroke-width="1.5"/>
-              <!-- 3 estrellas doradas dibujadas -->
-              <polygon points="222,12 225,18 231,19 226,23 227,29 222,26 217,29 218,23 213,19 219,18" fill="#D97706"/>
-              <polygon points="248,12 251,18 257,19 252,23 253,29 248,26 243,29 244,23 239,19 245,18" fill="#D97706"/>
-              <polygon points="274,12 277,18 283,19 278,23 279,29 274,26 269,29 270,23 265,19 271,18" fill="#D97706"/>
+              <!-- 4 notas negras -->
+              <circle cx="36" cy="38" r="4.5" fill="#1C1917"/><line x1="40.5" y1="38" x2="40.5" y2="16" stroke="#1C1917" stroke-width="1.5"/>
+              <circle cx="64" cy="34" r="4.5" fill="#1C1917"/><line x1="68.5" y1="34" x2="68.5" y2="14" stroke="#1C1917" stroke-width="1.5"/>
+              <circle cx="92" cy="42" r="4.5" fill="#1C1917"/><line x1="96.5" y1="42" x2="96.5" y2="20" stroke="#1C1917" stroke-width="1.5"/>
+              <circle cx="120" cy="30" r="4.5" fill="#1C1917"/><line x1="124.5" y1="30" x2="124.5" y2="11" stroke="#1C1917" stroke-width="1.5"/>
+              <!-- 5 estrellas doradas -->
+              <polygon points="168,14 170,19 175,20 171,23 172,28 168,26 164,28 165,23 161,20 166,19" fill="#D97706"/>
+              <polygon points="194,14 196,19 201,20 197,23 198,28 194,26 190,28 191,23 187,20 192,19" fill="#D97706"/>
+              <polygon points="220,14 222,19 227,20 223,23 224,28 220,26 216,28 217,23 213,20 218,19" fill="#D97706"/>
+              <polygon points="246,14 248,19 253,20 249,23 250,28 246,26 242,28 243,23 239,20 244,19" fill="#D97706"/>
+              <polygon points="272,14 274,19 279,20 275,23 276,28 272,26 268,28 269,23 265,20 270,19" fill="#D97706"/>
             </svg>
+            <div style="font-size:0.73rem;"><strong>Regla del maestro de capilla:</strong> Desplazamiento César = (Notas negras) + (Estrellas doradas).</div>
           </div>`;
 
       // === DÍA 7 ===
@@ -178,26 +184,24 @@ window.DayArtifacts = (() => {
         return `
           <div class="bank-slip" style="margin-bottom:10px;">
             <div style="color:#7DD3FC;font-weight:700;margin-bottom:6px;">ATESTADOS ANONIMIZADOS · 23:40 H</div>
-            <div class="bank-row"><span>ALFA</span><span>Dormido desde 23:00 h</span></div>
-            <div class="bank-row"><span style="color:#FDE68A;">BETA</span><span>Wi-Fi Estudio Diseño 23:25–23:52</span></div>
-            <div class="bank-row"><span>GAMMA</span><span>Reloj Sala Billar 23:40 h</span></div>
-            <div class="bank-row"><span>DELTA</span><span>Jardín interior</span></div>
+            <div class="bank-row"><span>ALFA</span><span>Dormido desde 23:00 h (sin testigos)</span></div>
+            <div class="bank-row"><span>BETA</span><span>Billar · miró el reloj de pie a las 23:40</span></div>
+            <div class="bank-row"><span>GAMMA</span><span>Biblioteca · navegó por cable LAN 23:40</span></div>
+            <div class="bank-row"><span>DELTA</span><span>Estudio Diseño · subida 1.4 GB 23:25–23:52</span></div>
+            <div class="bank-row"><span>EPSILON</span><span>Invernadero · sintió suelo radiante cálido</span></div>
+            <div class="bank-row"><span>ZETA</span><span>Terraza Oeste · abrió puerta exterior</span></div>
           </div>`;
       case "7-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">AUDITORÍA IT + RELOJ DE PIE AVERIADO</div>
-            <div style="display:flex;align-items:center;gap:14px;">
-              <svg width="74" height="74" viewBox="0 0 80 80" style="flex-shrink:0;">
-                <circle cx="40" cy="40" r="34" fill="#0F172A" stroke="#FBBF24" stroke-width="2.5"/>
-                <line x1="40" y1="40" x2="24" y2="50" stroke="#F87171" stroke-width="3" stroke-linecap="round"/>
-                <line x1="40" y1="40" x2="62" y2="40" stroke="#FDE68A" stroke-width="2" stroke-linecap="round"/>
-                <text x="40" y="64" text-anchor="middle" fill="#FDA4AF" font-family="monospace" font-size="10.5">20:15 PARADO</text>
-              </svg>
-              <div style="font-size:0.77rem;color:#E2E8F0;line-height:1.45;">
-                <strong>Router Estudio Diseño:</strong><br>Tráfico continuo 23:25–23:52 h desde portátil de <strong>Diego Aranda (Ficha Nº 12)</strong>.
-              </div>
-            </div>
+            <div class="blueprint-cap">AUDITORÍA TÉCNICA Y SENSORES DEL HOTEL</div>
+            <ul class="clue-list" style="font-size:0.75rem;">
+              <li>Reloj de pie del Billar detenido a las <strong>20:15 h</strong>.</li>
+              <li>Calefacción del Invernadero cortada desde las <strong>22:40 h</strong>.</li>
+              <li>Puerta Terraza Oeste sellada por hielo: <strong>0 aperturas</strong>.</li>
+              <li>Puerto LAN Biblioteca: <strong>0 bytes</strong> entre 23:00 y 00:00.</li>
+              <li>Router Estudio Diseño: tráfico <strong>1.42 GB (23:25–23:52)</strong> de <strong>Diego Aranda (Ficha Nº 12)</strong>.</li>
+            </ul>
           </div>`;
 
       // === DÍA 8 ===
@@ -207,23 +211,24 @@ window.DayArtifacts = (() => {
             <div class="blueprint-cap">BÁSCULAS DE PRECISIÓN #1 Y #2</div>
             <svg viewBox="0 0 300 84" style="width:100%;display:block;">
               <rect x="8" y="8" width="136" height="68" rx="8" fill="#061814" stroke="#34D399"/>
-              <text x="76" y="28" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10">2 ANÍS + 1 CANELA</text>
+              <text x="76" y="28" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10">2 ANÍS + 1 CLAVO</text>
               <rect x="34" y="38" width="84" height="26" rx="4" fill="#020617" stroke="#38BDF8"/>
-              <text x="76" y="55" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="13" font-weight="700">19.0 g</text>
+              <text x="76" y="55" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="13" font-weight="700">18.0 g</text>
               <rect x="156" y="8" width="136" height="68" rx="8" fill="#061814" stroke="#FBBF24"/>
-              <text x="224" y="28" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">1 ANÍS + 2 CLAVO</text>
+              <text x="224" y="28" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">1 CLAVO + 2 NUEZ</text>
               <rect x="182" y="38" width="84" height="26" rx="4" fill="#020617" stroke="#38BDF8"/>
-              <text x="224" y="55" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="13" font-weight="700">13.0 g</text>
+              <text x="224" y="55" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="13" font-weight="700">22.0 g</text>
             </svg>
           </div>`;
       case "8-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>BÁSCULA #3 Y RECETA DE INFUSIÓN SPA</span><span class="paper-stamp">PAULA MENDOZA</span></div>
-            <div class="mono" style="padding:8px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;margin-bottom:6px;text-align:center;font-weight:700;">
-              3 CANELA = 15.0 g
+            <div class="paper-ledger-head"><span>BÁSCULAS #3–#4 Y RECETA DE CONTROL</span><span class="paper-stamp">PAULA MENDOZA</span></div>
+            <div class="mono" style="padding:8px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;margin-bottom:6px;font-size:0.78rem;line-height:1.5;">
+              <strong>Báscula 3:</strong> 1 Nuez + 1 Jengibre = <strong>15 g</strong><br>
+              <strong>Báscula 4:</strong> 1 Anís + 1 Jengibre + 1 Clavo = <strong>17 g</strong>
             </div>
-            <div style="font-size:0.78rem;">Mezcla de control: <strong>2 Anís + 3 Clavo + 1 Canela = ? g</strong></div>
+            <div style="font-size:0.78rem;">Fórmula incautada: <strong>3 Anís + 2 Nuez + 4 Clavo + 1 Jengibre = ? g</strong></div>
           </div>`;
 
       // === DÍA 9 ===
@@ -231,155 +236,188 @@ window.DayArtifacts = (() => {
         return `
           <div class="cctv-frame" style="margin-bottom:8px;">
             <div class="cctv-hud" style="position:relative;background:#031019;padding:8px 10px;border-bottom:1px solid rgba(56,189,248,0.3);">
-              <span>CAM-04 NORTE (TELEFÉRICO) · REC</span><span>30/11 23:41:18 · -11 °C · M.S.</span>
+              <span>CAM-EXT · TERRAZA / POLEA</span><span>30/11 23:41:18 h</span>
             </div>
+          </div>
+          <div class="bank-slip">
+            <div style="color:#67E8F9;font-weight:700;margin-bottom:6px;">TELEMETRÍA POSTES EXTERIORES (23:41 H)</div>
+            <div class="bank-row"><span>Poste 01 (Sur · 180°)</span><span>-06 °C · Sin movimiento</span></div>
+            <div class="bank-row"><span>Poste 02 (SE · 140°)</span><span>-09 °C · Ráfaga nieve</span></div>
+            <div class="bank-row"><span>Poste 04 (Norte · 005°)</span><span>-14 °C · Iniciales manga: M.S.</span></div>
           </div>`;
       case "9-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">TECLADO ELECTRÓNICO CABAÑA NORTE · 23:41 H</div>
-            <div class="safe-screen">4 - 8 - 1 - 9</div>
-            <div style="font-size:0.74rem;color:#CBD5E1;text-align:center;">Acceso verificado junto a la cámara B tras despejar el hielo de la polea.</div>
+            <div class="blueprint-cap">TERMOGRAFÍA IR · TECLADO CABAÑA NORTE (23:41 H)</div>
+            <svg viewBox="0 0 280 120" style="width:100%;display:block;background:#020617;border-radius:8px;">
+              <rect x="20" y="14" width="54" height="42" rx="6" fill="rgba(56,189,248,0.22)" stroke="#38BDF8"/>
+              <text x="47" y="34" text-anchor="middle" fill="#BAE6FD" font-family="monospace" font-size="13" font-weight="700">7</text>
+              <text x="47" y="49" text-anchor="middle" fill="#7DD3FC" font-family="monospace" font-size="10">22.1°C</text>
+
+              <rect x="84" y="14" width="54" height="42" rx="6" fill="rgba(16,185,129,0.24)" stroke="#34D399"/>
+              <text x="111" y="34" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="13" font-weight="700">2</text>
+              <text x="111" y="49" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="10">24.8°C</text>
+
+              <rect x="148" y="14" width="54" height="42" rx="6" fill="rgba(245,158,11,0.26)" stroke="#FBBF24"/>
+              <text x="175" y="34" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="13" font-weight="700">9</text>
+              <text x="175" y="49" text-anchor="middle" fill="#FCD34D" font-family="monospace" font-size="10">27.3°C</text>
+
+              <rect x="212" y="14" width="54" height="42" rx="6" fill="rgba(239,68,68,0.34)" stroke="#F87171"/>
+              <text x="239" y="34" text-anchor="middle" fill="#FECACA" font-family="monospace" font-size="13" font-weight="700">4</text>
+              <text x="239" y="49" text-anchor="middle" fill="#FCA5A5" font-family="monospace" font-size="10">30.5°C</text>
+
+              <text x="140" y="84" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10">DISIPACIÓN TÉRMICA: EL BOTÓN MÁS FRÍO SE PULSÓ PRIMERO</text>
+              <text x="140" y="102" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">ORDEN PIN: MENOR TEMP -&gt; MAYOR TEMP</text>
+            </svg>
           </div>`;
 
       // === DÍA 10 ===
       case "10-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ESQUEMA HIDRÁULICO · SÓTANO CALDERAS</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Introduce debajo el código de circuito averiado que aparece en rojo en la terminal de Patri.</div>
+            <div class="blueprint-cap">MANUAL LÓGICO DE CALDERAS · SÓTANO</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Consulta abajo el circuito que cumpla la condición crítica en la terminal de Patri (ej. C4) para obtener sus reglas booleanas de purga.</div>
           </div>`;
       case "10-patri":
         return `
-          <div class="blueprint-box" style="border-color:rgba(248,113,113,0.6);">
-            <div class="blueprint-cap" style="color:#FECACA;">ALERTA ROJA EN PANEL · CIRCUITO C-7</div>
-            <div style="font-size:0.76rem;color:#E2E8F0;">Comunica <strong>C-7</strong> a Miguel y pulsa V1–V4 según sus instrucciones.</div>
+          <div class="blueprint-box" style="border-color:rgba(248,113,113,0.55);">
+            <div class="blueprint-cap" style="color:#FECACA;">MANÓMETROS DE CALDERAS (CRÍTICO: &gt; 3.2 bar Y &lt; 45 °C)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:monospace;font-size:0.74rem;margin-bottom:8px;">
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-2:</strong> 2.4 bar · 38 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-5:</strong> 3.8 bar · 62 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-7:</strong> 2.9 bar · 40 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(220,38,38,0.18);border:1px solid #F87171;"><strong>C-9:</strong> 4.1 bar · 36 °C</div>
+            </div>
+            <div style="font-size:0.73rem;color:#FDE68A;">Al estabilizar las 4 válvulas, anota la serie <strong>[AB][CD]</strong> e invierte los pares <strong>[CD][AB]</strong>.</div>
           </div>`;
 
       // === DÍA 11 ===
       case "11-miguel":
         return `
           <div class="paper-receipt torn-right">
-            <div style="font-weight:700;border-bottom:1px dashed #94A3B8;padding-bottom:4px;margin-bottom:6px;">HOTEL VENTISQUERO · TPV #01</div>
-            <div>FECHA: 30/11/2026 &nbsp; HORA: <strong>23:38</strong></div>
-            <div style="margin-top:6px;">L1 ...................... 24,00 EUR</div>
-            <div>L2 ...................... <strong>4,50 EUR</strong></div>
-            <div style="border-top:1px solid #0F172A;margin-top:6px;padding-top:4px;font-weight:700;">TOTAL COBRADO: 28,50 EUR</div>
+            <div style="font-weight:700;border-bottom:1px dashed #94A3B8;padding-bottom:4px;margin-bottom:6px;">CINTA TPV · AUTORIZACIONES (SIN MESA)</div>
+            <div><strong>AUT-41</strong> · 23:35 h .......... 11,50 EUR</div>
+            <div><strong>AUT-42</strong> · 23:38 h .......... 6,20 EUR</div>
+            <div><strong>AUT-43</strong> · 23:41 h .......... 19,50 EUR</div>
+            <div><strong>AUT-44</strong> · 23:31 h .......... 24,00 EUR</div>
+            <div style="border-top:1px solid #0F172A;margin-top:6px;padding-top:4px;font-size:0.72rem;">Orden desordenado respecto a lista de sala.</div>
           </div>`;
       case "11-patri":
         return `
           <div class="paper-receipt torn-left">
-            <div style="font-weight:700;border-bottom:1px dashed #94A3B8;padding-bottom:4px;margin-bottom:6px;">... COPIA CLIENTE / BARRA</div>
-            <div>OPERACIÓN TARJETA CONFIRMADA</div>
-            <div style="margin-top:6px;">2x WHISKY RESERVA · MESA 03</div>
-            <div>1x CAFÉ SOLO · <strong>MESA 08</strong></div>
-            <div style="border-top:1px solid #0F172A;margin-top:6px;padding-top:4px;font-weight:700;">TITULAR: MARCOS TEJADA</div>
+            <div style="font-weight:700;border-bottom:1px dashed #94A3B8;padding-bottom:4px;margin-bottom:6px;">CARTA BARRA Y COMANDAS (SIN IMPORTE)</div>
+            <div style="font-size:0.7rem;margin-bottom:6px;border-bottom:1px dashed #CBD5E1;padding-bottom:4px;">
+              Whisky 12,00 · Cóctel 7,00 · Cava 6,50 · Tapa 4,50 · Café Solo 3,80 · Agua Mineral 2,40
+            </div>
+            <div>Mesa 03 (Peña): 2x Whisky</div>
+            <div>Mesa 05 (Sala): 1x Cóctel + 1x Tapa</div>
+            <div><strong>Mesa 08 (M. Tejada):</strong> 1x Café Solo + 1x Agua</div>
+            <div>Mesa 11 (Gala): 3x Cava</div>
           </div>`;
 
       // === DÍA 12 ===
       case "12-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">NONOGRAMA 5x5 · PISTAS DE FILAS (ARRIBA → ABAJO)</div>
+            <div class="blueprint-cap">NONOGRAMA 5x5 · PISTAS DE FILAS (SOLO MIGUEL)</div>
             <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;font-family:monospace;font-size:0.8rem;color:#FDE68A;">
-              <span>F1: 3</span><span>F2: 1,1</span><span>F3: 5</span><span>F4: 1,1</span><span>F5: 1,1</span>
+              <span>F1: 1,1,1</span><span>F2: 1</span><span>F3: 2</span><span>F4: 1</span><span>F5: 1,1</span>
             </div>
           </div>`;
       case "12-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>PISTAS COLUMNAS + SALAS DE ARTE</span><span class="paper-stamp">ELENA VALLS</span></div>
-            <div class="mono" style="font-size:0.76rem;margin-bottom:6px;">C1: 4 | C2: 1,1 | C3: 1,1 | C4: 1,1 | C5: 4</div>
-            <div style="font-size:0.75rem;"><strong>A</strong>rchivo Histórico (Cód. 19) · <strong>B</strong>iblioteca (Cód. 05) · <strong>C</strong>apilla (Cód. 23)</div>
+            <div class="paper-ledger-head"><span>REJILLA CARDANO 5x5 · ARCHIVO HISTÓRICO</span><span class="paper-stamp">ELENA VALLS</span></div>
+            <div class="mono" style="font-size:0.74rem;margin-bottom:6px;"><strong>Columnas:</strong> C1: 1 | C2: 3 | C3: 1,1 | C4: 1 | C5: 2</div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-family:monospace;font-size:0.8rem;font-weight:700;text-align:center;">
+              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">B</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">R</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">C</div>
+              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">X</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">4</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">K</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">2</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">1</div>
+              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">P</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">9</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">V</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">0</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">M</div>
+              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">8</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">S</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">5</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">D</div>
+              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">Z</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">L</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">N</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">3</div>
+            </div>
+            <div style="font-size:0.7rem;margin-top:6px;">Lee de izquierda a derecha y de arriba abajo solo los 9 recuadros rellenos del nonograma.</div>
           </div>`;
 
       // === DÍA 13 ===
       case "13-miguel":
         return `
           <div class="chat-thread">
-            <div class="chat-bubble in">[Msg 1] Torre a Gabriel: el temporal empeora, viento &gt; 90 km/h.</div>
-            <div class="chat-bubble gap">[Msg 2 · Ver terminal de Patri]</div>
-            <div class="chat-bubble out">[Msg 3] Gabriel: estoy en hangar atando palas y activando baliza <strong>HEL-902</strong>.</div>
-            <div class="chat-bubble gap">[Msg 4 · Ver terminal de Patri]</div>
-            <div class="chat-bubble out">[Msg 5] Gabriel: imposible acercarme al hotel hasta que pare la ventisca.</div>
-            <div class="chat-bubble gap">[Msg 6 · Ver hora en terminal de Patri]</div>
+            <div class="chat-bubble in">[Msg 1 · 22:14 Z] Torre: temporal supera 90 km/h; imposibilidad de vuelo.</div>
+            <div class="chat-bubble gap">[Msg 2 · Ver en terminal de Patri]</div>
+            <div class="chat-bubble out">[Msg 3 · 22:28 Z] Gabriel: apago la baliza de prueba de las 22:15 Z y activo solo la portadora limpia (-42 dBm) dentro del hangar.</div>
+            <div class="chat-bubble gap">[Msg 4 · Ver confirmación UTC y puerta en Patri]</div>
+            <div class="chat-bubble out">[Msg 5 · 22:38 Z] Gabriel: la de -78 dBm es eco falso de ladera; sigo atando palas en espera.</div>
           </div>`;
       case "13-patri":
         return `
-          <div class="chat-thread">
-            <div class="chat-bubble gap">[Msg 1 · Ver terminal de Miguel]</div>
-            <div class="chat-bubble in">[Msg 2] Torre: confirma si puedes despegar antes de medianoche.<span class="chat-time">23:31</span></div>
-            <div class="chat-bubble gap">[Msg 3 · Ver código baliza en Miguel]</div>
-            <div class="chat-bubble in">[Msg 4] Torre: anota tu código de baliza para el radar militar.<span class="chat-time">23:34</span></div>
-            <div class="chat-bubble gap">[Msg 5 · Ver terminal de Miguel]</div>
-            <div class="chat-bubble in">[Msg 6] Torre: baliza confirmada en radar a las <strong>23:37</strong>.<span class="chat-time">23:37</span></div>
+          <div class="bank-slip" style="margin-bottom:8px;">
+            <div style="color:#FDE68A;font-weight:700;margin-bottom:6px;">TORRE RADAR MILITAR · HORA CET = UTC + 1 H</div>
+            <div class="bank-row"><span>HEL-418 (121.5 MHz)</span><span>-78 dBm · Eco de ladera</span></div>
+            <div class="bank-row"><span>HEL-735 (121.5 MHz)</span><span>Apagada a las 22:15 Z</span></div>
+            <div class="bank-row"><span>HEL-902 (121.5 MHz)</span><span>-42 dBm · Activa 22:37 Z · Hangar H4</span></div>
           </div>`;
 
       // === DÍA 14 ===
       case "14-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">RADAR WI-FI NORTE · PASILLO PLANTA 2</div>
-            <svg viewBox="0 0 320 104" style="width:100%;display:block;border-radius:8px;background:#031019;">
-              ${[201,202,203,204,205,206,207].map((num, idx) => {
-                const x = 14 + idx * 42;
-                const hit = num === 204 || num === 205;
-                return `<rect x="${x}" y="30" width="38" height="44" rx="4" fill="${hit ? "rgba(0,229,255,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${hit ? "#00E5FF" : "#475569"}"/><text x="${x+19}" y="56" text-anchor="middle" fill="${hit ? "#67E8F9" : "#94A3B8"}" font-family="monospace" font-size="10">${num}</text>`;
+            <div class="blueprint-cap">RADAR AP-NORTE (HAB. 203) · RSSI -54 dBm</div>
+            <svg viewBox="0 0 320 100" style="width:100%;display:block;border-radius:8px;background:#031019;">
+              ${[201,202,203,204,205,206,207,208,209,210,211,212].map((num, idx) => {
+                const x = 8 + idx * 25.5;
+                return `<rect x="${x}" y="30" width="23" height="40" rx="3" fill="${num === 203 ? "rgba(0,229,255,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${num === 203 ? "#00E5FF" : "#475569"}"/><text x="${x+11.5}" y="54" text-anchor="middle" fill="${num === 203 ? "#67E8F9" : "#94A3B8"}" font-family="monospace" font-size="8.5">${num}</text>`;
               }).join("")}
-              <circle cx="117" cy="22" r="5" fill="#00E5FF"/><text x="117" y="14" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="10.5">REPETIDOR NORTE (203)</text>
+              <text x="160" y="18" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="9.5">ATENCIÓN: -40/-49 dBm = 1 puerta · -50/-59 = 2 · -60/-69 = 3</text>
+              <text x="160" y="88" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="9.5">TRÁFICO SUBIDA 2.8 MB/s -> HOSTNAME: RC-AUDIT-09</text>
             </svg>
           </div>`;
       case "14-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">RADAR WI-FI SUR · PASILLO PLANTA 2</div>
-            <svg viewBox="0 0 320 104" style="width:100%;display:block;border-radius:8px;background:#031019;">
-              ${[201,202,203,204,205,206,207].map((num, idx) => {
-                const x = 14 + idx * 42;
-                const hit = num === 205 || num === 206;
-                return `<rect x="${x}" y="30" width="38" height="44" rx="4" fill="${hit ? "rgba(251,191,36,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${hit ? "#FBBF24" : "#475569"}"/><text x="${x+19}" y="56" text-anchor="middle" fill="${hit ? "#FDE68A" : "#94A3B8"}" font-family="monospace" font-size="10">${num}</text>`;
-              }).join("")}
-              <circle cx="285" cy="22" r="5" fill="#FBBF24"/><text x="255" y="14" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">REPETIDOR SUR (207)</text>
-            </svg>
+            <div class="blueprint-cap">RADAR AP-SUR (HAB. 208 · RSSI -63 dBm) + TABLA DHCP</div>
+            <div class="bank-row" style="font-size:0.73rem;"><span><strong>AP-SUR (208):</strong></span><span>Señal -63 dBm (ver tabla distancia en Miguel)</span></div>
+            <div class="bank-row" style="font-size:0.73rem;"><span>Huesped-Phone:</span><span>A4:83:E7:19:4C · Audio 12 KB/s</span></div>
+            <div class="bank-row" style="font-size:0.73rem;"><span><strong>RC-AUDIT-09 (Raúl C.):</strong></span><span>3C:52:82:9F:0B · TLS Hacienda</span></div>
+            <div class="bank-row" style="font-size:0.73rem;"><span>Tablet-201:</span><span>70:3A:CB:11:D2 · En reposo</span></div>
           </div>`;
 
       // === DÍA 15 ===
       case "15-miguel":
         return `
-          <div class="paper-ledger" style="background:linear-gradient(145deg,#92400E,#78350F);color:#FEF3C7;border:2px solid #FBBF24;text-align:center;">
-            <div class="mono" style="font-size:0.72rem;letter-spacing:0.14em;">PLACA DE LATÓN · RECEPCIÓN</div>
-            <div class="serif" style="font-size:1.15rem;font-weight:700;margin:4px 0;">HOTEL MIRADOR DEL VENTISQUERO</div>
-            <div class="mono" style="font-size:0.9rem;font-weight:700;color:#FDE047;">FUNDADO EN 1987 · 3 PLANTAS HUÉSPEDES</div>
+          <div class="paper-ledger" style="background:linear-gradient(145deg,#92400E,#78350F);color:#FEF3C7;border:2px solid #FBBF24;">
+            <div class="mono" style="font-size:0.72rem;letter-spacing:0.12em;">PLACA 1987 E INTENTO FALLIDO #1</div>
+            <div class="serif" style="font-size:1.02rem;font-weight:700;margin:4px 0;">D1 = Último dígito de fundación (1987)</div>
+            <div class="mono" style="font-size:0.78rem;color:#FDE68A;">Prueba 1: [ 7 2 5 8 4 ] -> 1 exacto · 2 en otra pos.</div>
+            <div class="mono" style="font-size:0.76rem;color:#FEF3C7;margin-top:4px;">Condición: D2 + D4 = 5 y D2 &gt; D4</div>
           </div>`;
       case "15-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">CROQUIS ARQUITECTÓNICO · CHIMENEAS SALÓN</div>
-            <svg viewBox="0 0 300 78" style="width:100%;display:block;background:#031019;border-radius:8px;">
-              <rect x="20" y="14" width="260" height="50" fill="none" stroke="#FBBF24" stroke-width="1.2"/>
-              <rect x="55" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="77" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">CHIMENEA 1</text>
-              <rect x="201" y="14" width="44" height="14" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="223" y="44" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">CHIMENEA 2</text>
+            <div class="blueprint-cap">CROQUIS SALÓN (D4) E INTENTO FALLIDO #2</div>
+            <svg viewBox="0 0 300 66" style="width:100%;display:block;background:#031019;border-radius:8px;margin-bottom:8px;">
+              <rect x="20" y="10" width="260" height="46" fill="none" stroke="#FBBF24" stroke-width="1.2"/>
+              <rect x="55" y="10" width="44" height="12" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="77" y="40" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">CHIMENEA 1</text>
+              <rect x="201" y="10" width="44" height="12" fill="rgba(220,38,38,0.45)" stroke="#F87171"/><text x="223" y="40" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">CHIMENEA 2</text>
             </svg>
+            <div class="mono" style="font-size:0.75rem;color:#67E8F9;">Prueba 2: [ 1 3 9 2 8 ] -> 2 exactos · 1 en otra pos.</div>
+            <div class="mono" style="font-size:0.73rem;color:#CBD5E1;margin-top:4px;">Sin dígitos repetidos · Suma D1+D2+D3+D4+D5 = 26</div>
           </div>`;
 
       // === DÍA 16 ===
       case "16-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ESPECTROGRAMA BUZÓN SATELITAL · 23:35–23:48</div>
-            <svg viewBox="0 0 300 54" style="width:100%;display:block;background:#020617;border-radius:6px;">
-              ${Array.from({ length: 30 }, (_, i) => {
-                const h = 8 + ((i * 19) % 34);
-                return `<rect x="${6 + i * 9.6}" y="${48 - h}" width="5" height="${h}" rx="2" fill="${i === 14 ? "#00E5FF" : "#1E293B"}"/>`;
-              }).join("")}
-            </svg>
+            <div class="blueprint-cap">ESPECTRO INMARSAT · SUITE 305 (BARRER 200–740 Hz)</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Hay 3 portadoras activas ocultas bajo la estática. Observa el medidor S-Meter inferior hasta sintonizar todas y filtra la hora real con Patri.</div>
           </div>`;
       case "16-patri":
         return `
           <div class="bank-slip">
-            <div style="color:#67E8F9;font-weight:700;margin-bottom:6px;">INFORME ANTENA SATELITAL INMARSAT</div>
-            <div class="bank-row"><span>TERMINAL</span><span>SUITE 305 (SOFÍA NAVARRO)</span></div>
-            <div class="bank-row"><span>BANDA ÓPTIMA</span><span style="color:#FDE68A;font-weight:700;">440 Hz</span></div>
+            <div style="color:#67E8F9;font-weight:700;margin-bottom:6px;">INFORME ANTENA INMARSAT · SUITE 305</div>
+            <div class="bank-row"><span>LLAMADA BREVE 23:12</span><span>Descartada (buzón de prueba)</span></div>
+            <div class="bank-row"><span>TRAMO REAL 23:35–23:48</span><span>Canales válidos: SAT-A y SAT-B</span></div>
+            <div class="bank-row"><span>FORMATO CÓDIGO</span><span>Palabra SAT-A + Token SAT-B invertido</span></div>
           </div>`;
 
       // === DÍA 17 ===
@@ -387,21 +425,24 @@ window.DayArtifacts = (() => {
       case "17-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>HOJA DE SERVICIO NOCTURNO · COMEDOR</span><span class="paper-stamp">23:30–23:50</span></div>
-            <div>Usa la parrilla interactiva inferior cruzando vuestras 4 pistas hasta fijar la ubicación y hora de <strong>Héctor Salgado</strong>.</div>
+            <div class="paper-ledger-head"><span>MATRIZ LÓGICA 4x4 · COMEDOR Y DEPENDENCIAS</span><span class="paper-stamp">23:20–23:50</span></div>
+            <div>Disponéis de 4 personas (<strong>Héctor, Nora, Tomás, Marta</strong>), 4 lugares y 4 franjas. Ninguna persona ni lugar repite franja. Cruzad las 8 pistas entre ambos terminales.</div>
           </div>`;
 
       // === DÍA 18 ===
       case "18-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">SUELA VIBRAM-ALPINE · ESCANEO EN NIEVE</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Desliza el calibre verde inferior hasta alinear el borde derecho de la pisada y lee la medida obtenida.</div>
+            <div class="blueprint-cap">SUELA VIBRAM-ALPINE (ALP-40) · BIOMECÁNICA</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Mide la longitud total exterior con el calibre inferior. Regla técnica de goma perimetral: <strong>L_pie = L_suela - 1.5 cm</strong>.</div>
           </div>`;
       case "18-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>GUARDABOTAS RECEPCIÓN · TAQUILLAS</span><span class="paper-stamp">30 NOV</span></div>
+            <div class="paper-ledger-head"><span>TABLA HORMA INTERIOR + GUARDABOTAS</span><span class="paper-stamp">30 NOV</span></div>
+            <div class="mono" style="font-size:0.71rem;margin-bottom:8px;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">
+              <strong>L_pie interno:</strong> 23.5 cm=T.37 · 24.0=T.38 · 24.5=T.39 · 25.0=T.40 · 25.5=T.41 · 26.5=T.42
+            </div>
             <div class="rfid-cards-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
               <div style="padding:8px;border:1.5px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Hab. 107 · Adriana Orozco</strong><br>Talla <strong>37</strong> · Secas 23:32 h</div>
               <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Hab. 203 · Elena Valls</strong><br>Talla 38 · En taquilla</div>
@@ -412,31 +453,45 @@ window.DayArtifacts = (() => {
       case "19-miguel":
         return `
           <div class="bank-slip">
-            <div style="color:#7DD3FC;font-weight:700;margin-bottom:6px;">BANCA PRIVADA · TRANSFERENCIA SEPA</div>
-            <div class="bank-row"><span>ORDENANTE</span><span>ÁLVARO ROLDÁN (SUITE 303)</span></div>
-            <div class="bank-row"><span>HORA / IMPORTE</span><span>23:39:10 h · 45.000,00 EUR</span></div>
-            <div class="bank-row"><span>TOKEN PARCIAL 1</span><span style="color:#FDE68A;font-weight:700;">RX-88</span></div>
+            <div style="color:#7DD3FC;font-weight:700;margin-bottom:6px;">CUATRO ÓRDENES SEPA SALIENTES · 30 NOV</div>
+            <div class="bank-row"><span>OP-1 · 23:32 · Zúrich</span><span>12.000 EUR · PX12</span></div>
+            <div class="bank-row"><span>OP-2 · 23:39 · Zúrich</span><span>45.000 EUR · ZR84 · (2,5)-(6,6)-(4,4)</span></div>
+            <div class="bank-row"><span>OP-3 · 23:34 · Luxemburgo</span><span>45.000 EUR · LX19 · (1,1)-(5,3)-(2,2)</span></div>
+            <div class="bank-row"><span>OP-4 · 23:41 · Madrid</span><span>8.500 EUR · MD07</span></div>
           </div>`;
       case "19-patri":
         return `
-          <div class="bank-slip" style="border-color:rgba(52,211,153,0.45);">
-            <div style="color:#6EE7B7;font-weight:700;margin-bottom:6px;">CERTIFICADO BIOMÉTRICO FACIAL</div>
-            <div class="bank-row"><span>IP ORIGEN</span><span>ROUTER SUITE 303 · 23:39:14 h</span></div>
-            <div class="bank-row"><span>TOKEN PARCIAL 2</span><span style="color:#FDE68A;font-weight:700;">41-Z</span></div>
+          <div class="paper-ledger">
+            <div class="paper-ledger-head"><span>MATRIZ SWIFT 6x6 + FIRMA BIOMÉTRICA</span><span class="paper-stamp">SUITE 303</span></div>
+            <div class="mono" style="font-size:0.72rem;margin-bottom:6px;">Firma facial en directo: <strong>Suite 303 · 23:39:14 h</strong> (orden &gt; 30.000 EUR hacia Zúrich durante el apagón).</div>
+            <div class="mono" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
+              Cols 1..6:<br>
+              F1: A B C D E F<br>
+              F2: G H I J K L<br>
+              F3: M N O P Q R<br>
+              F4: S T U V W X<br>
+              F5: Y Z 0 1 2 3<br>
+              F6: 4 5 6 7 8 9
+            </div>
           </div>`;
 
       // === DÍA 20 ===
       case "20-miguel":
-      case "20-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ESCÁNER PORTÁTIL DE EQUIPAJE · MALETÍN NORA</div>
-            <svg viewBox="0 0 300 84" style="width:100%;display:block;background:#020617;border-radius:8px;">
-              <rect x="24" y="14" width="252" height="56" rx="10" fill="none" stroke="${role === "miguel" ? "#38BDF8" : "#34D399"}" stroke-width="1.5" stroke-dasharray="5 3"/>
-              ${role === "miguel"
-                ? `<circle cx="96" cy="42" r="11" fill="none" stroke="#67E8F9" stroke-width="2.5"/><rect x="107" y="39" width="42" height="6" fill="#67E8F9"/><rect x="136" y="45" width="5" height="7" fill="#67E8F9"/><rect x="190" y="34" width="56" height="16" rx="8" fill="none" stroke="#38BDF8" stroke-width="2"/>`
-                : `<rect x="76" y="24" width="24" height="36" rx="5" fill="rgba(16,185,129,0.28)" stroke="#34D399"/><rect x="114" y="24" width="24" height="36" rx="5" fill="rgba(16,185,129,0.28)" stroke="#34D399"/><rect x="166" y="28" width="76" height="28" rx="4" fill="rgba(251,191,36,0.18)" stroke="#FBBF24"/>`}
-            </svg>
+            <div class="blueprint-cap">ESCÁNER METÁLICO · CAPA OCULTA BAJO FILTRO</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Activa el escáner inferior para revelar los 5 cortes reales de la llave maestra y el termómetro de latón.</div>
+          </div>`;
+      case "20-patri":
+        return `
+          <div class="paper-ledger">
+            <div class="paper-ledger-head"><span>TABLA CERRAJERO Y MAPA DE CAVA INFERIOR</span><span class="paper-stamp">NORA ECHEVARRÍA</span></div>
+            <div class="mono" style="font-size:0.7rem;margin-bottom:6px;">
+              <strong>Tallado pines:</strong> CAV-03 [2-4-1-5-3] · CAV-09 [2-5-1-4-3] · CAV-12 [3-5-2-4-1] · CAV-15 [1-5-2-4-3]
+            </div>
+            <div class="mono" style="font-size:0.7rem;border-top:1px dashed #B45309;padding-top:5px;">
+              <strong>Estantes Cava (+11 °C):</strong> Estante A2 (Añada 1994) · Estante B4 (Añada 1998) · Estante C1 (Añada 2002)
+            </div>
           </div>`;
 
       // === DÍA 21 ===
@@ -444,57 +499,72 @@ window.DayArtifacts = (() => {
       case "21-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">ESCALERA Y PASILLO PLANTA 3 → SALA LECTURA PLANTA 2</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">Ordenad los 5 eventos entre las 23:30 y las 23:45 h para extraer los 5 dígitos en orden cronológico.</div>
+            <div class="blueprint-cap">RECONSTRUCCIÓN RELATIVA · ANCLA ÚNICA 23:38 H</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Calculad el minuto real de cada uno de los 6 fragmentos [R, M, K, T, V, P] sumando/restando intervalos relativos y corrigiendo el desfase horario del reloj de pared.</div>
           </div>`;
 
       // === DÍA 22 ===
       case "22-miguel":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">CUADRO ELÉCTRICO GENERAL · PLANTA 1 (DIRECCIÓN)</div>
-            <div style="font-size:0.75rem;color:#CBD5E1;">El diferencial fue bajado manualmente a las 23:38 h desde el panel tras Dirección.</div>
+            <div class="blueprint-cap">ANALIZADOR DE CARGA · CUADRO GENERAL</div>
+            <div style="font-size:0.75rem;color:#CBD5E1;">Distingue entre oscilación gradual de tormenta, sai UPS continuo y caída cuadrada vertical por apertura manual de disyuntor.</div>
           </div>`;
       case "22-patri":
         return `
           <div class="blueprint-box">
-            <div class="blueprint-cap">PLANO CAPILLA ALPINA · SENSOR PUERTA CP</div>
-            <svg viewBox="0 0 300 66" style="width:100%;display:block;background:#031019;border-radius:8px;">
-              <rect x="20" y="12" width="260" height="42" rx="6" fill="rgba(16,185,129,0.12)" stroke="#34D399"/>
-              <text x="150" y="31" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5" font-weight="700">CAPILLA CP · PRESENCIA CONTINUA 23:25–23:50 H</text>
-              <text x="150" y="45" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5">TERESA ALARCÓN · SIN SALIDAS DETECTADAS</text>
-            </svg>
+            <div class="blueprint-cap">SENSOR MAGNÉTICO PUERTA CAPILLA (CP) · 30 NOV</div>
+            <div class="bank-row" style="font-size:0.73rem;"><span>23:24:10 h · Teresa Alarcón</span><span>OPEN -&gt; CLOSED</span></div>
+            <div class="bank-row" style="font-size:0.73rem;"><span>23:25:00 – 23:51:00 h</span><span><strong>0 aperturas</strong> (recinto sellado)</span></div>
+            <div class="bank-row" style="font-size:0.73rem;"><span>23:52:18 h · Salida</span><span>OPEN</span></div>
           </div>`;
 
       // === DÍA 23 ===
       case "23-miguel":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>BORRADOR MERCANTIL · ABRIGO VÍCTIMA</span><span class="paper-stamp">NOTARÍA</span></div>
-            <div>Documento de firma prevista: <strong>01/12/2026</strong> · Referencia manuscrita: <strong>Protocolo Notarial Nº 774</strong>.</div>
+            <div class="paper-ledger-head"><span>BORRADOR ROTO + MAPA ANTENAS BTS</span><span class="paper-stamp">NOTARÍA</span></div>
+            <div style="font-size:0.75rem;margin-bottom:6px;">Protocolo parcial: <strong>[ D1 ] [ 7 ] [ D3 ]</strong> · Suma total = <strong>19</strong> (D1 = años vigencia convenio en Patri).</div>
+            <div class="mono" style="font-size:0.71rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;">
+              Cell 2B -&gt; S201N | Cell 4E -&gt; V304E | Cell 7A -&gt; V304W | Cell 9C -&gt; E108S
+            </div>
           </div>`;
       case "23-patri":
         return `
           <div class="bank-slip">
-            <div style="color:#FDE68A;font-weight:700;margin-bottom:6px;">SÁBANA OPERADORA BTS · SUITE 304</div>
-            <div class="bank-row"><span>TITULAR</span><span>VALERIA DOMÍNGUEZ</span></div>
-            <div class="bank-row"><span>LLAMADA SALIENTE</span><span>23:28 – 23:54 h (26 MIN)</span></div>
-            <div class="bank-row"><span>CLAVE ANTENA</span><span style="color:#67E8F9;font-weight:700;">304V</span></div>
+            <div style="color:#FDE68A;font-weight:700;margin-bottom:6px;">CDR OPERADORA Y ANEXO JURÍDICO · SUITE 304</div>
+            <div class="bank-row"><span>Convenio Valeria–Arturo</span><span>Vigencia pactada: <strong>8 años</strong></span></div>
+            <div class="bank-row"><span>Llamada 23:12 (Cell 2B)</span><span>180 s · Cortada</span></div>
+            <div class="bank-row"><span>Llamada 23:28–23:54 (Cell 4E)</span><span><strong>1560 s</strong> ininterrumpidos</span></div>
+            <div class="bank-row"><span>Llamada 23:45 (Cell 7A)</span><span>240 s · Buzón</span></div>
           </div>`;
 
       // === DÍA 24 ===
       case "24-miguel":
         return `
           <div class="bank-slip" style="border-color:rgba(248,113,113,0.6);">
-            <div style="color:#FECACA;font-weight:700;margin-bottom:6px;">INFORME SECRIM Y CERRADURA HAB. 206</div>
-            <div class="bank-row"><span>ALCALOIDE HALLADO</span><span style="color:#FDE68A;font-weight:700;">ACONITINA (ACÓNITO)</span></div>
-            <div class="bank-row"><span>APERTURA HAB. 206 (18:15)</span><span style="color:#67E8F9;font-weight:700;">KEY-DIR-01</span></div>
+            <div style="color:#FECACA;font-weight:700;margin-bottom:6px;">VOLCADO CERRADURA HAB. 206 Y ESPECTRÓMETRO MS</div>
+            <div class="bank-row"><span>11:20 h · Limpieza</span><span>UID-4410</span></div>
+            <div class="bank-row"><span>16:40 h · Toallas</span><span>UID-5128</span></div>
+            <div class="bank-row"><span>18:15 h · 3 min dentro</span><span>UID-9042</span></div>
+            <div class="bank-row"><span>21:55 h · Radiador</span><span>UID-7731</span></div>
+            <div style="border-top:1px dashed rgba(248,113,113,0.45);margin-top:6px;padding-top:6px;font-size:0.72rem;color:#FDE68A;">
+              <strong>Pico MS hallado en copa: m/z 645.7 Da</strong><br>
+              Patrones: Atropina (289.4 Da) · Coniína (127.2 Da) · Aconitina (645.7 Da) · Digoxina (780.9 Da)
+            </div>
           </div>`;
       case "24-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>REGISTRO SPA TERMAL + LLAVERO MAESTRO</span><span class="paper-stamp">NOCHEBUENA</span></div>
-            <div><strong>Spa Termal 18:05–19:00 h:</strong> Firma presencial de <strong>Inés Casado</strong>.<br><strong>Llave KEY-DIR-01:</strong> Asignada en exclusiva a Dirección (Planta 1), sin copias.</div>
+            <div class="paper-ledger-head"><span>SPA TERMAL + INVENTARIO DE 5 LLAVES MAESTRAS</span><span class="paper-stamp">NOCHEBUENA</span></div>
+            <div style="font-size:0.74rem;margin-bottom:6px;"><strong>Spa Termal (firma presencial):</strong> Inés Casado dentro del circuito de aguas de <strong>18:05 a 19:00 h</strong>.</div>
+            <div class="mono" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
+              UID-4410 -> KEY-LIM-02 (Pisos)<br>
+              UID-5128 -> KEY-GOB-03 (Lavandería)<br>
+              UID-6019 -> KEY-SEC-05 (Seguridad)<br>
+              UID-7731 -> KEY-MAN-07 (Calderas)<br>
+              <strong>UID-9042 -> KEY-DIR-01 (Exclusiva Dirección Planta 1)</strong>
+            </div>
           </div>`;
 
       default:

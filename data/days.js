@@ -1,194 +1,195 @@
 /**
  * ADVIENTO CERO - 24 DIAS DE INVESTIGACION COOPERATIVA
- * Archivo generado con hashes SHA-256 y resoluciones codificadas (Cero Spoilers).
+ * Overhaul v2.6.0: dificultad progresiva de menos a mas con hashes SHA-256 (Cero Spoilers).
  */
 
 window.ADVENT_DAYS = [
     {
+        "day":  1,
+        "kicker":  "DÍA 01 · INSPECCIÓN DE MESAS",
+        "title":  "El Brindis del Salón",
+        "story":  "Veinte minutos antes de hallar a Arturo Valdivieso, el sensor óptico del salón captó un destello de xenón junto a uno de los ventanales. Debéis cruzar orientación, tarjetas anónimas y registro de recepción para identificar a quién ocupaba la Silla 3.",
         "mode":  "dual-lock",
         "miguel":  {
+                       "roleBadge":  "Miguel · Orientación y Sensores",
+                       "brief":  "Determina qué número de mesa y punto cardinal corresponden al destello de xenón de las 23:36 h.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eLecturas del Salón Mirador:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e23:31 h · Sensor Chimenea (Norte, Mesa 1): chispa térmica de leña.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:36 h · Sensor Ventanal de la Nieve:\u003c/strong\u003e destello de xenón 1/1000 s en el perímetro de la \u003cstrong\u003eMesa 4\u003c/strong\u003e.\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eUsa el croquis superior para comprobar qué punto cardinal corresponde al Ventanal de la Nieve.\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "room-map",
+                                      "caption":  "Sensores Ópticos · Salón Mirador",
+                                      "nodes":  [
+                                                    {
+                                                        "id":  "M1",
+                                                        "label":  "Mesa 1 · Chimenea (Norte)",
+                                                        "alert":  false
+                                                    },
+                                                    {
+                                                        "id":  "M2",
+                                                        "label":  "Mesa 2 · Comedor (Oeste)",
+                                                        "alert":  false
+                                                    },
+                                                    {
+                                                        "id":  "M3",
+                                                        "label":  "Mesa 3 · Escenario (Sur)",
+                                                        "alert":  false
+                                                    },
+                                                    {
+                                                        "id":  "M4",
+                                                        "label":  "Mesa 4 · Ventanal de la Nieve",
+                                                        "alert":  true
+                                                    }
+                                                ]
+                                  },
+                       "inputLabel":  "Habitación del titular de Silla 3 (cruzada por Patri)",
                        "inputPlaceholder":  "Ej. 204",
-                       "brief":  "Analiza el croquis de mesas del Salón Mirador para indicar a Patri el sector cardinal.",
                        "acceptedHashes":  [
                                               "9537f32ec7599e1ae953af6c9f929fe747ff9dadf79a9beff1f304c550173011",
                                               "0a3dd88578a129185bdcd718e97b712d0d7cc4932a0b70ab9ceb1d546a067cc7"
                                           ],
-                       "roleBadge":  "Miguel · Plano del Salón",
-                       "clueHtml":  "\u003cp\u003eLas 4 mesas del brindis están dispuestas así: \u003cstrong\u003eMesa 1 (Norte)\u003c/strong\u003e, \u003cstrong\u003eMesa 2 (Oeste)\u003c/strong\u003e, \u003cstrong\u003eMesa 3 (Sur)\u003c/strong\u003e y \u003cstrong\u003eMesa 4 (Este)\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eEl sensor de luz captó un destello de cámara profesional a las 23:36 h junto al \u003cstrong\u003eVentanal Este (Mesa 4)\u003c/strong\u003e.\u003c/p\u003e",
-                       "widget":  {
-                                      "caption":  "Distribución del Salón Mirador (23:36 h)",
-                                      "type":  "room-map",
-                                      "nodes":  [
-                                                    {
-                                                        "label":  "Mesa 1 · Norte",
-                                                        "alert":  false,
-                                                        "id":  "M1"
-                                                    },
-                                                    {
-                                                        "label":  "Mesa 2 · Oeste",
-                                                        "alert":  false,
-                                                        "id":  "M2"
-                                                    },
-                                                    {
-                                                        "label":  "Mesa 3 · Sur",
-                                                        "alert":  false,
-                                                        "id":  "M3"
-                                                    },
-                                                    {
-                                                        "label":  "Mesa 4 · Ventanal Este (Destello 23:36)",
-                                                        "alert":  true,
-                                                        "id":  "M4"
-                                                    }
-                                                ]
-                                  },
-                       "inputLabel":  "Habitación del fotógrafo (dato de Patri)",
-                       "partnerHint":  "Dile a Patri la letra cardinal y el número de la mesa del destello (ej. N2). Pregúntale qué número de habitación figura en la tarjeta del fotógrafo."
+                       "partnerHint":  "Dile a Patri la inicial cardinal del Ventanal de la Nieve + el nº de mesa del destello (ej. N2). Pídele el nº de habitación del huésped cuyas iniciales figuran en la Silla 3."
                    },
-        "kicker":  "DÍA 01 · INSPECCIÓN DE MESAS",
-        "day":  1,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTYiLCJmb3JlbnNpY1RhZyI6IlRFU1RJR08gRVhURVJJT1IgVkVSSUZJQ0FETyIsImNvbmNsdXNpb24iOiLDk3NjYXIgTGxvcmVudGUgKEhhYi4gMTA4KSBxdWVkw7MgcmVnaXN0cmFkbyBwb3IgZWwgcmVsb2ogZXh0ZXJpb3IgZm90b2dyYWZpYW5kbyBsYSB0b3JtZW50YSBkZXNkZSBlbCBwb3JjaGUgRXN0ZSBlbnRyZSBsYXMgMjM6MzUgeSBsYXMgMjM6NDQgaC4gUXVlZGEgZGVzY2FydGFkby4ifQ==",
-        "story":  "Veinte minutos antes de hallar a Arturo Valdivieso, alguien disparó el flash de una cámara junto al ventanal Este del Salón Mirador. Debéis confirmar quién ocupaba la Silla 3 de esa mesa.",
-        "hints":  [
-                      "Miguel debe decirle a Patri qué mesa está junto al Ventanal Este (E + número). Patri debe buscar esa mesa en sus tarjetas.",
-                      "La Mesa 4 está en el sector Este (código E4). En la Silla 3 de esa mesa aparece Óscar Llorente, alojado en la Hab. 108.",
-                      "Solución del Día 1 — Miguel: 108 · Patri: E4."
-                  ],
-        "title":  "El Brindis del Salón",
         "patri":  {
+                      "roleBadge":  "Patri · Protocolo y Recepción",
+                      "brief":  "Cruza la mesa indicada por Miguel con las tarjetas anónimas y el listado de Check-in.",
+                      "clueHtml":  "\u003cp\u003eLas tarjetas de mesa solo muestran iniciales. Identifica en la \u003cstrong\u003eSilla 3\u003c/strong\u003e de la mesa correcta qué iniciales aparecen y búscalas en la lista de Check-in VIP de tu documento para dar su habitación a Miguel.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Protocolo Silla 3 · Mesa del Ventanal",
+                                     "items":  [
+                                                   "Iniciales en Silla 3: O.LL. (Acreditación Prensa)",
+                                                   "Cotejar O.LL. con Check-in VIP para obtener habitación"
+                                               ]
+                                 },
+                      "inputLabel":  "Código de zona: inicial cardinal + nº de mesa",
                       "inputPlaceholder":  "Ej. N2",
-                      "brief":  "Revisa las tarjetas de protocolo de las mesas en cuanto Miguel te indique la zona.",
                       "acceptedHashes":  [
                                              "449777124b1466a8ed667d0dd4c0620993f59e20fb27b3fa8894e957f8762353"
                                          ],
-                      "roleBadge":  "Patri · Tarjetas de Sitio",
-                      "clueHtml":  "\u003cp\u003eListado de invitados de la \u003cstrong\u003eMesa 4\u003c/strong\u003e:\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSilla 1:\u003c/strong\u003e Álvaro Roldán (Suite 303)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 2:\u003c/strong\u003e Teresa Alarcón (Hab. 202)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 3:\u003c/strong\u003e Óscar Llorente · Fotógrafo acreditado (Hab. 108) — salió al porche exterior a las 23:35 h\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSilla 4:\u003c/strong\u003e Diego Aranda (Hab. 201)\u003c/li\u003e\u003c/ul\u003e",
-                      "widget":  {
-                                     "caption":  "Acreditación de Prensa · Protocolo",
-                                     "items":  [
-                                                   "Silla 3 · Mesa 4",
-                                                   "Titular: Óscar Llorente",
-                                                   "Nota: Salió al porche Este 23:35 h"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "inputLabel":  "Sector y Mesa del destello (dato de Miguel)",
-                      "partnerHint":  "Comunica a Miguel la habitación de la Silla 3. Pídele la inicial cardinal del ventanal + número de mesa (ej. N2)."
-                  }
+                      "partnerHint":  "Comunica a Miguel el número de habitación que corresponde a O.LL. y pídele el código cardinal (inicial + número de mesa)."
+                  },
+        "hints":  [
+                      "En el croquis de Miguel, el Ventanal de la Nieve mira al Este (E) y acoge la Mesa 4.",
+                      "Patri ve en Silla 3 las iniciales O.LL., que en el registro Check-in corresponden a Óscar Llorente (Hab. 108).",
+                      "Solución del Día 1 — Miguel: 108 · Patri: E4."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTYiLCJmb3JlbnNpY1RhZyI6IlRFU1RJR08gRVhURVJJT1IgVkVSSUZJQ0FETyIsImNvbmNsdXNpb24iOiLDk3NjYXIgTGxvcmVudGUgKEhhYi4gMTA4KSBxdWVkw7MgcmVnaXN0cmFkbyBwb3IgZWwgcmVsb2ogZXh0ZXJpb3IgZm90b2dyYWZpYW5kbyBsYSB0b3JtZW50YSBkZXNkZSBlbCBwb3JjaGUgRXN0ZSBlbnRyZSBsYXMgMjM6MzUgeSBsYXMgMjM6NDQgaC4gUXVlZGEgZGVzY2FydGFkby4ifQ=="
     },
     {
+        "day":  2,
+        "kicker":  "DÍA 02 · LINTERNA LUMINOL",
+        "title":  "Manchas bajo Luz UV",
+        "story":  "La bandeja de cócteles de la barra fue limpiada a toda prisa tras el hallazgo. Bajo tinta invisible UV no solo hay cifras: también dejaron anotada la regla de lectura del cierre frigorífico.",
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Linterna Ultravioleta",
+                       "brief":  "Recorre toda la superficie oscura para revelar tanto el código parcial como la regla de lectura.",
+                       "clueHtml":  "\u003cp\u003eBajo luz UV 365 nm aparecen la hora de servicio, tres dígitos reactivos y una nota de inversión que deberás leer íntegramente a Patri.\u003c/p\u003e",
                        "widget":  {
-                                      "secretSub":  "CÓDIGO PARCIAL BARRA",
-                                      "secretCode":  "7 - 3 - 9",
-                                      "prompt":  "Arrastra el dedo o ratón sobre el área oscura",
-                                      "type":  "uv-lamp"
+                                      "type":  "uv-lamp",
+                                      "prompt":  "Arrastra sobre toda la bandeja para ver código y regla",
+                                      "secretSub":  "SERVICIO 23:34 H · PIN FRIG",
+                                      "secretCode":  "7 - 4 - 2",
+                                      "secretNote":  "REGLA: Nº TURNO + 3 DÍGITOS EN ORDEN INVERSO"
                                   },
-                       "brief":  "Desliza el dedo por la superficie de la bandeja para iluminar los dígitos con luz UV.",
-                       "partnerHint":  "Dicta a Patri los 3 dígitos luminol que descubras con la linterna.",
-                       "clueHtml":  "\u003cp\u003eLa cámara forense ha aislado la bandeja de cócteles de la barra. Bajo luz normal no se aprecia nada, pero hay tinta reactiva UV escrita a mano.\u003c/p\u003e"
+                       "partnerHint":  "Dicta a Patri los 3 dígitos luminol y la regla de orden inverso para que los combine con el cuadrante."
                    },
-        "hints":  [
-                      "Miguel debe pasar el dedo por la caja oscura de la linterna UV para leer 3 dígitos.",
-                      "Los 3 dígitos UV son 739. Al añadir el número de turno #5 de Nicolás Ferrer se forma el código de 4 cifras.",
-                      "Solución del Día 2: 7395."
-                  ],
-        "kicker":  "DÍA 02 · LINTERNA LUMINOL",
-        "day":  2,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjAiLCJmb3JlbnNpY1RhZyI6IkNPQVJUQURBIERFIEFMTUFDw4lOIENPTkZJUk1BREEiLCJjb25jbHVzaW9uIjoiRWwgcmVnaXN0cm8gZnJpZ29yw61maWNvIGNvbmZpcm1hIHF1ZSBOaWNvbMOhcyBGZXJyZXIgZXN0dXZvIGVuY2VycmFkbyBidXNjYW5kbyBoaWVsbyBlbiBlbCBzw7N0YW5vIGVudHJlIGxhcyAyMzozNCB5IGxhcyAyMzo0NCBoLiBObyBtYW5pcHVsw7MgbGEgY29wYSBkdXJhbnRlIGVsIGFwYWfDs24uIn0=",
-        "story":  "La barra del Salón Mirador fue limpiada con prisas tras el hallazgo. Uno de los empleados dejó un rastro de tinta invisible en la bandeja de servicio.",
+        "patri":  {
+                      "roleBadge":  "Patri · Cuadrante Nocturno",
+                      "brief":  "Identifica el número de turno de quien estuvo en la cámara de hielo a las 23:34 h y aplica la regla UV.",
+                      "clueHtml":  "\u003cp\u003eEn el parte de barra aparecen cuatro turnos distintos, pero solo uno bajó al almacén frigorífico a las \u003cstrong\u003e23:34 h\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAplica la regla descubierta bajo la lámpara UV de Miguel para construir el código de 4 cifras.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Construcción del Código de Almacén",
+                                     "items":  [
+                                                   "1 cifra: Nº turno del empleado que bajó a las 23:34 h",
+                                                   "3 cifras: Código UV de Miguel leído de derecha a izquierda"
+                                               ]
+                                 },
+                      "partnerHint":  "Pide a Miguel los 3 dígitos UV y la regla oculta; identifica el turno de las 23:34 h en tu tabla."
+                  },
         "jointInput":  {
-                           "label":  "Código completo de verificación (4 dígitos)",
-                           "placeholder":  "Ej. 1234",
+                           "label":  "Código de registro frigorífico (4 dígitos)",
+                           "placeholder":  "Ej. 1000",
                            "acceptedHashes":  [
-                                                  "d114c819970461a9486c63dc47dab37a87b01144cef635b26a41c0d0b6a6272a"
+                                                  "cc8583c9721b171d6eba714aad590a5c3aa624de12916849a6f628fcace277b5"
                                               ]
                        },
-        "title":  "Manchas bajo Luz UV",
-        "patri":  {
-                      "roleBadge":  "Patri · Cuadrante de Turnos",
-                      "widget":  {
-                                     "caption":  "Fórmula de Registro Frigorífico",
-                                     "items":  [
-                                                   "Dígitos UV (Miguel) + Nº Turno (Patri)",
-                                                   "Formato: 4 dígitos sin guiones"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Cruza los dígitos UV de Miguel con el parte nocturno de barra.",
-                      "partnerHint":  "Pide a Miguel los 3 dígitos ocultos bajo la luz ultravioleta y añade al final el dígito de turno (#5).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eParte de Servicio · 30 de noviembre:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eBarman asignado:\u003c/strong\u003e Nicolás Ferrer (Turno de Noche \u003cstrong\u003e#5\u003c/strong\u003e)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eIncidencia:\u003c/strong\u003e Salió al almacén frigorífico de hielo a las 23:34 h y regresó a las 23:44 h con testigo de cocina.\u003c/li\u003e\u003c/ul\u003e\u003cp\u003ePara abrir el registro del almacén, introduce los \u003cstrong\u003e3 dígitos UV de Miguel\u003c/strong\u003e seguidos del \u003cstrong\u003enúmero de turno\u003c/strong\u003e de Nicolás.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "En la bandeja UV aparece 7-4-2 junto a la regla \u0027Nº Turno + 3 dígitos en orden inverso\u0027.",
+                      "En el cuadrante de Patri, Nicolás Ferrer (Turno #5) bajó a las 23:34 h. Invertir 7-4-2 da 247.",
+                      "Solución del Día 2: 5247."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjAiLCJmb3JlbnNpY1RhZyI6IkNPQVJUQURBIERFIEFMTUFDw4lOIENPTkZJUk1BREEiLCJjb25jbHVzaW9uIjoiRWwgcmVnaXN0cm8gZnJpZ29yw61maWNvIDUyNDcgY29uZmlybWEgcXVlIE5pY29sw6FzIEZlcnJlciBlc3R1dm8gZW5jZXJyYWRvIGJ1c2NhbmRvIGhpZWxvIGVuIGVsIHPDs3Rhbm8gZW50cmUgbGFzIDIzOjM0IHkgbGFzIDIzOjQ0IGguIE5vIG1hbmlwdWzDsyBsYSBjb3BhIGR1cmFudGUgZWwgYXBhZ8Ozbi4ifQ=="
     },
     {
+        "day":  3,
+        "kicker":  "DÍA 03 · TELEMETRÍA DE EMERGENCIA",
+        "title":  "Morse en la Centralita",
+        "story":  "Durante el apagón de las 23:38 h, alguien activó un pulsador interior enviando cinco caracteres en código Morse internacional.",
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Receptor de Audio/Luz",
+                       "brief":  "Reproduce la secuencia completa de cinco letras y díctala grupo a grupo a Patri.",
+                       "clueHtml":  "\u003cp\u003eLa centralita captó \u003cstrong\u003e5 letras\u003c/strong\u003e a las 23:39 h. Escucha o sigue la lámpara de destellos separando bien las cinco pausas.\u003c/p\u003e",
                        "widget":  {
-                                      "label":  "Pulsar para reproducir señal de 3 letras",
-                                      "sequence":  "... --- -",
-                                      "type":  "morse"
+                                      "type":  "morse",
+                                      "label":  "Reproducir trama de 5 letras",
+                                      "sequence":  "... --- - .- -."
                                   },
-                       "brief":  "Reproduce el aviso captado por la centralita y dicta la secuencia de puntos y rayas a Patri.",
-                       "partnerHint":  "Dicta a Patri los grupos de puntos (·) y rayas (−) para que los traduzca.",
-                       "clueHtml":  "\u003cp\u003eLa centralita grabó 3 letras en código Morse justo a las 23:39 h. Puedes escucharlas y ver el destello luminoso tantas veces como necesites.\u003c/p\u003e"
+                       "partnerHint":  "Dicta a Patri los 5 bloques de puntos (·) y rayas (−) para que los descifre con la tabla completa A–Z."
                    },
-        "hints":  [
-                      "La señal de Miguel emite tres puntos, tres rayas y una raya final (... / --- / -).",
-                      "... = S, --- = O, - = T -\u003e SOT (Sótano). Según la tabla de Patri, la extensión del Sótano es 04.",
-                      "Solución del Día 3: SOT04."
-                  ],
-        "kicker":  "DÍA 03 · TELEMETRÍA DE EMERGENCIA",
-        "day":  3,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDgiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgREUgRVhURU5TScOTTiAwNCBWRVJJRklDQURBIiwiY29uY2x1c2lvbiI6IlRvbcOhcyBCZXJtw7pkZXogbGxhbcOzIGRlc2RlIGVsIHRlbMOpZm9ubyBmaWpvIGRlbCBTw7N0YW5vIChFeHQuIDA0KSBhIGxhcyAyMzozOSBoIGFsIHF1ZWRhcnNlIGEgb3NjdXJhcyByZWNvZ2llbmRvIG1hbnRhcyB0w6lybWljYXMuIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
-        "story":  "Durante el apagón de las 23:38 h, alguien activó el pulsador de prueba de una extensión interna del hotel emitiendo una señal en código Morse.",
+        "patri":  {
+                      "roleBadge":  "Patri · Tabla Morse Internacional",
+                      "brief":  "Traduce las 5 letras usando el alfabeto completo A–Z y cruza el sector con su extensión de ronda.",
+                      "clueHtml":  "\u003cp\u003eLa tabla de conserjería incluye el alfabeto Morse íntegro y cuatro sectores de ronda nocturna. Une las \u003cstrong\u003e5 letras descifradas\u003c/strong\u003e seguidas de los \u003cstrong\u003e2 dígitos de su extensión\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato de Validación",
+                                     "items":  [
+                                                   "5 letras descifradas en Morse + 2 dígitos de extensión",
+                                                   "Ejemplo orientativo: CALDE18"
+                                               ]
+                                 },
+                      "partnerHint":  "Traduce el código de Miguel letra por letra y busca qué sector coincide en el directorio de Tomás Bermúdez."
+                  },
         "jointInput":  {
-                           "label":  "Código de sector y extensión",
-                           "placeholder":  "Ej. GAR12",
+                           "label":  "Palabra de 5 letras + Extensión (2 dígitos)",
+                           "placeholder":  "Ej. CALDE18",
                            "acceptedHashes":  [
-                                                  "3e4d43098405318c82d5a42589bca8c6327590ff9b509bdb038ff8debc611c3e"
+                                                  "1bef830b3cf33ca819f0cb3dcb6c8bdb591fafded2e6747cb83e30b0f342e565"
                                               ]
                        },
-        "title":  "Morse en la Centralita",
-        "patri":  {
-                      "roleBadge":  "Patri · Tabla de Extensiones",
-                      "widget":  {
-                                     "caption":  "Libro de Conserjería Nocturna",
-                                     "items":  [
-                                                   "Responsable de ronda: Tomás Bermúdez",
-                                                   "Formato de cierre: 3 LETRAS + 2 DÍGITOS"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Traduce la señal Morse de Miguel y busca su extensión en el libro de conserjería.",
-                      "partnerHint":  "Une las 3 letras traducidas con los 2 dígitos de la extensión de ese sector (ej. GAR12).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eDiccionario Morse rápido:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eS:\u003c/strong\u003e · · · \u0026nbsp;|\u0026nbsp; \u003cstrong\u003eO:\u003c/strong\u003e − − − \u0026nbsp;|\u0026nbsp; \u003cstrong\u003eT:\u003c/strong\u003e −\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eA:\u003c/strong\u003e · − \u0026nbsp;|\u0026nbsp; \u003cstrong\u003eZ:\u003c/strong\u003e − − · · \u0026nbsp;|\u0026nbsp; \u003cstrong\u003eG:\u003c/strong\u003e − − · \u0026nbsp;|\u0026nbsp; \u003cstrong\u003eR:\u003c/strong\u003e · − ·\u003c/li\u003e\u003c/ul\u003e\u003cp\u003e\u003cstrong\u003eSectores de Ronda (Tomás Bermúdez):\u003c/strong\u003e SOT (Sótano) = Ext. \u003cstrong\u003e04\u003c/strong\u003e · AZO (Azotea) = Ext. \u003cstrong\u003e09\u003c/strong\u003e · GAR (Garaje) = Ext. \u003cstrong\u003e12\u003c/strong\u003e.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Los cinco bloques son: (...) (---) (-) (.-) (-.).",
+                      "En Morse internacional equivalen a S-O-T-A-N (Sótano), cuya extensión asignada es 04.",
+                      "Solución del Día 3: SOTAN04."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDgiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgREUgRVhURU5TScOTTiAwNCBWRVJJRklDQURBIiwiY29uY2x1c2lvbiI6IlRvbcOhcyBCZXJtw7pkZXogbGxhbcOzIGRlc2RlIGVsIHRlbMOpZm9ubyBmaWpvIGRlbCBTw7N0YW5vIChFeHQuIDA0KSBhIGxhcyAyMzozOSBoIGFsIHF1ZWRhcnNlIGEgb3NjdXJhcyByZWNvZ2llbmRvIG1hbnRhcyB0w6lybWljYXMuIFF1ZWRhIGRlc2NhcnRhZG8uIn0="
     },
     {
+        "day":  4,
+        "kicker":  "DÍA 04 · CONTROL DE LAVANDERÍA",
+        "title":  "Cuadrante de Llaves Maestras",
+        "story":  "El armario de llaves maestras solo conserva dos cifras visibles en la mitad superior y dos en la inferior. Necesitáis resolver el Sudoku 4x4 completo cruzando deducciones para abrir el doble candado.",
         "mode":  "dual-lock",
         "miguel":  {
-                       "inputPlaceholder":  "Ej. 21",
-                       "brief":  "Solo ves las filas 1 y 2. Pide a Patri los valores clave de sus filas para deducir F1C4 y F2C1.",
-                       "acceptedHashes":  [
-                                              "44cb730c420480a0477b505ae68af508fb90f96cf0ec54c6ad16949dd427f13a"
-                                          ],
-                       "roleBadge":  "Miguel · Mitad Superior del Cuadrante",
-                       "clueHtml":  "\u003cp\u003eCompleta mentalmente o tocando tus casillas. Necesitas saber qué número va en \u003cstrong\u003eF1,C4\u003c/strong\u003e y en \u003cstrong\u003eF2,C1\u003c/strong\u003e (en ese orden, 2 dígitos).\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Mitad Superior (F1–F2)",
+                       "brief":  "Comparte tus dos cifras iniciales con Patri, pide las suyas y deduce tus 3 casillas objetivo en cian.",
+                       "clueHtml":  "\u003cp\u003eCada fila, columna y bloque 2x2 contiene los dígitos 1, 2, 3 y 4 sin repetir. Introduce los valores de \u003cstrong\u003e[F1,C3]\u003c/strong\u003e, \u003cstrong\u003e[F2,C1]\u003c/strong\u003e y \u003cstrong\u003e[F2,C3]\u003c/strong\u003e seguidos (3 dígitos).\u003c/p\u003e",
                        "widget":  {
+                                      "type":  "sudoku4",
                                       "prefill":  [
                                                       [
-                                                          1,
                                                           0,
+                                                          2,
                                                           0,
                                                           0
                                                       ],
                                                       [
                                                           0,
-                                                          4,
                                                           0,
-                                                          2
+                                                          0,
+                                                          4
                                                       ],
                                                       [
                                                           0,
@@ -207,34 +208,25 @@ window.ADVENT_DAYS = [
                                                           0,
                                                           1
                                                       ],
-                                      "type":  "sudoku4",
                                       "targets":  [
-                                                      "0,3",
-                                                      "1,0"
+                                                      "0,2",
+                                                      "1,0",
+                                                      "1,2"
                                                   ]
                                   },
-                       "inputLabel":  "Valores de [F1,C4] y [F2,C1] seguidos",
-                       "partnerHint":  "Comunica a Patri tus valores iniciales: F1C1=1, F2C2=4 y F2C4=2. Pregúntale qué tiene en F3C1 y F3C4."
+                       "inputLabel":  "Valores seguidos de [F1,C3], [F2,C1] y [F2,C3]",
+                       "inputPlaceholder":  "Ej. 123",
+                       "acceptedHashes":  [
+                                              "dbb1ded63bc70732626c5dfe6c7f50ced3d560e970f30b15335ac290358748f6"
+                                          ],
+                       "partnerHint":  "Comunica a Patri tus cifras: F1C2=2 y F2C4=4. Pídele sus posiciones en F3 y F4 para desbloquear las columnas."
                    },
-        "kicker":  "DÍA 04 · CONTROL DE LAVANDERÍA",
-        "day":  4,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTUiLCJmb3JlbnNpY1RhZyI6IkNBSsOTTiBERSBMTEFWRVMgUFJFQ0lOVEFETyIsImNvbmNsdXNpb24iOiJNYXJ0YSBRdWlyb2dhIGRlasOzIGVsIGN1YWRyYW50ZSBkZSBsbGF2ZXMgY2VycmFkbyBjb24gZWwgY8OzZGlnbyA0My00MSBlbiBsYXZhbmRlcsOtYSBhIGxhcyAyMzoyNSBoIGFudGVzIGRlbCBhcGFnw7NuLiBOaW5ndW5hIGxsYXZlIGRlIGxhdmFuZGVyw61hIHNhbGnDsyBkZWwgY3VhcnRvLiJ9",
-        "story":  "El armario de llaves maestras usa un cuadrante lógico 4x4 donde cada fila, columna y bloque 2x2 contiene los números 1, 2, 3 y 4 sin repetir.",
-        "hints":  [
-                      "En un Sudoku 4x4 no puede repetirse ningún número del 1 al 4 en fila, columna ni recuadro 2x2.",
-                      "Columna 4 ya tiene 2 (Miguel) y 3 (Patri), y Fila 1 tiene 1 -\u003e F1C4 = 4. En Columna 1 hay 1 (F1C1) y 2 (F3C1), y en caja superior izquierda ya está el 4 -\u003e F2C1 = 3. Para Patri, con F1C4=4 sale F4C4=1 y F4C1=4.",
-                      "Solución del Día 4 — Miguel: 43 · Patri: 41."
-                  ],
-        "title":  "Cuadrante de Llaves Maestras",
         "patri":  {
-                      "inputPlaceholder":  "Ej. 12",
-                      "brief":  "Solo ves las filas 3 y 4. Pide a Miguel sus datos superiores para deducir F4C1 y F4C4.",
-                      "acceptedHashes":  [
-                                             "3d914f9348c9cc0ff8a79716700b9fcd4d2f3e711608004eb8f138bcba7f14d9"
-                                         ],
-                      "roleBadge":  "Patri · Mitad Inferior del Cuadrante",
-                      "clueHtml":  "\u003cp\u003eLa gobernanta Marta Quiroga selló el armario con el código de la última fila. Deduce \u003cstrong\u003eF4,C1\u003c/strong\u003e y \u003cstrong\u003eF4,C4\u003c/strong\u003e (2 dígitos seguidos).\u003c/p\u003e",
+                      "roleBadge":  "Patri · Mitad Inferior (F3–F4)",
+                      "brief":  "Comunica tus dos valores fijos a Miguel, cruzad cada bloque 2x2 y halla tus 3 casillas objetivo.",
+                      "clueHtml":  "\u003cp\u003eDeduce el tablero completo con Miguel e introduce seguidos los 3 valores de \u003cstrong\u003e[F3,C3]\u003c/strong\u003e, \u003cstrong\u003e[F4,C1]\u003c/strong\u003e y \u003cstrong\u003e[F4,C4]\u003c/strong\u003e.\u003c/p\u003e",
                       "widget":  {
+                                     "type":  "sudoku4",
                                      "prefill":  [
                                                      [
                                                          0,
@@ -249,15 +241,15 @@ window.ADVENT_DAYS = [
                                                          0
                                                      ],
                                                      [
-                                                         2,
+                                                         1,
                                                          0,
                                                          0,
-                                                         3
+                                                         0
                                                      ],
                                                      [
                                                          0,
+                                                         0,
                                                          3,
-                                                         2,
                                                          0
                                                      ]
                                                  ],
@@ -265,983 +257,1123 @@ window.ADVENT_DAYS = [
                                                          2,
                                                          3
                                                      ],
-                                     "type":  "sudoku4",
                                      "targets":  [
+                                                     "2,2",
                                                      "3,0",
                                                      "3,3"
                                                  ]
                                  },
-                      "inputLabel":  "Valores de [F4,C1] y [F4,C4] seguidos",
-                      "partnerHint":  "Comunica a Miguel tus valores iniciales: F3C1=2 y F3C4=3. Pregúntale qué números tiene en F1C4 y F2C2."
-                  }
+                      "inputLabel":  "Valores seguidos de [F3,C3], [F4,C1] y [F4,C4]",
+                      "inputPlaceholder":  "Ej. 123",
+                      "acceptedHashes":  [
+                                             "5092c37bcbc9f0fb33cb0f9cab7aa5ae94ed0f1219773c380b143b7c1224d01b"
+                                         ],
+                      "partnerHint":  "Di a Miguel que tienes F3C1=1 y F4C3=3. Pregúntale por F1C2 y F2C4 para resolver la columna 1 y la fila 4."
+                  },
+        "hints":  [
+                      "Las 4 pistas totales son: F1C2=2, F2C4=4 (Miguel) y F3C1=1, F4C3=3 (Patri). En la caja superior izquierda falta el 4, y no puede ir en F2 ni C2 -\u003e F1C1=4.",
+                      "Con F1C1=4 y F3C1=1, en C1 quedan {2,3}. Como F4 tiene 3 en F4C3 -\u003e F4C1=2 y F2C1=3. El tablero queda 4213 / 3124 / 1342 / 2431.",
+                      "Solución del Día 4 — Miguel (F1C3,F2C1,F2C3): 132 · Patri (F3C3,F4C1,F4C4): 421."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTUiLCJmb3JlbnNpY1RhZyI6IkNBSsOTTiBERSBMTEFWRVMgUFJFQ0lOVEFETyIsImNvbmNsdXNpb24iOiJNYXJ0YSBRdWlyb2dhIGRlasOzIGVsIGN1YWRyYW50ZSBkZSBsbGF2ZXMgY2VycmFkbyBjb24gbG9zIGPDs2RpZ29zIDEzMi00MjEgZW4gbGF2YW5kZXLDrWEgYSBsYXMgMjM6MjUgaCBhbnRlcyBkZWwgYXBhZ8Ozbi4gTmluZ3VuYSBsbGF2ZSBzYWxpw7MgZGVsIGN1YXJ0by4ifQ=="
     },
     {
+        "day":  5,
+        "kicker":  "DÍA 05 · TORNIQUETES ALA NORTE",
+        "title":  "Lectura RFID de Pasillos",
+        "story":  "Tres tarjetas RFID distintas pasaron por el entorno de la Biblioteca de Planta 2 entre las 23:31 y las 23:44 h, pero solo una permaneció encerrada dentro durante el apagón.",
         "mode":  "dual-lock",
         "miguel":  {
+                       "roleBadge":  "Miguel · Log Técnico RFID",
+                       "brief":  "Filtra los falsos pasos de pasillo y salidas tempranas para aislar qué TAG quedó dentro a las 23:39 h.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eLecturas completas Planta 2:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e23:31:04 · TAG-B2 · Pasillo Sur (hacia Escalera) · 23:36:10 · Ascensor P1.\u003c/li\u003e\u003cli\u003e23:35:10 · TAG-E4 · Entrada Biblioteca · \u003cstrong\u003e23:36:40 · Salida Biblioteca\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:39:12 · TAG-C7 · Entrada Puerta Biblioteca\u003c/strong\u003e (sin lectura de salida hasta 23:58:04).\u003c/li\u003e\u003cli\u003e23:41:05 · TAG-F9 · Escalera P1/P2.\u003c/li\u003e\u003c/ul\u003e",
+                       "widget":  {
+                                      "type":  "dossier-card",
+                                      "caption":  "Filtro de Permanencia 23:38–23:42 h",
+                                      "items":  [
+                                                    "Descartar tarjetas que salieron antes del apagón",
+                                                    "Comunicar el TAG válido a Patri y pedir apellido titular"
+                                                ]
+                                  },
+                       "inputLabel":  "Primer apellido de la titular que permaneció dentro (dato de Patri)",
                        "inputPlaceholder":  "Ej. navarro",
-                       "brief":  "Identifica qué código TAG fichó en la Biblioteca a las 23:39 h.",
                        "acceptedHashes":  [
                                               "b74c3a133a11e1a0514c3841cd80b051cb6b18b28e58b2b0c9107cfdae9e9a06"
                                           ],
-                       "roleBadge":  "Miguel · Log Técnico RFID",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eRegistro de antenas (Planta 2):\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e23:31:04 · TAG-A1 · Pasillo Sur\u003c/li\u003e\u003cli\u003e23:34:50 · TAG-B4 · Ascensor Central\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:39:12 · TAG-C7 · Puerta Biblioteca\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e23:43:18 · TAG-D2 · Escalera Norte\u003c/li\u003e\u003c/ul\u003e",
-                       "widget":  {
-                                      "caption":  "Lectura Antena 02-BIB",
-                                      "items":  [
-                                                    "ID: TAG-C7",
-                                                    "Hora exacta: 23:39:12 h",
-                                                    "Ubicación: Biblioteca Planta 2"
-                                                ],
-                                      "type":  "dossier-card"
-                                  },
-                       "inputLabel":  "Primer apellido de la titular de TAG-C7 (dato de Patri)",
-                       "partnerHint":  "Indica a Patri el código del TAG (ej. A1) y el minuto exacto (ej. 31) de la Biblioteca. Pregúntale el apellido de la titular."
+                       "partnerHint":  "Dile a Patri cuál de los tres TAG permaneció dentro de la Biblioteca entre 23:39 y 23:58 h. Pídele el apellido de su titular."
                    },
-        "kicker":  "DÍA 05 · TORNIQUETES ALA NORTE",
-        "day":  5,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDUiLCJmb3JlbnNpY1RhZyI6IkFDQ0VTTyBCSUJMSU9URUNBIDIzOjM5IEgiLCJjb25jbHVzaW9uIjoiTHVjw61hIE1vbnRhbHZvIGFicmnDsyBsYSBCaWJsaW90ZWNhIGRlIFBsYW50YSAyIGEgbGFzIDIzOjM5OjEyIGggZW4gcGxlbm8gYXBhZ8OzbiB5IGVsIHNpc3RlbWEgZGVqw7Mgc3UgdGFyamV0YSByZWdpc3RyYWRhIGRlbnRybyBoYXN0YSBsYXMgMjM6NTggaC4gUXVlZGEgZGVzY2FydGFkYS4ifQ==",
-        "story":  "El lector electrónico de la Biblioteca de Planta 2 registró una tarjeta huésped durante el minuto crítico del apagón.",
-        "hints":  [
-                      "Miguel ve que el fichaje de las 23:39 en la Biblioteca corresponde a TAG-C7.",
-                      "Patri comprueba que TAG-C7 pertenece a Lucía Montalvo.",
-                      "Solución del Día 5 — Miguel: montalvo · Patri: C739."
-                  ],
-        "title":  "Lectura RFID de Pasillos",
         "patri":  {
-                      "inputPlaceholder":  "Ej. A131",
-                      "brief":  "Busca a quién pertenece el TAG que te diga Miguel.",
-                      "acceptedHashes":  [
-                                             "208213f825d268b65caf466cb4251405b34c6a85833fd5aa961710453bac5ff2"
-                                         ],
-                      "roleBadge":  "Patri · Asignación de Tarjetas",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eTarjetas RFID entregadas en Recepción:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eTAG-A1: Diego Aranda\u003c/li\u003e\u003cli\u003eTAG-B4: Álvaro Roldán\u003c/li\u003e\u003cli\u003eTAG-C7: \u003cstrong\u003eLucía Montalvo\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eTAG-D2: Gabriel Serrano\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIntroduce el código compacto: los 2 caracteres del TAG + los 2 dígitos del minuto en Biblioteca (ej. A131).\u003c/p\u003e",
+                      "roleBadge":  "Patri · Libro de Tarjetas",
+                      "brief":  "Coteja el TAG activo con la nota de reasignación de las 22:10 h para verificar titular y habitación.",
+                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eIncidencia Recepción 22:10 h:\u003c/strong\u003e Por desmagnetización, se anuló TAG-B2 en la Hab. 204 y se entregó \u003cstrong\u003eTAG-C7\u003c/strong\u003e a su ocupante.\u003c/p\u003e\u003cp\u003eIntroduce el \u003cstrong\u003eTAG válido (2 caracteres) + Nº de habitación (3 dígitos)\u003c/strong\u003e de su titular (ej. A1201).\u003c/p\u003e",
                       "widget":  {
-                                     "caption":  "Libro de Recepción · VIP",
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato Compacto Patri",
                                      "items":  [
-                                                   "TAG-C7 -\u003e Lucía Montalvo",
-                                                   "Hab. 204 · Prensa"
-                                               ],
-                                     "type":  "dossier-card"
+                                                   "2 caracteres del TAG activo + 3 dígitos de habitación",
+                                                   "Nota: TAG-E4 (Hab. 203) salió antes del apagón"
+                                               ]
                                  },
-                      "inputLabel":  "Código TAG + Minuto (dato de Miguel)",
-                      "partnerHint":  "Dile a Miguel el apellido de la titular de TAG-C7. Pídele los dos dígitos del minuto exacto del fichaje."
-                  }
+                      "inputLabel":  "TAG (2 caract.) + Habitación (3 dígitos)",
+                      "inputPlaceholder":  "Ej. A1201",
+                      "acceptedHashes":  [
+                                             "ed19e45703a29a51059d74e5ad3c013e284d92631e07541e5ccd3666faa1ad0d"
+                                         ],
+                      "partnerHint":  "Confirma a Miguel el apellido titular de la tarjeta válida tras la reasignación de las 22:10 h."
+                  },
+        "hints":  [
+                      "TAG-B2 bajó a P1 y TAG-E4 salió de Biblioteca a las 23:36:40. Solo TAG-C7 siguió dentro durante el apagón.",
+                      "Patri ve que TAG-C7 pertenece a Lucía Montalvo, Hab. 204.",
+                      "Solución del Día 5 — Miguel: montalvo · Patri: C7204."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDUiLCJmb3JlbnNpY1RhZyI6IkFDQ0VTTyBCSUJMSU9URUNBIDIzOjM5IEgiLCJjb25jbHVzaW9uIjoiTHVjw61hIE1vbnRhbHZvIChUQUctQzcsIEhhYi4gMjA0KSBhYnJpw7MgbGEgQmlibGlvdGVjYSBhIGxhcyAyMzozOToxMiBoIGVuIHBsZW5vIGFwYWfDs24geSBlbCBzaXN0ZW1hIHJlZ2lzdHLDsyBzdSB0YXJqZXRhIGRlbnRybyBoYXN0YSBsYXMgMjM6NTggaC4gUXVlZGEgZGVzY2FydGFkYS4ifQ=="
     },
     {
+        "day":  6,
+        "kicker":  "DÍA 06 · RUEDA CÉSAR Y PARTITURA",
+        "title":  "El Criptograma del Ropero",
+        "story":  "La nota del vestíbulo artístico contiene tres salas distintas cifradas bajo el mismo desplazamiento César. Necesitaréis calcular la clave real en la partitura y filtrar la acústica correcta.",
         "mode":  "dual-lock",
         "miguel":  {
+                       "roleBadge":  "Miguel · Decodificador César",
+                       "brief":  "Ajusta el desplazamiento calculado por Patri en la partitura y lee las 3 estancias descifradas.",
+                       "clueHtml":  "\u003cp\u003eCriptograma triple: \u003cstrong class=\u0027mono\u0027\u003eBJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eCuando descifres las tres salas con la clave de Patri, descríbeselas para filtrar cuál tiene la acústica del ensayo.\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "caesar",
+                                      "cipherText":  "BJUXW WXACN · LJVNARWX BDA · CNJCAX LNWCAJU"
+                                  },
+                       "inputLabel":  "Sala real donde vocalizó la artista (2 palabras)",
                        "inputPlaceholder":  "Ej. salon norte",
-                       "brief":  "Gira la rueda interactiva hasta el desplazamiento que descubra Patri en su partitura.",
                        "acceptedHashes":  [
                                               "c369395a81aa6bda3700513f6f4cf9b09335d7129344b7467d9b00ac0794d766"
                                           ],
-                       "roleBadge":  "Miguel · Decodificador César",
-                       "clueHtml":  "\u003cp\u003eTexto cifrado hallado: \u003cstrong class=\u0027mono\u0027\u003eFDPHULQR VXU\u003c/strong\u003e. Usa los botones + / - para retroceder las letras del abecedario.\u003c/p\u003e",
-                       "widget":  {
-                                      "type":  "caesar",
-                                      "cipherText":  "FDPHULQR VXU"
-                                  },
-                       "inputLabel":  "Las dos palabras descifradas",
-                       "partnerHint":  "Pregunta a Patri cuántas estrellas doradas tiene la partitura para fijar el desplazamiento. Luego dile qué dos palabras aparecen."
+                       "partnerHint":  "Pide a Patri el desplazamiento César (notas negras + estrellas doradas) y pregúntale cuál de las 3 salas descifradas tiene doble cortina y piano vertical."
                    },
-        "kicker":  "DÍA 06 · RUEDA CÉSAR",
-        "day":  6,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjEiLCJmb3JlbnNpY1RhZyI6IkVOU0FZTyBWT0NBTCBDT05GSVJNQURPIiwiY29uY2x1c2lvbiI6IkVsIHBlcnNvbmFsIHTDqWNuaWNvIGVzY3VjaMOzIGEgQ2xhdWRpYSBCZW7DrXRleiB2b2NhbGl6YXIgc2luIHBhdXNhIGRlbnRybyBkZWwgQ2FtZXJpbm8gU3VyIGFudGVzLCBkdXJhbnRlIHkgZGVzcHXDqXMgZGVsIGFwYWfDs24uIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
-        "story":  "Una nota manuscrita en código César apareció enganchada en el perchero del vestíbulo artístico.",
-        "hints":  [
-                      "Patri indica desplazamiento 3. Miguel debe ajustar la rueda a Desplazamiento 3 para retroceder 3 letras (F-\u003eC, D-\u003eA...).",
-                      "Al retroceder 3 posiciones, FDPHULQR VXU se convierte en CAMERINO SUR.",
-                      "Solución del Día 6 — Miguel: camerino sur · Patri: claudia."
-                  ],
-        "title":  "El Criptograma del Ropero",
         "patri":  {
-                      "inputPlaceholder":  "Ej. elena",
-                      "brief":  "Cuenta las estrellas doradas de la partitura y cruza la sala descifrada por Miguel.",
-                      "acceptedHashes":  [
-                                             "35f85825b9016fcc7818aca22298dc88a92ba6e4f029366ff8acbb3f823152d4"
-                                         ],
-                      "roleBadge":  "Patri · Partitura de Gala",
-                      "clueHtml":  "\u003cp\u003ePartitura de ensayo: \u003cem\u003e«Noche de Paz — Compás 3/4»\u003c/em\u003e. En la esquina superior hay exactamente \u003cstrong\u003e3 estrellas doradas\u003c/strong\u003e dibujadas a tinta (desplazamiento = \u003cstrong\u003e3\u003c/strong\u003e).\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eAsignación de camerinos:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eCamerino Norte: Invitados VIP\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eCamerino Sur: Claudia Benítez\u003c/strong\u003e (vocalizando 23:30–23:50 h)\u003c/li\u003e\u003cli\u003eCamerino Este: Equipo técnico\u003c/li\u003e\u003c/ul\u003e",
+                      "roleBadge":  "Patri · Partitura y Camerinos",
+                      "brief":  "Calcula el desplazamiento en la partitura y cruza las tres salas de Miguel con el parte acústico.",
+                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eTestimonio técnico (23:35 h):\u003c/strong\u003e Claudia Benítez ensayaba en una sala cerrada con \u003cstrong\u003edoble cortina de terciopelo y piano vertical\u003c/strong\u003e.\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSalón Norte:\u003c/strong\u003e piano de cola abierto al pasillo.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eCamerino Sur:\u003c/strong\u003e doble cortina de terciopelo + piano vertical.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eTeatro Central:\u003c/strong\u003e escenario abierto sin cortinaje privado.\u003c/li\u003e\u003c/ul\u003e",
                       "widget":  {
-                                     "caption":  "Clave de Desplazamiento",
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato Validación Patri",
                                      "items":  [
-                                                   "3 estrellas doradas -\u003e Desplazamiento = 3",
-                                                   "Introduce el nombre de pila de la artista de esa sala"
-                                               ],
-                                     "type":  "dossier-card"
+                                                   "Primer apellido de la artista + desplazamiento (2 dígitos)",
+                                                   "Ejemplo orientativo: navarro03"
+                                               ]
                                  },
-                      "inputLabel":  "Nombre de pila de la artista",
-                      "partnerHint":  "Dile a Miguel que el desplazamiento César es 3. Pregúntale qué sala descifró para introducir el nombre de pila de la artista."
-                  }
+                      "inputLabel":  "Apellido de la artista + Desplazamiento (2 dígitos)",
+                      "inputPlaceholder":  "Ej. navarro03",
+                      "acceptedHashes":  [
+                                             "a3c12abbf4fdec4fa2d0cd7185b353eb07a1a37a6fe1dd6a41c292d4d0904b5c"
+                                         ],
+                      "partnerHint":  "Cuenta en el pentagrama las 4 notas negras + 5 estrellas doradas (desplazamiento = 09), díselo a Miguel e identifica su sala acústica."
+                  },
+        "hints":  [
+                      "En la partitura hay 4 notas negras y 5 estrellas doradas: 4 + 5 = 9.",
+                      "Con desplazamiento 9, las salas son SALON NORTE, CAMERINO SUR y TEATRO CENTRAL. El parte acústico señala Camerino Sur (Claudia Benítez).",
+                      "Solución del Día 6 — Miguel: camerino sur · Patri: benitez09."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjEiLCJmb3JlbnNpY1RhZyI6IkVOU0FZTyBWT0NBTCBDT05GSVJNQURPIiwiY29uY2x1c2lvbiI6IkVsIHBlcnNvbmFsIHTDqWNuaWNvIGVzY3VjaMOzIGEgQ2xhdWRpYSBCZW7DrXRleiB2b2NhbGl6YXIgc2luIHBhdXNhIGRlbnRybyBkZWwgQ2FtZXJpbm8gU3VyIGFudGVzLCBkdXJhbnRlIHkgZGVzcHXDqXMgZGVsIGFwYWfDs24uIFF1ZWRhIGRlc2NhcnRhZGEuIn0="
     },
     {
+        "day":  7,
+        "kicker":  "DÍA 07 · TESTIMONIOS Y LOGS",
+        "title":  "Seis Coartadas, Cinco Sensores",
+        "story":  "Seis declaraciones anonimizadas mencionan relojes, suelo radiante, cables de red y puertas exteriores a las 23:40 h. Solo una sobrevive al examen técnico del hotel.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Declaraciones Anonimizadas",
+                       "roleBadge":  "Miguel · Atestados Anonimizados",
+                       "brief":  "Contrasta cada detalle ambiental de los seis sujetos (ALFA–ZETA) contra las auditorías técnicas de Patri.",
+                       "clueHtml":  "\u003cp\u003eLee palabra por palabra las 6 coartadas del expediente superior y descarta una a una las que contengan imposibilidades físicas o de red frente a los registros de Patri.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Formato del Código Conjunto",
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato del Código",
                                       "items":  [
-                                                    "Alias en mayúsculas + Nº sospechoso (2 dígitos)",
+                                                    "Alias sobreviviente en mayúsculas + Nº Ficha (2 dígitos)",
                                                     "Ejemplo: ALFA04"
-                                                ],
-                                      "type":  "dossier-card"
+                                                ]
                                   },
-                       "brief":  "Lee las cuatro actividades y busca qué alias coincide con los logs reales de Patri.",
-                       "partnerHint":  "Pide a Patri que revise qué actividad está 100% confirmada por el servidor del hotel y cuál es el número de ficha de esa persona.",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eSujeto Alfa:\u003c/strong\u003e Afirma haber dormido desde las 23:00 h.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSujeto Beta:\u003c/strong\u003e Declara haber trabajado subiendo archivos gráficos por Wi-Fi en el Estudio de Diseño de 23:25 a 23:52 h.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSujeto Gamma:\u003c/strong\u003e Dice haber bajado al billar mirando el reloj de pie a las 23:40 h.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eSujeto Delta:\u003c/strong\u003e Dice haber salido al jardín interior a fumar.\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Lee a Patri cada declaración completa para que contraste relojes, calefacción, puertas exteriores y puertos LAN."
                    },
-        "hints":  [
-                      "Patri confirma el Estudio de Diseño (Ficha 12). Miguel debe mirar qué sujeto declaró estar allí.",
-                      "Sujeto Beta coincide exactamente con el horario 23:25–23:52 del Estudio de Diseño, y la ficha es la 12.",
-                      "Solución del Día 7: BETA12."
-                  ],
-        "kicker":  "DÍA 07 · TESTIMONIOS Y LOGS",
-        "day":  7,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTIiLCJmb3JlbnNpY1RhZyI6IkFDVElWSURBRCBERSBSRUQgSU5JTlRFUlJVTVBJREEiLCJjb25jbHVzaW9uIjoiTG9zIHBhcXVldGVzIGRlIGRhdG9zIHN1Ymlkb3MgZGVzZGUgZWwgcG9ydMOhdGlsIGRlIERpZWdvIEFyYW5kYSBwcnVlYmFuIGFjdGl2aWRhZCBtYW51YWwgY29uc3RhbnRlIGVuIGVsIEVzdHVkaW8gZHVyYW50ZSB0b2RvIGVsIGFwYWfDs24uIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
-        "story":  "Cuatro sospechosos declararon por separado sobre lo que hacían a las 23:40 h, pero las actas de Miguel solo llevan alias griegos.",
+        "patri":  {
+                      "roleBadge":  "Patri · Auditoría del Servidor y Edificio",
+                      "brief":  "Cruza tus cinco informes técnicos con los seis relatos de Miguel hasta aislar al único sujeto veraz.",
+                      "clueHtml":  "\u003cp\u003eCuatro sensores desmienten detalles concretos (reloj parado, calefacción apagada, hielo exterior y puerto LAN sin tráfico). Solo el router del \u003cstrong\u003eEstudio de Diseño\u003c/strong\u003e valida a \u003cstrong\u003eDiego Aranda (Ficha 12)\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Cotejo Final",
+                                     "items":  [
+                                                   "Estudio de Diseño · Subida 1.42 GB (23:25–23:52)",
+                                                   "Titular confirmado: Diego Aranda · Ficha 12"
+                                               ]
+                                 },
+                      "partnerHint":  "Desmiente a los cinco sujetos incompatibles con tus sensores y combina el alias ganador con el número de ficha 12."
+                  },
         "jointInput":  {
-                           "label":  "Alias griego + Nº de ficha (2 dígitos)",
+                           "label":  "Alias verificado + Nº de ficha (2 dígitos)",
                            "placeholder":  "Ej. ALFA04",
                            "acceptedHashes":  [
-                                                  "00f264f1b623260e47c6b411af992a7bb8a007d41f215af9510db717cd043d0a"
+                                                  "317c94ae05b22075f8624fc922bed333a3133ab4457fbc3435e9adc9a33a6ed7"
                                               ]
                        },
-        "title":  "Cuatro Coartadas, Un Reloj Parado",
-        "patri":  {
-                      "roleBadge":  "Patri · Auditoría del Servidor",
-                      "widget":  {
-                                     "caption":  "Datos Confirmados",
-                                     "items":  [
-                                                   "Estudio de Diseño · Wi-Fi activo 23:25–23:52",
-                                                   "Titular: Diego Aranda · Ficha Nº 12"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Contrasta lo que te cuenta Miguel con los registros técnicos del hotel.",
-                      "partnerHint":  "Dile a Miguel qué actividad confirman los logs del router para que identifique el alias griego correcto.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eInforme Informático:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eEl reloj de pie del billar lleva averiado desde las 20:15 h (el del billar miente o confunde la hora).\u003c/li\u003e\u003cli\u003eEl router del \u003cstrong\u003eEstudio de Diseño\u003c/strong\u003e registra tráfico continuo y subida de maquetas desde el portátil de \u003cstrong\u003eDiego Aranda (Sospechoso 12)\u003c/strong\u003e entre las 23:25 y las 23:52 h.\u003c/li\u003e\u003c/ul\u003e"
-                  }
+        "hints":  [
+                      "BETA (reloj 20:15), GAMMA (LAN 0 bytes), EPSILON (suelo frío desde 22:40) y ZETA (puerta helada) quedan refutados.",
+                      "Solo DELTA coincide con la subida continua de 1.4 GB en el Estudio de Diseño (Ficha 12 de Diego Aranda).",
+                      "Solución del Día 7: DELTA12."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTIiLCJmb3JlbnNpY1RhZyI6IkFDVElWSURBRCBERSBSRUQgSU5JTlRFUlJVTVBJREEiLCJjb25jbHVzaW9uIjoiTG9zIHBhcXVldGVzIGRlIDEuNDIgR0Igc3ViaWRvcyBkZXNkZSBlbCBwb3J0w6F0aWwgZGUgRGllZ28gQXJhbmRhIHBydWViYW4gYWN0aXZpZGFkIG1hbnVhbCBjb25zdGFudGUgZW4gZWwgRXN0dWRpbyBkdXJhbnRlIHRvZG8gZWwgYXBhZ8Ozbi4gUXVlZGEgZGVzY2FydGFkby4ifQ=="
     },
     {
+        "day":  8,
+        "kicker":  "DÍA 08 · TOXICOLOGÍA DE ESPECIAS",
+        "title":  "La Balanza del Ponche",
+        "story":  "En el spa han aparecido cuatro pesajes de especias navideñas divididos entre vuestras terminales. Ninguna báscula resuelve un ingrediente por sí sola: debéis resolver el sistema de cuatro ecuaciones juntas.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Ecuaciones 1 y 2",
+                       "roleBadge":  "Miguel · Básculas 1 y 2",
+                       "brief":  "Comparte tus dos ecuaciones con Patri para poder despejar Anís, Clavo, Nuez y Jengibre.",
+                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eBáscula 1:\u003c/strong\u003e 2 Anís + 1 Clavo = \u003cstrong\u003e18 g\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eBáscula 2:\u003c/strong\u003e 1 Clavo + 2 Nuez = \u003cstrong\u003e22 g\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
-                                      "caption":  "Tabla de Pesos Parcial",
+                                      "type":  "dossier-card",
+                                      "caption":  "Sistema Parcial Miguel",
                                       "items":  [
-                                                    "2 Anís + 1 Canela = 19 g",
-                                                    "1 Anís + 2 Clavo = 13 g"
-                                                ],
-                                      "type":  "dossier-card"
+                                                    "2A + C = 18",
+                                                    "C + 2N = 22"
+                                                ]
                                   },
-                       "brief":  "Necesitas saber cuánto pesa 1 rama de Canela (dato de Patri) para calcular el Anís y el Clavo.",
-                       "partnerHint":  "Pide a Patri el peso de 1 Canela. Calcula luego cuánto pesa 1 Anís y 1 Clavo, y díselo para la mezcla final.",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eBáscula 1:\u003c/strong\u003e 2 Anís + 1 Canela = \u003cstrong\u003e19 g\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eBáscula 2:\u003c/strong\u003e 1 Anís + 2 Clavo = \u003cstrong\u003e13 g\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Dicta ambas ecuaciones a Patri y anotad sus dos ecuaciones (Nuez, Jengibre, Anís y Clavo) para despejar juntas cada peso."
                    },
-        "hints":  [
-                      "De 3 Canela = 15 g se deduce Canela = 5 g.",
-                      "Con Canela = 5 -\u003e 2 Anís = 14 (Anís = 7). Luego 7 + 2 Clavo = 13 -\u003e Clavo = 3.",
-                      "2(7) + 3(3) + 1(5) = 14 + 9 + 5 = 28."
-                  ],
-        "kicker":  "DÍA 08 · TOXICOLOGÍA DE ESPECIAS",
-        "day":  8,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiTVVFU1RSQSBSRVRFTklEQSDCtyBTSU4gREVTQ0FSVEUiLCJjb25jbHVzaW9uIjoiRWwgcGVzYWplIGRlIDI4IGcgY3VhZHJhIGNvbiBlbCBjdWFkZXJubyBkZSBtZXpjbGFzIGRlbCBzcGEsIHBlcm8gc2UgaW5jYXV0YW4gZG9zIGZyYXNjb3MgYW1iYXIgc2luIGV0aXF1ZXRhIHBhcmEgYW5hbGlzaXMgdG94aWNvbG9naWNvIGRlIE5vY2hlYnVlbmEuIFBhdWxhIE1lbmRvemEgc2lndWUgYmFqbyBzb3NwZWNoYSBoYXN0YSBlbCBjYXJlbyBmaW5hbC4ifQ==",
-        "story":  "En la sala de infusiones del spa han aparecido tres frascos de especias navideñas con pesos cifrados en una báscula de precisión.",
+        "patri":  {
+                      "roleBadge":  "Patri · Básculas 3–4 y Receta",
+                      "brief":  "Combinad las cuatro ecuaciones de las básculas y calculad el peso neto de la fórmula de control de Paula Mendoza.",
+                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eBáscula 3:\u003c/strong\u003e 1 Nuez + 1 Jengibre = \u003cstrong\u003e15 g\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eBáscula 4:\u003c/strong\u003e 1 Anís + 1 Jengibre + 1 Clavo = \u003cstrong\u003e17 g\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eFórmula de control:\u003c/strong\u003e 3 Anís + 2 Nuez + 4 Clavo + 1 Jengibre = \u003cstrong\u003e? g\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Ecuaciones Patri",
+                                     "items":  [
+                                                   "N + J = 15  |  A + J + C = 17",
+                                                   "Objetivo: 3A + 2N + 4C + J (solo número)"
+                                               ]
+                                 },
+                      "partnerHint":  "De 2A+C=18 y C+2N=22 sale N = A+2; al sustituir N y J en vuestra última ecuación podréis hallar A exactamente."
+                  },
         "jointInput":  {
                            "label":  "Peso total de la mezcla en gramos (solo número)",
-                           "placeholder":  "Ej. 24",
+                           "placeholder":  "Ej. 45",
                            "acceptedHashes":  [
-                                                  "59e19706d51d39f66711c2653cd7eb1291c94d9b55eb14bda74ce4dc636d015a",
-                                                  "6a6981daf614209de2449a288a622f25d2ecf5c4a415e74863e190e4e75f7353"
+                                                  "d029fa3a95e174a19934857f535eb9427d967218a36ea014b70ad704bc6c8d1c",
+                                                  "8676381056b35e2f4a70541633a5952f0a4395b9ff5ea1e5b122a252c54dabd1"
                                               ]
                        },
-        "title":  "La Balanza del Ponche",
-        "patri":  {
-                      "roleBadge":  "Patri · Báscula 3 y Fórmula Final",
-                      "widget":  {
-                                     "caption":  "Fórmula de Control",
-                                     "items":  [
-                                                   "3 Canela = 15 g",
-                                                   "Objetivo: 2 Anís + 3 Clavo + 1 Canela"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Deduce el peso de la Canela, dáselo a Miguel y calculad juntos la mezcla de control de Paula.",
-                      "partnerHint":  "Calcula cuánto vale 1 Canela y díselo a Miguel para que halle Anís y Clavo.",
-                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eBáscula 3:\u003c/strong\u003e 3 Canela = \u003cstrong\u003e15 g\u003c/strong\u003e\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eMezcla de control (Paula Mendoza):\u003c/strong\u003e \u003cstrong\u003e2 Anís + 3 Clavo + 1 Canela = ? g\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIntroduce el resultado total en gramos (solo el número, ej. 24).\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Expresando todo en función de Anís (A): C = 18 - 2A, N = 2 + A y J = 13 - A.",
+                      "En Báscula 4: A + (13 - A) + (18 - 2A) = 17 -\u003e 31 - 2A = 17 -\u003e A = 7 g, C = 4 g, N = 9 g, J = 6 g.",
+                      "3(7) + 2(9) + 4(4) + 6 = 21 + 18 + 16 + 6 = 61."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiTVVFU1RSQSBSRVRFTklEQSDCtyBTSU4gREVTQ0FSVEUiLCJjb25jbHVzaW9uIjoiRWwgcGVzYWplIGRlIDYxIGcgY3VhZHJhIGNvbiBlbCBjdWFkZXJubyBkZSBtZXpjbGFzIGRlbCBzcGEsIHBlcm8gc2UgaW5jYXV0YW4gZG9zIGZyYXNjb3Mgw6FtYmFyIHNpbiBldGlxdWV0YSBwYXJhIGFuw6FsaXNpcyB0b3hpY29sw7NnaWNvIGRlIE5vY2hlYnVlbmEuIFBhdWxhIE1lbmRvemEgc2lndWUgYmFqbyBzb3NwZWNoYSBoYXN0YSBlbCBjYXJlbyBmaW5hbC4ifQ=="
     },
     {
+        "day":  9,
+        "kicker":  "DÍA 09 · CÁMARAS EXTERIORES Y TERMOGRAFÍA",
+        "title":  "Fotogramas del Mirador",
+        "story":  "La cámara térmica exterior registró el ángulo norte del teleférico a las 23:41 h, mientras la cámara infrarroja interior captaba el calor residual del teclado de la Cabaña Norte.",
         "mode":  "dual-lock",
         "miguel":  {
-                       "inputPlaceholder":  "Ej. 1234",
-                       "brief":  "Inspecciona el visor térmico de la escena exterior para leer las iniciales y la temperatura.",
-                       "acceptedHashes":  [
-                                              "7527ba85bdc16eaae6b3f475aaa3b4c030611a001614a53fa47b4bc37b8950f6"
-                                          ],
-                       "roleBadge":  "Miguel · Cámara Norte (Teleférico)",
-                       "clueHtml":  "\u003cp\u003eEn el fotograma de la Cámara Norte se distingue al guía con chaqueta técnica y las iniciales bordadas \u003cstrong\u003eM.S.\u003c/strong\u003e en la manga. El termómetro digital del poste marca \u003cstrong\u003e-11 °C\u003c/strong\u003e.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Cámara Norte y Postes",
+                       "brief":  "Inspecciona el poste orientado al Norte (005°) en tu telemetría para extraer temperatura e iniciales.",
+                       "clueHtml":  "\u003cp\u003eSolo el \u003cstrong\u003ePoste 04 (Polea Teleférico, Azimut 005° Norte)\u003c/strong\u003e coincide con la cámara del visor.\u003c/p\u003e\u003cp\u003eExtrae sus \u003cstrong\u003e2 dígitos de temperatura (sin signo negativo) + sus 2 iniciales\u003c/strong\u003e para Patri, y pídele el PIN reconstruido por infrarrojos.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Cámara Norte · 23:41 h · Marca térmica: -11 °C · Bordado manga: M.S.",
                                       "type":  "scene-zoom",
-                                      "imgSrc":  "imagenes/scene-balcony.jpg"
+                                      "imgSrc":  "imagenes/scene-balcony.jpg",
+                                      "caption":  "Cámara Exterior · Polea Norte · 23:41:18 h"
                                   },
-                       "inputLabel":  "PIN de 4 dígitos de la Cabaña Norte (dato de Patri)",
-                       "partnerHint":  "Dile a Patri los dígitos de temperatura sin signo menos + las 2 iniciales juntas (ej. 05AB). Pregúntale el código PIN de la puerta de la cabaña."
+                       "inputLabel":  "PIN de 4 dígitos reconstruido por Patri (termografía IR)",
+                       "inputPlaceholder":  "Ej. 1234",
+                       "acceptedHashes":  [
+                                              "a5ca6c0335a3860b31a64f43bf3021207ac91133c82bbc1736ab4f4e2922afed"
+                                          ],
+                       "partnerHint":  "Pasa a Patri los dígitos de temperatura del Poste 04 Norte + las 2 iniciales bordadas (ej. 05AB). Pregúntale el PIN deducido de la termografía."
                    },
-        "kicker":  "DÍA 09 · CÁMARAS EXTERIORES",
-        "day":  9,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDQiLCJmb3JlbnNpY1RhZyI6IlRFTEVGw4lSSUNPIFkgQ0FCQcORQSBOT1JURSBWRVJJRklDQURPUyIsImNvbmNsdXNpb24iOiJNYXRlbyBTb2xlciBxdWVkw7MgZ3JhYmFkbyBsdWNoYW5kbyBjb250cmEgZWwgaGllbG8gZW4gZWwgZXh0ZXJpb3IgYSAtMTEgwrBDIHkgZmljaGFuZG8gZW4gc3UgY2FiYcOxYSBhIGxhcyAyMzo0MSBoLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9",
-        "story":  "Dos cámaras exteriores captaron a una figura solitaria bajo la ventisca junto al teleférico a las 23:41 h. Cada móvil recibe un ángulo distinto.",
-        "hints":  [
-                      "Miguel tiene -11 °C e iniciales M.S. (11MS). Patri tiene el PIN 4819.",
-                      "Intercambiad ambos códigos exactamente como pide cada campo.",
-                      "Solución del Día 9 — Miguel: 4819 · Patri: 11MS."
-                  ],
-        "title":  "Fotogramas del Mirador",
         "patri":  {
-                      "inputPlaceholder":  "Ej. 05AB",
-                      "brief":  "Revisa la puerta de la Cabaña Norte y cruza los datos térmicos de Miguel.",
-                      "acceptedHashes":  [
-                                             "d9205122c9576688af993a08b3d27c50856a99b49b656c543981c1ebff5ed0a1"
-                                         ],
-                      "roleBadge":  "Patri · Cámara Exterior B (Cabaña)",
-                      "clueHtml":  "\u003cp\u003eLa Cámara B muestra al individuo despejando hielo de la polea con un piolet, justo frente al teclado de la Cabaña Norte cuya contraseña de acceso registrada a las 23:41 h fue \u003cstrong\u003e4819\u003c/strong\u003e.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Termografía IR Cabaña",
+                      "brief":  "Ordena los 4 botones iluminados del más frío (pulsado primero) al más cálido (pulsado último).",
+                      "clueHtml":  "\u003cp\u003eLa cámara infrarroja del teclado muestra cuatro teclas con calor residual. La primera pulsada es la que lleva más segundos enfriándose (menor temperatura); la última, la más caliente.\u003c/p\u003e",
                       "widget":  {
-                                     "caption":  "Registro Puerta Cabaña Norte",
+                                     "type":  "dossier-card",
+                                     "caption":  "Regla IR + Formato Patri",
                                      "items":  [
-                                                   "PIN introducido 23:41 h: 4819",
-                                                   "Formato para validar: Temp (2 dígitos) + Iniciales"
-                                               ],
-                                     "type":  "dossier-card"
+                                                   "Orden PIN: de menor temperatura a mayor temperatura",
+                                                   "Introduce: Temperatura Poste Norte (2 díg.) + Iniciales"
+                                               ]
                                  },
                       "inputLabel":  "Temperatura (2 dígitos) + Iniciales (dato de Miguel)",
-                      "partnerHint":  "Comunica a Miguel el PIN 4819. Pídele la temperatura sin el signo negativo seguida de las dos iniciales bordadas (ej. 05AB)."
-                  }
+                      "inputPlaceholder":  "Ej. 05AB",
+                      "acceptedHashes":  [
+                                             "7618ec4d445de1aae0c2b8902e0896f8641603027d1c25b732044fc2f7962f75"
+                                         ],
+                      "partnerHint":  "Comunica a Miguel el PIN ordenado de menor a mayor temperatura y pídele la temperatura del Poste 04 Norte + sus iniciales."
+                  },
+        "hints":  [
+                      "Miguel lee en el Poste 04 Norte -14 °C e iniciales M.S. (14MS). Patri ordena las teclas IR: 22.1°C(7) -\u003e 24.8°C(2) -\u003e 27.3°C(9) -\u003e 30.5°C(4).",
+                      "El PIN térmico es 7294 y el código exterior es 14MS.",
+                      "Solución del Día 9 — Miguel: 7294 · Patri: 14MS."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDQiLCJmb3JlbnNpY1RhZyI6IlRFTEVGw4lSSUNPIFkgQ0FCQcORQSBOT1JURSBWRVJJRklDQURPUyIsImNvbmNsdXNpb24iOiJNYXRlbyBTb2xlciBxdWVkw7MgZ3JhYmFkbyBsdWNoYW5kbyBjb250cmEgZWwgaGllbG8gZW4gZWwgZXh0ZXJpb3IgYSAtMTQgwrBDIHkgdGVjbGVhbmRvIDcyOTQgZW4gc3UgY2FiYcOxYSBhIGxhcyAyMzo0MSBoLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
     },
     {
+        "day":  10,
+        "kicker":  "DÍA 10 · SALA DE MÁQUINAS",
+        "title":  "Válvulas de la Caldera",
+        "story":  "Cuatro manómetros marcan lecturas distintas en el sótano. Debéis aislar el circuito en alerta crítica, consultar sus reglas booleanas de seguridad y aplicar el ajuste final del manómetro.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Manual de Calderas",
+                       "roleBadge":  "Miguel · Manual Booleano de Calderas",
+                       "brief":  "Consulta el circuito en fallo que identifique Patri y deduce con ella qué válvulas quedan abiertas.",
+                       "clueHtml":  "\u003cp\u003eIntroduce aquí el código del único circuito que supere \u003cstrong\u003e3.2 bar\u003c/strong\u003e y esté por debajo de \u003cstrong\u003e45 °C\u003c/strong\u003e en los manómetros de Patri (ej. C4):\u003c/p\u003e",
                        "widget":  {
-                                      "triggerCode":  "C7",
-                                      "responseHtml":  "\u003cstrong\u003eProtocolo Circuito C-7:\u003c/strong\u003e Dejar \u003cstrong\u003eV1 ABIERTA\u003c/strong\u003e, \u003cstrong\u003eV2 CERRADA\u003c/strong\u003e, \u003cstrong\u003eV3 CERRADA\u003c/strong\u003e y \u003cstrong\u003eV4 ABIERTA\u003c/strong\u003e.",
-                                      "type":  "manual-lookup"
+                                      "type":  "manual-lookup",
+                                      "placeholder":  "Ej. C4",
+                                      "triggerCode":  "C9",
+                                      "responseHtml":  "\u003cstrong\u003eReglas Circuito C-9:\u003c/strong\u003e (1) V1 y V4 tienen estados opuestos. (2) Exactamente 2 válvulas abiertas en total. (3) V4 (par mayor) debe quedar ABIERTA. (4) V2 queda CERRADA si V1 está cerrada."
                                   },
-                       "brief":  "Introduce el número de circuito averiado que ve Patri para consultar qué válvulas abrir.",
-                       "partnerHint":  "Pregunta a Patri qué circuito marca alarma roja. Luego díctale qué válvulas debe dejar ABIERTAS y cuáles CERRADAS.",
-                       "clueHtml":  "\u003cp\u003eIntroduce aquí el \u003cstrong\u003ecódigo de circuito\u003c/strong\u003e en rojo que aparece en el panel de Patri (ej. C2) para desplegar el protocolo de válvulas:\u003c/p\u003e"
+                       "partnerHint":  "Pide a Patri qué circuito cumple (\u003e 3.2 bar y \u003c 45 °C). Consúltalo y díctale las cuatro reglas lógicas para deducir qué válvulas abrir."
                    },
-        "hints":  [
-                      "Patri dice C-7 a Miguel. Miguel escribe C7 en su buscador de manual y lee qué válvulas abrir.",
-                      "El protocolo ordena V1 ABIERTA, V2 CERRADA, V3 CERRADA, V4 ABIERTA. Al ponerlo así en el panel de Patri aparece el número.",
-                      "Solución del Día 10: 8420."
-                  ],
-        "kicker":  "DÍA 10 · SALA DE MÁQUINAS",
-        "day":  10,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTAiLCJmb3JlbnNpY1RhZyI6IlBVUkdBIERFIENBTERFUkFTIENFUlRJRklDQURBIiwiY29uY2x1c2lvbiI6IkVsIHJlZ2lzdHJvIGF1dG9tw6F0aWNvIDg0MjAgZGUgcHJlc2nDs24gY29uZmlybWEgcXVlIEp1bGnDoW4gUHJpZXRvIGVzdHV2byBtYW5pb2JyYW5kbyBtYW51YWxtZW50ZSBsYXMgdsOhbHZ1bGFzIGRlbCBzw7N0YW5vIGVudHJlIGxhcyAyMzozNiB5IGxhcyAyMzo0NSBoLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9",
-        "story":  "Un fallo de presión obligó a purgar el circuito hidráulico del sótano durante el apagón. Necesitáis activar la combinación exacta en el panel de Patri.",
-        "jointInput":  {
-                           "label":  "Código de serie revelado en el manómetro (4 dígitos)",
-                           "placeholder":  "Ej. 1020",
-                           "acceptedHashes":  [
-                                                  "33d9f4526b23543c77260989ff4439aca18cff76c61511b6987816f1e9fc6c32"
-                                              ]
-                       },
-        "title":  "Válvulas de la Caldera",
         "patri":  {
-                      "roleBadge":  "Patri · Tablero Interactivo de Válvulas",
+                      "roleBadge":  "Patri · Manómetros y Válvulas",
+                      "brief":  "Identifica el circuito en alerta, ajusta V1–V4 según el manual lógico e invierte los pares del resultado.",
+                      "clueHtml":  "\u003cp\u003eSolo uno de los cuatro circuitos cumple simultáneamente \u003cstrong\u003ePresión \u0026gt; 3.2 bar\u003c/strong\u003e y \u003cstrong\u003eTemperatura \u0026lt; 45 °C\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAl accionar correctamente V1–V4 obtendrás una serie de 4 cifras \u003cstrong\u003e[AB][CD]\u003c/strong\u003e; invierte ambos pares (\u003cstrong\u003e[CD][AB]\u003c/strong\u003e) para validar.\u003c/p\u003e",
                       "widget":  {
+                                     "type":  "valves",
                                      "targetState":  [
+                                                         false,
+                                                         false,
                                                          true,
-                                                         false,
-                                                         false,
                                                          true
                                                      ],
-                                     "type":  "valves",
-                                     "revealCode":  "8420"
+                                     "revealCode":  "6194"
                                  },
-                      "brief":  "Comunica a Miguel el circuito averiado y acciona las 4 válvulas según sus instrucciones.",
-                      "partnerHint":  "Dile a Miguel que el circuito dañado es el C-7 y espera sus órdenes para pulsar V1–V4.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eALERTA ROJA:\u003c/strong\u003e Avería detectada en el circuito \u003cstrong class=\u0027mono\u0027\u003eC-7\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eCuando ajustes las 4 válvulas tal como te indique Miguel, el manómetro te mostrará el código de serie de 4 dígitos.\u003c/p\u003e"
-                  }
-    },
-    {
-        "mode":  "code",
-        "miguel":  {
-                       "roleBadge":  "Miguel · Mitad Izquierda (Horas e Importes)",
-                       "widget":  {
-                                      "caption":  "Formato de Validación",
-                                      "items":  [
-                                                    "Nº Mesa (2 dígitos) + Hora (4 dígitos)",
-                                                    "Ejemplo: 032115"
-                                                ],
-                                      "type":  "dossier-card"
-                                  },
-                       "brief":  "Lee la hora y los precios de la columna izquierda para cruzarlos con los conceptos de Patri.",
-                       "partnerHint":  "Pide a Patri el número de mesa de 2 dígitos asociado al artículo de 4,50 EUR. Combínalo con la hora sin dos puntos.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eFragmento Izquierdo del Ticket:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eHora de cobro: \u003cstrong\u003e23:38 h\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eLínea 1: 24,00 EUR\u003c/li\u003e\u003cli\u003eLínea 2: \u003cstrong\u003e4,50 EUR\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eTotal TPV: 28,50 EUR\u003c/li\u003e\u003c/ul\u003e"
-                   },
-        "hints":  [
-                      "La Línea 2 (4,50 EUR, Café Solo) pertenece a la Mesa 08 y fue cobrada a las 23:38.",
-                      "Junta 08 (mesa) y 2338 (hora).",
-                      "Solución del Día 11: 082338."
-                  ],
-        "kicker":  "DÍA 11 · CONSUMO EN BARRA",
-        "day":  11,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjQiLCJmb3JlbnNpY1RhZyI6IkNPQlJPIFRQViAyMzozOCBIIFZFUklGSUNBRE8iLCJjb25jbHVzaW9uIjoiRWwgZGF0w6Fmb25vIGRlIHJlY2VwY2nDs24gY29icsOzIGVsIGNhZsOpIGRlIE1hcmNvcyBUZWphZGEgYSBsYXMgMjM6Mzg6MDQgaCBlbiBwcmVzZW5jaWEgZGVsIHJlY2VwY2lvbmlzdGEsIGp1c3RvIGN1YW5kbyBzYWx0YXJvbiBsb3MgcGxvbW9zLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9",
-        "story":  "Un ticket de caja rasgado por la mitad cayó detrás del mostrador de recepción. Ninguna mitad sirve por separado.",
+                      "partnerHint":  "Indica a Miguel el código del circuito crítico (C9). Deduce con él las 4 válvulas e invierte los dos pares de dígitos finales."
+                  },
         "jointInput":  {
-                           "label":  "Mesa (2 dígitos) + Hora (4 dígitos)",
-                           "placeholder":  "Ej. 032115",
+                           "label":  "Código oficial ajustado [CD][AB] (4 dígitos)",
+                           "placeholder":  "Ej. 1020",
                            "acceptedHashes":  [
-                                                  "912258ca546ffd791e39fef3f775a786a11ab4d512379087c0bfc1dbc77e19d3"
+                                                  "5a75498e4071bada9f427c43a61fd447e0788e8b375a987e836d0a21fcbc9940"
                                               ]
                        },
-        "title":  "El Ticket Térmico Roto",
-        "patri":  {
-                      "roleBadge":  "Patri · Mitad Derecha (Artículos y Mesa)",
-                      "widget":  {
-                                     "caption":  "Mesa 08 · Recepción Principal",
-                                     "items":  [
-                                                   "Titular: Marcos Tejada",
-                                                   "Artículo: Café Solo"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Identifica los conceptos y el número de mesa para unirlos con la hora que tiene Miguel.",
-                      "partnerHint":  "Dile a Miguel que el Café Solo corresponde a la Mesa 08 y pregúntale la hora exacta del ticket.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eFragmento Derecho del Ticket:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eLínea 1: 2x Whisky Reserva · Mesa 03\u003c/li\u003e\u003cli\u003eLínea 2: 1x Café Solo · \u003cstrong\u003eMesa 08 (Marcos Tejada)\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eEl escolta pagó su café en el mostrador principal justo a la hora que figura en el fragmento de Miguel.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Solo C-9 (4.1 bar y 36 °C) cumple la condición crítica. En el manual de C-9: V4=ABIERTA -\u003e por regla (1) V1=CERRADA.",
+                      "Con V1=CERRADA, la regla (4) fuerza V2=CERRADA. Como debe haber 2 abiertas (regla 2), V3=ABIERTA. El manómetro revela 6194.",
+                      "Invirtiendo los pares [61][94] queda 9461."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTAiLCJmb3JlbnNpY1RhZyI6IlBVUkdBIERFIENBTERFUkFTIEMtOSBDRVJUSUZJQ0FEQSIsImNvbmNsdXNpb24iOiJFbCByZWdpc3RybyBhdXRvbcOhdGljbyA5NDYxIGRlbCBjaXJjdWl0byBDLTkgY29uZmlybWEgcXVlIEp1bGnDoW4gUHJpZXRvIGVzdHV2byBtYW5pb2JyYW5kbyBsYXMgdsOhbHZ1bGFzIGRlbCBzw7N0YW5vIGVudHJlIGxhcyAyMzozNiB5IGxhcyAyMzo0NSBoLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
     },
     {
+        "day":  11,
+        "kicker":  "DÍA 11 · CONSUMO EN BARRA",
+        "title":  "El Ticket Térmico Roto",
+        "story":  "Cuatro cintas de datáfono y cuatro comandas de barra se mezclaron en distinto orden al romperse el rollo térmico. Usad la carta de precios para emparejar la consumición de Marcos Tejada.",
+        "mode":  "code",
+        "miguel":  {
+                       "roleBadge":  "Miguel · Cinta TPV (Horas e Importes)",
+                       "brief":  "Comunica las 4 autorizaciones y sus importes para que Patri calcule qué comanda suma cada cifra.",
+                       "clueHtml":  "\u003cp\u003eTus autorizaciones están ordenadas por número de operación (AUT-41 a AUT-44), pero no coinciden en orden con las mesas de Patri.\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato del Código Conjunto",
+                                      "items":  [
+                                                    "Nº AUT (2 dígitos) + Nº Mesa (2 dígitos) + Hora (4 dígitos)",
+                                                    "Ejemplo: 41032315"
+                                                ]
+                                  },
+                       "partnerHint":  "Lee a Patri cada AUT con su hora e importe exacto hasta emparejar la consumición de Marcos Tejada."
+                   },
+        "patri":  {
+                      "roleBadge":  "Patri · Carta de Barra y Comandas",
+                      "brief":  "Calcula el total de cada mesa con la lista de precios de la carta para identificar el Nº AUT y hora de Marcos.",
+                      "clueHtml":  "\u003cp\u003eSuma los artículos pedidos en cada mesa según la carta superior hasta encontrar qué autorización TPV de Miguel pagó exactamente \u003cstrong\u003eMarcos Tejada\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Emparejamiento TPV",
+                                     "items":  [
+                                                   "Busca el coste exacto de Café Solo + Agua Mineral",
+                                                   "Combina: [2 díg. AUT] + [2 díg. Mesa] + [4 díg. Hora]"
+                                               ]
+                                 },
+                      "partnerHint":  "Calcula cuánto suma la consumición de la Mesa 08 y pide a Miguel el Nº AUT y la hora de ese importe."
+                  },
+        "jointInput":  {
+                           "label":  "Nº AUT (2) + Mesa (2) + Hora TPV (4)",
+                           "placeholder":  "Ej. 41032315",
+                           "acceptedHashes":  [
+                                                  "0fc6f09f5b2db212246dc6ab217c001ff0834bf6f4386b9f89821a47f3307cee"
+                                              ]
+                       },
+        "hints":  [
+                      "Marcos Tejada (Mesa 08) pidió 1 Café Solo (3,80 EUR) + 1 Agua Mineral (2,40 EUR) = 6,20 EUR.",
+                      "En la cinta de Miguel, 6,20 EUR corresponde a AUT-42 cobrado a las 23:38 h.",
+                      "Solución del Día 11: 42082338."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjQiLCJmb3JlbnNpY1RhZyI6IkNPQlJPIFRQViAyMzozOCBIIFZFUklGSUNBRE8iLCJjb25jbHVzaW9uIjoiTGEgYXV0b3JpemFjacOzbiBBVVQtNDIgZW4gcmVjZXBjacOzbiBjb2Jyw7MgZWwgY2Fmw6kgeSBhZ3VhIGRlIE1hcmNvcyBUZWphZGEgKE1lc2EgMDgpIGEgbGFzIDIzOjM4OjA0IGggZW4gcHJlc2VuY2lhIGRlbCByZWNlcGNpb25pc3RhLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
+    },
+    {
+        "day":  12,
+        "kicker":  "DÍA 12 · REJILLA CARDANO 5x5",
+        "title":  "Nonograma del Archivo",
+        "story":  "El catálogo donde Elena Valls selló su inventario usa una máscara asimétrica 5x5. Solo resolviendo la cuadrícula exacta y superponiéndola sobre la matriz de letras aparecerá la estantería.",
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Pistas de Filas",
+                       "brief":  "Dicta las pistas horizontales de filas a Patri y rellenad juntos los 9 cuadros de la solución única.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePistas de Filas:\u003c/strong\u003e F1: \u003cstrong\u003e1, 1, 1\u003c/strong\u003e · F2: \u003cstrong\u003e1\u003c/strong\u003e · F3: \u003cstrong\u003e2\u003c/strong\u003e · F4: \u003cstrong\u003e1\u003c/strong\u003e · F5: \u003cstrong\u003e1, 1\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAl completar las 9 casillas rellenas, úsalas como plantilla perforada sobre la rejilla 5x5 de Patri.\u003c/p\u003e",
                        "widget":  {
+                                      "type":  "nonogram",
                                       "side":  "rows",
-                                      "clues":  [
-                                                    "3",
-                                                    "1,1",
-                                                    "5",
-                                                    "1,1",
-                                                    "1,1"
-                                                ],
-                                      "type":  "nonogram"
+                                      "clues":  {
+                                                    "rows":  [
+                                                                 [
+                                                                     1,
+                                                                     1,
+                                                                     1
+                                                                 ],
+                                                                 [
+                                                                     1
+                                                                 ],
+                                                                 [
+                                                                     2
+                                                                 ],
+                                                                 [
+                                                                     1
+                                                                 ],
+                                                                 [
+                                                                     1,
+                                                                     1
+                                                                 ]
+                                                             ],
+                                                    "cols":  [
+                                                                 [
+                                                                     "?"
+                                                                 ],
+                                                                 [
+                                                                     "?"
+                                                                 ],
+                                                                 [
+                                                                     "?"
+                                                                 ],
+                                                                 [
+                                                                     "?"
+                                                                 ],
+                                                                 [
+                                                                     "?"
+                                                                 ]
+                                                             ]
+                                                }
                                   },
-                       "brief":  "Dicta las pistas numéricas de cada fila a Patri y rellenad juntos la cuadrícula 5x5.",
-                       "partnerHint":  "Pide a Patri sus pistas verticales (columnas) para resolver el dibujo sin ambigüedad.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePistas horizontales (de arriba a abajo):\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eFila 1: \u003cstrong\u003e3\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eFila 2: \u003cstrong\u003e1, 1\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eFila 3: \u003cstrong\u003e5\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eFila 4: \u003cstrong\u003e1, 1\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eFila 5: \u003cstrong\u003e1, 1\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Comparte tus pistas de filas con Patri para deducir sin ambigüedad dónde van exactamente las 9 casillas rellenas."
                    },
-        "hints":  [
-                      "La Fila 3 es 5 (toda llena). Las Columnas 1 y 5 tienen 4 casillas seguidas que no pueden empezar en la Fila 1 porque la Fila 1 es 3 y Col 3 tiene 1,1.",
-                      "Al rellenar la cuadrícula aparece una gran letra A mayúscula, correspondiente al Archivo Histórico (Código 19).",
-                      "Solución del Día 12: A19."
-                  ],
-        "kicker":  "DÍA 12 · CUADRÍCULA 5x5",
-        "day":  12,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTkiLCJmb3JlbnNpY1RhZyI6IlRBU0FDScOTTiBFTiBBUkNISVZPIENPTkZJUk1BREEiLCJjb25jbHVzaW9uIjoiTGEgY8OhbWFyYSBkZSBhY2Nlc28gYWwgQXJjaGl2byBIaXN0w7NyaWNvIG11ZXN0cmEgYSBFbGVuYSBWYWxscyBmb3RvZ3JhZmlhbmRvIG1hbnVzY3JpdG9zIGhhc3RhIGxhcyAyMzo0OSBoLCBsZWpvcyBkZWwgU2Fsw7NuIE1pcmFkb3IuIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
-        "story":  "Un sello cifrado en cuadrícula 5x5 revela la inicial de la estancia histórica donde estuvo Elena Valls tasando obras durante la noche.",
+        "patri":  {
+                      "roleBadge":  "Patri · Columnas y Rejilla 5x5",
+                      "brief":  "Aporta las pistas de columnas y lee solo los 9 caracteres expuestos por el nonograma en orden de lectura.",
+                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePistas de Columnas:\u003c/strong\u003e C1: \u003cstrong\u003e1\u003c/strong\u003e · C2: \u003cstrong\u003e3\u003c/strong\u003e · C3: \u003cstrong\u003e1, 1\u003c/strong\u003e · C4: \u003cstrong\u003e1\u003c/strong\u003e · C5: \u003cstrong\u003e2\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eUna vez resueltas las 9 casillas negras, lee únicamente esas 9 posiciones sobre tu rejilla superior (izquierda a derecha, arriba a abajo).\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "nonogram",
+                                     "side":  "cols",
+                                     "clues":  {
+                                                   "rows":  [
+                                                                [
+                                                                    "?"
+                                                                ],
+                                                                [
+                                                                    "?"
+                                                                ],
+                                                                [
+                                                                    "?"
+                                                                ],
+                                                                [
+                                                                    "?"
+                                                                ],
+                                                                [
+                                                                    "?"
+                                                                ]
+                                                            ],
+                                                   "cols":  [
+                                                                [
+                                                                    1
+                                                                ],
+                                                                [
+                                                                    3
+                                                                ],
+                                                                [
+                                                                    1,
+                                                                    1
+                                                                ],
+                                                                [
+                                                                    1
+                                                                ],
+                                                                [
+                                                                    2
+                                                                ]
+                                                            ]
+                                               }
+                                 },
+                      "partnerHint":  "Dicta tus pistas de columnas a Miguel. Fila 1 (1,1,1) fija de golpe los cuadros en C1, C3 y C5; a partir de ahí salen C2 y C4."
+                  },
         "jointInput":  {
-                           "label":  "Inicial de la sala + Código de 2 dígitos",
-                           "placeholder":  "Ej. B05",
+                           "label":  "Código de 9 caracteres revelado por la rejilla",
+                           "placeholder":  "Ej. BIB05XYZ1",
                            "acceptedHashes":  [
-                                                  "aa1477c41bc44c975f9888ce34534593fd415d7d05c81aa9b0e5fbeb4e46346f",
-                                                  "08c48914a2945c722db2470cce5a81321ced305ae8253aff9c403382c754d3dc"
+                                                  "2fc480cc59e36a0a0ff9d9d8b4386a6313b5a8e0a807edf4084a30e02b4fba46"
                                               ]
                        },
-        "title":  "Nonograma del Archivo",
-        "patri":  {
-                      "roleBadge":  "Patri · Pistas de Columnas",
-                      "widget":  {
-                                     "side":  "cols",
-                                     "clues":  [
-                                                   "4",
-                                                   "1,1",
-                                                   "1,1",
-                                                   "1,1",
-                                                   "4"
-                                               ],
-                                     "type":  "nonogram"
-                                 },
-                      "brief":  "Dicta las pistas de columnas a Miguel e identifica qué sala empieza por la letra revelada.",
-                      "partnerHint":  "Dicta las columnas a Miguel. Al formar la letra en la cuadrícula 5x5, combina la letra + su código (ej. B05).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePistas verticales (de izquierda a derecha):\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eCol 1: \u003cstrong\u003e4\u003c/strong\u003e \u0026nbsp;|\u0026nbsp; Col 2: \u003cstrong\u003e1, 1\u003c/strong\u003e \u0026nbsp;|\u0026nbsp; Col 3: \u003cstrong\u003e1, 1\u003c/strong\u003e \u0026nbsp;|\u0026nbsp; Col 4: \u003cstrong\u003e1, 1\u003c/strong\u003e \u0026nbsp;|\u0026nbsp; Col 5: \u003cstrong\u003e4\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003e\u003cstrong\u003eSalas de Arte:\u003c/strong\u003e \u003cstrong\u003eA\u003c/strong\u003erchivo Histórico (Cód. 19) · \u003cstrong\u003eB\u003c/strong\u003eiblioteca (Cód. 05) · \u003cstrong\u003eC\u003c/strong\u003eapilla (Cód. 23).\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "F1 (1,1,1) solo cabe dejando huecos en C2 y C4 -\u003e F1 queda llena en C1, C3 y C5. Como C1=1 y C4=1 y C5=2, se deduce F2C5=1 y el bloque de 3 en C2 (F3..F5).",
+                      "Patrón único (# relleno): Fila 1: #.#.# | Fila 2: ....# | Fila 3: .##.. | Fila 4: .#... | Fila 5: .#.#.",
+                      "Sobre la rejilla de Patri los 9 cuadros descubren ARC19VAL7."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTkiLCJmb3JlbnNpY1RhZyI6IlRBU0FDScOTTiBFTiBBUkNISVZPIENPTkZJUk1BREEiLCJjb25jbHVzaW9uIjoiTGEgY8OhbWFyYSBkZWwgQXJjaGl2byBIaXN0w7NyaWNvIChlc3RhbnRlcsOtYSBBUkMxOVZBTDcpIG11ZXN0cmEgYSBFbGVuYSBWYWxscyBmb3RvZ3JhZmlhbmRvIG1hbnVzY3JpdG9zIGhhc3RhIGxhcyAyMzo0OSBoLCBsZWpvcyBkZWwgU2Fsw7NuIE1pcmFkb3IuIFF1ZWRhIGRlc2NhcnRhZGEuIn0="
     },
     {
+        "day":  13,
+        "kicker":  "DÍA 13 · MENSAJERÍA Y HUSO HORARIO",
+        "title":  "Chats Fragmentados",
+        "story":  "La tableta del helicóptero registra en horario UTC (Z), mientras el radar militar trabaja en hora local CET (UTC + 1 h). Además hay dos balizas trampa en la frecuencia.",
         "mode":  "dual-lock",
         "miguel":  {
-                       "inputPlaceholder":  "Ej. 2315",
-                       "brief":  "Lee tus mensajes alternándolos en voz alta con Patri.",
-                       "acceptedHashes":  [
-                                              "ed3c9dc579bb8a9de33c72abb3d5230c3f81dfb332f9e93a2468b9828e718997"
-                                          ],
-                       "roleBadge":  "Miguel · Paquetes Impares (1, 3, 5)",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[Msg 1]:\u003c/strong\u003e Torre a Gabriel: el temporal empeora, el viento supera los 90 km/h.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 3]:\u003c/strong\u003e Gabriel: recibido, estoy en el hangar atando las palas y activando la baliza \u003cstrong\u003eHEL-902\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 5]:\u003c/strong\u003e Gabriel: imposible acercarme al hotel hasta que pare la ventisca.\u003c/li\u003e\u003c/ul\u003e",
+                       "roleBadge":  "Miguel · Tableta Hangar (Hora UTC)",
+                       "brief":  "Transmite a Patri qué baliza permaneció activa y convierte la confirmación radar de UTC a hora local CET.",
+                       "clueHtml":  "\u003cp\u003eEn el Msg 3 y 5 Gabriel descarta la señal apagada a las 22:15 Z y el eco falso de -78 dBm, dejando solo la portadora de \u003cstrong\u003e-42 dBm\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003ePide a Patri la hora UTC confirmada en radar y el nº de Hangar, y recuerda sumar \u003cstrong\u003e+1 hora\u003c/strong\u003e para pasar de UTC a hora local CET.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Hilo Parcial Impar",
+                                      "type":  "dossier-card",
+                                      "caption":  "Conversión Horaria y Formato",
                                       "items":  [
-                                                    "Baliza hangar: HEL-902",
-                                                    "Falta hora del último mensaje"
-                                                ],
-                                      "type":  "dossier-card"
+                                                    "CET = UTC + 1 hora",
+                                                    "Introduce: Hora local CET (4 díg.) + Puerta Hangar (ej. 2215H1)"
+                                                ]
                                   },
-                       "inputLabel":  "Hora exacta del Msg 6 sin dos puntos (dato de Patri)",
-                       "partnerHint":  "Dile a Patri el código de baliza (HEL-902). Pregúntale la hora exacta de su mensaje de cierre."
+                       "inputLabel":  "Hora CET confirmada (4 díg.) + Puerta Hangar (dato de Patri)",
+                       "inputPlaceholder":  "Ej. 2215H1",
+                       "acceptedHashes":  [
+                                              "1a5d4b3e0d9be25dd54ae12b193879a099924e8648ad88b8d51c3804fcd8f80e"
+                                          ],
+                       "partnerHint":  "Dile a Patri qué baliza (-42 dBm, encendida tras las 22:15 Z) es la válida. Pídele su hora UTC de confirmación radar y puerta de hangar."
                    },
-        "kicker":  "DÍA 13 · MENSAJERÍA INTERCEPTADA",
-        "day":  13,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTgiLCJmb3JlbnNpY1RhZyI6IkJBTElaQSBERSBIQU5HQVIgQUNUSVZBIDIzOjM3IEgiLCJjb25jbHVzaW9uIjoiTGEgYmFsaXphIEhFTC05MDIgZGVsIGhhbmdhciBleHRlcmlvciBwZXJtYW5lY2nDsyBlbWl0aWVuZG8gbWFudWFsbWVudGUgYmFqbyBzdXBlcnZpc2nDs24gZGUgR2FicmllbCBTZXJyYW5vIGEgNDAwIG1ldHJvcyBkZWwgaG90ZWwgZHVyYW50ZSBlbCBjcmltZW4uIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
-        "story":  "El volcado de mensajería del piloto Gabriel Serrano llegó dividido en paquetes pares e impares entre vuestras terminales.",
-        "hints":  [
-                      "Miguel tiene el código de baliza HEL-902; Patri tiene la hora de confirmación radar 23:37.",
-                      "Intercambiad ambos datos sin guiones ni dos puntos.",
-                      "Solución del Día 13 — Miguel: 2337 · Patri: HEL902."
-                  ],
-        "title":  "Chats Fragmentados",
         "patri":  {
-                      "inputPlaceholder":  "Ej. HEL100",
-                      "brief":  "Alterna tus mensajes pares con los impares de Miguel.",
+                      "roleBadge":  "Patri · Torre Radar (3 Balizas)",
+                      "brief":  "Filtra tus tres señales de radar usando las indicaciones de potencia y horario de Miguel.",
+                      "clueHtml":  "\u003cp\u003eLa torre captó tres balizas en 121.5 MHz. Contrasta con Miguel cuál coincide con la portadora limpia que él describe y comunica a Miguel la hora Z + Puerta del Hangar.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Cotejo Militar",
+                                     "items":  [
+                                                   "Rechaza eco de ladera y baliza apagada",
+                                                   "Introduce el código alfanumérico de la baliza válida sin guion"
+                                               ]
+                                 },
+                      "inputLabel":  "Código de baliza válida sin guion (cruzado con Miguel)",
+                      "inputPlaceholder":  "Ej. HEL418",
                       "acceptedHashes":  [
                                              "ca97498a163f150d757b01e8ac59966f373377fc18186e23c1a380baa8e2a198"
                                          ],
-                      "roleBadge":  "Patri · Paquetes Pares (2, 4, 6)",
-                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[Msg 2 - 23:31]:\u003c/strong\u003e Torre: confirma si puedes despegar antes de medianoche.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 4 - 23:34]:\u003c/strong\u003e Torre: anota el código de tu baliza para el radar militar.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[Msg 6 - 23:37]:\u003c/strong\u003e Torre: baliza confirmada en pantalla a las \u003cstrong\u003e23:37\u003c/strong\u003e, quédate en el hangar.\u003c/li\u003e\u003c/ul\u003e",
-                      "widget":  {
-                                     "caption":  "Hilo Parcial Par",
-                                     "items":  [
-                                                   "Confirmación radar: 23:37 h",
-                                                   "Introduce código baliza sin guiones"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "inputLabel":  "Código de baliza sin guiones (dato de Miguel)",
-                      "partnerHint":  "Comunica a Miguel la hora del Msg 6 (23:37) y pídele el código alfanumérico de la baliza."
-                  }
+                      "partnerHint":  "Comunica a Miguel la confirmación 22:37 Z y la Puerta Hangar H4; pídele qué criterio de potencia o apagado descarta las otras dos."
+                  },
+        "hints":  [
+                      "Miguel descarta -78 dBm (HEL-418) y la de las 22:15 Z (HEL-735), quedando HEL-902 (-42 dBm).",
+                      "Patri ve HEL-902 confirmada a las 22:37 Z en Hangar H4. Sumar +1 h a 22:37 Z da 23:37 CET.",
+                      "Solución del Día 13 — Miguel: 2337H4 · Patri: HEL902."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTgiLCJmb3JlbnNpY1RhZyI6IkJBTElaQSBERSBIQU5HQVIgQUNUSVZBIDIzOjM3IENFVCIsImNvbmNsdXNpb24iOiJMYSBiYWxpemEgSEVMLTkwMiBkZWwgSGFuZ2FyIEg0IHBlcm1hbmVjacOzIGVtaXRpZW5kbyBtYW51YWxtZW50ZSBiYWpvIHN1cGVydmlzacOzbiBkZSBHYWJyaWVsIFNlcnJhbm8gYSBsYXMgMjM6MzcgQ0VUICgyMjozNyBaKSBhIDQwMCBtZXRyb3MgZGVsIGhvdGVsLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
     },
     {
-        "mode":  "code",
-        "miguel":  {
-                       "roleBadge":  "Miguel · Repetidor Norte",
-                       "widget":  {
-                                      "caption":  "Cobertura Antena Norte",
-                                      "items":  [
-                                                    "Rango confirmado: Hab. 204 · Hab. 205",
-                                                    "Formato código: Nº Habitación + iniciales AUD"
-                                                ],
-                                      "type":  "dossier-card"
-                                  },
-                       "brief":  "Marca en el plano qué habitaciones están dentro del radio del Repetidor Norte.",
-                       "partnerHint":  "Dile a Patri tus dos habitaciones candidatas (204 y 205) para cruzarlas con su Repetidor Sur.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePasillo Planta 2 (de izquierda a derecha):\u003c/strong\u003e Hab. 201 · 202 · 203 · 204 · 205 · 206.\u003c/p\u003e\u003cp\u003eEl \u003cstrong\u003eRepetidor Norte\u003c/strong\u003e (situado en la Hab. 203) indica que la señal del portátil está en el rango \u003cstrong\u003eHab. 204 o Hab. 205\u003c/strong\u003e.\u003c/p\u003e"
-                   },
-        "hints":  [
-                      "Miguel tiene {204, 205}. Patri tiene {205, 206}.",
-                      "La única intersección posible es la habitación 205. Añade AUD detrás.",
-                      "Solución del Día 14: 205AUD."
-                  ],
-        "kicker":  "DÍA 14 · ANTENAS PLANTA 2",
         "day":  14,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjIiLCJmb3JlbnNpY1RhZyI6IlNFU0nDk04gSU5JTlRFUlJVTVBJREEgRU4gSEFCLiAyMDUiLCJjb25jbHVzaW9uIjoiTGEgdHJpYW5ndWxhY2nDs24gV2ktRmkgc2l0w7phIGVsIHBvcnTDoXRpbCBhY3Rpdm8gZGUgUmHDumwgQ3Vlc3RhIGRlbnRybyBkZSBsYSBIYWJpdGFjacOzbiAyMDUgYSBsYXMgMjM6NDAgaCBkZXNjYXJnYW5kbyBiYWxhbmNlcyBmaXNjYWxlcy4gUXVlZGEgZGVzY2FydGFkby4ifQ==",
-        "story":  "El portátil del auditor fiscal descargó un lote de copias de seguridad exactamente a las 23:40 h. Podéis triangular su habitación exacta cruzando dos antenas.",
-        "jointInput":  {
-                           "label":  "Habitación única + código AUD",
-                           "placeholder":  "Ej. 204AUD",
-                           "acceptedHashes":  [
-                                                  "a1b590e638e3907a8d0215c4988ac4e95e4dddaf07190ed207fac23d205e7a75"
-                                              ]
-                       },
+        "kicker":  "DÍA 14 · FÍSICA DE SEÑAL RSSI",
         "title":  "Triangulación Wi-Fi",
-        "patri":  {
-                      "roleBadge":  "Patri · Repetidor Sur",
-                      "widget":  {
-                                     "caption":  "Cobertura Antena Sur",
-                                     "items":  [
-                                                   "Rango confirmado: Hab. 205 · Hab. 206",
-                                                   "Usuario MAC: Raúl Cuesta (AUD)"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Cruza el alcance del Repetidor Sur con las candidatas que te dé Miguel.",
-                      "partnerHint":  "Busca qué única habitación coincide en ambos repetidores y añádele AUD al final (ej. 204AUD).",
-                      "clueHtml":  "\u003cp\u003eEl \u003cstrong\u003eRepetidor Sur\u003c/strong\u003e (situado junto al ascensor Sur en 207) sitúa la conexión en el rango \u003cstrong\u003eHab. 205 o Hab. 206\u003c/strong\u003e.\u003c/p\u003e\u003cp\u003eAdemás, el registro identifica la MAC del portátil de \u003cstrong\u003eRaúl Cuesta\u003c/strong\u003e (código de perfil: \u003cstrong\u003eAUD\u003c/strong\u003e).\u003c/p\u003e"
-                  }
-    },
-    {
+        "story":  "Dos puntos de acceso cubren el pasillo lineal de 12 habitaciones de la Planta 2. Calculad la distancia en saltos de puerta según los dBm y extraed el rastro hardware del auditor.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Placa y Plano (D1 y D3)",
+                       "roleBadge":  "Miguel · AP-Norte y Tráfico Red",
+                       "brief":  "Aplica la tabla dBm-a-puertas desde Hab. 203 e identifica qué hostname sube 2.8 MB/s.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eRegla de atenuación:\u003c/strong\u003e -40 a -49 dBm = 1 puerta de distancia; -50 a -59 dBm = 2 puertas; -60 a -69 dBm = 3 puertas.\u003c/p\u003e\u003cp\u003eAP-Norte (\u003cstrong\u003e203\u003c/strong\u003e) mide \u003cstrong\u003e-54 dBm\u003c/strong\u003e hacia el equipo que transfiere \u003cstrong\u003e2.8 MB/s\u003c/strong\u003e (hostname en plano superior).\u003c/p\u003e",
                        "widget":  {
-                                      "displayLabel":  "Combinación de 4 dígitos",
-                                      "type":  "keypad"
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato del Código Conjunto",
+                                      "items":  [
+                                                    "Habitación intersección (3 díg.) + Últimos 4 hex de MAC sin \u0027:\u0027",
+                                                    "Ejemplo orientativo: 201A483"
+                                                ]
                                   },
-                       "brief":  "Obtén D1 y calcula D3 usando el dato D2 de Patri.",
-                       "partnerHint":  "Dile a Patri D1 (3) y el año 1987. Pregúntale cuánto vale D2 para calcular D3.",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eD1:\u003c/strong\u003e Número de plantas de huéspedes del hotel (\u003cstrong\u003e3\u003c/strong\u003e plantas).\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eD3:\u003c/strong\u003e Suma \u003cstrong\u003eD2 + 2\u003c/strong\u003e (pide D2 a Patri).\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eDato extra para Patri:\u003c/strong\u003e La placa inaugural del hotel dice \u003cem\u003e«Fundado en 1987»\u003c/em\u003e.\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Dile a Patri tus dos habitaciones posibles a 2 puertas de la 203 y pregúntale qué MAC corresponde al hostname RC-AUDIT-09."
                    },
+        "patri":  {
+                      "roleBadge":  "Patri · AP-Sur y Tabla DHCP",
+                      "brief":  "Calcula qué habitaciones están a distancia de -63 dBm desde la 208 e intersecta con Miguel.",
+                      "clueHtml":  "\u003cp\u003eAP-Sur (\u003cstrong\u003e208\u003c/strong\u003e) registra \u003cstrong\u003e-63 dBm\u003c/strong\u003e (consulta la regla dBm en Miguel para contar cuántas puertas se aleja a izquierda y derecha hasta Hab. 212).\u003c/p\u003e\u003cp\u003eCruza el hostname activo de Miguel con la tabla DHCP para tomar los \u003cstrong\u003eúltimos 4 caracteres hexadecimales\u003c/strong\u003e de su MAC sin dos puntos.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Datos DHCP Patri",
+                                     "items":  [
+                                                   "Rango AP-Sur (208, -63 dBm) intersectado con AP-Norte",
+                                                   "Últimos 4 hex MAC de RC-AUDIT-09 (sin \u0027:\u0027)"
+                                               ]
+                                 },
+                      "partnerHint":  "Con -63 dBm (3 puertas desde 208) salen {205, 211}. Cruzadlo con las candidatas de Miguel y extraed los últimos 4 hex de la MAC corporativa."
+                  },
+        "jointInput":  {
+                           "label":  "Habitación (3 díg.) + 4 hex finales de MAC",
+                           "placeholder":  "Ej. 201A483",
+                           "acceptedHashes":  [
+                                                  "43e05b7b1abad63db128cd777dfefd6e7c293f9d95cb9945122538b846064e6a"
+                                              ]
+                       },
         "hints":  [
-                      "D1 = 3 (plantas), D2 = 2 (chimeneas).",
-                      "D3 = D2 + 2 = 4. Como el año es 1987, su último dígito D4 = 7.",
-                      "Solución del Día 15: 3247."
+                      "AP-Norte en 203 (-54 dBm = 2 puertas) -\u003e {201, 205}. AP-Sur en 208 (-63 dBm = 3 puertas) -\u003e {205, 211}. La intersección es 205.",
+                      "El tráfico de 2.8 MB/s corresponde a RC-AUDIT-09, cuya MAC 3C:52:82:9F:0B acaba en 9F0B.",
+                      "Solución del Día 14: 2059F0B."
                   ],
-        "kicker":  "DÍA 15 · COMBINACIÓN COMPARTIDA",
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjIiLCJmb3JlbnNpY1RhZyI6IlNFU0nDk04gSU5JTlRFUlJVTVBJREEgRU4gSEFCLiAyMDUiLCJjb25jbHVzaW9uIjoiTGEgdHJpYW5ndWxhY2nDs24gZEJtIHNpdMO6YSBlbCBwb3J0w6F0aWwgUkMtQVVESVQtMDkgKE1BQyAuLi45RjBCKSBkZSBSYcO6bCBDdWVzdGEgZGVudHJvIGRlIGxhIEhhYml0YWNpw7NuIDIwNSBhIGxhcyAyMzo0MCBoIGRlc2NhcmdhbmRvIGJhbGFuY2VzIGZpc2NhbGVzLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
+    },
+    {
         "day":  15,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDYiLCJmb3JlbnNpY1RhZyI6IlBBR0FSw4kgU0VMTEFETyBBIExBUyAyMzo0MCBIIiwiY29uY2x1c2lvbiI6IkRlbnRybyBkZSBsYSBjYWphIGZ1ZXJ0ZSBhcGFyZWNlIGVsIHBhZ2Fyw6kgc2VsbGFkbyBwb3IgUmljYXJkbyBQZcOxYSB5IGVsIGNvbnNlcmplIGF1eGlsaWFyIGEgbGFzIDIzOjQwIGgganVudG8gYWwgbW9zdHJhZG9yIGRlIHJlY2VwY2nDs24uIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
-        "story":  "Para comprobar el pagaré firmado por el constructor Ricardo Peña, debéis abrir la caja fuerte auxiliar de recepción introduciendo sus 4 dígitos [D1-D2-D3-D4].",
-        "jointInput":  {
-                           "label":  "Combinación de la caja fuerte (4 dígitos)",
-                           "placeholder":  "Ej. 1234",
-                           "acceptedHashes":  [
-                                                  "32ec692a60618d8c17a808fbad9c27d4e5450c56fadbb7dab4f4af0fcb69a0d4"
-                                              ]
-                       },
+        "kicker":  "DÍA 15 · LÓGICA MASTERMIND 5 DÍGITOS",
         "title":  "La Caja Fuerte de Recepción",
-        "patri":  {
-                      "roleBadge":  "Patri · Ficha del Salón (D2 y D4)",
-                      "widget":  {
-                                     "caption":  "Manual Auxiliar",
-                                     "items":  [
-                                                   "D1 (Miguel) · D2 = 2 · D3 (D2+2) · D4 (último dígito año)"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Obtén D2 y calcula D4 usando el año de la placa de Miguel.",
-                      "partnerHint":  "Dile a Miguel que D2 = 2. Pregúntale el año de fundación para hallar D4.",
-                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003eD2:\u003c/strong\u003e Número de chimeneas del Salón Mirador (ficha arquitectónica: \u003cstrong\u003e2\u003c/strong\u003e chimeneas).\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eD4:\u003c/strong\u003e Último dígito del año de fundación del hotel que tiene Miguel.\u003c/li\u003e\u003c/ul\u003e"
-                  }
-    },
-    {
+        "story":  "El conserje intentó abrir dos veces la caja fuerte dejando el registro de aciertos posicionales. Combinad placa fundacional, chimeneas, ambos fallos y suma de control.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Ecualizador de Señal",
+                       "roleBadge":  "Miguel · Placa e Intento #1",
+                       "brief":  "Aporta D1, las pistas del fallo #1 y la desigualdad entre D2 y D4.",
+                       "clueHtml":  "\u003cp\u003eLa combinación tiene \u003cstrong\u003e5 cifras distintas [D1 D2 D3 D4 D5]\u003c/strong\u003e. Comparte con Patri la prueba \u003ccode\u003e[7 2 5 8 4] -\u003e 1 exacto, 2 en otra pos.\u003c/code\u003e y la suma \u003ccode\u003eD2 + D4 = 5 (con D2 \u0026gt; D4)\u003c/code\u003e.\u003c/p\u003e",
                        "widget":  {
-                                      "targetHz":  440,
-                                      "clearText":  "Llamada Suite 305 (23:35–23:48): Sofía hablando con su madre. Palabra clave: NEVADA",
-                                      "stepHz":  20,
-                                      "type":  "frequency",
-                                      "minHz":  200,
-                                      "maxHz":  700
-                                  },
-                       "brief":  "Desliza el sintonizador hasta los hercios que te indique Patri para revelar el mensaje.",
-                       "partnerHint":  "Pide a Patri la frecuencia exacta en Hz en su informe de telefonía. Luego léele la palabra clave que aparezca.",
-                       "clueHtml":  "\u003cp\u003eAjusta la frecuencia en el deslizador hasta eliminar el ruido blanco de la tormenta.\u003c/p\u003e"
-                   },
-        "hints":  [
-                      "Patri dice 440 Hz. Miguel desliza el control hasta 440 Hz.",
-                      "Al llegar a 440 Hz aparece la palabra NEVADA. Únela al número de suite (305).",
-                      "Solución del Día 16: NEVADA305."
-                  ],
-        "kicker":  "DÍA 16 · FILTRO DE AUDIO",
-        "day":  16,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTEiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgU0FURUxJVEFMIFZFUklGSUNBREEiLCJjb25jbHVzaW9uIjoiTGEgZ3JhYmFjacOzbiBzYXRlbGl0YWwgZGUgMTMgbWludXRvcyBkZW11ZXN0cmEgcXVlIFNvZsOtYSBOYXZhcnJvIHBlcm1hbmVjacOzIGVuIGxhIFN1aXRlIDMwNSBoYWJsYW5kbyBjb24gc3UgbWFkcmUgZHVyYW50ZSB0b2RvIGVsIGFwYWfDs24uIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
-        "story":  "Una grabación satelital de la Suite 305 quedó oculta bajo el rugido de la ventisca. Solo sintonizando la frecuencia exacta se limpia la transcripción.",
-        "jointInput":  {
-                           "label":  "Palabra clave + número de suite",
-                           "placeholder":  "Ej. CLAVE305",
-                           "acceptedHashes":  [
-                                                  "52cc43be5990b5ddf14bb95f37fbfbdc818e5f6b966e8a5028eec1d2125344a7"
-                                              ]
-                       },
-        "title":  "Frecuencia en el Buzón",
-        "patri":  {
-                      "roleBadge":  "Patri · Informe de Telefonía",
-                      "widget":  {
-                                     "caption":  "Parámetros Satélite",
-                                     "items":  [
-                                                   "Frecuencia óptima: 440 Hz",
-                                                   "Formato: PALABRA + 305"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Indica la frecuencia portadora a Miguel y combina su palabra clave con el número de suite.",
-                      "partnerHint":  "Dile a Miguel que sintonice 440 Hz. Luego pídele la palabra clave revelada.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eInforme Antena Satelital:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eBanda limpia asignada: \u003cstrong\u003e440 Hz\u003c/strong\u003e\u003c/li\u003e\u003cli\u003eDestino de grabación: \u003cstrong\u003eSuite 305\u003c/strong\u003e (Sofía Navarro)\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIntroduce la palabra clave limpia que lea Miguel seguida de los 3 dígitos de la suite (ej. CLAVE305).\u003c/p\u003e"
-                  }
-    },
-    {
-        "mode":  "dual-lock",
-        "miguel":  {
-                       "inputPlaceholder":  "Ej. bodega",
-                       "brief":  "Usa vuestras 4 pistas combinadas para averiguar en qué LUGAR estuvo el chef Héctor Salgado.",
-                       "acceptedHashes":  [
-                                              "91ca29a365ca8d9ac4c4b0e36a2f02a9b6aab8208c2cb71432b01d1aed016061"
-                                          ],
-                       "roleBadge":  "Miguel · Pistas Lógicas A",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 1:\u003c/strong\u003e Quien estuvo en la \u003cstrong\u003eCocina\u003c/strong\u003e lo hizo a las \u003cstrong\u003e23:40\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 2:\u003c/strong\u003e \u003cstrong\u003eBeatriz\u003c/strong\u003e no pisó la Cocina ni estuvo en ningún sitio a las 23:30.\u003c/li\u003e\u003c/ul\u003e",
-                       "widget":  {
-                                      "cols":  [
-                                                   "Cocina",
-                                                   "Bodega",
-                                                   "Salón"
-                                               ],
-                                      "rows":  [
-                                                   "Héctor",
-                                                   "Nora",
-                                                   "Beatriz"
-                                               ],
-                                      "type":  "logic3x3"
-                                  },
-                       "inputLabel":  "¿En qué lugar estuvo Héctor? (una palabra)",
-                       "partnerHint":  "Comparte tus dos pistas con Patri y usa la parrilla para deducir el lugar de Héctor."
-                   },
-        "kicker":  "DÍA 17 · LÓGICA CRUZADA 3x3",
-        "day":  17,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDIiLCJmb3JlbnNpY1RhZyI6IkVRVUlQTyBERSBDT0NJTkEgQ09NTyBURVNUSUdPIiwiY29uY2x1c2lvbiI6IkxvcyB0cmVzIHBpbmNoZXMgY29uZmlybWFuIHF1ZSBIw6ljdG9yIFNhbGdhZG8gbm8gc2FsacOzIGRlIGxhIENvY2luYSBhIGxhcyAyMzo0MCBoIHN1cGVydmlzYW5kbyBlbCBzb3VmZmzDqSBuYXZpZGXDsW8uIFF1ZWRhIGRlc2NhcnRhZG8uIn0=",
-        "story":  "Tres personas (Héctor, Nora y Beatriz) estuvieron en tres lugares distintos (Cocina, Bodega y Salón) a tres horas exactas (23:30, 23:40 y 23:50).",
-        "hints":  [
-                      "Por Pista 1, Cocina = 23:40. Por Pista 3, Nora en Bodega 10 min antes -\u003e Bodega = 23:30.",
-                      "Solo queda Salón = 23:50. Como Beatriz no fue a Cocina ni a 23:30, Beatriz = Salón 23:50 -\u003e Héctor = Cocina 23:40.",
-                      "Solución del Día 17 — Miguel: cocina · Patri: 2340."
-                  ],
-        "title":  "Parrilla Deductiva del Comedor",
-        "patri":  {
-                      "inputPlaceholder":  "Ej. 2330",
-                      "brief":  "Combina tus pistas con las de Miguel para deducir a qué HORA estuvo Héctor allí.",
-                      "acceptedHashes":  [
-                                             "f15a3a5d34619f23d79d4124224e69f757a36d8ffb90aa7c17bf085ceb6cd53a"
-                                         ],
-                      "roleBadge":  "Patri · Pistas Lógicas B",
-                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 3:\u003c/strong\u003e \u003cstrong\u003eNora\u003c/strong\u003e bajó a la \u003cstrong\u003eBodega\u003c/strong\u003e 10 minutos antes que la persona de la Cocina.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 4:\u003c/strong\u003e \u003cstrong\u003eHéctor\u003c/strong\u003e es el único con acceso al área de fogones y nunca entra en Bodega.\u003c/li\u003e\u003c/ul\u003e",
-                      "widget":  {
-                                     "cols":  [
-                                                  "23:30",
-                                                  "23:40",
-                                                  "23:50"
-                                              ],
-                                     "rows":  [
-                                                  "Héctor",
-                                                  "Nora",
-                                                  "Beatriz"
-                                              ],
-                                     "type":  "logic3x3"
-                                 },
-                      "inputLabel":  "¿A qué hora estuvo Héctor en ese lugar? (4 dígitos)",
-                      "partnerHint":  "Lee tus pistas a Miguel para deducir la hora exacta de Héctor (4 dígitos sin dos puntos)."
-                  }
-    },
-    {
-        "mode":  "code",
-        "miguel":  {
-                       "roleBadge":  "Miguel · Calibre Métrico",
-                       "widget":  {
-                                      "targetCm":  25.5,
-                                      "type":  "caliper",
-                                      "table":  [
+                                      "type":  "keypad",
+                                      "heading":  "ESQUEMA CAJA 5 DÍGITOS: D2+D4=5 (D2\u003eD4)",
+                                      "slots":  [
                                                     {
-                                                        "cm":  "24.0 cm",
-                                                        "size":  "37"
+                                                        "val":  "7",
+                                                        "lbl":  "D1 (1987)"
                                                     },
                                                     {
-                                                        "cm":  "25.5 cm",
-                                                        "size":  "39"
+                                                        "val":  "?",
+                                                        "lbl":  "D2"
                                                     },
                                                     {
-                                                        "cm":  "27.0 cm",
-                                                        "size":  "42"
+                                                        "val":  "?",
+                                                        "lbl":  "D3"
                                                     },
                                                     {
-                                                        "cm":  "28.5 cm",
-                                                        "size":  "44"
+                                                        "val":  "?",
+                                                        "lbl":  "D4 (Patri)"
+                                                    },
+                                                    {
+                                                        "val":  "?",
+                                                        "lbl":  "D5"
                                                     }
                                                 ]
                                   },
-                       "brief":  "Ajusta el calibre deslizante para medir la longitud exacta de la pisada en centímetros.",
-                       "partnerHint":  "Dile a Patri la talla europea que corresponde a la huella medida en tu calibre.",
-                       "clueHtml":  "\u003cp\u003eMueve el deslizador hasta alinear la punta y el tacón de la suela Vibram para leer su talla equivalente.\u003c/p\u003e"
+                       "partnerHint":  "Dile a Patri D1=7, el resultado de [7 2 5 8 4] y la condición D2 + D4 = 5 con D2 \u003e D4."
                    },
-        "hints":  [
-                      "El calibre de Miguel encaja exactamente en 25.5 cm, que en la tabla equivale a Talla 39.",
-                      "La ficha de Patri marca Talla 37 para Adriana Orozco.",
-                      "Solución del Día 18: 3937."
-                  ],
-        "kicker":  "DÍA 18 · CALIBRE FORENSE ABFO",
-        "day":  18,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjUiLCJmb3JlbnNpY1RhZyI6IkNBTFpBRE8gU0VDTyBFTiBUQVFVSUxMQSAyMzozMiBIIiwiY29uY2x1c2lvbiI6IkFkcmlhbmEgT3JvemNvIGRlasOzIHN1cyBib3RhcyB0YWxsYSAzNyBzZWNhcyBlbiByZWNlcGNpw7NuIGEgbGFzIDIzOjMyIGggeSBudW5jYSBwaXPDsyBlbCBwYXRpbyBjb24gYm90YXMgdGFsbGEgMzkuIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
-        "story":  "Una pisada nítida junto al alféizar exterior planteó dudas sobre la farmacéutica Adriana Orozco. Medid la huella y comparadla con el registro de calzado.",
+        "patri":  {
+                      "roleBadge":  "Patri · Chimeneas e Intento #2",
+                      "brief":  "Aporta D4 (chimeneas), el fallo #2 y la suma total 26 sin dígitos repetidos.",
+                      "clueHtml":  "\u003cp\u003eCon D4 (2 chimeneas) y D2+D4=5 deduciréis D2 y qué cifra desplazada de ambos intentos forzará D3. La suma total \u003cstrong\u003eD1+D2+D3+D4+D5 = 26\u003c/strong\u003e cerrará D5 sin repeticiones.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Condiciones Finales",
+                                     "items":  [
+                                                   "D4 = 2 chimeneas | [1 3 9 2 8] -\u003e 2 exactos, 1 desplazado",
+                                                   "5 dígitos distintos con suma total = 26"
+                                               ]
+                                 },
+                      "partnerHint":  "Comparte tus dos chimeneas (D4=2), el intento fallido #2 y la suma total = 26 con Miguel."
+                  },
         "jointInput":  {
-                           "label":  "Talla huella + Talla Adriana (4 dígitos)",
-                           "placeholder":  "Ej. 4237",
+                           "label":  "Combinación de 5 dígitos de la caja fuerte",
+                           "placeholder":  "Ej. 12345",
                            "acceptedHashes":  [
-                                                  "9c67d3b75b1e8364898454889940f9cb70b4022532d0aaaf1f1d979504b149f4"
+                                                  "74a562801c96b08f86f55a44a4235cf47bafc1e282114e2406dcbd4bd104f841"
                                               ]
                        },
-        "title":  "Huellas en la Nieve del Patio",
-        "patri":  {
-                      "roleBadge":  "Patri · Préstamo de Botas",
-                      "widget":  {
-                                     "caption":  "Comparativa Biométrica",
-                                     "items":  [
-                                                   "Talla huella patio (Miguel) + Talla Adriana (37)",
-                                                   "Formato: 4 dígitos seguidos"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Comprueba qué talla calza realmente Adriana Orozco en el registro de recepción.",
-                      "partnerHint":  "Pide a Miguel la talla de la huella del patio y únela a la talla 37 de Adriana (4 dígitos).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eRegistro de Taquillas de Nieve:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eHab. 107 · \u003cstrong\u003eAdriana Orozco\u003c/strong\u003e: Bota izquierda/derecha \u003cstrong\u003eTalla 37\u003c/strong\u003e (entregadas secas a las 23:32 h)\u003c/li\u003e\u003cli\u003eHab. 203 · Elena Valls: Talla 38\u003c/li\u003e\u003c/ul\u003e\u003cp\u003ePara certificar la discordancia, introduce la \u003cstrong\u003eTalla de la huella (Miguel)\u003c/strong\u003e seguida de la \u003cstrong\u003eTalla real de Adriana (Patri)\u003c/strong\u003e.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "D1 = 7 y D4 = 2. Como D2 + D4 = 5, D2 = 3. Con 7-3-?-2-?, en [1 3 9 2 8] los 2 exactos ya son el 3 y el 2; por tanto, el 8 es correcto pero no está en D5.",
+                      "Como D1, D2 y D4 están ocupados y el 8 no va en D5 (ni en D4 según el intento #1), el 8 solo puede ir en D3 -\u003e 7-3-8-2-?.",
+                      "Suma = 26 -\u003e 7+3+8+2+D5 = 26 -\u003e D5 = 6. Solución del Día 15: 73826."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDYiLCJmb3JlbnNpY1RhZyI6IlBBR0FSw4kgU0VMTEFETyBBIExBUyAyMzo0MCBIIiwiY29uY2x1c2lvbiI6IkRlbnRybyBkZSBsYSBjYWphIGZ1ZXJ0ZSBhYmllcnRhIGNvbiA3MzgyNiBhcGFyZWNlIGVsIHBhZ2Fyw6kgc2VsbGFkbyBwb3IgUmljYXJkbyBQZcOxYSBhIGxhcyAyMzo0MCBoIGp1bnRvIGFsIG1vc3RyYWRvciBkZSByZWNlcGNpw7NuLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
     },
     {
+        "day":  16,
+        "kicker":  "DÍA 16 · BARRIDO ESPECTRAL",
+        "title":  "Frecuencia en el Buzón",
+        "story":  "Hay tres portadoras activas ocultas entre 200 y 740 Hz bajo la tormenta: una llamada de prueba descartable y dos canales satelitales del tramo real.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Extracto de Movimientos",
+                       "roleBadge":  "Miguel · Sintonizador Multi-Banda",
+                       "brief":  "Desliza el dial observando el S-Meter hasta cazar los tres picos de señal al 100% y léelos a Patri.",
+                       "clueHtml":  "\u003cp\u003eCuando el medidor \u003cstrong\u003eSeñal\u003c/strong\u003e llegue al \u003cstrong\u003e100%\u003c/strong\u003e, anota el canal, su hora y su clave. Hay \u003cstrong\u003etres frecuencias activas\u003c/strong\u003e entre 200 y 740 Hz.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Bloque 1 del Token",
-                                      "items":  [
-                                                    "RX-88",
-                                                    "Unir con Bloque 2 sin guiones"
-                                                ],
-                                      "type":  "dossier-card"
+                                      "type":  "frequency",
+                                      "minHz":  200,
+                                      "maxHz":  740,
+                                      "stepHz":  20,
+                                      "initHz":  200,
+                                      "bands":  [
+                                                    {
+                                                        "hz":  260,
+                                                        "text":  "[AUX · 23:12 h] Llamada de prueba · Clave: CUMBRE · Sufijo: 19"
+                                                    },
+                                                    {
+                                                        "hz":  420,
+                                                        "text":  "[SAT-A · 23:35–23:48 h] Sofía con su madre · Clave SAT-A: VENTISCA"
+                                                    },
+                                                    {
+                                                        "hz":  640,
+                                                        "text":  "[SAT-B · 23:35–23:48 h] Telemetría buzón · Token SAT-B: 48"
+                                                    }
+                                                ]
                                   },
-                       "brief":  "Localiza el primer bloque del código de verificación en la transferencia de las 23:39 h.",
-                       "partnerHint":  "Comunica RX-88 a Patri para unirlo con su segundo bloque.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eOperación saliente 23:39:10 h:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eOrdenante: Álvaro Roldán (Suite 303)\u003c/li\u003e\u003cli\u003eImporte: 45.000,00 EUR · Destino: Zúrich\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eToken Parcial 1:\u003c/strong\u003e \u003cstrong class=\u0027mono\u0027\u003eRX-88\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Barre todo el dial de 200 a 740 Hz para encontrar las tres emisoras y pregunta a Patri cuál es falsa y cómo combinar los dos canales buenos."
                    },
-        "hints":  [
-                      "Miguel tiene RX-88 y Patri tiene 41-Z.",
-                      "Al unir ambos quitando los guiones queda RX8841Z.",
-                      "Solución del Día 19: RX8841Z."
-                  ],
-        "kicker":  "DÍA 19 · AUDITORÍA BANCARIA",
-        "day":  19,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiU0VTScOTTiBFTiBBVURJVE9Sw41BIMK3IFNJTiBERVNDQVJURSIsImNvbmNsdXNpb24iOiJMYSByZWZlcmVuY2lhIFJYODg0MVogYWNyZWRpdGEgdW5hIG9yZGVuIGRlc2RlIGxhIHJlZCBkZWwgaG90ZWwsIHBlcm8gcXVlZGEgcGVuZGllbnRlIGRlIGNvdGVqbyBiYW5jYXJpbyBkaXJlY3RvIHNpIHNlIGZpcm1vIGVuIHZpdm8gbyBlbiBkaWZlcmlkbyBkZXNkZSBsYSBTdWl0ZSAzMDMuIEFsdmFybyBSb2xkYW4gcGVybWFuZWNlIGFjdGl2byBjb21vIGZpbmFsaXN0YS4ifQ==",
-        "story":  "El banquero Álvaro Roldán aseguró estar firmando una operación millonaria por internet desde su suite. Su token de seguridad está partido en dos.",
+        "patri":  {
+                      "roleBadge":  "Patri · Informe Inmarsat",
+                      "brief":  "Indica a Miguel qué horario pertenece a la llamada real y aplica la regla de inversión sobre SAT-B.",
+                      "clueHtml":  "\u003cp\u003eEl registro satelital valida únicamente el tramo continuo \u003cstrong\u003e23:35–23:48 h\u003c/strong\u003e (canales SAT-A y SAT-B). La señal de las 23:12 es una prueba previa.\u003c/p\u003e\u003cp\u003eConstruye el código uniendo \u003cstrong\u003ePalabra de SAT-A + Token de SAT-B invertido\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Regla de Ensamblado Inmarsat",
+                                     "items":  [
+                                                   "Tramo válido: 23:35–23:48 h (SAT-A y SAT-B)",
+                                                   "Invertir las 2 cifras del Token SAT-B detrás de la palabra"
+                                               ]
+                                 },
+                      "partnerHint":  "Pide a Miguel los mensajes de las bandas del tramo 23:35–23:48 h y recuerda invertir las dos cifras de SAT-B."
+                  },
         "jointInput":  {
-                           "label":  "Token completo sin guiones",
-                           "placeholder":  "Ej. AB1234C",
+                           "label":  "Palabra SAT-A + Token SAT-B invertido",
+                           "placeholder":  "Ej. CUMBRE19",
                            "acceptedHashes":  [
-                                                  "7782c55477c6db8cf787696d8f3828b9eefafe9bb242354c8186ccf24c7061ba"
+                                                  "cb08ddbaed2c0f4560761f5193c7513b814ae7e0ed23a8a3fe0b41d59fea04f8"
                                               ]
                        },
-        "title":  "Transferencias de Medianoche",
-        "patri":  {
-                      "roleBadge":  "Patri · Certificado Biométrico IP",
-                      "widget":  {
-                                     "caption":  "Bloque 2 del Token",
-                                     "items":  [
-                                                   "41-Z",
-                                                   "Firma facial verificada en Suite 303"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Combina el bloque de Miguel con tu segundo bloque para validar la firma remota.",
-                      "partnerHint":  "Pide el Token Parcial 1 a Miguel y añádele 41Z detrás (sin guiones).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eLog de Firma Facial:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003eIP verificada: Router Suite 303 (23:39:14 h)\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eToken Parcial 2:\u003c/strong\u003e \u003cstrong class=\u0027mono\u0027\u003e41-Z\u003c/strong\u003e\u003c/li\u003e\u003c/ul\u003e\u003cp\u003eIntroduce el token completo uniendo ambos bloques sin guiones.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Los tres picos en el S-Meter de Miguel están en 260 Hz (23:12, descartado), 420 Hz (VENTISCA) y 640 Hz (48).",
+                      "Patri valida solo 23:35–23:48 (VENTISCA + 48) y aplica la regla de inversión a 48 -\u003e 84.",
+                      "Solución del Día 16: VENTISCA84."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTEiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgU0FURUxJVEFMIFZFUklGSUNBREEiLCJjb25jbHVzaW9uIjoiTGEgZ3JhYmFjacOzbiBzYXRlbGl0YWwgZGUgMTMgbWludXRvcyAoVkVOVElTQ0E4NCkgZGVtdWVzdHJhIHF1ZSBTb2bDrWEgTmF2YXJybyBwZXJtYW5lY2nDsyBlbiBsYSBTdWl0ZSAzMDUgaGFibGFuZG8gY29uIHN1IG1hZHJlIGR1cmFudGUgdG9kbyBlbCBhcGFnw7NuLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
     },
     {
+        "day":  17,
+        "kicker":  "DÍA 17 · DEDUCCIÓN EINSTEIN 4x4",
+        "title":  "Parrilla Deductiva del Comedor",
+        "story":  "Cuatro personas del complejo (Héctor, Nora, Tomás y Marta) estuvieron en cuatro dependencias distintas (Cocina, Bodega, Salón y Oficio) en cuatro franjas exactas. Ninguna pista da un nombre directo.",
         "mode":  "dual-lock",
         "miguel":  {
-                       "inputPlaceholder":  "Ej. 2004",
-                       "brief":  "Activa el filtro de metales para leer el grabado de la llave de bodega.",
-                       "acceptedHashes":  [
-                                              "d54123de468bd42ea00dafbd777f85fe5fa1ff6404d9838c007953c25c92a1c5"
-                                          ],
-                       "roleBadge":  "Miguel · Espectro Metálico",
-                       "clueHtml":  "\u003cp\u003ePulsa el botón del escáner para filtrar los objetos metálicos dentro del maletín.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Pistas 1–4 y Lugares",
+                       "brief":  "Comparte tus cuatro pistas lógicas con Patri para fijar primero lugar-hora y luego cada persona.",
+                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 1:\u003c/strong\u003e Quien estuvo en la \u003cstrong\u003eBodega\u003c/strong\u003e llegó exactamente 10 minutos después de quien estuvo en \u003cstrong\u003eCocina\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 2:\u003c/strong\u003e \u003cstrong\u003eMarta\u003c/strong\u003e estuvo 10 minutos antes que \u003cstrong\u003eTomás\u003c/strong\u003e, y Marta no pisó ni Cocina ni Bodega.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 3:\u003c/strong\u003e Nadie estuvo en el \u003cstrong\u003eSalón\u003c/strong\u003e después de las 23:30.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 4:\u003c/strong\u003e El turno en \u003cstrong\u003eOficio\u003c/strong\u003e se realizó a una hora terminada en :20.\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
-                                      "mode":  "metal",
-                                      "reveal":  "LLAVE DE BODEGA: CAV-09",
-                                      "sub":  "Metal de latón + termómetro de cava",
-                                      "type":  "xray"
+                                      "type":  "logic3x3",
+                                      "rows":  [
+                                                   "Héctor",
+                                                   "Nora",
+                                                   "Tomás",
+                                                   "Marta"
+                                               ],
+                                      "cols":  [
+                                                   "Cocina",
+                                                   "Bodega",
+                                                   "Salón",
+                                                   "Oficio"
+                                               ]
                                   },
-                       "inputLabel":  "Año de añada en las botellas (dato de Patri)",
-                       "partnerHint":  "Dile a Patri el código grabado en la llave metálica (ej. CAV09). Pregúntale la añada de la etiqueta orgánica."
+                       "inputLabel":  "Lugar de Héctor + Nombre de quien estuvo en Oficio",
+                       "inputPlaceholder":  "Ej. bodega nora",
+                       "acceptedHashes":  [
+                                              "978c456a715eb4a2071728219249fe96ca5c00e0544af0b57c0613c00117e7db",
+                                              "978c456a715eb4a2071728219249fe96ca5c00e0544af0b57c0613c00117e7db"
+                                          ],
+                       "partnerHint":  "Lee tus cuatro pistas a Patri y combina sus pistas 5–8 en la matriz 4x4 para ubicar a las cuatro personas."
                    },
-        "kicker":  "DÍA 20 · FILTROS ESPECTRALES",
-        "day":  20,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDciLCJmb3JlbnNpY1RhZyI6IlBSRUNJTlRPIERFIENBVkEgSU5UQUNUTyIsImNvbmNsdXNpb24iOiJFbCByZWdpc3RybyBiaW9tw6l0cmljbyBkZSBsYSBjYXZhIGluZmVyaW9yIHkgbGEgdmVyaWZpY2FjacOzbiBkZSBib3RlbGxhcyBwcnVlYmFuIHF1ZSBOb3JhIEVjaGV2YXJyw61hIHBlcm1hbmVjacOzIGludmVudGFyaWFuZG8gZW4gZWwgc3Vic3VlbG8uIFF1ZWRhIGRlc2NhcnRhZGEuIn0=",
-        "story":  "El maletín de mano de la sumiller Nora Echevarría pasó por el escáner portátil. Miguel solo ve la capa metálica; Patri solo ve la capa orgánica.",
-        "hints":  [
-                      "Miguel activa el filtro metálico (CAV-09); Patri activa el filtro orgánico (1998).",
-                      "Intercambiad ambos códigos (CAV09 sin guión y 1998).",
-                      "Solución del Día 20 — Miguel: 1998 · Patri: CAV09."
-                  ],
-        "title":  "Escáner de Equipaje (Rayos X)",
         "patri":  {
-                      "inputPlaceholder":  "Ej. CAV01",
-                      "brief":  "Activa el filtro orgánico para leer el año en las botellas lacradas y la nota de cava.",
+                      "roleBadge":  "Patri · Pistas 5–8 y Horarios",
+                      "brief":  "Deduce junto a Miguel el horario completo de los cuatro empleados y valida las dos horas pedidas.",
+                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003ePista 5:\u003c/strong\u003e \u003cstrong\u003eNora\u003c/strong\u003e bajó en la última franja posible (\u003cstrong\u003e23:50\u003c/strong\u003e), pero nunca entró en Cocina ni en Oficio.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 6:\u003c/strong\u003e La persona del \u003cstrong\u003eSalón\u003c/strong\u003e estuvo justo 10 min después de quien revisó el Oficio.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 7:\u003c/strong\u003e \u003cstrong\u003eHéctor\u003c/strong\u003e no estuvo ni a las 23:20 ni a las 23:30, ni pisó el Salón.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003ePista 8:\u003c/strong\u003e \u003cstrong\u003eTomás\u003c/strong\u003e no estuvo en Cocina ni en Oficio.\u003c/li\u003e\u003c/ul\u003e",
+                      "widget":  {
+                                     "type":  "logic3x3",
+                                     "rows":  [
+                                                  "Héctor",
+                                                  "Nora",
+                                                  "Tomás",
+                                                  "Marta"
+                                              ],
+                                     "cols":  [
+                                                  "23:20",
+                                                  "23:30",
+                                                  "23:40",
+                                                  "23:50"
+                                              ]
+                                 },
+                      "inputLabel":  "Hora de Héctor (4 díg.) + Hora de Nora (4 díg.) seguidas",
+                      "inputPlaceholder":  "Ej. 23202330",
+                      "acceptedHashes":  [
+                                             "0266ad957b4e8910e876ad5024416d4fbab4ad3f627e307c89d4ce6937e26c95"
+                                         ],
+                      "partnerHint":  "Empieza fijando qué lugar va en :20, :30, :40 y :50 usando P4, P6 y P1; luego encaja a Nora y Héctor."
+                  },
+        "hints":  [
+                      "Por P4 Oficio = 23:20 -\u003e por P6 Salón = 23:30 (cumple P3). Con P1 (Bodega 10 min después de Cocina), Cocina = 23:40 y Bodega = 23:50.",
+                      "Por P5 Nora (23:50) = Bodega. Por P7 Héctor no está en 23:20 ni 23:30, luego Héctor = Cocina 23:40.",
+                      "Quedan 23:20 Oficio y 23:30 Salón para Marta y Tomás; por P2 Marta = Oficio 23:20 y Tomás = Salón 23:30. Miguel: cocina marta · Patri: 23402350."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDIiLCJmb3JlbnNpY1RhZyI6IkVRVUlQTyBERSBDT0NJTkEgQ09NTyBURVNUSUdPIiwiY29uY2x1c2lvbiI6IkxvcyB0cmVzIHBpbmNoZXMgY29uZmlybWFuIHF1ZSBIw6ljdG9yIFNhbGdhZG8gbm8gc2FsacOzIGRlIGxhIENvY2luYSBhIGxhcyAyMzo0MCBoIHN1cGVydmlzYW5kbyBsb3MgcG9zdHJlcyBuYXZpZGXDsW9zLiBRdWVkYSBkZXNjYXJ0YWRvLiJ9"
+    },
+    {
+        "day":  18,
+        "kicker":  "DÍA 18 · BIOMECÁNICA DE HUELLA ABFO",
+        "title":  "Huellas en la Nieve del Patio",
+        "story":  "Una pisada de suela Vibram-Alpine modelo ALP-40 generó dudas sobre Adriana Orozco. Deberéis medir el largo exterior total, descontar el cerco de goma y convertir la horma interna.",
+        "mode":  "code",
+        "miguel":  {
+                       "roleBadge":  "Miguel · Calibre Forense ABFO",
+                       "brief":  "Alinea el calibre sobre la suela exterior y aplica el descuento biomecánico de goma (-1.5 cm).",
+                       "clueHtml":  "\u003cp\u003eLa longitud que marca el calibre es el contorno exterior completo (\u003ccode\u003eL_suela\u003c/code\u003e). Resta \u003cstrong\u003e1.5 cm\u003c/strong\u003e del cerco Vibram para dar a Patri la longitud interior real del pie (\u003ccode\u003eL_pie\u003c/code\u003e).\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "caliper",
+                                      "targetCm":  26.5,
+                                      "hideTable":  true,
+                                      "table":  [
+
+                                                ]
+                                  },
+                       "partnerHint":  "Mide exactamente la suela en tu calibre, réstale 1.5 cm y comunica a Patri L_pie junto al código ALP-40."
+                   },
+        "patri":  {
+                      "roleBadge":  "Patri · Tabla de Horma y Taquillas",
+                      "brief":  "Convierte el L_pie calculado por Miguel a talla europea y únelo a la talla real de Adriana y el modelo.",
+                      "clueHtml":  "\u003cp\u003eUsa tu tabla superior de conversión de \u003ccode\u003eL_pie\u003c/code\u003e para hallar la talla exacta de la pisada del patio y compárala con las botas secas de Adriana Orozco en la taquilla.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato del Código",
+                                     "items":  [
+                                                   "Talla huella patio (2 díg.) + Talla Adriana (2 díg.) + Código suela",
+                                                   "Ejemplo orientativo: 3938URB10"
+                                               ]
+                                 },
+                      "partnerHint":  "Pide a Miguel el valor L_pie ya descontado, busca su talla en la tabla y concaténala con 37 y ALP40."
+                  },
+        "jointInput":  {
+                           "label":  "Talla huella + Talla Adriana + Modelo sin guion",
+                           "placeholder":  "Ej. 3938URB10",
+                           "acceptedHashes":  [
+                                                  "8e99ce294e792ae1209a799c37a955b0c50209b55215cc8f8edd603231c0e3d3"
+                                              ]
+                       },
+        "hints":  [
+                      "El calibre alinea la suela exterior en 26.5 cm. Descontando el cerco de 1.5 cm resulta L_pie = 25.0 cm.",
+                      "En la tabla de Patri, L_pie = 25.0 cm corresponde a Talla 40 (Adriana calza Talla 37).",
+                      "Solución del Día 18: 4037ALP40."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjUiLCJmb3JlbnNpY1RhZyI6IkNBTFpBRE8gU0VDTyBFTiBUQVFVSUxMQSAyMzozMiBIIiwiY29uY2x1c2lvbiI6IkFkcmlhbmEgT3JvemNvIGRlasOzIHN1cyBib3RhcyB0YWxsYSAzNyBzZWNhcyBlbiByZWNlcGNpw7NuIGEgbGFzIDIzOjMyIGggeSBudW5jYSBwaXPDsyBlbCBwYXRpbyBjb24gYm90YXMgQUxQLTQwIHRhbGxhIDQwLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
+    },
+    {
+        "day":  19,
+        "kicker":  "DÍA 19 · CRIPTOGRAFÍA BANCARIA SWIFT",
+        "title":  "Transferencias de Medianoche",
+        "story":  "Cuatro transferencias internacionales salieron del hotel alrededor de la medianoche, pero el token de validación se cifra mediante coordenadas sobre una matriz SWIFT 6x6.",
+        "mode":  "code",
+        "miguel":  {
+                       "roleBadge":  "Miguel · Órdenes SEPA Salientes",
+                       "brief":  "Filtra la orden que cumpla importe \u003e 30.000 EUR hacia Zúrich durante el apagón (23:38–23:42 h).",
+                       "clueHtml":  "\u003cp\u003eSolo una de las cuatro órdenes del extracto coincide simultáneamente con el destino, el umbral económico y la franja del apagón que confirma Patri. Lee a Patri su prefijo de 4 caracteres y sus 3 pares de coordenadas.\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "dossier-card",
+                                      "caption":  "Filtro de Operación Sospechosa",
+                                      "items":  [
+                                                    "Importe \u003e 30.000 EUR · Destino Zúrich · Hora 23:38–23:42",
+                                                    "Pasa a Patri su Prefijo (4 car.) y los 3 pares (Fila, Columna)"
+                                                ]
+                                  },
+                       "partnerHint":  "Comunica el prefijo y los tres pares de coordenadas (F,C) de la operación válida para que Patri los decodifique en su matriz 6x6."
+                   },
+        "patri":  {
+                      "roleBadge":  "Patri · Matriz SWIFT 6x6 e IP Suite 303",
+                      "brief":  "Decodifica las tres coordenadas de Miguel sobre la tabla 6x6 y anota el minuto de firma facial.",
+                      "clueHtml":  "\u003cp\u003eCada par \u003ccode\u003e(Fila, Columna)\u003c/code\u003e señala un carácter en la tabla SWIFT 6x6 (Filas 1–6 arriba-abajo, Columnas 1–6 izquierda-derecha).\u003c/p\u003e\u003cp\u003eUne el \u003cstrong\u003ePrefijo de la orden\u003c/strong\u003e + los \u003cstrong\u003e3 caracteres decodificados\u003c/strong\u003e + los \u003cstrong\u003e2 dígitos del minuto de firma facial\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato Token Completo",
+                                     "items":  [
+                                                   "[Prefijo 4 car.] + [3 car. Matriz 6x6] + [Minuto firma 2 díg.]",
+                                                   "Ejemplo orientativo: LX19A2B34"
+                                               ]
+                                 },
+                      "partnerHint":  "Asegúrate de filtrar solo OP-2 (Zúrich, 45.000 EUR, 23:39) y convertir (2,5)-(6,6)-(4,4) en la matriz."
+                  },
+        "jointInput":  {
+                           "label":  "Prefijo + Código Matriz 6x6 + Minuto firma",
+                           "placeholder":  "Ej. LX19A2B34",
+                           "acceptedHashes":  [
+                                                  "7936dadbab5d2b6579be8b33a932f32858e6f6e6c287ead76290ff473f0d8c1a"
+                                              ]
+                       },
+        "hints":  [
+                      "OP-1 son solo 12.000 EUR y OP-3 va a Luxemburgo fuera del apagón. Solo cumple OP-2: ZR84 con (2,5)-(6,6)-(4,4).",
+                      "En la Matriz SWIFT 6x6: F2C5 = K, F6C6 = 9 y F4C4 = V -\u003e K9V. Firma facial en 23:39 -\u003e minuto 39.",
+                      "Solución del Día 19: ZR84K9V39."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOm51bGwsImZvcmVuc2ljVGFnIjoiU0VTScOTTiBFTiBBVURJVE9Sw41BIMK3IFNJTiBERVNDQVJURSIsImNvbmNsdXNpb24iOiJMYSByZWZlcmVuY2lhIFpSODRLOVYzOSBhY3JlZGl0YSB1bmEgb3JkZW4gZGVzZGUgbGEgcmVkIGRlbCBob3RlbCBhIGxhcyAyMzozOSBoLCBwZXJvIHF1ZWRhIHBlbmRpZW50ZSBkZSBjb3Rlam8gZGlyZWN0byBzaSBzZSBmaXJtw7MgZW4gdml2byBvIGVuIGRpZmVyaWRvIGRlc2RlIGxhIFN1aXRlIDMwMy4gw4FsdmFybyBSb2xkw6FuIHBlcm1hbmVjZSBhY3Rpdm8gY29tbyBmaW5hbGlzdGEuIn0="
+    },
+    {
+        "day":  20,
+        "kicker":  "DÍA 20 · ESCÁNER DE TALLADO X-RAY",
+        "title":  "Escáner de Equipaje (Rayos X)",
+        "story":  "El escáner portátil separa la capa metálica (dientes reales de la llave y termómetro de latón) de la capa orgánica (botellas y precintos). Deberéis leer medidas visuales sin texto directo.",
+        "mode":  "dual-lock",
+        "miguel":  {
+                       "roleBadge":  "Miguel · Espectro Metálico",
+                       "brief":  "Activa el filtro de metales para medir la altura visual de los 5 dientes de la llave y leer el termómetro.",
+                       "clueHtml":  "\u003cp\u003ePulsa el escáner para revelar el perfil real de la llave. Cada columna muestra una profundidad de tallado de \u003cstrong\u003e1 (corto) a 5 (largo)\u003c/strong\u003e que deberás dictar a Patri de izquierda a derecha, junto a los \u003cstrong\u003e°C\u003c/strong\u003e del termómetro.\u003c/p\u003e",
+                       "widget":  {
+                                      "type":  "xray",
+                                      "mode":  "metal",
+                                      "detailSvg":  "\u003csvg viewBox=\u00270 0 280 95\u0027 style=\u0027width:100%;display:block;background:#020617;border-radius:6px;\u0027\u003e\u003cline x1=\u002724\u0027 y1=\u002726\u0027 x2=\u0027175\u0027 y2=\u002726\u0027 stroke=\u0027#38BDF8\u0027 stroke-width=\u00272\u0027/\u003e\u003crect x=\u002734\u0027 y=\u002726\u0027 width=\u002718\u0027 height=\u002716\u0027 fill=\u0027#67E8F9\u0027/\u003e\u003ctext x=\u002743\u0027 y=\u002721\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#BAE6FD\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003e2\u003c/text\u003e\u003crect x=\u002762\u0027 y=\u002726\u0027 width=\u002718\u0027 height=\u002740\u0027 fill=\u0027#67E8F9\u0027/\u003e\u003ctext x=\u002771\u0027 y=\u002721\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#BAE6FD\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003e5\u003c/text\u003e\u003crect x=\u002790\u0027 y=\u002726\u0027 width=\u002718\u0027 height=\u00278\u0027 fill=\u0027#67E8F9\u0027/\u003e\u003ctext x=\u002799\u0027 y=\u002721\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#BAE6FD\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003e1\u003c/text\u003e\u003crect x=\u0027118\u0027 y=\u002726\u0027 width=\u002718\u0027 height=\u002732\u0027 fill=\u0027#67E8F9\u0027/\u003e\u003ctext x=\u0027127\u0027 y=\u002721\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#BAE6FD\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003e4\u003c/text\u003e\u003crect x=\u0027146\u0027 y=\u002726\u0027 width=\u002718\u0027 height=\u002724\u0027 fill=\u0027#67E8F9\u0027/\u003e\u003ctext x=\u0027155\u0027 y=\u002721\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#BAE6FD\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003e3\u003c/text\u003e\u003crect x=\u0027194\u0027 y=\u002718\u0027 width=\u002768\u0027 height=\u002752\u0027 rx=\u00278\u0027 fill=\u0027rgba(251,191,36,0.12)\u0027 stroke=\u0027#FBBF24\u0027/\u003e\u003ctext x=\u0027228\u0027 y=\u002740\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#FDE68A\u0027 font-family=\u0027monospace\u0027 font-size=\u002711\u0027 font-weight=\u0027700\u0027\u003e+11 °C\u003c/text\u003e\u003ctext x=\u0027228\u0027 y=\u002756\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#CBD5E1\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003eTERMÓMETRO\u003c/text\u003e\u003c/svg\u003e",
+                                      "reveal":  "TALLADO 5 PINES + TERMÓMETRO +11 °C",
+                                      "sub":  "Dicta la secuencia de 5 alturas (1–5) a Patri y pídele añada + estante intacto."
+                                  },
+                       "inputLabel":  "Añada botella intacta (4 díg.) + Estante cava según Patri",
+                       "inputPlaceholder":  "Ej. 1994A2",
+                       "acceptedHashes":  [
+                                              "071cb3361a8ef2107426acb161ca48c4b328ba90aa8ede3a208fc0c2b43cc411"
+                                          ],
+                       "partnerHint":  "Dicta a Patri los 5 cortes [2-5-1-4-3] y la temperatura (+11 °C). Pídele qué añada permanece precintada en la cava y qué código de estante le corresponde."
+                   },
+        "patri":  {
+                      "roleBadge":  "Patri · Espectro Orgánico y Tablas",
+                      "brief":  "Activa el filtro orgánico para identificar qué botella mantiene intacto su precinto de las 23:40 h.",
+                      "clueHtml":  "\u003cp\u003eCoteja los 5 cortes metálicos que vea Miguel con la tabla de cerrajero de tu documento para identificar qué llave guardaba Nora Echevarría en su maletín.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "xray",
+                                     "mode":  "organic",
+                                     "detailSvg":  "\u003csvg viewBox=\u00270 0 280 86\u0027 style=\u0027width:100%;display:block;background:#020617;border-radius:6px;\u0027\u003e\u003crect x=\u002718\u0027 y=\u002714\u0027 width=\u0027112\u0027 height=\u002758\u0027 rx=\u00276\u0027 fill=\u0027rgba(239,68,68,0.12)\u0027 stroke=\u0027#F87171\u0027/\u003e\u003ctext x=\u002774\u0027 y=\u002734\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#FECACA\u0027 font-family=\u0027monospace\u0027 font-size=\u002711\u0027 font-weight=\u0027700\u0027\u003eAÑADA 1994\u003c/text\u003e\u003ctext x=\u002774\u0027 y=\u002750\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#FCA5A5\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003eCORCHO ROTO · 21:10\u003c/text\u003e\u003crect x=\u0027150\u0027 y=\u002714\u0027 width=\u0027112\u0027 height=\u002758\u0027 rx=\u00276\u0027 fill=\u0027rgba(16,185,129,0.16)\u0027 stroke=\u0027#34D399\u0027/\u003e\u003ctext x=\u0027206\u0027 y=\u002734\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#A7F3D0\u0027 font-family=\u0027monospace\u0027 font-size=\u002711\u0027 font-weight=\u0027700\u0027\u003eAÑADA 1998\u003c/text\u003e\u003ctext x=\u0027206\u0027 y=\u002750\u0027 text-anchor=\u0027middle\u0027 fill=\u0027#6EE7B7\u0027 font-family=\u0027monospace\u0027 font-size=\u00279\u0027\u003ePRECINTO INTACTO 23:40\u003c/text\u003e\u003c/svg\u003e",
+                                     "reveal":  "BOTELLA INTACTA 23:40: AÑADA 1998",
+                                     "sub":  "Compara con el mapa de cava (+11 °C) para informar a Miguel del estante."
+                                 },
+                      "inputLabel":  "Código de llave del cerrajero sin guion (cruzado con Miguel)",
+                      "inputPlaceholder":  "Ej. CAV03",
                       "acceptedHashes":  [
                                              "02bb43b4328c0c089761aec7469b194eb5b479bcb74f06e82e21370034a39ed3"
                                          ],
-                      "roleBadge":  "Patri · Espectro Orgánico",
-                      "clueHtml":  "\u003cp\u003ePulsa el botón del escáner para filtrar los materiales orgánicos y etiquetas de papel.\u003c/p\u003e",
-                      "widget":  {
-                                     "mode":  "organic",
-                                     "reveal":  "RESERVA AÑADA 1998 · CAVA INFERIOR 23:30–23:50",
-                                     "sub":  "Dos botellas intactas con precinto original",
-                                     "type":  "xray"
-                                 },
-                      "inputLabel":  "Código de llave metálica sin guión (dato de Miguel)",
-                      "partnerHint":  "Dile a Miguel la añada (4 cifras) y pregúntale el código de la llave sin guión."
-                  }
+                      "partnerHint":  "Dile a Miguel la añada intacta (1998) y su estante en cava (B4). Pídele los 5 cortes para buscar su llave en la tabla de cerrajero."
+                  },
+        "hints":  [
+                      "El escáner metálico revela 5 dientes de altura [2-5-1-4-3] y +11 °C; el orgánico muestra intacta la añada 1998.",
+                      "En la tabla de Patri: [2-5-1-4-3] = CAV-09, y 1998 a +11 °C corresponde al Estante B4.",
+                      "Solución del Día 20 — Miguel: 1998B4 · Patri: CAV09."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDciLCJmb3JlbnNpY1RhZyI6IlBSRUNJTlRPIERFIENBVkEgSU5UQUNUTyIsImNvbmNsdXNpb24iOiJMYSBsbGF2ZSBDQVYtMDksIGVsIHRlcm3Ds21ldHJvICgrMTEgwrBDKSB5IGxvcyBwcmVjaW50b3MgaW50YWN0b3MgZGUgbGEgYcOxYWRhIDE5OTggKEVzdGFudGUgQjQpIHBydWViYW4gcXVlIE5vcmEgRWNoZXZhcnLDrWEgcGVybWFuZWNpw7MgaW52ZW50YXJpYW5kbyBlbiBsYSBjYXZhIGluZmVyaW9yLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
     },
     {
+        "day":  21,
+        "kicker":  "DÍA 21 · RECONSTRUCCIÓN RELATIVA",
+        "title":  "Cronología de la Planta 3",
+        "story":  "Los seis fragmentos de la Planta 3 perdieron casi todas sus marcas de reloj. Solo conocéis la hora exacta del apagón y una desviación técnica en el reloj de pasillo.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Fragmentos 1, 4 y 5",
+                       "roleBadge":  "Miguel · Fragmentos T, R y V",
+                       "brief":  "Aporta el ancla fija del apagón (T) y calcula junto a Patri los desplazamientos de minutos.",
+                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[T] Ancla fija:\u003c/strong\u003e Apagón eléctrico general a las \u003cstrong\u003e23:38 h\u003c/strong\u003e exactas.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[R]:\u003c/strong\u003e La discusión junto a la Suite 301 ocurrió exactamente \u003cstrong\u003e9 minutos antes\u003c/strong\u003e del apagón.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[V]:\u003c/strong\u003e La luz volvió cuando el reloj de pared del pasillo de Planta 3 marcaba las \u003cstrong\u003e23:45 h\u003c/strong\u003e (consultar desfase a Patri).\u003c/li\u003e\u003c/ul\u003e",
                        "widget":  {
-                                      "caption":  "Tus 3 Eventos",
+                                      "type":  "dossier-card",
+                                      "caption":  "Tus Tres Fragmentos",
                                       "items":  [
-                                                    "23:30 -\u003e 4",
-                                                    "23:42 -\u003e 9",
-                                                    "23:45 -\u003e 1"
-                                                ],
-                                      "type":  "dossier-card"
+                                                    "[T] = 23:38 exactas",
+                                                    "[R] = Apagón menos 9 min  |  [V] = Reloj pasillo 23:45 (corregir desfase)"
+                                                ]
                                   },
-                       "brief":  "Combina tus 3 eventos con los 2 intermedios de Patri y ordena sus dígitos de menor a mayor hora.",
-                       "partnerHint":  "Intercambia tus horas y dígitos con Patri para obtener la secuencia ordenada de 5 cifras.",
-                       "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e23:30 h [Dígito 4]:\u003c/strong\u003e Discusión verbal en la puerta de la Suite 301.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:42 h [Dígito 9]:\u003c/strong\u003e Vuelve el suministro eléctrico en Plantas 2 y 3.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:45 h [Dígito 1]:\u003c/strong\u003e Beatriz llama a recepción desde el teléfono fijo de la Sala de Lectura (Planta 2).\u003c/li\u003e\u003c/ul\u003e"
+                       "partnerHint":  "Comunica [T]=23:38, [R] y [V] a Patri para deducir todas las horas y ordenar las 6 letras de menor a mayor minuto."
                    },
-        "hints":  [
-                      "Las horas en orden son: 23:30, 23:35, 23:38, 23:42, 23:45.",
-                      "Sus dígitos respectivos son: 4, 7, 2, 9, 1.",
-                      "Solución del Día 21: 47291."
-                  ],
-        "kicker":  "DÍA 21 · LÍNEA TEMPORAL",
-        "day":  21,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDEiLCJmb3JlbnNpY1RhZyI6IlRFU1RJR09TIEVOIFNBTEEgREUgTEVDVFVSQSIsImNvbmNsdXNpb24iOiJUcmVzIGh1w6lzcGVkZXMgY29uZmlybWFuIGxhIHByZXNlbmNpYSBjb250aW51YSBkZSBCZWF0cml6IFZhbGRpdmllc28gZW4gbGEgU2FsYSBkZSBMZWN0dXJhIGRlIFBsYW50YSAyIGR1cmFudGUgZWwgYXBhZ8Ozbi4gUXVlZGEgZGVzY2FydGFkYS4ifQ==",
-        "story":  "Los registros de la Planta 3 tienen cinco eventos repartidos entre vuestras pantallas. Ordenadlos cronológicamente de 23:30 a 23:45 para sacar el código.",
+        "patri":  {
+                      "roleBadge":  "Patri · Fragmentos M, K, P y Desfase",
+                      "brief":  "Aporta el desfase de +3 minutos del reloj de pared y calcula el instante real de tus tres eventos.",
+                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e[M]:\u003c/strong\u003e El ascensor pasó vacío por Planta 3 exactamente \u003cstrong\u003e4 minutos después\u003c/strong\u003e de la discusión junto a Suite 301 [R].\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[K]:\u003c/strong\u003e El botones vio bajar a Beatriz por la escalera \u003cstrong\u003e2 minutos después\u003c/strong\u003e del ascensor [M].\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e[P]:\u003c/strong\u003e Beatriz llamó desde el fijo de Sala de Lectura \u003cstrong\u003e4 minutos después\u003c/strong\u003e de volver la luz [V].\u003c/li\u003e\u003cli\u003e\u003cstrong\u003eNota Mantenimiento:\u003c/strong\u003e El reloj de pared de Planta 3 iba \u003cstrong\u003e3 minutos adelantado\u003c/strong\u003e sobre la hora real.\u003c/li\u003e\u003c/ul\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Regla de Cierre",
+                                     "items":  [
+                                                   "Ordena las 6 letras [R, M, K, T, V, P] de más temprana a más tardía",
+                                                   "Ejemplo orientativo: ABCDEF"
+                                               ]
+                                 },
+                      "partnerHint":  "Calcula cada hora real corrigiendo los 3 minutos de adelanto en el reloj de pasillo antes de ubicar [V] y [P]."
+                  },
         "jointInput":  {
-                           "label":  "Secuencia de 5 dígitos ordenada cronológicamente",
-                           "placeholder":  "Ej. 12345",
+                           "label":  "Secuencia ordenada de las 6 letras",
+                           "placeholder":  "Ej. ABCDEF",
                            "acceptedHashes":  [
-                                                  "2fd2c50d7a07d99ef9f8147bf8ec05bf977d1edebf7c71bec7cc06d4a8195fdc"
+                                                  "241bb46078430e5854d6767ff40d60e7a3e637a0368667d9f95461e8e3b7a9ec"
                                               ]
                        },
-        "title":  "Cronología de la Planta 3",
-        "patri":  {
-                      "roleBadge":  "Patri · Fragmentos 2 y 3",
-                      "widget":  {
-                                     "caption":  "Tus 2 Eventos",
-                                     "items":  [
-                                                   "23:35 -\u003e 7",
-                                                   "23:38 -\u003e 2"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Encaja tus 2 eventos en la línea temporal de Miguel.",
-                      "partnerHint":  "Ordena los 5 momentos desde las 23:30 hasta las 23:45 y escribe sus 5 dígitos seguidos.",
-                      "clueHtml":  "\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e\u003cstrong\u003e23:35 h [Dígito 7]:\u003c/strong\u003e El botones ve a Beatriz bajar las escaleras hacia la Planta 2.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:38 h [Dígito 2]:\u003c/strong\u003e Apagón general; tres huéspedes confirman que Beatriz ya leía junto a la ventana en Planta 2.\u003c/li\u003e\u003c/ul\u003e"
-                  }
+        "hints":  [
+                      "T = 23:38 -\u003e R = 23:38 - 9 = 23:29 -\u003e M = 23:29 + 4 = 23:33 -\u003e K = 23:33 + 2 = 23:35.",
+                      "El reloj de pared marcaba 23:45 pero llevaba +3 min de adelanto -\u003e V real = 23:42 -\u003e P = 23:42 + 4 = 23:46.",
+                      "Orden cronológico exacto: R (23:29), M (23:33), K (23:35), T (23:38), V (23:42), P (23:46) -\u003e RMKTVP."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDEiLCJmb3JlbnNpY1RhZyI6IlRFU1RJR09TIEVOIFNBTEEgREUgTEVDVFVSQSIsImNvbmNsdXNpb24iOiJMYSByZWNvbnN0cnVjY2nDs24gdGVtcG9yYWwgUk1LVFZQIHNpdMO6YSBhIEJlYXRyaXogVmFsZGl2aWVzbyBiYWphbmRvIGEgbGFzIDIzOjM1IGggeSBsbGFtYW5kbyBkZXNkZSBsYSBTYWxhIGRlIExlY3R1cmEgZGUgUGxhbnRhIDIgdHJhcyBlbCBhcGFnw7NuIGFudGUgdHJlcyB0ZXN0aWdvcy4gUXVlZGEgZGVzY2FydGFkYS4ifQ=="
     },
     {
+        "day":  22,
+        "kicker":  "DÍA 22 · ANÁLISIS DE OSCILOSCOPIO",
+        "title":  "Pico de Voltaje en Planta 1",
+        "story":  "El cuadro eléctrico general registró cuatro líneas entre las 23:30 y las 23:46 h. Distinguiréis cuál sufrió una caída manual de disyuntor, calcularéis el minuto exacto sobre la escala relativa y cruzaréis el sensor de la Capilla.",
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Osciloscopio Eléctrico",
+                       "roleBadge":  "Miguel · Osciloscopio 4 Circuitos",
+                       "brief":  "Identifica qué circuito cae verticalmente de forma cuadrada a 0 V y calcula su hora sumando minutos a 23:30 h.",
+                       "clueHtml":  "\u003cp\u003eLa escala horizontal empieza en \u003cstrong\u003eT0 = 23:30 h\u003c/strong\u003e con marcas verticales cada \u003cstrong\u003e+4 minutos\u003c/strong\u003e (+0m, +4m, +8m, +12m, +16m). Descarta caídas suaves o SAI continuo para hallar el corte manual.\u003c/p\u003e",
                        "widget":  {
                                       "type":  "voltage",
-                                      "dropTime":  "23:38"
+                                      "traces":  [
+                                                     {
+                                                         "label":  "C-01 · Exterior (fluctuación lenta por tormenta)",
+                                                         "color":  "#38BDF8",
+                                                         "points":  "10,10 60,14 110,20 170,24 230,28 270,30"
+                                                     },
+                                                     {
+                                                         "label":  "C-02 · Cocina (carga estable con micro-bache)",
+                                                         "color":  "#34D399",
+                                                         "points":  "10,12 160,12 170,20 180,12 270,12"
+                                                     },
+                                                     {
+                                                         "label":  "C-03 · Dirección P1 (corte vertical abrupto)",
+                                                         "color":  "#FF2D55",
+                                                         "points":  "10,10 138,10 140,36 198,36 200,10 270,10"
+                                                     },
+                                                     {
+                                                         "label":  "C-04 · Calderas (respaldo SAI continuo)",
+                                                         "color":  "#FBBF24",
+                                                         "points":  "10,14 270,14"
+                                                     }
+                                                 ]
                                   },
-                       "brief":  "Lee la hora exacta del corte provocado desde el cuadro de Planta 1.",
-                       "partnerHint":  "Dile a Patri la hora de 4 dígitos del corte (2338) para unirla al código de la capilla.",
-                       "clueHtml":  "\u003cp\u003eEl gráfico de tensión cae a cero exactamente a las \u003cstrong\u003e23:38 h\u003c/strong\u003e desde el cuadro situado tras el mostrador de Dirección (Planta 1).\u003c/p\u003e\u003cp\u003eEsto descarta por completo a quien estuviera encerrado en la Capilla Alpina.\u003c/p\u003e"
+                       "partnerHint":  "Indica a Patri qué circuito cae en escalón vertical exacto (entre +8m y +12m desde las 23:30 h) y calcula la hora real del disparo."
                    },
-        "hints":  [
-                      "El pico de corte en el osciloscopio de Miguel ocurre a las 23:38.",
-                      "Une 2338 con CP.",
-                      "Solución del Día 22: 2338CP."
-                  ],
-        "kicker":  "DÍA 22 · CUADRO ELÉCTRICO",
-        "day":  22,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjMiLCJmb3JlbnNpY1RhZyI6IlBSRVNFTkNJQSBDT05USU5VQSBFTiBDQVBJTExBIiwiY29uY2x1c2lvbiI6IlRlcmVzYSBBbGFyY8OzbiBubyBzYWxpw7MgZGUgbGEgQ2FwaWxsYSBBbHBpbmEgZW4gbmluZ8O6biBtb21lbnRvIG1pZW50cmFzIGFsZ3VpZW4gbWFuaXB1bGFiYSBlbCBjdWFkcm8gZWzDqWN0cmljbyBkZSBQbGFudGEgMS4gUXVlZGEgZGVzY2FydGFkYS4ifQ==",
-        "story":  "El análisis del generador revela que el apagón no fue por la tormenta: alguien bajó manualmente el diferencial principal desde la Planta 1.",
+        "patri":  {
+                      "roleBadge":  "Patri · Sensor Puerta Capilla (CP)",
+                      "brief":  "Verifica que no hubo aperturas en la Capilla Alpina durante el corte y combina el código completo.",
+                      "clueHtml":  "\u003cp\u003eEl contacto magnético \u003cstrong\u003eCP\u003c/strong\u003e certifica cero salidas de Teresa Alarcón durante el corte en Planta 1.\u003c/p\u003e\u003cp\u003eUne el \u003cstrong\u003eCódigo del circuito saboteado sin guion (3 car.)\u003c/strong\u003e + \u003cstrong\u003eHora exacta del corte (4 díg.)\u003c/strong\u003e + \u003cstrong\u003eCP\u003c/strong\u003e.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato del Código",
+                                     "items":  [
+                                                   "Circuito (ej. C01) + Hora corte (4 díg.) + CP",
+                                                   "Ejemplo orientativo: C012334CP"
+                                               ]
+                                 },
+                      "partnerHint":  "Verifica con Miguel qué circuito hace caída vertical (C03) en la marca +8m (23:30 + 8 min = 23:38) y añade CP."
+                  },
         "jointInput":  {
-                           "label":  "Hora de corte (4 dígitos) + CP",
-                           "placeholder":  "Ej. 2210CP",
+                           "label":  "Circuito + Hora corte (4 díg.) + CP",
+                           "placeholder":  "Ej. C012334CP",
                            "acceptedHashes":  [
-                                                  "693062f9b700c27dd77d568db0b1ffbb53683bb1970a891c6d4be39d64328da9"
+                                                  "aacc2ea46582ae4e2ab174f94a5c66ff07064477e599a9c08167267c8860317c"
                                               ]
                        },
-        "title":  "Pico de Voltaje en Planta 1",
-        "patri":  {
-                      "roleBadge":  "Patri · Sensor de la Capilla Alpina",
-                      "widget":  {
-                                     "caption":  "Sensor Capilla CP",
-                                     "items":  [
-                                                   "Teresa Alarcón: 23:25–23:50 h",
-                                                   "Formato: HORA(4) + CP"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Comprueba quién estuvo rezando en la capilla sin acercarse al cuadro eléctrico.",
-                      "partnerHint":  "Pide a Miguel la hora exacta del corte y añade CP al final (ej. 2210CP).",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eRegistro Capilla (Código de puerta: \u003cspan class=\u0027mono\u0027\u003eCP\u003c/span\u003e):\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eTeresa Alarcón encendió velas y permaneció en la capilla cerrada desde las 23:25 hasta las 23:50 h acompañada por el sensor de presencia continuo.\u003c/p\u003e\u003cp\u003eIntroduce la \u003cstrong\u003eHora de corte (4 dígitos de Miguel)\u003c/strong\u003e + \u003cstrong\u003eCódigo de puerta CP\u003c/strong\u003e.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Solo C-03 (Dirección P1) cae verticalmente de golpe a 0 V en la marca central de +8m y vuelve en +12m.",
+                      "T0 = 23:30 h + 8 min = 23:38 h (apagón de 4 min hasta las 23:42 h).",
+                      "Solución del Día 22: C032338CP."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjMiLCJmb3JlbnNpY1RhZyI6IlBSRVNFTkNJQSBDT05USU5VQSBFTiBDQVBJTExBIiwiY29uY2x1c2lvbiI6Ik1pZW50cmFzIGVsIGNpcmN1aXRvIEMtMDMgZXJhIGNvcnRhZG8gbWFudWFsbWVudGUgYSBsYXMgMjM6MzggaCBlbiBQbGFudGEgMSwgZWwgY29udGFjdG8gbWFnbsOpdGljbyBDUCBwcnVlYmEgcXVlIFRlcmVzYSBBbGFyY8OzbiBubyBzYWxpw7MgZGUgbGEgQ2FwaWxsYSBBbHBpbmEuIFF1ZWRhIGRlc2NhcnRhZGEuIn0="
     },
     {
+        "day":  23,
+        "kicker":  "DÍA 23 · NOTARÍA Y TRIANGULACIÓN BTS",
+        "title":  "La Penúltima Coartada",
+        "story":  "Un borrador notarial rasgado por los extremos oculta dos de sus tres dígitos, mientras la operadora entrega duraciones crudas en segundos desde distintas celdas BTS.",
         "mode":  "dual-lock",
         "miguel":  {
-                       "inputPlaceholder":  "Ej. 201X",
-                       "brief":  "Extrae el número de protocolo notarial hallado en el abrigo de Arturo.",
-                       "acceptedHashes":  [
-                                              "14577b51f90dcf31ca5db4b722b82bfca531c95e4f9f4aaedb79bf2159f81d19"
-                                          ],
-                       "roleBadge":  "Miguel · Borrador del Bolsillo",
-                       "clueHtml":  "\u003cp\u003eEn el bolsillo interior de Arturo apareció un acuerdo mercantil que debía firmarse el 1 de diciembre con el \u003cstrong\u003eProtocolo Notarial Nº 774\u003c/strong\u003e.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Borrador y Mapa BTS",
+                       "brief":  "Comunica la cifra central (7) y la suma total (19) del protocolo a Patri, y traduce su Cell-ID continua.",
+                       "clueHtml":  "\u003cp\u003eEn el bolsillo de Arturo apareció un protocolo roto \u003ccode\u003e[D1][7][D3]\u003c/code\u003e donde la suma de sus tres cifras vale \u003cstrong\u003e19\u003c/strong\u003e y \u003ccode\u003eD1\u003c/code\u003e equivale a los años de vigencia del convenio anterior que guarda Patri.\u003c/p\u003e\u003cp\u003eCuando Patri filtre qué llamada dura al menos \u003cstrong\u003e25 minutos\u003c/strong\u003e seguidos, busca su Cell-ID en tu tabla.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Documento Mercantil",
+                                      "type":  "dossier-card",
+                                      "caption":  "Cruces de Doble Candado",
                                       "items":  [
-                                                    "Protocolo Nº 774",
-                                                    "Cita de firma: 01/12"
-                                                ],
-                                      "type":  "dossier-card"
+                                                    "Comunicar a Patri: D2 = 7 y suma D1+D2+D3 = 19",
+                                                    "Convertir Cell-ID continua de Patri a Código Antena BTS"
+                                                ]
                                   },
-                       "inputLabel":  "Clave de antena de la Suite 304 (dato de Patri)",
-                       "partnerHint":  "Dile a Patri el número de protocolo 774. Pregúntale la clave alfanumérica de antena de la Suite 304."
+                       "inputLabel":  "Código de antena BTS de la llamada ininterrumpida",
+                       "inputPlaceholder":  "Ej. S201N",
+                       "acceptedHashes":  [
+                                              "bbffb9e3087f0fcc9ee7125eea0aea2f7bd5aead66850b2af8b0a987765261e0"
+                                          ],
+                       "partnerHint":  "Dile a Patri que D2=7 y suma=19; pregúntale los años del convenio para que deduzca D1 y D3, y qué Cell-ID superó los 25 min."
                    },
-        "kicker":  "DÍA 23 · PROTOCOLO NOTARIAL",
-        "day":  23,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDkiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgSU5JTlRFUlJVTVBJREEgMjYgTUlOIiwiY29uY2x1c2lvbiI6IkxvcyByZWdpc3Ryb3MgZGUgb3BlcmFkb3JhIHViaWNhbiBhIFZhbGVyaWEgRG9tw61uZ3VleiBhbCB0ZWzDqWZvbm8gZW4gbGEgU3VpdGUgMzA0IGR1cmFudGUgMjYgbWludXRvcyBpbmludGVycnVtcGlkb3MuIFNvbG8gcXVlZGFuIGRvcyBzb3NwZWNob3NvcyBwYXJhIE5vY2hlYnVlbmEuIn0=",
-        "story":  "Solo quedan tres sospechosos en el tablero. Una llamada de larga duración desde Madrid está a punto de despejar uno de los nombres más tensos.",
-        "hints":  [
-                      "Miguel tiene el protocolo 774; Patri tiene la clave de antena 304V.",
-                      "Intercambiad ambos códigos.",
-                      "Solución del Día 23 — Miguel: 304V · Patri: 774."
-                  ],
-        "title":  "La Penúltima Coartada",
         "patri":  {
-                      "inputPlaceholder":  "Ej. 100",
-                      "brief":  "Comprueba la llamada continua de Valeria Domínguez y envía su clave a Miguel.",
-                      "acceptedHashes":  [
-                                             "089ee14b926fabea6dd95890032d1a37e69c1011c710977af774ec3a7b5b39a6"
-                                         ],
-                      "roleBadge":  "Patri · Registro de Antena Celular",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eSábana de llamadas · Valeria Domínguez:\u003c/strong\u003e\u003c/p\u003e\u003cp\u003eLlamada saliente ininterrumpida a su bufete de Madrid de \u003cstrong\u003e23:28 a 23:54 h\u003c/strong\u003e desde la ventana de la Suite 304 (\u003cstrong\u003eClave de antena: 304V\u003c/strong\u003e) discutiendo el borrador que tiene Miguel.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Operadora BTS y Anexo Legal",
+                      "brief":  "Convierte los segundos del CDR a minutos para hallar la llamada continua (\u003e= 25 min) y deduce el protocolo.",
+                      "clueHtml":  "\u003cp\u003eEl convenio previo Valeria–Arturo tenía \u003cstrong\u003e8 años de vigencia (D1 = 8)\u003c/strong\u003e. Con la cifra central y la suma total de Miguel calcula los tres dígitos del protocolo.\u003c/p\u003e\u003cp\u003eCalcula cuál de las llamadas del CDR en segundos supera los \u003cstrong\u003e25 minutos\u003c/strong\u003e y pasa su \u003cstrong\u003eCell-ID\u003c/strong\u003e a Miguel.\u003c/p\u003e",
                       "widget":  {
-                                     "caption":  "Antena Suite 304",
+                                     "type":  "dossier-card",
+                                     "caption":  "Formato Patri",
                                      "items":  [
-                                                   "Llamada 23:28–23:54 h confirmada",
-                                                   "Clave antena: 304V"
-                                               ],
-                                     "type":  "dossier-card"
+                                                   "Protocolo notarial completo [D1][D2][D3] (3 dígitos)",
+                                                   "Pista: divide 1560 segundos entre 60"
+                                               ]
                                  },
-                      "inputLabel":  "Número de protocolo notarial (dato de Miguel)",
-                      "partnerHint":  "Dile a Miguel la clave 304V. Pídele los 3 dígitos del número de protocolo notarial."
-                  }
+                      "inputLabel":  "Protocolo notarial reconstruido (3 dígitos)",
+                      "inputPlaceholder":  "Ej. 571",
+                      "acceptedHashes":  [
+                                             "3d734d729009b74c011651eb24b06a74151fb99b8da5110295da8bb77ec3f92d"
+                                         ],
+                      "partnerHint":  "1560 s / 60 = 26 min (Cell 4E); comunica Cell 4E a Miguel y calcula D3 sabiendo D1=8, D2=7 y suma=19."
+                  },
+        "hints":  [
+                      "1560 segundos = 26 minutos ininterrumpidos (23:28–23:54) en Cell 4E -\u003e en la tabla de Miguel equivale a V304E.",
+                      "D1 = 8 años (Patri), D2 = 7 (Miguel), suma = 19 -\u003e D3 = 19 - 8 - 7 = 4 -\u003e Protocolo 874.",
+                      "Solución del Día 23 — Miguel: V304E · Patri: 874."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMDkiLCJmb3JlbnNpY1RhZyI6IkxMQU1BREEgSU5JTlRFUlJVTVBJREEgMjYgTUlOIiwiY29uY2x1c2lvbiI6IkxvcyByZWdpc3Ryb3MgZGUgYW50ZW5hIFYzMDRFIHkgZWwgcHJvdG9jb2xvIDg3NCBjb25maXJtYW4gbGEgbGxhbWFkYSBkZSBWYWxlcmlhIERvbcOtbmd1ZXogZW4gbGEgU3VpdGUgMzA0IGR1cmFudGUgMjYgbWludXRvcyBpbmludGVycnVtcGlkb3MuIEN1YXRybyBzb3NwZWNob3NvcyBwYXNhbiBhIGxhIGpvcm5hZGEgZGVjaXNpdmEgZGUgTm9jaGVidWVuYS4ifQ=="
     },
     {
+        "day":  24,
+        "kicker":  "DÍA 24 · RESOLUCIÓN FINAL",
+        "title":  "Nochebuena: Juicio en el Ventisquero",
+        "story":  "Es 24 de diciembre. Cuatro sospechosos siguen en pie en vuestro tablero. Paso 1: cruzad el registro horario del Spa con las cuatro aperturas electrónicas UID de la Hab. 206 y el inventario maestro para ejecutar el último descarte. Paso 2: enfrentad a los 3 finalistas en el Careo Final apoyándoos en la espectrometría MS de la copa.",
         "mode":  "final-trial",
         "miguel":  {
-                       "roleBadge":  "Miguel · Toxicología y Cerradura 206",
+                       "roleBadge":  "Miguel · Cerradura 206 (UID) y Espectrómetro MS",
+                       "brief":  "Compara tus 4 registros UID de Hab. 206 con la coartada del Spa de Patri y lee el pico molecular m/z de la copa.",
+                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePaso 1:\u003c/strong\u003e Cuatro UID distintos abrieron la Hab. 206 el 30 de noviembre, pero solo uno coincide dentro de la franja en que Inés estaba dentro del Spa Termal.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003ePaso 2:\u003c/strong\u003e Guarda el peso molecular hallado en la copa (\u003cstrong\u003em/z 645.7 Da\u003c/strong\u003e) para identificar el veneno durante el Careo Final.\u003c/p\u003e",
                        "widget":  {
-                                      "caption":  "Prueba Reina de Laboratorio",
+                                      "type":  "dossier-card",
+                                      "caption":  "Auditoría Cerradura + Pico MS",
                                       "items":  [
-                                                    "Toxina: Aconitina (Acónito)",
-                                                    "Apertura Hab. 206 (18:15 h): KEY-DIR-01"
-                                                ],
-                                      "type":  "dossier-card"
+                                                    "Cruzar franja Spa de Patri contra tus 4 UID",
+                                                    "Identificar alcaloide de 645.7 Da para Paso 2"
+                                                ]
                                   },
-                       "brief":  "Descubre qué veneno mató a Arturo y qué llave maestra abrió la Hab. 206 a las 18:15 h.",
-                       "partnerHint":  "Confirma a Patri el código KEY-DIR-01 y el veneno hallado para cruzar quién tiene acceso exclusivo a esa llave.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eAnálisis químico portátil:\u003c/strong\u003e La copa contenía un alcaloide letal extraído de planta alpina: \u003cstrong\u003eACONITINA\u003c/strong\u003e (del \u003cem\u003eacónito\u003c/em\u003e).\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eCerradura electrónica Hab. 206 (18:15 h):\u003c/strong\u003e Apertura registrada con la llave maestra \u003cstrong class=\u0027mono\u0027\u003eKEY-DIR-01\u003c/strong\u003e.\u003c/p\u003e"
+                       "partnerHint":  "Pregunta a Patri en qué tramo horario estuvo Inés dentro del Spa para identificar el UID anómalo y su hora exacta."
                    },
-        "hints":  [
-                      "Paso 1: el código de la llave maestra sin guiones es KEYDIR01. Al validarlo, queda un único sospechoso en el tablero.",
-                      "Paso 2: selecciona al único sospechoso restante, veneno \u0027aconitina\u0027 (o \u0027acónito\u0027) y maniobra \u0027apagón\u0027 (o \u0027cuadro eléctrico\u0027).",
-                      "Solución del Día 24 — Llave: KEYDIR01 · Culpable: Carmen Ibáñez · Veneno: aconitina · Maniobra: apagón."
-                  ],
+        "patri":  {
+                      "roleBadge":  "Patri · Libro del Spa e Inventario de Llaves",
+                      "brief":  "Aporta el horario presencial de Inés Casado en el Spa Termal y traduce el UID intruso a código KEY.",
+                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003ePaso 1 · Descarte Final:\u003c/strong\u003e Inés Casado permaneció dentro del Spa Termal de \u003cstrong\u003e18:05 a 19:00 h\u003c/strong\u003e. Busca con Miguel qué UID abrió su habitación en esa ventana, tradúcelo en tu llavero y añade la hora exacta (4 dígitos).\u003c/p\u003e\u003cp\u003e\u003cstrong\u003ePaso 2 · Careo Final:\u003c/strong\u003e Contrastad las fotografías AFIS y coartadas de los 3 finalistas restantes.\u003c/p\u003e",
+                      "widget":  {
+                                     "type":  "dossier-card",
+                                     "caption":  "Paso 1 · Formato Llave + Hora",
+                                     "items":  [
+                                                   "Código llave intrusa sin guiones + Hora intrusión (4 díg.)",
+                                                   "Ejemplo orientativo: KEYMAN071640"
+                                               ]
+                                 },
+                      "partnerHint":  "Identifica el UID usado entre las 18:05 y 19:00 h, busca su KEY-XXX-XX en el llavero y concaténale la hora de 4 dígitos."
+                  },
+        "jointInput":  {
+                           "label":  "Paso 1 · Código llave sin guiones + Hora intrusión (4 díg.)",
+                           "placeholder":  "Ej. KEYMAN071640",
+                           "acceptedHashes":  [
+                                                  "35ea52c40ce742ff7ba3e78fdf6eac7b65b43622fc6f8eb9b87ec7c2cd10428c"
+                                              ]
+                       },
         "finalVerdict":  {
                              "suspectHashes":  [
                                                    "a52ba8b1e0bd26a9a9292be45e1653663828573d6e8b629cde0351a21afd2945",
@@ -1262,31 +1394,11 @@ window.ADVENT_DAYS = [
                                                   "fb01ef138f44fcfe4e13ea3956c6fbc6b8970abe5908735ce1ff514229f9e0f9"
                                               ]
                          },
-        "kicker":  "DÍA 24 · RESOLUCIÓN FINAL",
-        "day":  24,
-        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTMiLCJmb3JlbnNpY1RhZyI6IklOw4lTIENBU0FETyBFWE9ORVJBREEgwrcgTExBVkUgTUFFU1RSQSBBSVNMQURBIiwiY29uY2x1c2lvbiI6Ikluw6lzIENhc2FkbyBlc3RhYmEgZW4gZWwgU3BhIFRlcm1hbCBjdWFuZG8gbGEgbGxhdmUgbWFlc3RyYSBLRVktRElSLTAxIGVudHLDsyBlbiBzdSBoYWJpdGFjacOzbiBwYXJhIHN1c3RyYWVyIGVsIHZpYWwgZGUgYWNvbml0aW5hLiIsImZpbmFsRXBpbG9ndWUiOnsidGl0bGUiOiJPUkRFTiBERSBERVRFTkNJw5NOIEVKRUNVVEFEQSDCtyBDQVNPIFJFU1VFTFRPIiwiY3VscHJpdElkIjoiczAzIiwiY3VscHJpdE5hbWUiOiJDYXJtZW4gSWLDocOxZXoiLCJjb25mZXNzaW9uIjoiQWNvcnJhbGFkYSBwb3IgbGEgbGVjdHVyYSBkZSBzdSBsbGF2ZSBtYWVzdHJhIEtFWS1ESVItMDEgZW4gbGEgSGFiLiAyMDYsIGVsIHJhc3RybyBkZSBhY29uaXRpbmEgZW4gbGEgbWFuZ2EgZGUgc3UgYmxhemVyIHkgZWwgYWNjZXNvIGFsIGN1YWRybyBlbMOpY3RyaWNvIHRyYXMgc3UgbW9zdHJhZG9yLCBDYXJtZW4gSWLDocOxZXogY29uZmVzw7M6IHRyYXMgZG9jZSBhw7FvcyBzb3N0ZW5pZW5kbyBlbCBob3RlbCwgQXJ0dXJvIHByZXRlbmTDrWEgdmVuZGVybG8geSBkZXNwZWRpcmxhIGVsIDEgZGUgZW5lcm8uIEFwcm92ZWNow7MgZWwgYXBhZ8OzbiBkZSA0IG1pbnV0b3MgZGUgbGFzIDIzOjM4IGggcGFyYSB2ZXJ0ZXIgbGEgZG9zaXMgZW4gbGEgY29wYSBkZWwgU2Fsw7NuIE1pcmFkb3IuIn19",
-        "story":  "Es 24 de diciembre. Cuatro sospechosos siguen en pie en vuestro tablero. Primero verificad la llave usada en la Habitación 206 para resolver el último descarte; después, enfrentad a los 3 finalistas en el Careo Final.",
-        "jointInput":  {
-                           "label":  "Paso 1 · Código de llave maestra sin guiones",
-                           "placeholder":  "Ej. KEY000",
-                           "acceptedHashes":  [
-                                                  "13eab8866f78bab6d6ed4a285c33c55d430fb102fc6399501696e83406e81dcc"
-                                              ]
-                       },
-        "title":  "Nochebuena: Juicio en el Ventisquero",
-        "patri":  {
-                      "roleBadge":  "Patri · Registro Spa e Inventario de Llaves",
-                      "widget":  {
-                                     "caption":  "Paso 1 · Descarte Final",
-                                     "items":  [
-                                                   "Código llave sin guiones: KEYDIR01",
-                                                   "Paso 2 · Orden de Detención Final"
-                                               ],
-                                     "type":  "dossier-card"
-                                 },
-                      "brief":  "Comprueba la coartada de Inés Casado a las 18:15 h y a quién pertenece KEY-DIR-01.",
-                      "partnerHint":  "Validad primero el código de llave sin guiones (KEYDIR01) para descartar a la última inocente; luego completad juntos el veredicto.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eSpa Termal (18:05–19:00 h):\u003c/strong\u003e Inés Casado estuvo dentro del circuito de aguas con firma y taquilla a las 18:15 h cuando robaron de su maletín en la Hab. 206.\u003c/p\u003e\u003cp\u003e\u003cstrong\u003eInventario único de llaves maestras:\u003c/strong\u003e \u003cstrong\u003eKEY-DIR-01\u003c/strong\u003e pertenece en exclusiva a \u003cstrong\u003eDirección del Hotel\u003c/strong\u003e (sin copias), junto al cuadro eléctrico de Planta 1 que provocó el \u003cstrong\u003eapagón\u003c/strong\u003e.\u003c/p\u003e"
-                  }
+        "hints":  [
+                      "Paso 1: Inés estuvo en el Spa de 18:05 a 19:00 h. A las 18:15 h entró UID-9042 en la Hab. 206, que corresponde a KEY-DIR-01 -\u003e KEYDIR011815.",
+                      "Paso 2: En el espectrómetro MS de Miguel, el pico 645.7 Da corresponde al alcaloide aconitina (acónito); cruzando huellas W-14, fibra azul marino y cámaras, la maniobra fue el apagón del cuadro eléctrico.",
+                      "Solución del Día 24 — Paso 1: KEYDIR011815 · Culpable: Carmen Ibáñez · Veneno: aconitina · Maniobra: apagón."
+                  ],
+        "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMTMiLCJmb3JlbnNpY1RhZyI6IklOw4lTIENBU0FETyBFWE9ORVJBREEgwrcgTExBVkUgTUFFU1RSQSBBSVNMQURBIiwiY29uY2x1c2lvbiI6Ikluw6lzIENhc2FkbyBlc3RhYmEgZW4gZWwgU3BhIFRlcm1hbCBjdWFuZG8gbGEgbGxhdmUgbWFlc3RyYSBLRVktRElSLTAxIGVudHLDsyBlbiBzdSBoYWJpdGFjacOzbiBwYXJhIHN1c3RyYWVyIGVsIHZpYWwgZGUgYWNvbml0aW5hLiIsImZpbmFsRXBpbG9ndWUiOnsidGl0bGUiOiJPUkRFTiBERSBERVRFTkNJw5NOIEVKRUNVVEFEQSDCtyBDQVNPIFJFU1VFTFRPIiwiY3VscHJpdElkIjoiczAzIiwiY3VscHJpdE5hbWUiOiJDYXJtZW4gSWLDocOxZXoiLCJjb25mZXNzaW9uIjoiQWNvcnJhbGFkYSBwb3IgbGEgbGVjdHVyYSBkZSBzdSBsbGF2ZSBtYWVzdHJhIEtFWS1ESVItMDEgZW4gbGEgSGFiLiAyMDYsIGVsIHJhc3RybyBkZSBhY29uaXRpbmEgZW4gbGEgbWFuZ2EgZGUgc3UgYmxhemVyIHkgZWwgYWNjZXNvIGFsIGN1YWRybyBlbMOpY3RyaWNvIHRyYXMgc3UgbW9zdHJhZG9yLCBDYXJtZW4gSWLDocOxZXogY29uZmVzw7M6IHRyYXMgZG9jZSBhw7FvcyBzb3N0ZW5pZW5kbyBlbCBob3RlbCwgQXJ0dXJvIHByZXRlbmTDrWEgdmVuZGVybG8geSBkZXNwZWRpcmxhIGVsIDEgZGUgZW5lcm8uIEFwcm92ZWNow7MgZWwgYXBhZ8OzbiBkZSA0IG1pbnV0b3MgZGUgbGFzIDIzOjM4IGggcGFyYSB2ZXJ0ZXIgbGEgZG9zaXMgZW4gbGEgY29wYSBkZWwgU2Fsw7NuIE1pcmFkb3IuIn19"
     }
 ];

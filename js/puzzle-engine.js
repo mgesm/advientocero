@@ -151,6 +151,7 @@ window.PuzzleEngine = (() => {
               <div class="uv-secret-layer" id="uv-secret-${dayNum}">
                 <div class="mono" style="font-size:0.68rem;letter-spacing:0.12em;color:#A5F3FC;">${escapeHtml(widget.secretSub)}</div>
                 <div class="uv-revealed-code">${escapeHtml(widget.secretCode)}</div>
+                ${widget.secretNote ? `<div class="uv-rule-note">${escapeHtml(widget.secretNote)}</div>` : ""}
               </div>
             </div>
           </div>`;
@@ -224,7 +225,7 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <form data-manual-form="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}" style="display:flex;gap:8px;">
-              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="Ej. B4" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
+              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="${escapeHtml(widget.placeholder || "Ej. C2")}" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
               <button type="submit" class="btn btn-frost btn-sm" style="flex-shrink:0;">Consultar</button>
             </form>
             <div id="manual-res-${dayNum}" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
@@ -266,34 +267,46 @@ window.PuzzleEngine = (() => {
           </div>`;
       }
 
-      case "keypad":
+      case "keypad": {
+        const slots = Array.isArray(widget.slots) && widget.slots.length
+          ? widget.slots
+          : [
+              { val: "3", lbl: "D1 (Plantas)" },
+              { val: "?", lbl: "D2 (Patri)" },
+              { val: "D2+2", lbl: "D3" },
+              { val: "1987", lbl: "Año Placa" }
+            ];
         return `
           <div class="widget-panel">
-            <div class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-bottom:6px;">ESQUEMA CAJA FUERTE: [ D1 ] [ D2 ] [ D3=D2+2 ] [ D4 ]</div>
+            <div class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-bottom:6px;">${escapeHtml(widget.heading || "ESQUEMA CAJA FUERTE")}</div>
             <div class="keypad-grid" style="text-align:center;">
-              <div class="stat-pill"><span class="stat-val">3</span><span class="stat-lbl">D1 (Plantas)</span></div>
-              <div class="stat-pill"><span class="stat-val">?</span><span class="stat-lbl">D2 (Patri)</span></div>
-              <div class="stat-pill"><span class="stat-val">D2+2</span><span class="stat-lbl">D3</span></div>
-              <div class="stat-pill"><span class="stat-val">1987</span><span class="stat-lbl">Año Placa</span></div>
+              ${slots.map((s) => `<div class="stat-pill"><span class="stat-val">${escapeHtml(s.val)}</span><span class="stat-lbl">${escapeHtml(s.lbl)}</span></div>`).join("")}
             </div>
           </div>`;
+      }
 
-      case "frequency":
+      case "frequency": {
+        const bands = Array.isArray(widget.bands) && widget.bands.length
+          ? widget.bands
+          : [{ hz: Number(widget.targetHz || 440), text: widget.clearText || "" }];
+        const initHz = Number(widget.initHz || widget.minHz || 200);
         return `
           <div class="widget-panel">
-            <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;">
-              <span>FILTRO PASABANDA</span>
-              <span id="freq-val-${dayNum}">280 Hz</span>
+            <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+              <span>FILTRO PASABANDA · S-METER</span>
+              <span><strong id="freq-val-${dayNum}">${initHz} Hz</strong> · Señal <strong id="freq-sig-${dayNum}">8%</strong></span>
             </div>
+            <div class="freq-smeter-track"><div class="freq-smeter-fill" id="freq-smeter-${dayNum}"></div></div>
             <div class="adv-range-wrap">
               <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="-${widget.stepHz}" aria-label="Bajar frecuencia">−</button>
-              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="280" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-target="${widget.targetHz}" data-clear="${escapeHtml(widget.clearText)}" data-day="${dayNum}">
+              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="${initHz}" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-bands='${escapeHtml(JSON.stringify(bands))}' data-day="${dayNum}">
               <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="${widget.stepHz}" aria-label="Subir frecuencia">+</button>
             </div>
             <div id="freq-msg-${dayNum}" class="mono" style="margin-top:8px;padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
-              [ #%&amp; RUIDO DE VENTISCA · SINTONIZA LA BANDA CORRECTA ##@ ]
+              [ #%&amp; RUIDO DE VENTISCA · BARRE EL DIAL BUSCANDO PICOS DE SEÑAL ##@ ]
             </div>
           </div>`;
+      }
 
       case "logic3x3":
         return `
@@ -332,9 +345,9 @@ window.PuzzleEngine = (() => {
               </div>
               <div id="caliper-status-${dayNum}" class="mono" style="font-size:0.76rem;color:var(--vg-text-muted);margin-top:4px;">Desliza la línea verde hasta el borde derecho de la suela</div>
             </div>
-            <div class="caliper-grid" style="font-size:0.72rem;text-align:center;">
-              ${(widget.table || []).map((t) => `<div class="stat-pill"><span class="stat-val" style="font-size:0.86rem;">T.${escapeHtml(t.size)}</span><span class="stat-lbl">${escapeHtml(t.cm)}</span></div>`).join("")}
-            </div>
+            ${(widget.table && widget.table.length) ? `<div class="caliper-grid" style="font-size:0.72rem;text-align:center;">
+              ${widget.table.map((t) => `<div class="stat-pill"><span class="stat-val" style="font-size:0.86rem;">T.${escapeHtml(t.size)}</span><span class="stat-lbl">${escapeHtml(t.cm)}</span></div>`).join("")}
+            </div>` : ""}
           </div>`;
       }
 
@@ -345,12 +358,34 @@ window.PuzzleEngine = (() => {
               Activar filtro espectral (${widget.mode === "metal" ? "Metales" : "Orgánico"})
             </button>
             <div id="xray-box-${dayNum}" style="display:none;margin-top:10px;padding:12px;border-radius:10px;background:#0B1120;border:1.5px solid #0284C7;">
+              ${widget.detailSvg ? `<div style="margin-bottom:8px;">${widget.detailSvg}</div>` : ""}
               <div class="mono" style="font-size:0.88rem;font-weight:700;color:#67E8F9;">${escapeHtml(widget.reveal)}</div>
               <div style="font-size:0.76rem;color:#CBD5E1;margin-top:4px;">${escapeHtml(widget.sub)}</div>
             </div>
           </div>`;
 
       case "voltage":
+        if (Array.isArray(widget.traces) && widget.traces.length) {
+          return `
+            <div class="widget-panel">
+              <div class="mono" style="font-size:0.72rem;color:var(--adv-crimson);margin-bottom:8px;">OSCILOSCOPIO 4 CIRCUITOS · T0 = 23:30 H (MARCAS +4M)</div>
+              ${widget.traces.map((tr) => `
+                <div style="margin-bottom:8px;">
+                  <div class="mono" style="font-size:0.68rem;color:${escapeHtml(tr.color || "#93C5FD")};margin-bottom:2px;">${escapeHtml(tr.label)}</div>
+                  <svg viewBox="0 0 280 42" style="width:100%;height:42px;background:rgba(2,4,8,0.85);border-radius:8px;border:1px solid rgba(255,255,255,0.1);display:block;">
+                    <line x1="20" y1="0" x2="20" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
+                    <line x1="80" y1="0" x2="80" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
+                    <line x1="140" y1="0" x2="140" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
+                    <line x1="200" y1="0" x2="200" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
+                    <line x1="260" y1="0" x2="260" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
+                    <polyline points="${escapeHtml(tr.points)}" fill="none" stroke="${escapeHtml(tr.color || "#38BDF8")}" stroke-width="2.2"/>
+                  </svg>
+                </div>`).join("")}
+              <div class="mono" style="display:flex;justify-content:space-between;font-size:0.66rem;color:#94A3B8;padding:2px 8px 0;">
+                <span>+0m</span><span>+4m</span><span>+8m</span><span>+12m</span><span>+16m</span>
+              </div>
+            </div>`;
+        }
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--adv-crimson);margin-bottom:6px;">OSCILOSCOPIO · PLANTA 1 (DIRECCIÓN)</div>
@@ -669,20 +704,41 @@ window.PuzzleEngine = (() => {
       if (inp.dataset.action === "tune-freq") {
         const day = inp.dataset.day;
         const val = Number(inp.value);
-        const target = Number(inp.dataset.target);
+        let bands = [];
+        try { bands = JSON.parse(inp.dataset.bands || "[]"); } catch (_) {}
+        if (!bands.length && inp.dataset.target) {
+          bands = [{ hz: Number(inp.dataset.target), text: inp.dataset.clear || "" }];
+        }
         const lbl = document.getElementById(`freq-val-${day}`);
+        const sigEl = document.getElementById(`freq-sig-${day}`);
+        const smeter = document.getElementById(`freq-smeter-${day}`);
         const msg = document.getElementById(`freq-msg-${day}`);
         if (lbl) lbl.textContent = `${val} Hz`;
+        let minDist = 999;
+        let hitBand = null;
+        bands.forEach((b) => {
+          const d = Math.abs(val - Number(b.hz));
+          if (d < minDist) minDist = d;
+          if (d === 0) hitBand = b;
+        });
+        const sigPct = hitBand ? 100 : minDist <= 40 ? Math.max(18, Math.round(92 - minDist * 1.7)) : 8;
+        if (sigEl) sigEl.textContent = `${sigPct}%`;
+        if (smeter) {
+          smeter.style.width = `${sigPct}%`;
+          smeter.style.background = hitBand ? "linear-gradient(90deg, #10B981, #34D399)" : minDist <= 40 ? "linear-gradient(90deg, #F59E0B, #38BDF8)" : "linear-gradient(90deg, #334155, #475569)";
+        }
         if (msg) {
-          if (val === target) {
+          if (hitBand) {
             window.AudioFX.radioSweep?.();
             msg.style.color = "#67E8F9";
             msg.style.borderColor = "rgba(0,229,255,0.5)";
-            msg.textContent = inp.dataset.clear || "";
+            msg.textContent = hitBand.text || "";
           } else {
             msg.style.color = "var(--vg-text-muted)";
             msg.style.borderColor = "rgba(255,255,255,0.08)";
-            msg.textContent = "[ #%& RUIDO DE VENTISCA · SINTONIZA LA BANDA CORRECTA ##@ ]";
+            msg.textContent = minDist <= 40
+              ? "[ ~ PORTADORA PRÓXIMA DETECTADA · AJUSTA FINO EL DIAL ~ ]"
+              : "[ #%& RUIDO DE VENTISCA · BARRE EL DIAL BUSCANDO PICOS DE SEÑAL ##@ ]";
           }
         }
         emitChange();
@@ -702,7 +758,7 @@ window.PuzzleEngine = (() => {
         if (st) {
           if (Math.abs(val - target) < 0.01) {
             st.style.color = "#6EE7B7";
-            st.textContent = `ALINEADO EXACTO: ${target.toFixed(1)} cm -> Consulta la talla equivalente en la tabla.`;
+            st.textContent = `ALINEADO EXACTO: ${target.toFixed(1)} cm (longitud exterior de suela).`;
           } else {
             st.style.color = "var(--vg-text-muted)";
             st.textContent = "Desliza la línea verde hasta el borde derecho de la suela";

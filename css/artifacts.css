@@ -56,8 +56,10 @@
 
 .paper-ledger-head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 6px;
   padding-bottom: 6px;
   margin-bottom: 8px;
   border-bottom: 1.5px solid rgba(180, 83, 9, 0.35);

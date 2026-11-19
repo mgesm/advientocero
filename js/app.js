@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.5.0";
+  const APP_VERSION = "v2.6.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
