@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.9.0";
+  const APP_VERSION = "v2.9.1";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -110,6 +110,36 @@
     document.body.classList.remove("modal-open");
     document.body.style.top = "";
     window.scrollTo(0, lockedScrollY);
+  }
+
+  let briefingFsScrollY = 0;
+
+  function setBriefingFullscreen(active, targetFrame = null) {
+    const frames = targetFrame ? [targetFrame] : Array.from(document.querySelectorAll(".briefing-frame"));
+    if (active) {
+      if (!frames.length) return;
+      if (!document.body.classList.contains("briefing-fs-active")) {
+        briefingFsScrollY = window.scrollY || window.pageYOffset || 0;
+        document.body.classList.add("briefing-fs-active");
+      }
+      frames.forEach((fr) => {
+        fr.classList.add("briefing-fullscreen");
+        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: true }, "*"); } catch (_) {}
+      });
+      if (window.history?.pushState) {
+        window.history.pushState({ briefingFs: true, tab: activeTab, day: selectedDayNum }, "");
+      }
+    } else {
+      const wasActive = document.body.classList.contains("briefing-fs-active") || Boolean(document.querySelector(".briefing-frame.briefing-fullscreen"));
+      document.body.classList.remove("briefing-fs-active");
+      document.querySelectorAll(".briefing-frame").forEach((fr) => {
+        fr.classList.remove("briefing-fullscreen");
+        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+      });
+      if (wasActive) {
+        window.scrollTo(0, briefingFsScrollY);
+      }
+    }
   }
 
   function initSnowCanvas() {
@@ -296,6 +326,7 @@
 
   function switchTab(tab, opts = {}) {
     if (activeTab === tab && !opts.force) return;
+    setBriefingFullscreen(false);
     clearKeyboardOpen();
     window.AudioFX.stopMorse?.();
     tabScrollY[activeTab] = window.scrollY;
@@ -1958,11 +1989,8 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        const fsFrame = document.querySelector(".briefing-frame.briefing-fullscreen");
-        if (fsFrame) {
-          fsFrame.classList.remove("briefing-fullscreen");
-          unlockBodyScroll();
-          try { fsFrame.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+        if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
+          setBriefingFullscreen(false);
           return;
         }
         if (document.getElementById("adv-modal")?.classList.contains("open")) {
@@ -2031,16 +2059,8 @@
       } else if (e.data && e.data.type === "toggle-fullscreen") {
         document.querySelectorAll(".briefing-frame").forEach((fr) => {
           if (fr.contentWindow === e.source || document.querySelectorAll(".briefing-frame").length === 1) {
-            const active = fr.classList.toggle("briefing-fullscreen");
-            if (active) {
-              lockBodyScroll();
-              if (window.history?.pushState) {
-                window.history.pushState({ briefingFs: true, tab: activeTab, day: selectedDayNum }, "");
-              }
-            } else {
-              unlockBodyScroll();
-            }
-            try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active }, "*"); } catch (_) {}
+            const active = !fr.classList.contains("briefing-fullscreen");
+            setBriefingFullscreen(active, fr);
           }
         });
       }
@@ -2050,11 +2070,8 @@
       window.history.replaceState({ tab: "calendar", day: selectedDayNum }, "");
     }
     window.addEventListener("popstate", (e) => {
-      const fsFrame = document.querySelector(".briefing-frame.briefing-fullscreen");
-      if (fsFrame) {
-        fsFrame.classList.remove("briefing-fullscreen");
-        unlockBodyScroll();
-        try { fsFrame.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+      if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
+        setBriefingFullscreen(false);
         return;
       }
       if (document.getElementById("adv-modal")?.classList.contains("open")) {

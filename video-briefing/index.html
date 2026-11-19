@@ -77,12 +77,20 @@
       }
     }
     body.is-fullscreen {
+      height: 100dvh;
       min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
       justify-content: center;
-      padding: env(safe-area-inset-top, 0px) 8px env(safe-area-inset-bottom, 0px);
+      padding: max(env(safe-area-inset-top, 0px), 6px) 8px max(env(safe-area-inset-bottom, 0px), 6px);
+    }
+    body.is-fullscreen .player-shell {
+      max-height: calc(100dvh - 12px);
+      overflow-y: auto;
     }
     body.is-fullscreen .stage {
-      max-height: 58dvh;
+      max-height: 46dvh;
+      min-height: 160px;
     }
     .seek-row {
       display: flex;
@@ -846,7 +854,7 @@
         const fsBtn = document.getElementById("fs-btn");
         if (fsBtn) fsBtn.textContent = isFs ? "Salir pantalla completa" : "Pantalla completa";
         resizeCanvas();
-        notifyParentHeight();
+        if (!isFs) setTimeout(notifyParentHeight, 60);
       } else if (e.data.type === "mute") {
         musicOn = !e.data.muted;
         document.getElementById("music-btn").textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
@@ -869,6 +877,7 @@
     });
 
     function notifyParentHeight() {
+      if (document.body.classList.contains("is-fullscreen")) return;
       if (window.parent && window.parent !== window) {
         const shell = document.getElementById("player-shell");
         const h = shell ? Math.ceil(shell.getBoundingClientRect().height) : document.documentElement.scrollHeight;
