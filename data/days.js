@@ -1,6 +1,6 @@
 /**
  * ADVIENTO CERO - 24 DIAS DE INVESTIGACION COOPERATIVA
- * Overhaul v2.6.0: dificultad progresiva de menos a mas con hashes SHA-256 (Cero Spoilers).
+ * Overhaul v2.7.0: dificultad progresiva de menos a mas + contexto de sospecha en cada dia (Cero Spoilers).
  */
 
 window.ADVENT_DAYS = [
@@ -9,6 +9,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 01 · INSPECCIÓN DE MESAS",
         "title":  "El Brindis del Salón",
         "story":  "Veinte minutos antes de hallar a Arturo Valdivieso, el sensor óptico del salón captó un destello de xenón junto a uno de los ventanales. Debéis cruzar orientación, tarjetas anónimas y registro de recepción para identificar a quién ocupaba la Silla 3.",
+        "dossierContext":  {
+                               "focus":  "Durante la tarde, Arturo requisó por la fuerza la tarjeta de memoria de un fotógrafo acreditado tras una instantánea comprometedora. Además, varios invitados aseguran haber visto el fogonazo de una cámara junto a una mesa minutos antes del colapso.",
+                               "alibi":  "El sospechoso sostiene que ya había salido al porche exterior Este antes de las 23:36 h para fotografiar el temporal y que no estaba dentro del Salón Mirador.",
+                               "goal":  "Cruzar el plano del sensor óptico con las tarjetas de protocolo anónimas y el Check-in para confirmar en qué mesa y silla se sentaba y desde dónde se disparó el flash."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Orientación y Sensores",
@@ -79,6 +84,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 02 · LINTERNA LUMINOL",
         "title":  "Manchas bajo Luz UV",
         "story":  "La bandeja de cócteles de la barra fue limpiada a toda prisa tras el hallazgo. Bajo tinta invisible UV no solo hay cifras: también dejaron anotada la regla de lectura del cierre frigorífico.",
+        "dossierContext":  {
+                               "focus":  "El barman Nicolás Ferrer sirvió personalmente las copas del brindis navideño en las que apareció el tóxico. Poco después del hallazgo, alguien limpió apresuradamente la bandeja de servicio de la barra.",
+                               "alibi":  "Nicolás afirma no haber tocado la copa durante el apagón porque salió diez minutos al almacén frigorífico del sótano a buscar hielo.",
+                               "goal":  "Revelar con luz ultravioleta la anotación invisible de la bandeja y cruzarla con el cuadrante nocturno de barra para comprobar si el registro del frigorífico confirma su bajada a las 23:34 h."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Linterna Ultravioleta",
@@ -126,6 +136,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 03 · TELEMETRÍA DE EMERGENCIA",
         "title":  "Morse en la Centralita",
         "story":  "Durante el apagón de las 23:38 h, alguien activó un pulsador interior enviando cinco caracteres en código Morse internacional.",
+        "dossierContext":  {
+                               "focus":  "El conserje nocturno Tomás Bermúdez dependía de un acuerdo verbal de pensión interna que Arturo se negaba a firmar tras décadas de servicio en el hotel.",
+                               "alibi":  "Asegura que al saltar la luz bajó al almacén del sótano para repartir mantas térmicas entre los huéspedes y que desde allí pulsó la llamada de emergencia.",
+                               "goal":  "Traducir los cinco caracteres captados en código Morse por la centralita a las 23:39 h y cotejarlos con el directorio completo de extensiones para verificar desde qué planta se activó."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Receptor de Audio/Luz",
@@ -171,6 +186,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 04 · CONTROL DE LAVANDERÍA",
         "title":  "Cuadrante de Llaves Maestras",
         "story":  "El armario de llaves maestras solo conserva dos cifras visibles en la mitad superior y dos en la inferior. Necesitáis resolver el Sudoku 4x4 completo cruzando deducciones para abrir el doble candado.",
+        "dossierContext":  {
+                               "focus":  "La gobernanta Marta Quiroga es una de las pocas personas con acceso físico a todas las llaves maestras del hotel, incluidas la suite de la víctima y los equipajes privados de los huéspedes.",
+                               "alibi":  "Declara haber precintado el armario maestro de lavandería a las 23:25 h sin volver a sacar ninguna llave durante el resto de la velada.",
+                               "goal":  "Completar entre ambos terminales el cuadrante lógico 4x4 del armario de llaves para validar si el precinto quedó realmente cerrado antes del apagón."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Mitad Superior (F1–F2)",
@@ -282,6 +302,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 05 · TORNIQUETES ALA NORTE",
         "title":  "Lectura RFID de Pasillos",
         "story":  "Tres tarjetas RFID distintas pasaron por el entorno de la Biblioteca de Planta 2 entre las 23:31 y las 23:44 h, pero solo una permaneció encerrada dentro durante el apagón.",
+        "dossierContext":  {
+                               "focus":  "Entre las personas alojadas en Planta 2 hay una investigadora que había destapado irregularidades urbanísticas del hotel, motivo de un grave enfrentamiento previo con Arturo.",
+                               "alibi":  "Sostiene que se retiró sola a la Biblioteca de Planta 2 antes del apagón y que no salió hasta que acudió la dirección tras el suceso.",
+                               "goal":  "Aislar qué tarjeta RFID permaneció realmente dentro de la Biblioteca entre las 23:39 y las 23:58 h y confirmar su titular real tras una reasignación nocturna de recepción."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Log Técnico RFID",
@@ -333,6 +358,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 06 · RUEDA CÉSAR Y PARTITURA",
         "title":  "El Criptograma del Ropero",
         "story":  "La nota del vestíbulo artístico contiene tres salas distintas cifradas bajo el mismo desplazamiento César. Necesitaréis calcular la clave real en la partitura y filtrar la acústica correcta.",
+        "dossierContext":  {
+                               "focus":  "La cantante Claudia Benítez mantuvo una agria discusión contractual con Arturo tras el primer pase de la gala al reclamarle pagos bloqueados. Una nota cifrada apareció en el perchero del vestíbulo artístico.",
+                               "alibi":  "Mantiene que permaneció ensayando en voz alta y a puerta cerrada dentro de su camerino antes, durante y después del apagón.",
+                               "goal":  "Deduce con la partitura el desplazamiento César exacto, descifra las tres salas candidatas y verifica en cuál coinciden las condiciones acústicas descritas por los técnicos."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Decodificador César",
@@ -380,6 +410,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 07 · TESTIMONIOS Y LOGS",
         "title":  "Seis Coartadas, Cinco Sensores",
         "story":  "Seis declaraciones anonimizadas mencionan relojes, suelo radiante, cables de red y puertas exteriores a las 23:40 h. Solo una sobrevive al examen técnico del hotel.",
+        "dossierContext":  {
+                               "focus":  "Arturo había bloqueado recientemente la línea de financiación del estudio creativo de su sobrino Diego Aranda exigiéndole devolver un préstamo de inmediato. Varios testimonios nocturnos se contradicen sobre lo ocurrido a las 23:40 h.",
+                               "alibi":  "Uno de los seis sujetos interrogados asegura que permaneció en todo momento trabajando en el Estudio de Diseño con carga de maquetas en red.",
+                               "goal":  "Refutar los relatos imposibles frente a los sensores físicos del hotel (relojes, calefacción, hielo y puertos LAN) y confirmar si el tráfico del estudio respalda esa coartada."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Atestados Anonimizados",
@@ -428,6 +463,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 08 · TOXICOLOGÍA DE ESPECIAS",
         "title":  "La Balanza del Ponche",
         "story":  "En el spa han aparecido cuatro pesajes de especias navideñas divididos entre vuestras terminales. Ninguna báscula resuelve un ingrediente por sí sola: debéis resolver el sistema de cuatro ecuaciones juntas.",
+        "dossierContext":  {
+                               "focus":  "La fisioterapeuta Paula Mendoza elaboraba aceites e infusiones herbales personalizadas para los huéspedes VIP del spa. Durante la inspección aparecieron frascos de ámbar sin etiqueta y pesajes fragmentados sobre su mesa de trabajo.",
+                               "alibi":  "Asegura que solo preparaba mezclas inocuas de especias navideñas y tisanas relajantes para la noche de Adviento.",
+                               "goal":  "Resolver simultáneamente el sistema de cuatro pesajes entre ambos terminales para comprobar el gramaje exacto de la mezcla frente al cuaderno del spa."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Básculas 1 y 2",
@@ -477,6 +517,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 09 · CÁMARAS EXTERIORES Y TERMOGRAFÍA",
         "title":  "Fotogramas del Mirador",
         "story":  "La cámara térmica exterior registró el ángulo norte del teleférico a las 23:41 h, mientras la cámara infrarroja interior captaba el calor residual del teclado de la Cabaña Norte.",
+        "dossierContext":  {
+                               "focus":  "El guía alpino Mateo Soler protagonizó esa tarde una violenta discusión con Arturo al negarse a poner en marcha el teleférico en plena ciclogénesis. Una figura con ropa técnica fue detectada en el exterior.",
+                               "alibi":  "Sostiene que a las 23:41 h se encontraba en el exterior quitando hielo de la polea norte y entrando acto seguido en su cabaña.",
+                               "goal":  "Cruzar los sensores meteorológicos del poste Norte con la termografía residual infrarroja del teclado de la Cabaña Norte para probar su presencia física allí a las 23:41 h."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Cámara Norte y Postes",
@@ -525,6 +570,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 10 · SALA DE MÁQUINAS",
         "title":  "Válvulas de la Caldera",
         "story":  "Cuatro manómetros marcan lecturas distintas en el sótano. Debéis aislar el circuito en alerta crítica, consultar sus reglas booleanas de seguridad y aplicar el ajuste final del manómetro.",
+        "dossierContext":  {
+                               "focus":  "El técnico Julián Prieto había sido amonestado por Arturo a raíz de fallos repetidos en la calefacción del ala oeste. Su conocimiento de cuadros, válvulas e instalaciones lo sitúa en el foco técnico del sabotaje.",
+                               "alibi":  "Afirma que entre las 23:36 y las 23:45 h estaba atrapado en el sótano purgando manualmente un circuito hidráulico en alerta crítica.",
+                               "goal":  "Detectar el circuito averiado por presión y temperatura, deducir sus reglas booleanas de purga y contrastar la serie resultante del manómetro."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Manual Booleano de Calderas",
@@ -573,6 +623,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 11 · CONSUMO EN BARRA",
         "title":  "El Ticket Térmico Roto",
         "story":  "Cuatro cintas de datáfono y cuatro comandas de barra se mezclaron en distinto orden al romperse el rollo térmico. Usad la carta de precios para emparejar la consumición de Marcos Tejada.",
+        "dossierContext":  {
+                               "focus":  "El escolta privado Marcos Tejada sabía que Arturo planeaba despedirlo esa misma semana por pérdida de confianza; además conocía los puntos ciegos de vigilancia y rutinas de la víctima.",
+                               "alibi":  "Declara que no se apartó del vestíbulo principal porque pagó un café en recepción justo en el minuto en que se fue la luz.",
+                               "goal":  "Emparejar las cintas TPV desordenadas con las comandas y precios de barra para confirmar a qué hora exacta se autorizó el pago de su mesa."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Cinta TPV (Horas e Importes)",
@@ -621,6 +676,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 12 · REJILLA CARDANO 5x5",
         "title":  "Nonograma del Archivo",
         "story":  "El catálogo donde Elena Valls selló su inventario usa una máscara asimétrica 5x5. Solo resolviendo la cuadrícula exacta y superponiéndola sobre la matriz de letras aparecerá la estantería.",
+        "dossierContext":  {
+                               "focus":  "La tasadora Elena Valls había descubierto que uno de los cuadros del Salón Mirador era una falsificación encubierta, poniendo en jaque la póliza y reputación de Arturo Valdivieso.",
+                               "alibi":  "Sostiene que se encontraba lejos de la planta baja, inventariando y fotografiando manuscritos antiguos en el Archivo Histórico.",
+                               "goal":  "Resolver la máscara única del nonograma 5x5 y superponerla sobre la matriz del Archivo Histórico para localizar la estantería exacta revisada bajo cámara."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Pistas de Filas",
@@ -737,6 +797,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 13 · MENSAJERÍA Y HUSO HORARIO",
         "title":  "Chats Fragmentados",
         "story":  "La tableta del helicóptero registra en horario UTC (Z), mientras el radar militar trabaja en hora local CET (UTC + 1 h). Además hay dos balizas trampa en la frecuencia.",
+        "dossierContext":  {
+                               "focus":  "El piloto Gabriel Serrano culpaba a Arturo de haberle presionado días atrás para volar en condiciones meteorológicas extremas que pusieron en riesgo su vida y licencia.",
+                               "alibi":  "Mantiene que permaneció confinado en el hangar exterior asegurando el rotor del helicóptero y emitiendo manualmente su baliza de posición.",
+                               "goal":  "Alinear las marcas UTC de la tableta del piloto con la hora local CET del radar militar, descartar los ecos falsos de tormenta y validar qué baliza estuvo activa a las 23:37 h."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Tableta Hangar (Hora UTC)",
@@ -788,6 +853,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 14 · FÍSICA DE SEÑAL RSSI",
         "title":  "Triangulación Wi-Fi",
         "story":  "Dos puntos de acceso cubren el pasillo lineal de 12 habitaciones de la Planta 2. Calculad la distancia en saltos de puerta según los dBm y extraed el rastro hardware del auditor.",
+        "dossierContext":  {
+                               "focus":  "El auditor fiscal Raúl Cuesta había detectado una caja B oculta en la sociedad del hotel, descubrimiento que amenazaba con una denuncia penal contra Arturo tras el fin de semana.",
+                               "alibi":  "Asegura que a las 23:40 h seguía encerrado en su habitación descargando balances fiscales desde su portátil corporativo.",
+                               "goal":  "Calcular distancias en habitaciones a partir de los decibelios dBm de dos antenas Wi-Fi opuestas y verificar la dirección MAC del equipo que transfería datos a esa hora."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · AP-Norte y Tráfico Red",
@@ -836,6 +906,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 15 · LÓGICA MASTERMIND 5 DÍGITOS",
         "title":  "La Caja Fuerte de Recepción",
         "story":  "El conserje intentó abrir dos veces la caja fuerte dejando el registro de aciertos posicionales. Combinad placa fundacional, chimeneas, ambos fallos y suma de control.",
+        "dossierContext":  {
+                               "focus":  "El constructor Ricardo Peña mantenía un litigio por una factura impagada de 240.000 euros retenida personalmente por Arturo por la reforma del complejo.",
+                               "alibi":  "Sostiene que a las 23:40 h se hallaba junto al mostrador de recepción sellando un pagaré de urgencia que quedó depositado en la caja auxiliar.",
+                               "goal":  "Combinar las pistas arquitectónicas del hotel con los dos intentos fallidos registrados en el teclado para abrir la caja fuerte y certificar si el pagaré existe dentro."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Placa e Intento #1",
@@ -902,6 +977,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 16 · BARRIDO ESPECTRAL",
         "title":  "Frecuencia en el Buzón",
         "story":  "Hay tres portadoras activas ocultas entre 200 y 740 Hz bajo la tormenta: una llamada de prueba descartable y dos canales satelitales del tramo real.",
+        "dossierContext":  {
+                               "focus":  "Sofía Navarro, prometida de Arturo, acababa de enterarse esa tarde de que había sido eliminada por completo del nuevo testamento antes de la boda.",
+                               "alibi":  "Declara haber subido a la Suite 305 antes del brindis final para mantener una larga llamada satelital con su madre sin bajar al salón.",
+                               "goal":  "Realizar un barrido de frecuencias con el S-Meter entre estática de tormenta, descartar comunicaciones previas y validar las dos portadoras del tramo real 23:35–23:48 h."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Sintonizador Multi-Banda",
@@ -963,6 +1043,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 17 · DEDUCCIÓN EINSTEIN 4x4",
         "title":  "Parrilla Deductiva del Comedor",
         "story":  "Cuatro personas del complejo (Héctor, Nora, Tomás y Marta) estuvieron en cuatro dependencias distintas (Cocina, Bodega, Salón y Oficio) en cuatro franjas exactas. Ninguna pista da un nombre directo.",
+        "dossierContext":  {
+                               "focus":  "El chef ejecutivo Héctor Salgado afrontaba el rechazo de su presupuesto y la amenaza directa de Arturo de externalizar toda la restauración del hotel.",
+                               "alibi":  "Mantiene que a las 23:40 h supervisaba el soufflé navideño dentro de la Cocina junto a sus pinches, aunque las rondas entre Cocina, Bodega, Salón y Oficio resultan confusas.",
+                               "goal":  "Completar la matriz deductiva 4x4 cruzando las ocho restricciones horarias y de ubicación del personal para confirmar exactamente dónde estuvo cada uno a las 23:40 h."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Pistas 1–4 y Lugares",
@@ -1029,6 +1114,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 18 · BIOMECÁNICA DE HUELLA ABFO",
         "title":  "Huellas en la Nieve del Patio",
         "story":  "Una pisada de suela Vibram-Alpine modelo ALP-40 generó dudas sobre Adriana Orozco. Deberéis medir el largo exterior total, descontar el cerco de goma y convertir la horma interna.",
+        "dossierContext":  {
+                               "focus":  "La farmacéutica jubilada Adriana Orozco posee amplios conocimientos sobre alcaloides vegetales y dosificaciones letales. Además, una pisada nítida en la nieve bajo un alféizar hizo sospechar que salió al exterior.",
+                               "alibi":  "Afirma que entregó sus botas secas en las taquillas de recepción a las 23:32 h y no volvió a pisar el jardín helado.",
+                               "goal":  "Medir la huella exterior con el calibre ABFO, descontar el margen técnico de goma de la suela hasta la horma del pie y comparar la talla europea real con su calzado guardado."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Calibre Forense ABFO",
@@ -1077,6 +1167,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 19 · CRIPTOGRAFÍA BANCARIA SWIFT",
         "title":  "Transferencias de Medianoche",
         "story":  "Cuatro transferencias internacionales salieron del hotel alrededor de la medianoche, pero el token de validación se cifra mediante coordenadas sobre una matriz SWIFT 6x6.",
+        "dossierContext":  {
+                               "focus":  "El banquero Álvaro Roldán dirigía una opa hostil sobre el hotel y mantuvo esa misma tarde un tenso roce en privado con Arturo por el control societario.",
+                               "alibi":  "Asegura haber estado en la Suite 303 a las 23:39 h ejecutando una transferencia urgente de 45.000 EUR hacia Zúrich con verificación facial en directo.",
+                               "goal":  "Filtrar las cuatro órdenes SEPA salientes del hotel, descifrar las coordenadas de verificación en la matriz SWIFT 6x6 y auditar si la firma biométrica coincide en tiempo real."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Órdenes SEPA Salientes",
@@ -1125,6 +1220,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 20 · ESCÁNER DE TALLADO X-RAY",
         "title":  "Escáner de Equipaje (Rayos X)",
         "story":  "El escáner portátil separa la capa metálica (dientes reales de la llave y termómetro de latón) de la capa orgánica (botellas y precintos). Deberéis leer medidas visuales sin texto directo.",
+        "dossierContext":  {
+                               "focus":  "La sumiller Nora Echevarría discrepaba gravemente con Arturo por la falsificación de añadas de prestigio en la carta privada de bodega. Al revisar su maletín aparecieron herramientas y envases sin declarar.",
+                               "alibi":  "Mantiene que durante el crimen estuvo inventariando botellas selladas en la cava del subsuelo sin subir al Salón Mirador.",
+                               "goal":  "Activar los filtros metálico y orgánico de rayos X para medir visualmente los cinco dientes de su llave y comprobar la añada intacta y temperatura de la cava."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Espectro Metálico",
@@ -1174,6 +1274,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 21 · RECONSTRUCCIÓN RELATIVA",
         "title":  "Cronología de la Planta 3",
         "story":  "Los seis fragmentos de la Planta 3 perdieron casi todas sus marcas de reloj. Solo conocéis la hora exacta del apagón y una desviación técnica en el reloj de pasillo.",
+        "dossierContext":  {
+                               "focus":  "Beatriz Valdivieso, hermana y socia minoritaria de Arturo, se oponía frontalmente a la venta familiar del complejo y mantuvo una discusión audible en su suite poco antes del crimen.",
+                               "alibi":  "Sostiene que bajó de Planta 3 antes del apagón y que permaneció en la Sala de Lectura de Planta 2 durante todo el corte eléctrico.",
+                               "goal":  "Reconstruir el orden exacto de seis sucesos usando solo intervalos relativos desde la hora del apagón y corrigiendo el adelanto del reloj de pasillo."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Fragmentos T, R y V",
@@ -1222,6 +1327,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 22 · ANÁLISIS DE OSCILOSCOPIO",
         "title":  "Pico de Voltaje en Planta 1",
         "story":  "El cuadro eléctrico general registró cuatro líneas entre las 23:30 y las 23:46 h. Distinguiréis cuál sufrió una caída manual de disyuntor, calcularéis el minuto exacto sobre la escala relativa y cruzaréis el sensor de la Capilla.",
+        "dossierContext":  {
+                               "focus":  "Teresa Alarcón culpaba a Arturo de la muerte de su marido en un accidente de obra ocurrido en el hotel en 2019. Además, alguien provocó deliberadamente el apagón de 4 minutos desde Planta 1.",
+                               "alibi":  "Declara que rezaba con velas dentro de la Capilla Alpina mientras fallaba la luz, sin acercarse al cuadro eléctrico.",
+                               "goal":  "Distinguir en el osciloscopio qué circuito sufrió un corte manual vertical frente a picos de tormenta, calcular el minuto exacto sobre escala relativa y cruzar el sensor de puerta de la capilla."
+                           },
         "mode":  "code",
         "miguel":  {
                        "roleBadge":  "Miguel · Osciloscopio 4 Circuitos",
@@ -1287,6 +1397,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 23 · NOTARÍA Y TRIANGULACIÓN BTS",
         "title":  "La Penúltima Coartada",
         "story":  "Un borrador notarial rasgado por los extremos oculta dos de sus tres dígitos, mientras la operadora entrega duraciones crudas en segundos desde distintas celdas BTS.",
+        "dossierContext":  {
+                               "focus":  "El convenio de divorcio y reparto accionarial de la exmujer y abogada Valeria Domínguez expiraba justo al empezar el 1 de diciembre, lo que convertía aquella medianoche en su último plazo.",
+                               "alibi":  "Afirma que estuvo hablando 26 minutos ininterrumpidos con su bufete de Madrid desde la ventana de la Suite 304 mientras discutía un borrador notarial.",
+                               "goal":  "Reconstruir los dígitos faltantes del protocolo hallado en el abrigo de Arturo y comprobar en los registros celulares en segundos qué antena mantuvo activa esa llamada."
+                           },
         "mode":  "dual-lock",
         "miguel":  {
                        "roleBadge":  "Miguel · Borrador y Mapa BTS",
@@ -1338,6 +1453,11 @@ window.ADVENT_DAYS = [
         "kicker":  "DÍA 24 · RESOLUCIÓN FINAL",
         "title":  "Nochebuena: Juicio en el Ventisquero",
         "story":  "Es 24 de diciembre. Cuatro sospechosos siguen en pie en vuestro tablero. Paso 1: cruzad el registro horario del Spa con las cuatro aperturas electrónicas UID de la Hab. 206 y el inventario maestro para ejecutar el último descarte. Paso 2: enfrentad a los 3 finalistas en el Careo Final apoyándoos en la espectrometría MS de la copa.",
+        "dossierContext":  {
+                               "focus":  "La botánica Inés Casado guarda muestras de flora alpina tóxica en su equipaje de la Hab. 206, pero denuncia que alguien ajeno entró en su cuarto mientras ella estaba en el Spa. Al mismo tiempo, la autopsia apunta a un alcaloide alpino en la copa del brindis.",
+                               "alibi":  "Inés asegura que permaneció en el circuito termal del Spa entre las 18:05 y las 19:00 h; fuera de ese último descarte, solo quedan tres finalistas con motivos vigentes.",
+                               "goal":  "Paso 1: cruzar el horario del Spa con las cuatro aperturas UID de la Hab. 206 para aislar qué llave maestra robó el vial. Paso 2: identificar la toxina en el espectrómetro MS y cruzar huellas AFIS y coartadas en el Careo Final."
+                           },
         "mode":  "final-trial",
         "miguel":  {
                        "roleBadge":  "Miguel · Cerradura 206 (UID) y Espectrómetro MS",

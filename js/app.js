@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.6.0";
+  const APP_VERSION = "v2.7.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -935,6 +935,16 @@
           </div>
           <h1 class="day-title">${esc(dayObj.title)}</h1>
           <p class="day-story">${esc(dayObj.story)}</p>
+          ${dayObj.dossierContext ? `
+            <div class="context-brief-box">
+              <div class="mono context-brief-head">CONTEXTO DE LA DILIGENCIA · POR QUÉ INVESTIGAMOS ESTO HOY</div>
+              <ul class="context-brief-list">
+                <li><strong>Motivo de sospecha:</strong> ${esc(dayObj.dossierContext.focus)}</li>
+                <li><strong>Coartada en duda:</strong> ${esc(dayObj.dossierContext.alibi)}</li>
+                <li><strong>Objetivo de esta prueba:</strong> ${esc(dayObj.dossierContext.goal)}</li>
+              </ul>
+            </div>
+          ` : ""}
         </div>
 
         ${dayObj.day === 1 ? `

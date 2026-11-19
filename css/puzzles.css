@@ -68,6 +68,37 @@
   color: var(--vg-text-secondary);
 }
 
+.context-brief-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--vg-radius-md);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.32);
+}
+
+.context-brief-head {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--adv-gold-soft);
+  margin-bottom: 8px;
+}
+
+.context-brief-list {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.83rem;
+  line-height: 1.48;
+  color: var(--vg-text-primary);
+}
+
+.context-brief-list strong {
+  color: #FDE68A;
+}
+
 /* Tarjeta exclusiva del jugador (Miguel vs Patri) */
 .terminal-card {
   padding: 18px;
