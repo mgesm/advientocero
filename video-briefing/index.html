@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ADVIENTO CERO — Vídeo Briefing Oficial</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,13 +12,32 @@
     body {
       background: #040907;
       color: #F8FAFC;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
       min-height: 100dvh;
+      overscroll-behavior: contain;
     }
     body.embedded {
       min-height: auto;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    button:focus-visible,
+    input:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid #FBBF24;
+      outline-offset: 2px;
     }
     .player-shell {
       width: 100%;
@@ -38,14 +57,14 @@
       padding: 8px 12px;
       background: #061814;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      font-family: 'Courier Prime', monospace;
+      font-family: 'Courier Prime', ui-monospace, SFMono-Regular, monospace;
       font-size: 11px;
     }
     .rec-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: #F87171;
+      color: #FCA5A5;
       font-weight: 700;
       letter-spacing: 0.08em;
     }
@@ -73,24 +92,36 @@
     }
     @media (max-height: 480px) and (orientation: landscape) {
       .stage {
-        max-height: 220px;
+        max-height: 200px;
+        min-height: 140px;
       }
     }
     body.is-fullscreen {
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
       height: 100dvh;
       min-height: 100dvh;
       max-height: 100dvh;
       overflow-y: auto;
-      justify-content: center;
-      padding: max(env(safe-area-inset-top, 0px), 6px) 8px max(env(safe-area-inset-bottom, 0px), 6px);
+      justify-content: flex-start;
+      padding: max(env(safe-area-inset-top, 0px), 6px) max(env(safe-area-inset-right, 0px), 8px) max(env(safe-area-inset-bottom, 0px), 6px) max(env(safe-area-inset-left, 0px), 8px);
     }
     body.is-fullscreen .player-shell {
-      max-height: calc(100dvh - 12px);
+      margin: auto 0;
+      max-height: calc(100vh - 12px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      max-height: calc(100dvh - 12px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
       overflow-y: auto;
     }
     body.is-fullscreen .stage {
-      max-height: 46dvh;
+      max-height: 44dvh;
       min-height: 160px;
+    }
+    @media (max-height: 480px) and (orientation: landscape) {
+      body.is-fullscreen .stage {
+        max-height: 38dvh;
+        min-height: 120px;
+      }
     }
     .seek-row {
       display: flex;
@@ -101,7 +132,12 @@
       flex: 1;
       accent-color: #FBBF24;
       cursor: pointer;
-      min-height: 28px;
+      min-height: 36px;
+    }
+    @media (pointer: coarse) {
+      .seek-range {
+        min-height: 44px;
+      }
     }
     .slide-img, .slide-video {
       position: absolute;
@@ -191,6 +227,10 @@
       display: grid;
       place-items: center;
       background: rgba(2, 4, 8, 0.36);
+      border: none;
+      padding: 0;
+      width: 100%;
+      cursor: pointer;
       transition: opacity 250ms ease;
     }
     .center-play.hidden {
@@ -210,17 +250,20 @@
     }
     .audio-blocked-tip {
       display: none;
-      margin-top: 6px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      background: rgba(220, 38, 38, 0.25);
-      border: 1px solid rgba(248, 113, 113, 0.55);
+      margin-top: 8px;
+      min-height: 44px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: rgba(220, 38, 38, 0.28);
+      border: 1px solid rgba(248, 113, 113, 0.6);
       color: #FECACA;
-      font-size: 11.5px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
     }
     .audio-blocked-tip.visible {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
     }
     .controls {
       padding: 10px 12px;
@@ -247,6 +290,10 @@
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: manipulation;
     }
     .btn-gold {
       background: rgba(185, 28, 28, 0.72);
@@ -265,11 +312,12 @@
       border-radius: 99px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: transparent;
-      color: #94A3B8;
-      font-family: 'Courier Prime', monospace;
+      color: #CBD5E1;
+      font-family: 'Courier Prime', ui-monospace, SFMono-Regular, monospace;
       font-size: 11px;
       cursor: pointer;
       white-space: nowrap;
+      touch-action: manipulation;
     }
     .act-pill.active {
       background: rgba(251, 191, 36, 0.18);
@@ -279,6 +327,7 @@
     @media (pointer: coarse) {
       .btn, .act-pill {
         min-height: 44px;
+        min-width: 44px;
       }
     }
     .progress-track {
@@ -312,6 +361,7 @@
       border-top: 1px solid rgba(255, 255, 255, 0.10);
       max-height: 240px;
       overflow-y: auto;
+      overscroll-behavior: contain;
       font-size: 12px;
       line-height: 1.5;
     }
@@ -319,24 +369,35 @@
       display: block;
     }
     .script-item {
-      padding: 7px 9px;
+      width: 100%;
+      text-align: left;
+      padding: 9px 10px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.08);
       margin-bottom: 6px;
       cursor: pointer;
       background: rgba(255, 255, 255, 0.02);
+      color: inherit;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      display: block;
     }
     .script-item.active {
       border-color: rgba(251, 191, 36, 0.55);
       background: rgba(251, 191, 36, 0.08);
     }
     @media (prefers-reduced-motion: reduce) {
-      .slide-img, .slide-video, .rec-dot { animation: none !important; transition: none !important; }
+      .slide-img, .slide-video, .rec-dot, .progress-fill, .center-play, .blackout-veil {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="player-shell" id="player-shell">
+  <main class="player-shell" id="player-shell">
+    <h1 class="sr-only">Vídeo Briefing Oficial de Adviento Cero</h1>
     <div class="rec-bar">
       <span class="rec-pill"><span class="rec-dot"></span> GRABACIÓN DE CAMPO · UOPJ VENTISQUERO</span>
       <span id="timecode" style="color:#94A3B8;">30/11 19:00:00</span>
@@ -346,7 +407,7 @@
       <img src="../imagenes/cover-hotel.jpg" class="slide-img active" id="img-0" alt="Fachada Hotel">
       <img src="../imagenes/scene-lobby.jpg" class="slide-img" id="img-1" alt="Salón Mirador">
       <img src="../imagenes/scene-balcony.jpg" class="slide-img" id="img-2" alt="Terraza Norte">
-      <video class="slide-video" id="act-video" muted loop playsinline preload="metadata"></video>
+      <video class="slide-video" id="act-video" muted loop playsinline webkit-playsinline preload="metadata"></video>
       <div class="blackout-veil" id="blackout-veil"></div>
       <canvas class="fx-canvas" id="fx-canvas" aria-hidden="true"></canvas>
       <div class="vignette"></div>
@@ -357,16 +418,16 @@
         <span class="hud-tag" id="hud-temp">TEMP -11.4 °C · TELEFÉRICO BLOQUEADO</span>
       </div>
 
-      <div class="center-play" id="center-play">
-        <div class="play-circle" aria-label="Reproducir">
+      <button type="button" class="center-play" id="center-play" aria-label="Reproducir o pausar briefing">
+        <span class="play-circle" aria-hidden="true">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
-        </div>
-      </div>
+        </span>
+      </button>
     </div>
 
     <div class="subtitle-bar">
       <div class="act-title" id="act-title">Acto I · Aislamiento en el Pirineo</div>
-      <div class="subtitle-text" id="act-text">Pulsa reproducir para iniciar el informe audiovisual del caso sin spoilers.</div>
+      <div class="subtitle-text" id="act-text" aria-live="polite">Pulsa reproducir para iniciar el informe audiovisual del caso sin spoilers.</div>
       <button type="button" id="audio-blocked-btn" class="audio-blocked-tip">Toca aquí para activar la locución de este acto en iOS</button>
     </div>
 
@@ -374,24 +435,28 @@
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
       <div class="seek-row">
         <input type="range" id="seek-range" class="seek-range" min="0" max="1000" value="0" aria-label="Progreso del acto actual">
-        <span id="audio-time" style="font-family:'Courier Prime',monospace;font-size:11px;color:#94A3B8;min-width:74px;text-align:right;">00:00 / 00:00</span>
+        <span id="audio-time" style="font-family:'Courier Prime',ui-monospace,monospace;font-size:11px;color:#CBD5E1;min-width:74px;text-align:right;font-variant-numeric:tabular-nums;">00:00 / 00:00</span>
       </div>
       <div class="ctrl-row">
         <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-          <button type="button" class="btn" id="prev-act-btn" title="Acto anterior" aria-label="Acto anterior">|&lt;</button>
+          <button type="button" class="btn" id="prev-act-btn" title="Acto anterior" aria-label="Acto anterior">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+          </button>
           <button type="button" class="btn" id="rw-btn" title="Retroceder 8 segundos">-8s</button>
           <button type="button" class="btn btn-gold" id="play-btn">Reproducir</button>
           <button type="button" class="btn" id="ff-btn" title="Avanzar 8 segundos">+8s</button>
-          <button type="button" class="btn" id="next-act-btn" title="Acto siguiente" aria-label="Acto siguiente">&gt;|</button>
+          <button type="button" class="btn" id="next-act-btn" title="Acto siguiente" aria-label="Acto siguiente">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+          </button>
         </div>
-        <span id="act-counter" style="font-family:'Courier Prime',monospace;font-size:11px;color:#CBD5E1;">Acto 1 / 6</span>
+        <span id="act-counter" style="font-family:'Courier Prime',ui-monospace,monospace;font-size:11px;color:#CBD5E1;font-variant-numeric:tabular-nums;">Acto 1 / 6</span>
       </div>
       <div class="ctrl-row">
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button type="button" class="btn" id="voice-btn">Voz: ON</button>
-          <button type="button" class="btn" id="music-btn">Ambiente: ON</button>
+          <button type="button" class="btn" id="voice-btn" aria-pressed="true">Voz: ON</button>
+          <button type="button" class="btn" id="music-btn" aria-pressed="true">Ambiente: ON</button>
           <button type="button" class="btn" id="speed-btn">1.0x</button>
-          <button type="button" class="btn" id="script-btn">Guion</button>
+          <button type="button" class="btn" id="script-btn" aria-expanded="false">Guion</button>
         </div>
         <button type="button" class="btn" id="fs-btn">Pantalla completa</button>
       </div>
@@ -399,7 +464,7 @@
     </div>
 
     <div class="script-panel" id="script-panel"></div>
-  </div>
+  </main>
 
   <script>
     if (window.parent && window.parent !== window) {
@@ -475,7 +540,7 @@
       {
         title: "Acto VI · Protocolo Cooperativo: Miguel y Patri",
         cam: "CONEXIÓN ASIMÉTRICA ACTIVA",
-        temp: "TERMINAL A (MIGUEL) ↔ TERMINAL B (PATRI)",
+        temp: "TERMINAL A (MIGUEL) Y TERMINAL B (PATRI)",
         tc: "01/12 00:01:00",
         img: 1,
         audio: "audio/act-6.mp3",
@@ -487,10 +552,21 @@
       }
     ];
 
+    const memStore = new Map();
+    const SafeBriefStorage = {
+      getItem(k) {
+        try { return window.localStorage.getItem(k); } catch (_) { return memStore.has(k) ? memStore.get(k) : null; }
+      },
+      setItem(k, v) {
+        try { window.localStorage.setItem(k, String(v)); } catch (_) { memStore.set(k, String(v)); }
+      }
+    };
+
     let idx = 0;
     let playing = false;
-    let voiceOn = true;
-    let musicOn = localStorage.getItem("adviento_muted") !== "1";
+    let globalMuted = SafeBriefStorage.getItem("adviento_muted") === "1";
+    let voiceOn = !globalMuted;
+    let musicOn = !globalMuted;
     let playbackRate = 1.0;
     let timer = null;
     let audioCtx = null;
@@ -500,8 +576,18 @@
     let fxRaf = null;
     const voiceAudio = new Audio();
     voiceAudio.preload = "auto";
+    voiceAudio.muted = globalMuted;
 
-    document.getElementById("music-btn").textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
+    const musicBtnEl = document.getElementById("music-btn");
+    const voiceBtnEl = document.getElementById("voice-btn");
+    if (musicBtnEl) {
+      musicBtnEl.textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
+      musicBtnEl.setAttribute("aria-pressed", musicOn ? "true" : "false");
+    }
+    if (voiceBtnEl) {
+      voiceBtnEl.textContent = `Voz: ${voiceOn ? "ON" : "OFF"}`;
+      voiceBtnEl.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+    }
 
     const rail = document.getElementById("acts-rail");
     const scriptPanel = document.getElementById("script-panel");
@@ -513,9 +599,10 @@
       b.onclick = () => goToAct(i, true);
       rail.appendChild(b);
 
-      const item = document.createElement("div");
+      const item = document.createElement("button");
+      item.type = "button";
       item.className = "script-item" + (i === 0 ? " active" : "");
-      item.innerHTML = `<strong style="color:#FDE68A;">${a.title}</strong><div style="color:#CBD5E1;margin-top:2px;">${a.narration}</div>`;
+      item.innerHTML = `<strong style="color:#FDE68A;">${a.title}</strong><span style="display:block;color:#CBD5E1;margin-top:2px;">${a.narration}</span>`;
       item.onclick = () => goToAct(i, true);
       scriptPanel.appendChild(item);
     });
@@ -632,21 +719,21 @@
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     }
 
+    function advanceToNextAct() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!playing) return;
+        if (idx < ACTS.length - 1) goToAct(idx + 1, true);
+        else togglePlay(false);
+      }, 850);
+    }
+
     function speakAct(actIndex, resumeSame) {
       const actObj = ACTS[actIndex];
       const tip = document.getElementById("audio-blocked-btn");
       tip.classList.remove("visible");
       clearTimeout(timer);
       if (!playing) return;
-
-      const advance = () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          if (!playing) return;
-          if (idx < ACTS.length - 1) goToAct(idx + 1, true);
-          else togglePlay(false);
-        }, 850);
-      };
 
       if (!voiceOn) {
         pauseVoice();
@@ -664,13 +751,14 @@
           currentAudioAct = actIndex;
         }
         voiceAudio.playbackRate = playbackRate;
-        voiceAudio.onended = advance;
+        voiceAudio.muted = !voiceOn;
+        voiceAudio.onended = advanceToNextAct;
         voiceAudio.onerror = () => {
-          timer = setTimeout(advance, actObj.dur / playbackRate);
+          timer = setTimeout(advanceToNextAct, actObj.dur / playbackRate);
         };
         voiceAudio.play().catch(() => {
           tip.classList.add("visible");
-          timer = setTimeout(advance, actObj.dur / playbackRate);
+          timer = setTimeout(advanceToNextAct, actObj.dur / playbackRate);
         });
       }
     }
@@ -800,7 +888,8 @@
     };
     document.getElementById("fs-btn").onclick = () => {
       if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type: "toggle-fullscreen" }, "*");
+        const targetOrigin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
+        window.parent.postMessage({ type: "toggle-fullscreen" }, targetOrigin);
         return;
       }
       const el = document.documentElement;
@@ -816,13 +905,16 @@
     document.getElementById("audio-blocked-btn").onclick = () => {
       clearTimeout(timer);
       document.getElementById("audio-blocked-btn").classList.remove("visible");
+      voiceAudio.muted = !voiceOn;
       voiceAudio.play().catch(() => {
-        timer = setTimeout(advance, (ACTS[idx]?.dur || 12000) / playbackRate);
+        timer = setTimeout(advanceToNextAct, (ACTS[idx]?.dur || 12000) / playbackRate);
       });
     };
     document.getElementById("voice-btn").onclick = (e) => {
       voiceOn = !voiceOn;
+      voiceAudio.muted = !voiceOn;
       e.target.textContent = `Voz: ${voiceOn ? "ON" : "OFF"}`;
+      e.target.setAttribute("aria-pressed", voiceOn ? "true" : "false");
       if (!voiceOn) {
         pauseVoice();
         if (playing) speakAct(idx, false);
@@ -833,6 +925,7 @@
     document.getElementById("music-btn").onclick = (e) => {
       musicOn = !musicOn;
       e.target.textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
+      e.target.setAttribute("aria-pressed", musicOn ? "true" : "false");
       if (!musicOn) stopDrone();
       else if (playing) startDrone();
     };
@@ -842,12 +935,16 @@
       e.target.textContent = `${playbackRate}x`;
       voiceAudio.playbackRate = playbackRate;
     };
-    document.getElementById("script-btn").onclick = () => {
-      scriptPanel.classList.toggle("open");
+    document.getElementById("script-btn").onclick = (e) => {
+      const open = scriptPanel.classList.toggle("open");
+      e.target.setAttribute("aria-expanded", open ? "true" : "false");
       notifyParentHeight();
     };
 
     window.addEventListener("message", (e) => {
+      if (e.origin && window.location.origin && window.location.origin !== "null" && e.origin !== window.location.origin) {
+        return;
+      }
       if (!e.data) return;
       if (e.data.type === "pause") {
         togglePlay(false);
@@ -859,10 +956,27 @@
         resizeCanvas();
         if (!isFs) setTimeout(notifyParentHeight, 60);
       } else if (e.data.type === "mute") {
-        musicOn = !e.data.muted;
-        document.getElementById("music-btn").textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
-        if (!musicOn) stopDrone();
-        else if (playing) startDrone();
+        const muted = Boolean(e.data.muted);
+        musicOn = !muted;
+        voiceOn = !muted;
+        voiceAudio.muted = muted;
+        const mBtn = document.getElementById("music-btn");
+        const vBtn = document.getElementById("voice-btn");
+        if (mBtn) {
+          mBtn.textContent = `Ambiente: ${musicOn ? "ON" : "OFF"}`;
+          mBtn.setAttribute("aria-pressed", musicOn ? "true" : "false");
+        }
+        if (vBtn) {
+          vBtn.textContent = `Voz: ${voiceOn ? "ON" : "OFF"}`;
+          vBtn.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+        }
+        if (muted) {
+          stopDrone();
+          pauseVoice();
+        } else if (playing) {
+          startDrone();
+          speakAct(idx, false);
+        }
       }
     });
 
@@ -884,7 +998,8 @@
       if (window.parent && window.parent !== window) {
         const shell = document.getElementById("player-shell");
         const h = shell ? Math.ceil(shell.getBoundingClientRect().height) : document.documentElement.scrollHeight;
-        window.parent.postMessage({ type: "briefing-height", height: h }, "*");
+        const targetOrigin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
+        window.parent.postMessage({ type: "briefing-height", height: h }, targetOrigin);
       }
     }
 

@@ -24,7 +24,7 @@
   --vg-glass-blur-sm: blur(14px) saturate(160%);
 
   /* Micro-bordes especulares */
-  --vg-border-specular: 1px solid rgba(255, 255, 255, 0.10);
+  --vg-border-specular: 1px solid rgba(255, 255, 255, 0.18);
   --vg-border-specular-strong: 1px solid rgba(251, 191, 36, 0.28);
   --vg-border-gold: 1px solid rgba(251, 191, 36, 0.50);
   --vg-border-crimson: 1px solid rgba(248, 113, 113, 0.45);
@@ -82,10 +82,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  color-scheme: dark;
+}
+
+html.font-boost {
+  font-size: 115%;
+}
+
 html, body {
   background-color: #050B12;
   color: var(--vg-text-primary);
   font-family: var(--vg-font-sans);
+  min-height: 100vh;
   min-height: 100dvh;
   overscroll-behavior-y: contain;
   -webkit-font-smoothing: antialiased;
@@ -93,10 +102,6 @@ html, body {
 
 body {
   background: #050B12;
-}
-
-body.font-boost {
-  font-size: 115%;
 }
 
 body::before {
@@ -154,7 +159,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   max-width: 1120px;
   margin: 0 auto;
   overflow-x: clip;
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 86px) max(16px, env(safe-area-inset-left, 0px));
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 104px) max(16px, env(safe-area-inset-left, 0px));
 }
 
 @media (max-width: 768px) {
@@ -177,6 +182,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background: var(--vg-glass-bg-pill);
   color: var(--vg-text-primary);
   white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .badge {
+    white-space: normal;
+    text-align: left;
+    max-width: 100%;
+    line-height: 1.3;
+  }
 }
 
 .badge-gold {
@@ -223,7 +237,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 42px;
+  min-height: 44px;
   padding: 9px 16px;
   border-radius: var(--vg-radius-md);
   border: var(--vg-border-specular-strong);
@@ -233,11 +247,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
   transition: transform 150ms var(--vg-spring), background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.btn:active {
+.btn:not(:disabled):active {
   transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .btn-primary {
@@ -247,8 +268,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: var(--adv-gold-glow);
 }
 
-.btn-primary:hover {
-  background: linear-gradient(135deg, rgba(185, 28, 28, 0.88), rgba(180, 83, 9, 0.72));
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(185, 28, 28, 0.88), rgba(180, 83, 9, 0.72));
+  }
 }
 
 .btn-frost {
@@ -529,6 +552,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   position: relative;
   width: 100%;
   max-width: 580px;
+  max-height: 88vh;
   max-height: 88dvh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -544,15 +568,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .adv-modal-topstrip {
   position: sticky;
-  top: -14px;
+  top: 0;
   z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  margin: -6px -10px 8px;
-  padding: 6px 10px 4px;
-  background: linear-gradient(180deg, rgba(10, 25, 22, 0.96) 65%, transparent);
+  min-height: 46px;
+  margin: -14px -20px 10px;
+  padding: 10px 16px 6px;
+  background: linear-gradient(180deg, rgba(10, 25, 22, 0.98) 70%, transparent);
 }
 
 .adv-modal-handle {
@@ -564,8 +588,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .adv-modal-close {
   position: absolute;
-  right: 4px;
-  top: 0;
+  right: 8px;
+  top: 4px;
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -602,6 +626,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-size: 0.84rem;
   line-height: 1.45;
   cursor: pointer;
+  touch-action: manipulation;
   transition: border-color 140ms ease, background 140ms ease;
 }
 
@@ -633,10 +658,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 /* Toast cooperativo no intrusivo */
 .adv-toast-host {
   position: fixed;
-  top: max(14px, env(safe-area-inset-top, 0px));
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 95;
+  z-index: 100000;
   width: min(92vw, 440px);
   display: flex;
   flex-direction: column;
@@ -663,6 +688,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 /* Lightbox fotográfico táctil */
 .lightbox-stage {
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: 62vh;
   max-height: 62dvh;
   border-radius: 12px;
   border: var(--vg-border-specular-strong);
@@ -672,28 +699,36 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .lightbox-stage img {
   width: 100%;
+  max-width: none;
+  max-height: none;
   height: auto;
   display: block;
-  transform-origin: center center;
-  transition: transform 180ms ease;
+  transition: width 180ms ease;
 }
 
 /* Lectura nocturna suave */
 body.night-reading-soft .paper-receipt,
-body.night-reading-soft .paper-ledger {
-  background: #CBD5E1;
-  color: #0F172A;
+body.night-reading-soft .paper-ledger,
+body.night-reading-soft .paper-subcard {
+  background: #CBD5E1 !important;
+  color: #0F172A !important;
+  border-color: #64748B !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .view-panel.active, .identity-overlay.open, .identity-modal, .adv-modal-backdrop.open, .adv-modal-sheet,
-  .pulse-dot, .door-card, .door-card.state-available::before, .door-card.state-available::after, .shake-error {
+  .pulse-dot, .door-card, .door-card.state-available::before, .door-card.state-available::after,
+  .dock-item, .dock-item svg, .hint-item, .adv-toast, .shake-error {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-body.Pref-reduced-motion * {
+body.pref-reduced-motion #snow-canvas {
+  display: none;
+}
+
+body.pref-reduced-motion * {
   animation: none !important;
   transition-duration: 0.01ms !important;
 }

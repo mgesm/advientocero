@@ -6,39 +6,48 @@ window.DateGate = (() => {
   const TARGET_YEAR = 2026;
   const ADMIN_KEY = "adviento_admin_sim_day";
   const ADMIN_FLAG = "adviento_admin_enabled";
+  const storage = window.SafeStorage || {
+    getItem(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+    setItem(k, v) { try { localStorage.setItem(k, String(v)); } catch (_) {} },
+    removeItem(k) { try { localStorage.removeItem(k); } catch (_) {} }
+  };
 
   function checkUrlActivation() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("admin") === "ventisquero") {
-      localStorage.setItem(ADMIN_FLAG, "1");
-      if (!localStorage.getItem(ADMIN_KEY)) {
-        localStorage.setItem(ADMIN_KEY, "24");
+      storage.setItem(ADMIN_FLAG, "1");
+      if (!storage.getItem(ADMIN_KEY)) {
+        storage.setItem(ADMIN_KEY, "24");
       }
     }
   }
 
   function isAdminEnabled() {
-    return localStorage.getItem(ADMIN_FLAG) === "1";
+    return storage.getItem(ADMIN_FLAG) === "1";
   }
 
   function enableAdmin(simDay = 24) {
-    localStorage.setItem(ADMIN_FLAG, "1");
-    localStorage.setItem(ADMIN_KEY, String(simDay));
+    storage.setItem(ADMIN_FLAG, "1");
+    setSimulatedDay(simDay);
   }
 
   function disableAdmin() {
-    localStorage.removeItem(ADMIN_FLAG);
-    localStorage.removeItem(ADMIN_KEY);
+    storage.removeItem(ADMIN_FLAG);
+    storage.removeItem(ADMIN_KEY);
   }
 
   function setSimulatedDay(dayNum) {
-    localStorage.setItem(ADMIN_KEY, String(Math.max(0, Math.min(24, Number(dayNum) || 0))));
+    const parsed = Number(dayNum);
+    const clamped = Number.isFinite(parsed) ? Math.max(0, Math.min(24, Math.floor(parsed))) : 24;
+    storage.setItem(ADMIN_KEY, String(clamped));
   }
 
   function getSimulatedDay() {
     if (!isAdminEnabled()) return null;
-    const raw = localStorage.getItem(ADMIN_KEY);
-    return raw !== null ? Number(raw) : 24;
+    const raw = storage.getItem(ADMIN_KEY);
+    if (raw === null || raw === "") return 24;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) ? Math.max(0, Math.min(24, Math.floor(parsed))) : 24;
   }
 
   function getRealUnlockedMaxDay() {
@@ -60,7 +69,8 @@ window.DateGate = (() => {
   }
 
   function isDayOpen(dayNum) {
-    return dayNum <= getMaxOpenDay();
+    const n = Number(dayNum);
+    return Number.isFinite(n) && n >= 1 && n <= getMaxOpenDay();
   }
 
   function getCountdownText() {

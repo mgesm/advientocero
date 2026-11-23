@@ -15,7 +15,7 @@ window.DayArtifacts = (() => {
       <div class="artifact-envelope">
         <div class="custody-strip">
           <span><strong>${code}</strong> · ${unit} · ${String(dayNum).padStart(2, "0")} DIC</span>
-          <button type="button" class="btn btn-sm btn-ghost" data-zoom-artifact style="min-height:34px;padding:4px 9px;font-size:0.7rem;">Inspeccionar ampliado</button>
+          <button type="button" class="btn btn-sm btn-ghost" data-zoom-artifact style="font-size:0.72rem;">Inspeccionar ampliado</button>
         </div>
         <div class="artifact-body">${body}</div>
       </div>`;
@@ -29,12 +29,12 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">CROQUIS ORIENTACIÓN Y SENSORES · SALÓN MIRADOR</div>
-            <svg viewBox="0 0 320 190" style="width:100%;display:block;border-radius:8px;background:#031019;">
+            <svg viewBox="0 0 320 190" role="img" aria-label="Croquis de orientación y sensores del Salón Mirador" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="12" y="12" width="296" height="166" fill="none" stroke="#38BDF8" stroke-width="1.5"/>
               <text x="160" y="27" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">NORTE · CHIMENEA DOBLE</text>
               <text x="160" y="170" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5">SUR · ESCENARIO GALA</text>
-              <text x="22" y="98" fill="#94A3B8" font-family="monospace" font-size="10.5" transform="rotate(-90 22 98)">OESTE · COMEDOR</text>
-              <text x="298" y="98" fill="#FDE68A" font-family="monospace" font-size="10.5" transform="rotate(90 298 98)">ESTE · VENTANAL NIEVE</text>
+              <text x="22" y="98" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10.5" transform="rotate(-90 22 98)">OESTE · COMEDOR</text>
+              <text x="298" y="98" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10.5" transform="rotate(90 298 98)">ESTE · VENTANAL NIEVE</text>
               <circle cx="160" cy="95" r="16" fill="rgba(16,185,129,0.22)" stroke="#34D399" stroke-width="1.5"/>
               <text x="160" y="98" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10.5">ABETO</text>
               <circle cx="160" cy="52" r="14" fill="rgba(255,255,255,0.06)" stroke="#64748B"/><text x="160" y="55" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">M1</text>
@@ -51,11 +51,11 @@ window.DayArtifacts = (() => {
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>PROTOCOLO MESA 4 · TARJETAS ANÓNIMAS</span><span class="paper-stamp">RECEPCIÓN</span></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 1</strong><br>A. Roldán (VIP)</div>
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 2</strong><br>T. Alarcón (VIP)</div>
-              <div style="padding:8px;border:2px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Silla 3 · PRENSA</strong><br>Iniciales: <strong>O.LL.</strong><br><span style="font-size:0.72rem;color:#B91C1C;">Salió al porche 23:35 h</span></div>
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 4</strong><br>D. Aranda (VIP)</div>
+            <div class="subcard-grid-2" style="margin-bottom:8px;">
+              <div class="paper-subcard" style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 1</strong><br>A. Roldán (VIP)</div>
+              <div class="paper-subcard" style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 2</strong><br>T. Alarcón (VIP)</div>
+              <div style="padding:8px;border:2px solid #B91C1C;border-radius:6px;background:#FEF2F2;color:#0F172A;"><strong>Silla 3 · PRENSA</strong><br>Iniciales: <strong>O.LL.</strong><br><span style="font-size:0.72rem;color:#B91C1C;">Salió al porche 23:35 h</span></div>
+              <div class="paper-subcard" style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Silla 4</strong><br>D. Aranda (VIP)</div>
             </div>
             <div class="mono" style="font-size:0.72rem;border-top:1px dashed #B45309;padding-top:6px;">
               <strong>Check-in VIP:</strong> D. Aranda (201) · T. Alarcón (202) · Ó. Llorente (108) · G. Serrano (208)
@@ -68,11 +68,16 @@ window.DayArtifacts = (() => {
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>CUADRANTE NOCTURNO · BARRA PRINCIPAL</span><span class="paper-stamp">30 NOV</span></div>
             <table style="width:100%;border-collapse:collapse;font-size:0.74rem;">
-              <tr style="border-bottom:1px solid rgba(180,83,9,0.25);text-align:left;"><th>Turno</th><th>Empleado</th><th>Horario e incidencia</th></tr>
-              <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#2</td><td>Ayudante Sala</td><td>22:00–23:15 · Salón Sur</td></tr>
-              <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#4</td><td>Pinche Frío</td><td>23:00–00:00 · Cocina interior</td></tr>
-              <tr style="background:#FEE2E2;font-weight:700;"><td>#5</td><td>Nicolás Ferrer</td><td>23:34–23:44 · Cámara de hielo</td></tr>
-              <tr><td>#8</td><td>Mozo Almacén</td><td>Turno diurno (finalizado 19:00)</td></tr>
+              <caption class="sr-only">Cuadrante nocturno de barra principal</caption>
+              <thead>
+                <tr style="border-bottom:1px solid rgba(180,83,9,0.25);text-align:left;"><th scope="col">Turno</th><th scope="col">Empleado</th><th scope="col">Horario e incidencia</th></tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#2</td><td>Ayudante Sala</td><td>22:00-23:15 · Salón Sur</td></tr>
+                <tr style="border-bottom:1px solid rgba(180,83,9,0.18);"><td>#4</td><td>Pinche Frío</td><td>23:00-00:00 · Cocina interior</td></tr>
+                <tr style="background:#FEE2E2;color:#0F172A;font-weight:700;"><td>#5</td><td>Nicolás Ferrer</td><td>23:34-23:44 · Cámara de hielo</td></tr>
+                <tr><td>#8</td><td>Mozo Almacén</td><td>Turno diurno (finalizado 19:00)</td></tr>
+              </tbody>
             </table>
           </div>`;
       case "2-patri":
@@ -86,8 +91,8 @@ window.DayArtifacts = (() => {
       case "3-miguel":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>TABLA MORSE INTERNACIONAL (A–Z)</span><span class="paper-stamp">CONSERJERÍA</span></div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-family:monospace;font-size:0.68rem;margin-bottom:8px;">
+            <div class="paper-ledger-head"><span>TABLA MORSE INTERNACIONAL (A-Z)</span><span class="paper-stamp">CONSERJERÍA</span></div>
+            <div class="morse-steps-grid" style="font-family:monospace;font-size:0.68rem;margin-bottom:8px;">
               <div><strong>A:</strong> .-</div><div><strong>B:</strong> -...</div><div><strong>C:</strong> -.-.</div><div><strong>D:</strong> -..</div>
               <div><strong>E:</strong> .</div><div><strong>F:</strong> ..-.</div><div><strong>G:</strong> --.</div><div><strong>H:</strong> ....</div>
               <div><strong>I:</strong> ..</div><div><strong>J:</strong> .---</div><div><strong>K:</strong> -.-</div><div><strong>L:</strong> .-..</div>
@@ -136,7 +141,7 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">PLANO PLANTA 2 · REGISTRO DE ANTENAS RFID</div>
-            <svg viewBox="0 0 320 110" style="width:100%;display:block;border-radius:8px;background:#031019;">
+            <svg viewBox="0 0 320 110" role="img" aria-label="Plano Planta 2 y registro de antenas RFID" style="width:100%;display:block;border-radius:8px;background:#031019;">
               <rect x="10" y="18" width="300" height="74" fill="none" stroke="#38BDF8" stroke-width="1.2"/>
               <rect x="20" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="50" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">PASILLO</text><text x="50" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">SUR</text>
               <rect x="90" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="120" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ASCENSOR</text><text x="120" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">CENTRAL</text>
@@ -150,7 +155,7 @@ window.DayArtifacts = (() => {
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>PARTITURA Y REGLA ACÚSTICA · GALA</span><span class="paper-stamp">CLAVE CÉSAR</span></div>
-            <svg viewBox="0 0 300 72" style="width:100%;display:block;background:#FFFDF7;border-radius:6px;margin-bottom:6px;">
+            <svg viewBox="0 0 300 72" role="img" aria-label="Partitura musical con 4 notas negras y 5 estrellas doradas" class="paper-subcard" style="width:100%;display:block;background:#FFFDF7;border-radius:6px;margin-bottom:6px;padding:0;">
               <line x1="12" y1="22" x2="288" y2="22" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="30" x2="288" y2="30" stroke="#78716C" stroke-width="1"/>
               <line x1="12" y1="38" x2="288" y2="38" stroke="#78716C" stroke-width="1"/>
@@ -209,7 +214,7 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">BÁSCULAS DE PRECISIÓN #1 Y #2</div>
-            <svg viewBox="0 0 300 84" style="width:100%;display:block;">
+            <svg viewBox="0 0 300 84" role="img" aria-label="Básculas de precisión 1 y 2" style="width:100%;display:block;">
               <rect x="8" y="8" width="136" height="68" rx="8" fill="#061814" stroke="#34D399"/>
               <text x="76" y="28" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="10">2 ANÍS + 1 CLAVO</text>
               <rect x="34" y="38" width="84" height="26" rx="4" fill="#020617" stroke="#38BDF8"/>
@@ -223,8 +228,8 @@ window.DayArtifacts = (() => {
       case "8-patri":
         return `
           <div class="paper-ledger">
-            <div class="paper-ledger-head"><span>BÁSCULAS #3–#4 Y RECETA DE CONTROL</span><span class="paper-stamp">PAULA MENDOZA</span></div>
-            <div class="mono" style="padding:8px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;margin-bottom:6px;font-size:0.78rem;line-height:1.5;">
+            <div class="paper-ledger-head"><span>BÁSCULAS #3-#4 Y RECETA DE CONTROL</span><span class="paper-stamp">PAULA MENDOZA</span></div>
+            <div class="mono paper-subcard" style="padding:8px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;margin-bottom:6px;font-size:0.78rem;line-height:1.5;">
               <strong>Báscula 3:</strong> 1 Nuez + 1 Jengibre = <strong>15 g</strong><br>
               <strong>Báscula 4:</strong> 1 Anís + 1 Jengibre + 1 Clavo = <strong>17 g</strong>
             </div>
@@ -249,26 +254,27 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">TERMOGRAFÍA IR · TECLADO CABAÑA NORTE (23:41 H)</div>
-            <svg viewBox="0 0 280 120" style="width:100%;display:block;background:#020617;border-radius:8px;">
-              <rect x="20" y="14" width="54" height="42" rx="6" fill="rgba(56,189,248,0.22)" stroke="#38BDF8"/>
-              <text x="47" y="34" text-anchor="middle" fill="#BAE6FD" font-family="monospace" font-size="13" font-weight="700">7</text>
-              <text x="47" y="49" text-anchor="middle" fill="#7DD3FC" font-family="monospace" font-size="10">22.1°C</text>
+            <svg viewBox="0 0 280 70" role="img" aria-label="Termografía infrarroja teclado cabaña Norte" style="width:100%;display:block;background:#020617;border-radius:8px;margin-bottom:8px;">
+              <rect x="16" y="14" width="56" height="42" rx="6" fill="rgba(56,189,248,0.22)" stroke="#38BDF8"/>
+              <text x="44" y="33" text-anchor="middle" fill="#BAE6FD" font-family="monospace" font-size="13" font-weight="700">7</text>
+              <text x="44" y="48" text-anchor="middle" fill="#7DD3FC" font-family="monospace" font-size="10">22.1°C</text>
 
-              <rect x="84" y="14" width="54" height="42" rx="6" fill="rgba(16,185,129,0.24)" stroke="#34D399"/>
-              <text x="111" y="34" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="13" font-weight="700">2</text>
-              <text x="111" y="49" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="10">24.8°C</text>
+              <rect x="80" y="14" width="56" height="42" rx="6" fill="rgba(16,185,129,0.24)" stroke="#34D399"/>
+              <text x="108" y="33" text-anchor="middle" fill="#A7F3D0" font-family="monospace" font-size="13" font-weight="700">2</text>
+              <text x="108" y="48" text-anchor="middle" fill="#6EE7B7" font-family="monospace" font-size="10">24.8°C</text>
 
-              <rect x="148" y="14" width="54" height="42" rx="6" fill="rgba(245,158,11,0.26)" stroke="#FBBF24"/>
-              <text x="175" y="34" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="13" font-weight="700">9</text>
-              <text x="175" y="49" text-anchor="middle" fill="#FCD34D" font-family="monospace" font-size="10">27.3°C</text>
+              <rect x="144" y="14" width="56" height="42" rx="6" fill="rgba(245,158,11,0.26)" stroke="#FBBF24"/>
+              <text x="172" y="33" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="13" font-weight="700">9</text>
+              <text x="172" y="48" text-anchor="middle" fill="#FCD34D" font-family="monospace" font-size="10">27.3°C</text>
 
-              <rect x="212" y="14" width="54" height="42" rx="6" fill="rgba(239,68,68,0.34)" stroke="#F87171"/>
-              <text x="239" y="34" text-anchor="middle" fill="#FECACA" font-family="monospace" font-size="13" font-weight="700">4</text>
-              <text x="239" y="49" text-anchor="middle" fill="#FCA5A5" font-family="monospace" font-size="10">30.5°C</text>
-
-              <text x="140" y="84" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10">DISIPACIÓN TÉRMICA: EL BOTÓN MÁS FRÍO SE PULSÓ PRIMERO</text>
-              <text x="140" y="102" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="10">ORDEN PIN: MENOR TEMP -&gt; MAYOR TEMP</text>
+              <rect x="208" y="14" width="56" height="42" rx="6" fill="rgba(239,68,68,0.34)" stroke="#F87171"/>
+              <text x="236" y="33" text-anchor="middle" fill="#FECACA" font-family="monospace" font-size="13" font-weight="700">4</text>
+              <text x="236" y="48" text-anchor="middle" fill="#FCA5A5" font-family="monospace" font-size="10">30.5°C</text>
             </svg>
+            <div class="mono" style="font-size:0.72rem;color:#CBD5E1;text-align:center;line-height:1.45;">
+              DISIPACIÓN TÉRMICA: EL BOTÓN MÁS FRÍO SE PULSÓ PRIMERO<br>
+              <strong style="color:#FDE68A;">ORDEN PIN: MENOR TEMP -&gt; MAYOR TEMP</strong>
+            </div>
           </div>`;
 
       // === DÍA 10 ===
@@ -282,11 +288,11 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box" style="border-color:rgba(248,113,113,0.55);">
             <div class="blueprint-cap" style="color:#FECACA;">MANÓMETROS DE CALDERAS (CRÍTICO: &gt; 3.2 bar Y &lt; 45 °C)</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:monospace;font-size:0.74rem;margin-bottom:8px;">
-              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-2:</strong> 2.4 bar · 38 °C</div>
-              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-5:</strong> 3.8 bar · 62 °C</div>
-              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;"><strong>C-7:</strong> 2.9 bar · 40 °C</div>
-              <div style="padding:7px;border-radius:6px;background:rgba(220,38,38,0.18);border:1px solid #F87171;"><strong>C-9:</strong> 4.1 bar · 36 °C</div>
+            <div class="subcard-grid-2" style="gap:8px;font-family:monospace;font-size:0.74rem;margin-bottom:8px;">
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;min-width:0;"><strong>C-2:</strong> 2.4 bar · 38 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;min-width:0;"><strong>C-5:</strong> 3.8 bar · 62 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid #475569;min-width:0;"><strong>C-7:</strong> 2.9 bar · 40 °C</div>
+              <div style="padding:7px;border-radius:6px;background:rgba(220,38,38,0.18);border:1px solid #F87171;min-width:0;"><strong>C-9:</strong> 4.1 bar · 36 °C</div>
             </div>
             <div style="font-size:0.73rem;color:#FDE68A;">Al estabilizar las 4 válvulas, anota la serie <strong>[AB][CD]</strong> e invierte los pares <strong>[CD][AB]</strong>.</div>
           </div>`;
@@ -329,12 +335,12 @@ window.DayArtifacts = (() => {
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>REJILLA CARDANO 5x5 · ARCHIVO HISTÓRICO</span><span class="paper-stamp">ELENA VALLS</span></div>
             <div class="mono" style="font-size:0.74rem;margin-bottom:6px;"><strong>Columnas:</strong> C1: 1 | C2: 3 | C3: 1,1 | C4: 1 | C5: 2</div>
-            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;font-family:monospace;font-size:0.8rem;font-weight:700;text-align:center;">
-              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">B</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">R</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">C</div>
-              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">X</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">4</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">K</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">2</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">1</div>
-              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">P</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">9</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">V</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">0</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">M</div>
-              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">8</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">S</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">5</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">D</div>
-              <div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">Z</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">L</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">N</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">3</div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;font-family:monospace;font-size:0.8rem;font-weight:700;text-align:center;">
+              <div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">B</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">R</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">C</div>
+              <div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">X</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">4</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">K</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">2</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">1</div>
+              <div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">P</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">9</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">V</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">0</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">M</div>
+              <div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">8</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">A</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">S</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">5</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">D</div>
+              <div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">Z</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">L</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">N</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">7</div><div class="paper-subcard" style="padding:4px;background:#FFFDF7;border:1px solid #D97706;">3</div>
             </div>
             <div style="font-size:0.7rem;margin-top:6px;">Lee de izquierda a derecha y de arriba abajo solo los 9 recuadros rellenos del nonograma.</div>
           </div>`;
@@ -363,14 +369,16 @@ window.DayArtifacts = (() => {
         return `
           <div class="blueprint-box">
             <div class="blueprint-cap">RADAR AP-NORTE (HAB. 203) · RSSI -54 dBm</div>
-            <svg viewBox="0 0 320 100" style="width:100%;display:block;border-radius:8px;background:#031019;">
+            <svg viewBox="0 0 332 58" role="img" aria-label="Plano de pasillo habitaciones 201 a 212 con nodo AP-Norte en 203" style="width:100%;display:block;border-radius:8px;background:#031019;margin-bottom:8px;">
               ${[201,202,203,204,205,206,207,208,209,210,211,212].map((num, idx) => {
-                const x = 8 + idx * 25.5;
-                return `<rect x="${x}" y="30" width="23" height="40" rx="3" fill="${num === 203 ? "rgba(0,229,255,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${num === 203 ? "#00E5FF" : "#475569"}"/><text x="${x+11.5}" y="54" text-anchor="middle" fill="${num === 203 ? "#67E8F9" : "#94A3B8"}" font-family="monospace" font-size="8.5">${num}</text>`;
+                const x = 6 + idx * 26.8;
+                return `<rect x="${x}" y="9" width="24" height="40" rx="3" fill="${num === 203 ? "rgba(0,229,255,0.22)" : "rgba(255,255,255,0.04)"}" stroke="${num === 203 ? "#00E5FF" : "#475569"}"/><text x="${x+12}" y="33" text-anchor="middle" fill="${num === 203 ? "#67E8F9" : "#CBD5E1"}" font-family="monospace" font-size="10">${num}</text>`;
               }).join("")}
-              <text x="160" y="18" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="9.5">ATENCIÓN: -40/-49 dBm = 1 puerta · -50/-59 = 2 · -60/-69 = 3</text>
-              <text x="160" y="88" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="9.5">TRÁFICO SUBIDA 2.8 MB/s -> HOSTNAME: RC-AUDIT-09</text>
             </svg>
+            <div class="mono" style="font-size:0.71rem;color:#67E8F9;text-align:center;line-height:1.45;">
+              ATENCIÓN: -40/-49 dBm = 1 puerta · -50/-59 = 2 · -60/-69 = 3<br>
+              <strong style="color:#FDE68A;">TRÁFICO SUBIDA 2.8 MB/s -&gt; HOSTNAME: RC-AUDIT-09</strong>
+            </div>
           </div>`;
       case "14-patri":
         return `
@@ -434,12 +442,12 @@ window.DayArtifacts = (() => {
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>REGLA BIOMÉTRICA Y TAQUILLA GUARDABOTAS</span><span class="paper-stamp">30 NOV</span></div>
-            <div class="mono" style="font-size:0.72rem;margin-bottom:8px;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">
+            <div class="mono paper-subcard" style="font-size:0.72rem;margin-bottom:8px;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:5px;">
               <strong>Margen Vibram ALP-40:</strong> L_pie = L_suela - <strong>1.5 cm</strong>
             </div>
-            <div class="rfid-cards-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div style="padding:8px;border:1.5px solid #B91C1C;border-radius:6px;background:#FEF2F2;"><strong>Hab. 107 · Adriana Orozco</strong><br>Talla <strong>37</strong> · Secas 23:32 h</div>
-              <div style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;"><strong>Hab. 203 · Elena Valls</strong><br>Talla 38 · En taquilla</div>
+            <div class="rfid-cards-grid">
+              <div style="padding:8px;border:1.5px solid #B91C1C;border-radius:6px;background:#FEF2F2;color:#0F172A;min-width:0;"><strong>Hab. 107 · Adriana Orozco</strong><br>Talla <strong>37</strong> · Secas 23:32 h</div>
+              <div class="paper-subcard" style="padding:8px;border:1px solid #D97706;border-radius:6px;background:#FFFDF7;min-width:0;"><strong>Hab. 203 · Elena Valls</strong><br>Talla 38 · En taquilla</div>
             </div>
           </div>`;
       case "18-patri":
@@ -467,7 +475,7 @@ window.DayArtifacts = (() => {
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>MATRIZ SWIFT 6x6 + FIRMA BIOMÉTRICA</span><span class="paper-stamp">SUITE 303</span></div>
             <div class="mono" style="font-size:0.72rem;margin-bottom:6px;">Registro biométrico captado desde IP Suite 303 · <strong>23:39:14 h</strong> (orden &gt; 30.000 EUR hacia Zúrich durante el apagón; pendiente cotejar presencia física).</div>
-            <div class="mono" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
+            <div class="mono paper-subcard" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
               Cols 1..6:<br>
               F1: A B C D E F<br>
               F2: G H I J K L<br>
@@ -528,7 +536,7 @@ window.DayArtifacts = (() => {
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>BORRADOR ROTO + MAPA ANTENAS BTS</span><span class="paper-stamp">NOTARÍA</span></div>
             <div style="font-size:0.75rem;margin-bottom:6px;">Protocolo parcial: <strong>[ D1 ] [ 7 ] [ D3 ]</strong> · Suma total = <strong>19</strong> (D1 = años vigencia convenio en Patri).</div>
-            <div class="mono" style="font-size:0.71rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;">
+            <div class="mono paper-subcard" style="font-size:0.71rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;">
               Cell 2B -&gt; S201N | Cell 4E -&gt; V304E | Cell 7A -&gt; V304W | Cell 9C -&gt; E108S
             </div>
           </div>`;
@@ -561,7 +569,7 @@ window.DayArtifacts = (() => {
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>SPA TERMAL + INVENTARIO DE 5 LLAVES MAESTRAS</span><span class="paper-stamp">NOCHEBUENA</span></div>
             <div style="font-size:0.74rem;margin-bottom:6px;"><strong>Spa Termal (firma presencial):</strong> Inés Casado dentro del circuito de aguas de <strong>18:05 a 19:00 h</strong>.</div>
-            <div class="mono" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
+            <div class="mono paper-subcard" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
               UID-4410 -> KEY-LIM-02 (Pisos)<br>
               UID-5128 -> KEY-GOB-03 (Lavandería)<br>
               UID-6019 -> KEY-SEC-05 (Seguridad)<br>

@@ -5,6 +5,12 @@
 window.SyncEngine = (() => {
   const BASE_LOCAL_KEY = "adviento_cero_state_v1";
   const BASE_DIRTY_KEY = "adviento_cero_dirty_v1";
+  const SCHEMA_VERSION = 2;
+  const storage = window.SafeStorage || {
+    getItem(k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
+    setItem(k, v) { try { localStorage.setItem(k, String(v)); return true; } catch (_) { return false; } },
+    removeItem(k) { try { localStorage.removeItem(k); } catch (_) {} }
+  };
 
   let state = createDefaultState();
   let dbRef = null;
@@ -18,6 +24,8 @@ window.SyncEngine = (() => {
   let activeRoomId = "";
   let connId = `c_${Math.random().toString(36).slice(2, 10)}`;
   let writeSeq = 0;
+  let isFlushing = false;
+  let pendingReset = false;
   let listeners = [];
   let networkListenersBound = false;
 
@@ -34,28 +42,23 @@ window.SyncEngine = (() => {
   }
 
   function isDirty() {
-    try {
-      return localStorage.getItem(getDirtyKey()) === "1";
-    } catch (_) {
-      return false;
-    }
+    return storage.getItem(getDirtyKey()) === "1";
   }
 
   function setDirty(flag) {
-    try {
-      if (flag) localStorage.setItem(getDirtyKey(), "1");
-      else localStorage.removeItem(getDirtyKey());
-    } catch (_) {}
+    if (flag) storage.setItem(getDirtyKey(), "1");
+    else storage.removeItem(getDirtyKey());
   }
 
   function createDefaultState() {
     return {
+      schemaVersion: SCHEMA_VERSION,
       days: {},            // { "1": { miguelSolved, patriSolved, solved, discardId, conclusion, forensicTag, solvedAt } }
       discardedIds: [],    // ["s16", ...]
       discardedMap: {},    // { "s16": true }
       finalVerdictSolved: false,
       finalEpilogue: null,
-      finalProposal: null, // { byRole, suspectId, reason, poison, method, miguelSigned, patriSigned }
+      finalProposal: null, // { byRole, suspectId, reason, poison, method, proposedAt }
       sharedNotes: "",
       notesMeta: null,     // { updatedBy, updatedAt }
       fieldDispatch: {},   // { "1": { miguel: { text, at }, patri: { text, at } } }
@@ -92,13 +95,16 @@ window.SyncEngine = (() => {
   }
 
   function normalizeState(rawObj) {
-    const out = Object.assign(createDefaultState(), rawObj || {});
-    if (!out.days || typeof out.days !== "object") out.days = {};
-    if (!out.hintsUnlocked || typeof out.hintsUnlocked !== "object") out.hintsUnlocked = {};
-    if (!out.presence || typeof out.presence !== "object") out.presence = {};
-    if (!out.discardedMap || typeof out.discardedMap !== "object") out.discardedMap = {};
-    if (!out.fieldDispatch || typeof out.fieldDispatch !== "object") out.fieldDispatch = {};
-    if (!out.suspectNotes || typeof out.suspectNotes !== "object") out.suspectNotes = {};
+    const safeRaw = rawObj && typeof rawObj === "object" && !Array.isArray(rawObj) ? rawObj : {};
+    const out = Object.assign(createDefaultState(), safeRaw);
+    out.schemaVersion = SCHEMA_VERSION;
+    if (!out.days || typeof out.days !== "object" || Array.isArray(out.days)) out.days = {};
+    if (!out.hintsUnlocked || typeof out.hintsUnlocked !== "object" || Array.isArray(out.hintsUnlocked)) out.hintsUnlocked = {};
+    if (!out.presence || typeof out.presence !== "object" || Array.isArray(out.presence)) out.presence = {};
+    if (!out.discardedMap || typeof out.discardedMap !== "object" || Array.isArray(out.discardedMap)) out.discardedMap = {};
+    if (!out.fieldDispatch || typeof out.fieldDispatch !== "object" || Array.isArray(out.fieldDispatch)) out.fieldDispatch = {};
+    if (!out.suspectNotes || typeof out.suspectNotes !== "object" || Array.isArray(out.suspectNotes)) out.suspectNotes = {};
+    if (typeof out.sharedNotes !== "string") out.sharedNotes = "";
 
     healDualLockDays(out);
 
@@ -193,7 +199,15 @@ window.SyncEngine = (() => {
       if (Object.keys(outS).length) merged.suspectNotes[sid] = outS;
     });
 
-    if (!r.sharedNotes && l.sharedNotes) {
+    const lNotesAt = Number(l.notesMeta?.updatedAt || 0);
+    const rNotesAt = Number(r.notesMeta?.updatedAt || 0);
+    if (lNotesAt && (!rNotesAt || lNotesAt > rNotesAt)) {
+      merged.sharedNotes = l.sharedNotes;
+      merged.notesMeta = l.notesMeta;
+    } else if (rNotesAt && (!lNotesAt || rNotesAt >= lNotesAt)) {
+      merged.sharedNotes = r.sharedNotes;
+      merged.notesMeta = r.notesMeta;
+    } else if (!r.sharedNotes && l.sharedNotes) {
       merged.sharedNotes = l.sharedNotes;
       merged.notesMeta = l.notesMeta || null;
     } else if (l.sharedNotes && r.sharedNotes && l.sharedNotes !== r.sharedNotes && !r.sharedNotes.includes(l.sharedNotes)) {
@@ -205,7 +219,7 @@ window.SyncEngine = (() => {
 
   function loadLocal() {
     try {
-      const raw = localStorage.getItem(getLocalKey());
+      const raw = storage.getItem(getLocalKey());
       if (raw) {
         state = normalizeState(JSON.parse(raw));
       } else {
@@ -218,7 +232,7 @@ window.SyncEngine = (() => {
 
   function saveLocal() {
     try {
-      localStorage.setItem(getLocalKey(), JSON.stringify(state));
+      storage.setItem(getLocalKey(), JSON.stringify(state));
     } catch (_) {}
   }
 
@@ -295,8 +309,8 @@ window.SyncEngine = (() => {
         if (sn[rk]) patch[`suspectNotes/${sid}/${rk}`] = sn[rk];
       });
     });
-    if (merged.sharedNotes) {
-      patch.sharedNotes = merged.sharedNotes;
+    if (merged.sharedNotes || merged.notesMeta) {
+      patch.sharedNotes = typeof merged.sharedNotes === "string" ? merged.sharedNotes : "";
       if (merged.notesMeta) patch.notesMeta = merged.notesMeta;
     }
     return patch;
@@ -304,7 +318,12 @@ window.SyncEngine = (() => {
 
   function cleanupListeners() {
     if (roomRef && activeRole && mode === "firebase") {
-      try { roomRef.child(`presence/${activeRole}/connections/${connId}`).remove().catch(() => {}); } catch (_) {}
+      try {
+        const roleRef = roomRef.child(`presence/${activeRole}`);
+        roleRef.child(`connections/${connId}`).onDisconnect().cancel().catch(() => {});
+        roleRef.child("lastSeen").onDisconnect().cancel().catch(() => {});
+        roleRef.child(`connections/${connId}`).remove().catch(() => {});
+      } catch (_) {}
     }
     try { roomRef?.off(); } catch (_) {}
     try { connectedRef?.off(); } catch (_) {}
@@ -357,6 +376,7 @@ window.SyncEngine = (() => {
         });
 
         roomRef.on("value", (snap) => {
+          if (pendingReset) return;
           const remote = snap.val();
           initialSynced = true;
           if (remote && typeof remote === "object") {
@@ -364,12 +384,18 @@ window.SyncEngine = (() => {
               const merged = mergeMonotone(state, remote);
               state = merged;
               saveLocal();
-              const seq = ++writeSeq;
-              const patch = buildDeltaPatch(merged);
-              if (Object.keys(patch).length > 0) {
-                roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
-              } else {
-                clearWriteOk(seq);
+              if (!isFlushing) {
+                const seq = ++writeSeq;
+                const patch = buildDeltaPatch(merged);
+                if (Object.keys(patch).length > 0) {
+                  isFlushing = true;
+                  roomRef.update(patch)
+                    .then(() => clearWriteOk(seq))
+                    .catch(handleWriteError)
+                    .finally(() => { isFlushing = false; });
+                } else {
+                  clearWriteOk(seq);
+                }
               }
             } else {
               state = normalizeState(remote);
@@ -378,12 +404,18 @@ window.SyncEngine = (() => {
             notify();
           } else {
             const initData = normalizeState(state);
-            const seq = ++writeSeq;
-            const patch = buildDeltaPatch(initData);
-            if (Object.keys(patch).length > 0) {
-              roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
-            } else {
-              clearWriteOk(seq);
+            if (!isFlushing) {
+              const seq = ++writeSeq;
+              const patch = buildDeltaPatch(initData);
+              if (Object.keys(patch).length > 0) {
+                isFlushing = true;
+                roomRef.update(patch)
+                  .then(() => clearWriteOk(seq))
+                  .catch(handleWriteError)
+                  .finally(() => { isFlushing = false; });
+              } else {
+                clearWriteOk(seq);
+              }
             }
           }
         }, (err) => {
@@ -456,9 +488,12 @@ window.SyncEngine = (() => {
           if (committed && snap) {
             const val = snap.val();
             if (val && val.solved && val.discardId) {
-              roomRef.child(`discardedMap/${val.discardId}`).set(true).catch(handleWriteError);
+              roomRef.child(`discardedMap/${val.discardId}`).set(true)
+                .then(() => clearWriteOk(seq))
+                .catch(handleWriteError);
+            } else {
+              clearWriteOk(seq);
             }
-            clearWriteOk(seq);
           }
         });
       } else if (decoded) {
@@ -612,13 +647,21 @@ window.SyncEngine = (() => {
 
   function resetAll() {
     state = createDefaultState();
-    setDirty(false);
     saveLocal();
     if (mode === "firebase" && roomRef) {
+      pendingReset = true;
+      setDirty(true);
+      const seq = ++writeSeq;
       roomRef.set(state).then(() => {
-        syncError = null;
+        pendingReset = false;
+        clearWriteOk(seq);
         if (activeRole) applyPresenceConnection();
-      }).catch(handleWriteError);
+      }).catch((err) => {
+        pendingReset = false;
+        handleWriteError(err);
+      });
+    } else {
+      setDirty(false);
     }
     notify();
   }

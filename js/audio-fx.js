@@ -1,15 +1,59 @@
 /**
- * ADVIENTO CERO — MOTOR DE AUDIO PROCEDIMENTAL Y HÁPTICA (WEB AUDIO API)
+ * ADVIENTO CERO — MOTOR DE AUDIO PROCEDIMENTAL, HÁPTICA Y ALMACENAMIENTO SEGURO
  */
+
+window.SafeStorage = (() => {
+  const mem = new Map();
+  let quotaWarned = false;
+  let quotaHandler = null;
+
+  function notifyQuota(err) {
+    if (quotaWarned) return;
+    quotaWarned = true;
+    if (typeof quotaHandler === "function") {
+      try { quotaHandler(err); } catch (_) {}
+    }
+  }
+
+  return {
+    getItem(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (_) {
+        return mem.has(key) ? mem.get(key) : null;
+      }
+    },
+    setItem(key, val) {
+      const s = String(val);
+      mem.set(key, s);
+      try {
+        window.localStorage.setItem(key, s);
+        return true;
+      } catch (err) {
+        notifyQuota(err);
+        return false;
+      }
+    },
+    removeItem(key) {
+      mem.delete(key);
+      try {
+        window.localStorage.removeItem(key);
+      } catch (_) {}
+    },
+    onError(fn) {
+      quotaHandler = fn;
+    }
+  };
+})();
 
 window.AudioFX = (() => {
   let ctx = null;
-  let muted = localStorage.getItem("adviento_muted") === "1";
+  let muted = window.SafeStorage.getItem("adviento_muted") === "1";
   let morseRunId = 0;
 
   function isReducedMotion() {
     return (
-      document.body?.classList.contains("Pref-reduced-motion") ||
+      document.body?.classList.contains("pref-reduced-motion") ||
       (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)
     );
   }
@@ -21,33 +65,61 @@ window.AudioFX = (() => {
     } catch (_) {}
   }
 
-  function getCtx() {
-    if (muted) return null;
+  function ensureCtx(allowWhenMuted = false) {
+    if (muted && !allowWhenMuted) return null;
     if (!ctx) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) ctx = new AC();
+      try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) ctx = new AC();
+      } catch (_) {
+        ctx = null;
+      }
     }
-    if (ctx && ctx.state === "suspended") {
+    if (ctx && (ctx.state === "suspended" || ctx.state === "interrupted")) {
       ctx.resume().catch(() => {});
     }
     return ctx;
   }
 
+  function unlockAudioOnce() {
+    const c = ensureCtx(true);
+    if (c && c.state !== "running") {
+      c.resume().catch(() => {});
+    }
+  }
+
+  ["pointerdown", "touchend", "keydown"].forEach((evt) => {
+    document.addEventListener(evt, unlockAudioOnce, { passive: true, capture: true });
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopMorse();
+  });
+
+  function scheduleTone(c, freq, durationMs, type, gainVal, delayMs) {
+    try {
+      const now = c.currentTime + delayMs / 1000;
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.start(now);
+      osc.stop(now + durationMs / 1000 + 0.02);
+    } catch (_) {}
+  }
+
   function tone(freq, durationMs, type = "sine", gainVal = 0.08, delayMs = 0) {
-    const c = getCtx();
+    const c = ensureCtx(false);
     if (!c) return;
-    const now = c.currentTime + delayMs / 1000;
-    const osc = c.createOscillator();
-    const gain = c.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(gainVal, now + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
-    osc.connect(gain);
-    gain.connect(c.destination);
-    osc.start(now);
-    osc.stop(now + durationMs / 1000 + 0.02);
+    if (c.state !== "running") {
+      c.resume().then(() => scheduleTone(c, freq, durationMs, type, gainVal, delayMs)).catch(() => {});
+      return;
+    }
+    scheduleTone(c, freq, durationMs, type, gainVal, delayMs);
   }
 
   function click() {
@@ -130,7 +202,14 @@ window.AudioFX = (() => {
   function toggleMute() {
     muted = !muted;
     if (muted) stopMorse();
-    localStorage.setItem("adviento_muted", muted ? "1" : "0");
+    window.SafeStorage.setItem("adviento_muted", muted ? "1" : "0");
+    return muted;
+  }
+
+  function setMuted(flag) {
+    muted = Boolean(flag);
+    if (muted) stopMorse();
+    window.SafeStorage.setItem("adviento_muted", muted ? "1" : "0");
     return muted;
   }
 
@@ -146,6 +225,7 @@ window.AudioFX = (() => {
     stopMorse,
     isMuted,
     toggleMute,
+    setMuted,
     haptic
   };
 })();

@@ -3,16 +3,17 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.9.4";
+  const APP_VERSION = "v2.10.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
   const PREFS_KEY = "adviento_prefs_v1";
+  const Store = window.SafeStorage || window.localStorage;
 
   let overlayHistoryPushed = false;
   let modalHistoryPushed = false;
   let briefingFsHistoryPushed = false;
-  let ignoreNextPopstate = false;
+  let ignorePopstateCount = 0;
 
   const DAY_SUSPECT_FOCUS = {
     1: { id: "s16", hideBeforeSolve: true }, 2: { id: "s20" }, 3: { id: "s08" }, 4: { id: "s15" },
@@ -23,7 +24,7 @@
     21: { id: "s01" }, 22: { id: "s23" }, 23: { id: "s09" }, 24: { id: "s13" }
   };
 
-  let currentRole = localStorage.getItem(ROLE_KEY) || "";
+  let currentRole = Store.getItem(ROLE_KEY) || "";
   let activeTab = "calendar";
   let selectedDayNum = 1;
   let userPickedDay = false;
@@ -45,44 +46,78 @@
   let lastFocusedEl = null;
   let initialRemoteApplied = false;
   let lockedScrollY = 0;
+  let lastKnownMaxOpenDay = window.DateGate.getMaxOpenDay();
 
   const tabScrollY = { calendar: 0, day: 0, suspects: 0, expediente: 0 };
-  let draftsStore = loadJsonStorage(DRAFTS_KEY, { inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } });
+  let draftsStore = loadDraftsStorage();
   let userPrefs = loadJsonStorage(PREFS_KEY, { fontBoost: false, nightSoft: false, reducedMotion: false });
+  let lastAdminSignature = "";
   let lastCalendarSignature = "";
   let lastDaySignature = "";
   let lastSuspectsSignature = "";
+  let lastExpedienteSignature = "";
 
   const esc = (s) => window.PuzzleEngine.escapeHtml(s);
 
   function loadJsonStorage(key, fallback) {
     try {
-      const raw = localStorage.getItem(key);
-      return raw ? Object.assign({}, fallback, JSON.parse(raw)) : fallback;
+      const raw = Store.getItem(key);
+      if (!raw) return Object.assign({}, fallback);
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return Object.assign({}, fallback);
+      }
+      return Object.assign({}, fallback, parsed);
     } catch (_) {
-      return fallback;
+      return Object.assign({}, fallback);
     }
   }
 
+  function loadDraftsStorage() {
+    const base = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
+    const loaded = loadJsonStorage(DRAFTS_KEY, base);
+    const isPlainObj = (v) => Boolean(v && typeof v === "object" && !Array.isArray(v));
+    return {
+      schemaVersion: 2,
+      inputs: isPlainObj(loaded.inputs) ? loaded.inputs : {},
+      widgets: isPlainObj(loaded.widgets) ? loaded.widgets : {},
+      scratch: isPlainObj(loaded.scratch) ? loaded.scratch : {},
+      verdict: Object.assign({}, base.verdict, isPlainObj(loaded.verdict) ? loaded.verdict : {})
+    };
+  }
+
   function saveDrafts() {
-    try { localStorage.setItem(DRAFTS_KEY, JSON.stringify(draftsStore)); } catch (_) {}
+    try { Store.setItem(DRAFTS_KEY, JSON.stringify(draftsStore)); } catch (_) {}
+  }
+
+  function flushPendingNotes() {
+    if (!noteTimer) return;
+    clearTimeout(noteTimer);
+    noteTimer = null;
+    const ta = document.getElementById("shared-notes-area");
+    if (ta && currentRole) {
+      window.SyncEngine.saveNotes(ta.value, currentRole);
+    }
   }
 
   function applyUserPrefs() {
-    document.body.classList.toggle("font-boost", Boolean(userPrefs.fontBoost));
+    document.documentElement.classList.toggle("font-boost", Boolean(userPrefs.fontBoost));
+    document.body.classList.remove("font-boost");
     document.body.classList.toggle("night-reading-soft", Boolean(userPrefs.nightSoft));
-    document.body.classList.toggle("Pref-reduced-motion", Boolean(userPrefs.reducedMotion));
-    try { localStorage.setItem(PREFS_KEY, JSON.stringify(userPrefs)); } catch (_) {}
+    document.body.classList.remove("Pref-reduced-motion");
+    document.body.classList.toggle("pref-reduced-motion", Boolean(userPrefs.reducedMotion));
+    if (userPrefs.reducedMotion && window.clearSnow) window.clearSnow();
+    try { Store.setItem(PREFS_KEY, JSON.stringify(userPrefs)); } catch (_) {}
   }
 
   function getSvg(name) {
     const icons = {
-      lock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
-      unlock: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`,
-      check: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-      hourglass: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`,
-      users: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
-      gift: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 4.8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>`
+      lock: `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`,
+      unlock: `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`,
+      check: `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      hourglass: `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`,
+      users: `<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+      gift: `<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 4.8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>`
     };
     return icons[name] || "";
   }
@@ -92,7 +127,7 @@
     if (!host) return;
     const item = document.createElement("div");
     item.className = "adv-toast";
-    item.innerHTML = `<span>${esc(text)}</span>${actionLabel ? `<button type="button" class="btn btn-sm btn-gold" style="min-height:34px;padding:4px 10px;">${esc(actionLabel)}</button>` : ""}`;
+    item.innerHTML = `<span>${esc(text)}</span>${actionLabel ? `<button type="button" class="btn btn-sm btn-gold">${esc(actionLabel)}</button>` : ""}`;
     host.appendChild(item);
     if (actionLabel && typeof onAction === "function") {
       item.querySelector("button")?.addEventListener("click", () => {
@@ -101,6 +136,15 @@
       });
     }
     setTimeout(() => { if (item.isConnected) item.remove(); }, 5200);
+  }
+
+  if (window.SafeStorage && typeof window.SafeStorage.onError === "function") {
+    let storageWarnShown = false;
+    window.SafeStorage.onError(() => {
+      if (storageWarnShown) return;
+      storageWarnShown = true;
+      showToast("Almacenamiento local limitado; los cambios siguen activos en esta sesión.");
+    });
   }
 
   function lockBodyScroll() {
@@ -121,6 +165,7 @@
 
   function setBriefingFullscreen(active, targetFrame = null, fromHistory = false) {
     const frames = targetFrame ? [targetFrame] : Array.from(document.querySelectorAll(".briefing-frame"));
+    const origin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
     if (active) {
       if (!frames.length) return;
       if (!document.body.classList.contains("briefing-fs-active")) {
@@ -129,7 +174,7 @@
       }
       frames.forEach((fr) => {
         fr.classList.add("briefing-fullscreen");
-        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: true }, "*"); } catch (_) {}
+        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: true }, origin); } catch (_) {}
       });
       if (!fromHistory && !briefingFsHistoryPushed && window.history?.pushState) {
         briefingFsHistoryPushed = true;
@@ -140,7 +185,7 @@
       document.body.classList.remove("briefing-fs-active");
       document.querySelectorAll(".briefing-frame").forEach((fr) => {
         fr.classList.remove("briefing-fullscreen");
-        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, "*"); } catch (_) {}
+        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, origin); } catch (_) {}
       });
       if (wasActive) {
         window.scrollTo(0, briefingFsScrollY);
@@ -148,7 +193,7 @@
       if (briefingFsHistoryPushed) {
         briefingFsHistoryPushed = false;
         if (!fromHistory && window.history?.back) {
-          ignoreNextPopstate = true;
+          ignorePopstateCount += 1;
           window.history.back();
         }
       }
@@ -255,13 +300,22 @@
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) ensureTicking();
     });
+    window.clearSnow = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      sparks.length = 0;
+      ctx.clearRect(0, 0, w, h);
+    };
     window.resumeSnow = ensureTicking;
     ensureTicking();
   }
 
   function postToBriefings(payload) {
+    const origin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
     document.querySelectorAll('iframe[src*="video-briefing"]').forEach((fr) => {
-      try { fr.contentWindow?.postMessage(payload, "*"); } catch (_) {}
+      try { fr.contentWindow?.postMessage(payload, origin); } catch (_) {}
     });
   }
 
@@ -280,10 +334,13 @@
     selectedDayNum = maxOpen;
   }
 
+  let idLastFocusedEl = null;
+
   function openIdentityOverlay(fromHistory = false) {
     const overlay = document.getElementById("identity-overlay");
     const cancelBtn = document.getElementById("identity-cancel-btn");
     if (!overlay) return;
+    if (!fromHistory) idLastFocusedEl = document.activeElement;
     if (cancelBtn) cancelBtn.style.display = currentRole ? "block" : "none";
 
     overlay.querySelectorAll("[data-choose-role]").forEach((btn) => {
@@ -295,6 +352,8 @@
 
     overlay.classList.add("open");
     lockBodyScroll();
+    const firstBtn = overlay.querySelector("[data-choose-role]");
+    if (firstBtn) setTimeout(() => { try { firstBtn.focus({ preventScroll: true }); } catch (_) {} }, 20);
     if (!fromHistory && currentRole && !overlayHistoryPushed && window.history?.pushState) {
       overlayHistoryPushed = true;
       window.history.pushState({ overlay: "identity", tab: activeTab, day: selectedDayNum }, "");
@@ -308,10 +367,14 @@
       unlockBodyScroll();
       if (window.resumeSnow) window.resumeSnow();
     }
+    if (idLastFocusedEl && typeof idLastFocusedEl.focus === "function" && idLastFocusedEl.isConnected) {
+      try { idLastFocusedEl.focus({ preventScroll: true }); } catch (_) {}
+    }
+    idLastFocusedEl = null;
     if (overlayHistoryPushed) {
       overlayHistoryPushed = false;
       if (!fromHistory && window.history?.back) {
-        ignoreNextPopstate = true;
+        ignorePopstateCount += 1;
         window.history.back();
       }
     }
@@ -319,13 +382,15 @@
 
   function applyRoleSwitch(role) {
     currentRole = role;
-    localStorage.setItem(ROLE_KEY, role);
+    Store.setItem(ROLE_KEY, role);
     closeIdentityOverlay();
     window.SyncEngine.markPresence(role);
     window.AudioFX.click();
+    lastAdminSignature = "";
     lastCalendarSignature = "";
     lastDaySignature = "";
     lastSuspectsSignature = "";
+    lastExpedienteSignature = "";
     renderAdminBar();
     renderActiveTab();
     maybeShowFirstDedication();
@@ -347,6 +412,7 @@
 
   function switchTab(tab, opts = {}) {
     if (activeTab === tab && !opts.force) return;
+    flushPendingNotes();
     setBriefingFullscreen(false);
     clearKeyboardOpen();
     window.AudioFX.stopMorse?.();
@@ -497,12 +563,19 @@
     const bar = document.getElementById("admin-bar");
     if (!bar) return;
     if (!window.DateGate.isAdminEnabled()) {
+      lastAdminSignature = "";
       bar.style.display = "none";
       return;
     }
     const sim = window.DateGate.getSimulatedDay();
     const otherRole = currentRole === "miguel" ? "patri" : "miguel";
     const otherLabel = otherRole === "miguel" ? "Miguel" : "Patri";
+    const adminSig = `${currentRole}:${sim}`;
+    if (adminSig === lastAdminSignature && bar.innerHTML.trim() !== "") {
+      bar.style.display = "flex";
+      return;
+    }
+    lastAdminSignature = adminSig;
     bar.style.display = "flex";
     bar.innerHTML = `
       <span class="badge badge-gold">MODO TEST (Sala aislada · Cero Spoilers)</span>
@@ -522,17 +595,21 @@
 
     document.getElementById("admin-sim-select")?.addEventListener("change", (e) => {
       window.DateGate.setSimulatedDay(e.target.value);
+      lastKnownMaxOpenDay = window.DateGate.getMaxOpenDay();
       userPickedDay = false;
       selectDefaultDay();
+      lastAdminSignature = "";
       lastCalendarSignature = "";
       lastDaySignature = "";
       lastSuspectsSignature = "";
+      lastExpedienteSignature = "";
       renderAdminBar();
       renderActiveTab();
     });
 
     document.getElementById("admin-exit-btn")?.addEventListener("click", () => {
       window.DateGate.disableAdmin();
+      lastKnownMaxOpenDay = window.DateGate.getMaxOpenDay();
       if (window.location.search.includes("admin=") && window.history?.replaceState) {
         const u = new URL(window.location.href);
         u.searchParams.delete("admin");
@@ -542,9 +619,11 @@
       if (currentRole) window.SyncEngine.markPresence(currentRole);
       userPickedDay = false;
       selectDefaultDay();
+      lastAdminSignature = "";
       lastCalendarSignature = "";
       lastDaySignature = "";
       lastSuspectsSignature = "";
+      lastExpedienteSignature = "";
       renderAdminBar();
       renderActiveTab();
     });
@@ -555,13 +634,14 @@
         "¿Resetear todo el progreso en la sala de pruebas (puertas, descartes y notas)? La partida real no se verá afectada.",
         "Sí, resetear test",
         () => {
+          flushPendingNotes();
           try {
-            localStorage.removeItem(DEDICATION_SEEN_KEY);
-            localStorage.removeItem(ROLE_KEY);
-            localStorage.removeItem(DRAFTS_KEY);
+            Store.removeItem(DEDICATION_SEEN_KEY);
+            Store.removeItem(ROLE_KEY);
+            Store.removeItem(DRAFTS_KEY);
           } catch (_) {}
           currentRole = "";
-          draftsStore = { inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
+          draftsStore = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
           const ta = document.getElementById("shared-notes-area");
           if (ta) ta.value = "";
           suspectFilter = "all";
@@ -572,9 +652,11 @@
           userPickedDay = false;
           prevSyncSnap = null;
           selectDefaultDay();
+          lastAdminSignature = "";
           lastCalendarSignature = "";
           lastDaySignature = "";
           lastSuspectsSignature = "";
+          lastExpedienteSignature = "";
           window.SyncEngine.resetAll();
           closeModal();
           switchTab("calendar", { silent: true, force: true });
@@ -794,6 +876,11 @@
     const prevDispatchOpen = Boolean(document.getElementById("day-dispatch-details")?.open);
     const prevScratchOpen = Boolean(container.querySelector(".widget-scratchpad")?.open);
     const prevDispatchDraft = document.getElementById("dispatch-input")?.value;
+    const prevDayBriefingMount = document.getElementById("day-briefing-mount");
+    const preservedDayIframe = selectedDayNum === 1 && prevDayBriefingMount ? prevDayBriefingMount.querySelector("iframe") : null;
+    if (preservedDayIframe && preservedDayIframe.parentNode) {
+      preservedDayIframe.parentNode.removeChild(preservedDayIframe);
+    }
     const ae = document.activeElement;
     const prevFocusState = ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
       ? { id: ae.id, start: ae.selectionStart, end: ae.selectionEnd }
@@ -860,7 +947,7 @@
                 <button type="submit" class="btn btn-primary" style="width:100%;">Validar mi parte (${role === "miguel" ? "Miguel" : "Patri"})</button>
               </form>
             `}
-            <div id="day-feedback"></div>
+            <div id="day-feedback" aria-live="polite"></div>
           </div>`;
       } else {
         const attrs = buildInputAttrs(dayObj.jointInput.label, dayObj.jointInput.placeholder);
@@ -875,7 +962,7 @@
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%;">Validar Indicio del Día</button>
             </form>
-            <div id="day-feedback"></div>
+            <div id="day-feedback" aria-live="polite"></div>
           </div>`;
       }
     } else {
@@ -908,7 +995,12 @@
         } else {
           const showdownHtml = window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, remaining) : "";
           const prop = syncState.finalProposal;
-          const vDraft = prop || draftsStore.verdict;
+          const effVerdict = {
+            suspect: draftsStore.verdict.suspect || prop?.suspectId || "",
+            reason: draftsStore.verdict.reason || prop?.reason || "",
+            poison: draftsStore.verdict.poison || prop?.poison || "",
+            method: draftsStore.verdict.method || prop?.method || ""
+          };
           const isPartnerProposal = Boolean(prop && prop.byRole && prop.byRole !== role);
           const isMyProposal = Boolean(prop && prop.byRole === role);
           const reasons = [
@@ -936,41 +1028,47 @@
                 <div class="input-group">
                   <span class="input-label">1. Culpable elegido entre los ${remaining.length} finalistas</span>
                   <div class="radio-cards-grid" role="radiogroup" aria-label="Culpable elegido">
-                    ${remaining.map((s) => `
-                      <button type="button" class="radio-card ${vDraft.suspectId === s.id || vDraft.suspect === s.id ? "selected" : ""}" data-fv-suspect="${esc(s.id)}">
+                    ${remaining.map((s) => {
+                      const isSel = effVerdict.suspect === s.id;
+                      return `
+                      <button type="button" role="radio" aria-checked="${isSel ? "true" : "false"}" class="radio-card ${isSel ? "selected" : ""}" data-fv-suspect="${esc(s.id)}">
                         <span class="radio-card-dot"></span>
                         <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="40" height="40" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0;">
                         <div>
                           <div style="font-weight:700;color:#FFFBEB;">${esc(s.name)}</div>
                           <div style="font-size:0.74rem;color:var(--vg-text-secondary);">${esc(s.role)} · ${esc(s.room)}</div>
                         </div>
-                      </button>`).join("")}
+                      </button>`;
+                    }).join("")}
                   </div>
                 </div>
                 <div class="input-group">
                   <span class="input-label">2. Prueba determinante y razón del descarte</span>
                   <div class="radio-cards-grid" role="radiogroup" aria-label="Justificación forense">
-                    ${reasons.map((r) => `
-                      <button type="button" class="radio-card ${(vDraft.reason || "") === r.id ? "selected" : ""}" data-fv-reason="${esc(r.id)}">
+                    ${reasons.map((r) => {
+                      const isSel = effVerdict.reason === r.id;
+                      return `
+                      <button type="button" role="radio" aria-checked="${isSel ? "true" : "false"}" class="radio-card ${isSel ? "selected" : ""}" data-fv-reason="${esc(r.id)}">
                         <span class="radio-card-dot"></span>
                         <span>${esc(r.txt)}</span>
-                      </button>`).join("")}
+                      </button>`;
+                    }).join("")}
                   </div>
                 </div>
                 <div class="input-group">
                   <label class="input-label" for="fv-poison">3. Veneno hallado en la copa</label>
-                  <input id="fv-poison" type="text" class="adv-input" value="${esc(vDraft.poison || "")}" placeholder="Ej. nombre de la toxina o planta" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
+                  <input id="fv-poison" type="text" class="adv-input" value="${esc(effVerdict.poison)}" placeholder="Ej. nombre de la toxina o planta" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
                 </div>
                 <div class="input-group">
                   <label class="input-label" for="fv-method">4. Maniobra ejecutada desde Planta 1 a las 23:38 h</label>
-                  <input id="fv-method" type="text" class="adv-input" value="${esc(vDraft.method || "")}" placeholder="Ej. palabra clave de la maniobra" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
+                  <input id="fv-method" type="text" class="adv-input" value="${esc(effVerdict.method)}" placeholder="Ej. palabra clave de la maniobra" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                   ${!isPartnerProposal ? `<button type="button" id="fv-propose-btn" class="btn btn-frost" style="flex:1;min-width:170px;">Proponer a ${partnerName}</button>` : ""}
-                  <button type="submit" class="btn btn-primary" style="flex:1;min-width:190px;">${isPartnerProposal ? "Firmar y Ejecutar Orden" : "Ejecutar Orden de Detención"}</button>
+                  <button type="submit" id="fv-submit-btn" class="btn btn-primary" style="flex:1;min-width:190px;">${isPartnerProposal ? "Firmar y Ejecutar Orden" : "Ejecutar Orden de Detención"}</button>
                 </div>
               </form>
-              <div id="final-feedback"></div>
+              <div id="final-feedback" aria-live="polite"></div>
             </div>`;
         }
       } else {
@@ -990,7 +1088,7 @@
         finalTrialHtml = `
           <div class="glass-card answer-card" style="border:var(--vg-border-pine);">
             <span class="badge badge-pine">${esc(ep.title || "CASO CERRADO")}</span>
-            <h3 style="margin:10px 0 8px;font-size:1.2rem;">Culpable arrestada: ${esc(ep.culpritName || "")}</h3>
+            <h3 style="margin:10px 0 8px;font-size:1.2rem;">Culpable arrestado/a: ${esc(ep.culpritName || "")}</h3>
             <p class="day-story">${esc(ep.confession || "")}</p>
             <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
               <button type="button" class="btn btn-sm btn-gold" id="print-closing-btn">Acta Oficial de Cierre</button>
@@ -1031,7 +1129,7 @@
             <span class="badge badge-gold">${esc(dayObj.kicker)}</span>
             <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
               ${maxOpen > 1 ? `
-                <select id="day-quick-jump" class="adv-select" style="width:auto;min-height:38px;padding:4px 10px;font-size:0.82rem;" aria-label="Saltar a puerta">
+                <select id="day-quick-jump" class="adv-select" style="width:auto;min-height:44px;padding:6px 10px;font-size:16px;" aria-label="Saltar a puerta">
                   ${Array.from({ length: maxOpen }, (_, i) => i + 1).map((dNum) => `<option value="${dNum}" ${dNum === selectedDayNum ? "selected" : ""}>Día ${String(dNum).padStart(2, "0")}</option>`).join("")}
                 </select>
               ` : ""}
@@ -1071,7 +1169,9 @@
               <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
               <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Informe grabado del caso</span>
             </div>
-            <iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>
+            <div id="day-briefing-mount">
+              ${preservedDayIframe ? "" : `<iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>`}
+            </div>
           </div>
         ` : ""}
 
@@ -1099,7 +1199,7 @@
             <div style="margin-top:8px;">
               ${partnerDispatch?.text ? `<div class="clue-box" style="margin-bottom:8px;font-size:0.8rem;"><strong>Dato enviado por ${partnerName}:</strong> ${esc(partnerDispatch.text)}</div>` : `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-bottom:8px;">${partnerName} aún no ha remitido ningún dato en esta puerta.</div>`}
               <form id="dispatch-form" style="display:flex;gap:8px;">
-                <input type="text" id="dispatch-input" class="adv-input" value="${esc(prevFocusState?.id === "dispatch-input" && prevDispatchDraft !== undefined ? prevDispatchDraft : (myDispatch?.text || ""))}" placeholder="Enviar dato breve a ${partnerName}..." style="min-height:44px;">
+                <input type="text" id="dispatch-input" class="adv-input" aria-label="Dato para enviar a ${partnerName}" value="${esc(prevFocusState?.id === "dispatch-input" && prevDispatchDraft !== undefined ? prevDispatchDraft : (myDispatch?.text || ""))}" placeholder="Enviar dato breve a ${partnerName}..." style="min-height:44px;min-width:0;">
                 <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Enviar</button>
               </form>
             </div>
@@ -1120,6 +1220,10 @@
         </div>
       </div>
     `;
+
+    if (preservedDayIframe) {
+      document.getElementById("day-briefing-mount")?.appendChild(preservedDayIframe);
+    }
 
     const widgetMount = document.getElementById("widget-mount");
     const draftKey = `${dayObj.day}-${role}`;
@@ -1151,12 +1255,28 @@
         const env = btn.closest(".artifact-envelope");
         const body = env?.querySelector(".artifact-body");
         if (!body) return;
+        let artScale = 1;
         showModal(`
           <span class="badge badge-gold">INSPECCIÓN AMPLIADA DE INDICIO</span>
           <h3 id="adv-modal-title" class="serif" style="font-size:1.35rem;margin:8px 0 12px;">Día ${String(dayObj.day).padStart(2, "0")} · Evidencia</h3>
-          <div style="overflow-x:auto;">${body.innerHTML}</div>
-          <button type="button" class="btn btn-ghost" style="width:100%;margin-top:14px;" id="close-modal-btn">Cerrar visor</button>
+          <div style="overflow:auto;max-height:62dvh;">
+            <div id="artifact-zoom-wrap" style="transform-origin:top left;transition:transform 160ms ease;">${body.innerHTML}</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <button type="button" class="btn btn-sm btn-frost" style="flex:1;" id="art-zoom-btn">Ampliar 1.5x</button>
+            <button type="button" class="btn btn-sm btn-ghost" style="flex:1;" id="close-modal-btn">Cerrar visor</button>
+          </div>
         `, btn);
+        const wrap = document.getElementById("artifact-zoom-wrap");
+        const zBtn = document.getElementById("art-zoom-btn");
+        zBtn?.addEventListener("click", () => {
+          artScale = artScale === 1 ? 1.5 : 1;
+          if (wrap) {
+            wrap.style.transform = artScale === 1 ? "" : `scale(${artScale})`;
+            wrap.style.width = artScale === 1 ? "" : `${Math.round(100 / artScale * 100)}%`;
+          }
+          zBtn.textContent = artScale === 1 ? "Ampliar 1.5x" : "Restablecer 1x";
+        });
         document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
       });
     });
@@ -1173,6 +1293,7 @@
         lastDaySignature = "";
         window.AudioFX.stopMorse?.();
         window.SyncEngine.setViewingDay(selectedDayNum);
+        if (window.history?.pushState) window.history.pushState({ tab: "day", day: selectedDayNum }, "");
         renderDayView(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -1266,7 +1387,8 @@
         delete draftsStore.inputs[String(dayObj.day)];
         delete draftsStore.widgets[draftKey];
         saveDrafts();
-        window.AudioFX.sealBreak?.() || window.AudioFX.success();
+        if (typeof window.AudioFX.sealBreak === "function") window.AudioFX.sealBreak();
+        else window.AudioFX.success();
         if (window.triggerGoldBurst) window.triggerGoldBurst(34);
         const decoded = window.PuzzleEngine.decodePayload(dayObj.unlockPayload);
         window.SyncEngine.solveDayPart(dayObj.day, role, dayObj.mode, decoded);
@@ -1281,7 +1403,11 @@
         window.AudioFX.click();
         draftsStore.verdict.suspect = btn.dataset.fvSuspect;
         saveDrafts();
-        container.querySelectorAll("[data-fv-suspect]").forEach((b) => b.classList.toggle("selected", b === btn));
+        container.querySelectorAll("[data-fv-suspect]").forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("selected", on);
+          b.setAttribute("aria-checked", on ? "true" : "false");
+        });
       });
     });
 
@@ -1290,7 +1416,11 @@
         window.AudioFX.click();
         draftsStore.verdict.reason = btn.dataset.fvReason;
         saveDrafts();
-        container.querySelectorAll("[data-fv-reason]").forEach((b) => b.classList.toggle("selected", b === btn));
+        container.querySelectorAll("[data-fv-reason]").forEach((b) => {
+          const on = b === btn;
+          b.classList.toggle("selected", on);
+          b.setAttribute("aria-checked", on ? "true" : "false");
+        });
       });
     });
 
@@ -1322,7 +1452,12 @@
         "¿Confirmáis enviar esta acusación definitiva tras contrastar ambos terminales?",
         "Confirmar acusación",
         async () => {
+          if (isSubmitting) return;
           isSubmitting = true;
+          const submitBtn = document.getElementById("fv-submit-btn");
+          const propBtn = document.getElementById("fv-propose-btn");
+          if (submitBtn) submitBtn.disabled = true;
+          if (propBtn) propBtn.disabled = true;
           try {
             const fv = dayObj.finalVerdict;
             const ok1 = await window.PuzzleEngine.matchesHashes(sVal, fv.suspectHashes);
@@ -1352,12 +1487,15 @@
             window.SyncEngine.solveFinalVerdict(decoded?.finalEpilogue || null, innocentIds);
           } finally {
             isSubmitting = false;
+            if (submitBtn && submitBtn.isConnected) submitBtn.disabled = false;
+            if (propBtn && propBtn.isConnected) propBtn.disabled = false;
           }
         }
       );
     });
 
     document.getElementById("fv-propose-btn")?.addEventListener("click", () => {
+      if (isSubmitting) return;
       const sVal = draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
       const rVal = draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
       const pVal = document.getElementById("fv-poison")?.value?.trim() || "";
@@ -1417,7 +1555,11 @@
     container.querySelectorAll("[data-group-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.groupFilter === suspectGroupFilter));
     container.querySelectorAll("[data-floor-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.floorFilter === suspectFloorFilter));
 
+    const clearBtn = document.getElementById("suspect-search-clear");
+    if (clearBtn) clearBtn.style.display = suspectSearch.trim() ? "inline-flex" : "none";
+
     const q = suspectSearch.trim().toLowerCase();
+    let visibleCount = 0;
     container.querySelectorAll("[data-suspect-id]").forEach((card) => {
       const isOut = card.dataset.discarded === "1";
       const grp = card.dataset.group || "";
@@ -1427,8 +1569,12 @@
       const hideGroup = suspectGroupFilter !== "all" && grp !== suspectGroupFilter;
       const hideFloor = suspectFloorFilter !== "all" && flr !== suspectFloorFilter;
       const hideQuery = q && !hay.includes(q);
-      card.classList.toggle("is-hidden-by-filter", Boolean(hideStatus || hideGroup || hideFloor || hideQuery));
+      const hidden = Boolean(hideStatus || hideGroup || hideFloor || hideQuery);
+      card.classList.toggle("is-hidden-by-filter", hidden);
+      if (!hidden) visibleCount += 1;
     });
+    const emptyEl = document.getElementById("suspects-empty-state");
+    if (emptyEl) emptyEl.style.display = visibleCount === 0 ? "block" : "none";
   }
 
   function computeSuspectsSignature() {
@@ -1465,9 +1611,11 @@
 
     lastSuspectsSignature = sig;
     clearTimeout(noteTimer);
+    noteTimer = null;
 
     const preservedNotes = existingTa ? existingTa.value : (syncState.sharedNotes || "");
-    const wasFocused = existingTa && document.activeElement === existingTa;
+    const wasFocused = Boolean(existingTa && document.activeElement === existingTa);
+    const taSel = wasFocused ? { start: existingTa.selectionStart, end: existingTa.selectionEnd } : null;
 
     const discarded = syncState.discardedIds || [];
     const solvedDays = Object.keys(syncState.days || {}).filter((k) => syncState.days[k]?.solved).map(Number);
@@ -1482,25 +1630,26 @@
         <h2 class="section-title">Sospechosos descubiertos (${discovered.length}/25)</h2>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           <span class="badge badge-crimson">${discardedInView} descartados · ${activeInView} activos</span>
-          <button type="button" id="jump-to-notes-btn" class="btn btn-sm btn-ghost" style="min-height:36px;">Ir a Libreta</button>
+          <button type="button" id="jump-to-notes-btn" class="btn btn-sm btn-ghost">Ir a Libreta</button>
         </div>
       </div>
 
       ${discovered.length > 0 ? `
-        <div style="margin-bottom:10px;">
-          <input type="search" id="suspect-search-input" class="adv-input" value="${esc(suspectSearch)}" placeholder="Buscar por nombre, rol o habitación..." style="min-height:44px;">
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px;">
+          <input type="search" id="suspect-search-input" class="adv-input" aria-label="Buscar sospechosos por nombre, rol o habitación" value="${esc(suspectSearch)}" placeholder="Buscar nombre, rol o hab..." style="min-height:44px;flex:1;min-width:0;">
+          <button type="button" id="suspect-search-clear" class="btn btn-sm btn-ghost" aria-label="Limpiar búsqueda" style="display:${suspectSearch.trim() ? "inline-flex" : "none"};flex-shrink:0;">Limpiar</button>
         </div>
-        <div class="suspect-filters">
+        <div class="suspect-filters" role="group" aria-label="Filtrar por estado">
           <button type="button" class="filter-chip ${suspectFilter === "all" ? "active" : ""}" data-filter="all">Todos (${discovered.length})</button>
           <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Sospechosos (${activeInView})</button>
           <button type="button" class="filter-chip ${suspectFilter === "discarded" ? "active" : ""}" data-filter="discarded">Descartados (${discardedInView})</button>
         </div>
-        <div class="suspect-filters" style="margin-top:-4px;">
+        <div class="suspect-filters" role="group" aria-label="Filtrar por grupo" style="margin-top:-4px;">
           <button type="button" class="filter-chip ${suspectGroupFilter === "all" ? "active" : ""}" data-group-filter="all">Huéspedes y Personal</button>
           <button type="button" class="filter-chip ${suspectGroupFilter === "Huésped" ? "active" : ""}" data-group-filter="Huésped">Huéspedes</button>
           <button type="button" class="filter-chip ${suspectGroupFilter === "Personal" ? "active" : ""}" data-group-filter="Personal">Personal</button>
         </div>
-        <div class="suspect-filters" style="margin-top:-4px;">
+        <div class="suspect-filters" role="group" aria-label="Filtrar por planta" style="margin-top:-4px;">
           ${["all", "Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
             <button type="button" class="filter-chip ${suspectFloorFilter === fl ? "active" : ""}" data-floor-filter="${fl}">${fl === "all" ? "Todas las plantas" : fl}</button>
           `).join("")}
@@ -1541,6 +1690,10 @@
               </button>`;
           }).join("")}
         </div>
+        <div id="suspects-empty-state" class="glass-card" style="display:none;padding:20px;text-align:center;margin-top:8px;">
+          <p class="day-story" style="margin-bottom:10px;">Ningún sospechoso coincide con los filtros o la búsqueda actual.</p>
+          <button type="button" id="suspects-reset-filters-btn" class="btn btn-sm btn-frost">Mostrar todos</button>
+        </div>
       `}
 
       <div id="notes-card-anchor" class="glass-card" style="padding:18px;margin-top:20px;">
@@ -1550,8 +1703,9 @@
         </div>
         <div id="notes-remote-conflict" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(251,191,36,0.14);border:var(--vg-border-gold);justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:0.78rem;">
           <span>Tu pareja acaba de actualizar la libreta.</span>
-          <button type="button" class="btn btn-sm btn-gold" id="notes-merge-btn" style="min-height:34px;">Fusionar cambios</button>
+          <button type="button" class="btn btn-sm btn-gold" id="notes-merge-btn">Fusionar cambios</button>
         </div>
+        <label class="sr-only" for="shared-notes-area">Libreta compartida de Miguel y Patri</label>
         <textarea id="shared-notes-area" class="adv-textarea" placeholder="Anotad aquí sospechas, teorías o pistas compartidas...">${esc(preservedNotes)}</textarea>
       </div>
     `;
@@ -1565,6 +1719,21 @@
 
     document.getElementById("suspect-search-input")?.addEventListener("input", (e) => {
       suspectSearch = e.target.value;
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-search-clear")?.addEventListener("click", () => {
+      suspectSearch = "";
+      const inp = document.getElementById("suspect-search-input");
+      if (inp) inp.value = "";
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspects-reset-filters-btn")?.addEventListener("click", () => {
+      suspectFilter = "all";
+      suspectGroupFilter = "all";
+      suspectFloorFilter = "all";
+      suspectSearch = "";
+      const inp = document.getElementById("suspect-search-input");
+      if (inp) inp.value = "";
       applySuspectFilterOnly();
     });
     container.querySelectorAll("[data-filter]").forEach((btn) => {
@@ -1582,10 +1751,18 @@
     });
 
     const ta = document.getElementById("shared-notes-area");
-    if (wasFocused && ta) ta.focus();
+    if (wasFocused && ta) {
+      try {
+        ta.focus({ preventScroll: true });
+        if (taSel && typeof ta.setSelectionRange === "function") {
+          ta.setSelectionRange(taSel.start, taSel.end ?? taSel.start);
+        }
+      } catch (_) {}
+    }
     ta?.addEventListener("input", () => {
       clearTimeout(noteTimer);
       noteTimer = setTimeout(() => {
+        noteTimer = null;
         window.SyncEngine.saveNotes(ta.value, currentRole);
       }, 450);
     });
@@ -1601,9 +1778,23 @@
     });
   }
 
-  function renderExpedienteView() {
+  function renderExpedienteView(force = false) {
     const container = document.getElementById("view-expediente");
     if (!container || !currentRole) return;
+
+    const expSig = JSON.stringify({
+      role: currentRole,
+      maxOpen: window.DateGate.getMaxOpenDay(),
+      days: syncState.days,
+      hints: syncState.hintsUnlocked,
+      floor: expedienteFloor,
+      fv: syncState.finalVerdictSolved,
+      prefs: userPrefs
+    });
+    if (!force && expSig === lastExpedienteSignature && container.innerHTML.trim() !== "") {
+      return;
+    }
+    lastExpedienteSignature = expSig;
 
     const lore = window.CASE_LORE;
     const solvedDaysArr = Object.entries(syncState.days || {})
@@ -1808,7 +1999,7 @@
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setTimeout(() => URL.revokeObjectURL(url), 15000);
   }
 
   function showModal(html, triggerEl, opts = {}) {
@@ -1825,6 +2016,10 @@
       </div>
       ${html}
     `;
+    const titleEl = document.getElementById("adv-modal-title");
+    if (titleEl && !titleEl.hasAttribute("tabindex")) {
+      titleEl.setAttribute("tabindex", "-1");
+    }
     modal.classList.add("open");
     lockBodyScroll();
     document.getElementById("adv-modal-x-btn")?.addEventListener("click", () => closeModal());
@@ -1833,8 +2028,10 @@
       window.history.pushState({ modal: true, tab: activeTab, day: selectedDayNum }, "");
     }
     if (!opts.preserveFocus) {
-      const focusTarget = body.querySelector("h2, h3, button:not(#adv-modal-x-btn), input, select, textarea") || document.getElementById("adv-modal-x-btn");
-      if (focusTarget) focusTarget.focus();
+      const focusTarget = titleEl || body.querySelector("h2, h3, button:not(#adv-modal-x-btn), input, select, textarea") || document.getElementById("adv-modal-x-btn");
+      if (focusTarget) {
+        try { focusTarget.focus({ preventScroll: true }); } catch (_) {}
+      }
     }
   }
 
@@ -1848,13 +2045,13 @@
       if (window.resumeSnow) window.resumeSnow();
     }
     if (lastFocusedEl && typeof lastFocusedEl.focus === "function" && lastFocusedEl.isConnected) {
-      lastFocusedEl.focus();
+      try { lastFocusedEl.focus({ preventScroll: true }); } catch (_) {}
     }
     lastFocusedEl = null;
     if (modalHistoryPushed) {
       modalHistoryPushed = false;
       if (!fromHistory && window.history?.back) {
-        ignoreNextPopstate = true;
+        ignorePopstateCount += 1;
         window.history.back();
       }
     }
@@ -1865,20 +2062,27 @@
     showModal(`
       <span class="badge badge-frost">VISOR FOTOGRÁFICO DE EVIDENCIA</span>
       <h3 id="adv-modal-title" class="serif" style="font-size:1.2rem;margin:8px 0 10px;">${esc(caption || "Evidencia")}</h3>
-      <div class="lightbox-stage">
+      <div class="lightbox-stage" id="lightbox-stage">
         <img src="${esc(src)}" alt="${esc(caption || "Evidencia")}" id="lightbox-img">
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;">
-        <button type="button" class="btn btn-sm btn-frost" style="flex:1;" id="lb-zoom-btn">Zoom 1x → 2x</button>
+        <button type="button" class="btn btn-sm btn-frost" style="flex:1;" id="lb-zoom-btn">Zoom 1x a 2x</button>
         <button type="button" class="btn btn-sm btn-ghost" style="flex:1;" id="close-modal-btn">Cerrar</button>
       </div>
     `, triggerEl);
+    const stage = document.getElementById("lightbox-stage");
     const img = document.getElementById("lightbox-img");
     const zoomBtn = document.getElementById("lb-zoom-btn");
     zoomBtn?.addEventListener("click", () => {
       scale = scale === 1 ? 2 : scale === 2 ? 3 : 1;
-      if (img) img.style.transform = `scale(${scale})`;
-      zoomBtn.textContent = scale === 1 ? "Zoom 1x → 2x" : scale === 2 ? "Zoom 2x → 3x" : "Restablecer 1x";
+      if (img) {
+        img.style.width = `${scale * 100}%`;
+      }
+      if (stage && scale === 1) {
+        stage.scrollLeft = 0;
+        stage.scrollTop = 0;
+      }
+      zoomBtn.textContent = scale === 1 ? "Zoom 1x a 2x" : scale === 2 ? "Zoom 2x a 3x" : "Restablecer 1x";
     });
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
   }
@@ -1928,7 +2132,6 @@
   function openSuspectModal(suspectId, triggerEl, preserveFocus = false) {
     const s = (window.SUSPECTS_DATA || []).find((x) => x.id === suspectId);
     if (!s) return;
-    openModalSuspectId = suspectId;
     const isOut = (syncState.discardedIds || []).includes(s.id);
     const culpritId = syncState.finalEpilogue?.culpritId;
     const isCulprit = Boolean(syncState.finalVerdictSolved && culpritId && s.id === culpritId);
@@ -1939,12 +2142,27 @@
     const mySNote = sNotes[currentRole] || { stance: "duda", note: "" };
     const partnerRole = currentRole === "miguel" ? "patri" : "miguel";
     const partnerSNote = sNotes[partnerRole];
+    const badgeClass = isCulprit ? "badge-crimson" : isExonerated && !isOut ? "badge-pine" : isOut ? "badge-crimson" : "badge-gold";
+    const badgeText = isCulprit ? "CULPABLE" : isExonerated && !isOut ? "EXONERADO" : isOut ? "DESCARTADO" : `FICHA #${s.num}`;
+    const partnerNoteHtml = partnerSNote?.note
+      ? `<div class="clue-box" style="margin-top:10px;font-size:0.8rem;"><strong>Anotación de ${partnerRole === "miguel" ? "Miguel" : "Patri"} (${esc(partnerSNote.stance)}):</strong> ${esc(partnerSNote.note)}</div>`
+      : "";
 
+    const existingPartnerSlot = document.getElementById("suspect-partner-note-slot");
+    const existingBadge = document.getElementById("suspect-modal-badge");
+    if (preserveFocus && openModalSuspectId === suspectId && existingPartnerSlot && existingBadge) {
+      existingBadge.className = `badge ${badgeClass}`;
+      existingBadge.textContent = badgeText;
+      existingPartnerSlot.innerHTML = `${solvedEntry ? `<div class="feedback-banner success"><strong>Resolución:</strong> ${esc(solvedEntry.conclusion)}</div>` : ""}${partnerNoteHtml}`;
+      return;
+    }
+
+    openModalSuspectId = suspectId;
     showModal(`
       <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
         <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="82" height="82" style="width:82px;height:82px;border-radius:14px;object-fit:cover;border:var(--vg-border-specular-strong);">
         <div>
-          <span class="badge ${isCulprit ? "badge-crimson" : isExonerated && !isOut ? "badge-pine" : isOut ? "badge-crimson" : "badge-gold"}">${isCulprit ? "CULPABLE" : isExonerated && !isOut ? "EXONERADO" : isOut ? "DESCARTADO" : `FICHA #${esc(s.num)}`}</span>
+          <span id="suspect-modal-badge" class="badge ${badgeClass}">${esc(badgeText)}</span>
           <h3 id="adv-modal-title" style="font-size:1.25rem;margin-top:6px;">${esc(s.name)}</h3>
           <div style="font-size:0.82rem;color:var(--vg-text-secondary);">${esc(s.role)} · ${esc(s.room)}</div>
         </div>
@@ -1953,17 +2171,19 @@
         <p style="margin-bottom:8px;"><strong>Posible motivo:</strong> ${esc(s.motiveHint)}</p>
         <p><strong>Coartada inicial:</strong> ${esc(s.alibiClaim)}</p>
       </div>
-      ${solvedEntry ? `<div class="feedback-banner success"><strong>Resolución:</strong> ${esc(solvedEntry.conclusion)}</div>` : ""}
-      ${partnerSNote?.note ? `<div class="clue-box" style="margin-top:10px;font-size:0.8rem;"><strong>Anotación de ${partnerRole === "miguel" ? "Miguel" : "Patri"} (${esc(partnerSNote.stance)}):</strong> ${esc(partnerSNote.note)}</div>` : ""}
+      <div id="suspect-partner-note-slot">
+        ${solvedEntry ? `<div class="feedback-banner success"><strong>Resolución:</strong> ${esc(solvedEntry.conclusion)}</div>` : ""}
+        ${partnerNoteHtml}
+      </div>
       <form id="suspect-note-form" style="margin-top:12px;">
         <div class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-bottom:6px;">Tu valoración sobre ${esc(s.name)}</div>
-        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+        <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;" role="group" aria-label="Valoración de sospecha">
           ${["sospecha", "duda", "inocente"].map((st) => `
-            <button type="button" class="filter-chip ${mySNote.stance === st ? "active" : ""}" data-stance="${st}" style="min-height:38px;">${st.toUpperCase()}</button>
+            <button type="button" class="filter-chip ${mySNote.stance === st ? "active" : ""}" data-stance="${st}" aria-pressed="${mySNote.stance === st ? "true" : "false"}">${st.toUpperCase()}</button>
           `).join("")}
         </div>
         <div style="display:flex;gap:8px;">
-          <input type="text" id="suspect-note-inp" class="adv-input" value="${esc(mySNote.note || "")}" placeholder="Apunte rápido de coartada..." style="min-height:44px;">
+          <input type="text" id="suspect-note-inp" class="adv-input" aria-label="Apunte rápido de coartada" value="${esc(mySNote.note || "")}" placeholder="Apunte rápido de coartada..." style="min-height:44px;min-width:0;">
           <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Guardar</button>
         </div>
       </form>
@@ -1974,7 +2194,11 @@
     document.querySelectorAll("[data-stance]").forEach((b) => {
       b.addEventListener("click", () => {
         chosenStance = b.dataset.stance;
-        document.querySelectorAll("[data-stance]").forEach((x) => x.classList.toggle("active", x === b));
+        document.querySelectorAll("[data-stance]").forEach((x) => {
+          const on = x === b;
+          x.classList.toggle("active", on);
+          x.setAttribute("aria-pressed", on ? "true" : "false");
+        });
       });
     });
     document.getElementById("suspect-note-form")?.addEventListener("submit", (e) => {
@@ -2004,15 +2228,22 @@
   function maybeShowFirstDedication() {
     if (currentRole !== "patri") return;
     try {
-      if (localStorage.getItem(DEDICATION_SEEN_KEY) === "1") return;
-      localStorage.setItem(DEDICATION_SEEN_KEY, "1");
+      if (Store.getItem(DEDICATION_SEEN_KEY) === "1") return;
+      Store.setItem(DEDICATION_SEEN_KEY, "1");
     } catch (_) {}
     openDedicationModal();
   }
 
+  let partnerToastBaselineReady = false;
+
   function detectPartnerProgressToast(newSt) {
-    if (!prevSyncSnap || !currentRole) {
+    const syncStatus = window.SyncEngine.getStatus();
+    if (!currentRole || (syncStatus.mode === "firebase" && !syncStatus.initialSynced)) {
+      return;
+    }
+    if (!prevSyncSnap || !partnerToastBaselineReady) {
       prevSyncSnap = JSON.parse(JSON.stringify(newSt));
+      partnerToastBaselineReady = true;
       return;
     }
     const partnerRole = currentRole === "miguel" ? "patri" : "miguel";
@@ -2033,6 +2264,20 @@
       }
     });
     prevSyncSnap = JSON.parse(JSON.stringify(newSt));
+  }
+
+  function refreshDateGateIfNeeded() {
+    const nowMax = window.DateGate.getMaxOpenDay();
+    if (nowMax !== lastKnownMaxOpenDay) {
+      lastKnownMaxOpenDay = nowMax;
+      lastCalendarSignature = "";
+      lastDaySignature = "";
+      lastSuspectsSignature = "";
+      lastExpedienteSignature = "";
+      renderAdminBar();
+      renderActiveTab();
+      updateDockIndicator();
+    }
   }
 
   function renderActiveTab() {
@@ -2086,37 +2331,59 @@
         }
         return;
       }
-      // Trampa de foco básica dentro de #adv-modal
-      if (e.key === "Tab" && document.getElementById("adv-modal")?.classList.contains("open")) {
-        const sheet = document.getElementById("adv-modal-body");
-        if (!sheet) return;
-        const focusables = Array.from(sheet.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])'));
-        if (focusables.length < 2) return;
+      if (e.key === "Tab") {
+        const modalOpen = document.getElementById("adv-modal")?.classList.contains("open");
+        const idOpen = !modalOpen && document.getElementById("identity-overlay")?.classList.contains("open");
+        const root = modalOpen
+          ? document.getElementById("adv-modal-body")
+          : idOpen
+            ? document.querySelector("#identity-overlay .identity-modal")
+            : null;
+        if (!root) return;
+        const focusables = Array.from(root.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])')).filter((el) => el.offsetParent !== null);
+        if (!focusables.length) return;
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        if (!root.contains(document.activeElement)) {
           e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
+          (e.shiftKey ? last : first).focus();
+        } else if (focusables.length >= 2) {
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
       }
     });
 
     // Teclado virtual móvil mediante visualViewport + fallback focusin/out (sin incluir <select>)
+    let baseH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
     if (window.visualViewport) {
-      const baseH = window.innerHeight;
-      window.visualViewport.addEventListener("resize", () => {
-        const isKb = window.visualViewport.height < baseH * 0.78 && document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+      const updateViewportKb = () => {
+        const ae = document.activeElement;
+        const editing = Boolean(ae && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.type !== "range");
+        if (!editing && window.visualViewport.height > 0) {
+          baseH = window.visualViewport.height;
+        }
+        const isKb = editing && window.visualViewport.height < baseH * 0.78;
         document.body.classList.toggle("keyboard-open", Boolean(isKb));
+      };
+      window.visualViewport.addEventListener("resize", updateViewportKb);
+      window.addEventListener("orientationchange", () => {
+        setTimeout(() => {
+          baseH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+          updateViewportKb();
+        }, 250);
       });
     }
     document.addEventListener("focusin", (e) => {
       if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName) && e.target.type !== "range") {
         document.body.classList.add("keyboard-open");
-        if (window.innerWidth <= 768) {
-          setTimeout(() => { try { e.target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (_) {} }, 180);
+        if (window.innerWidth <= 768 && !document.body.classList.contains("modal-open")) {
+          setTimeout(() => { try { e.target.scrollIntoView({ block: "center", behavior: "smooth" }); } catch (_) {} }, 300);
         }
       }
     });
@@ -2129,7 +2396,20 @@
       }, 150);
     });
 
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        flushPendingNotes();
+      } else {
+        refreshDateGateIfNeeded();
+      }
+    });
+    window.addEventListener("focus", refreshDateGateIfNeeded);
+    setInterval(() => {
+      if (!document.hidden) refreshDateGateIfNeeded();
+    }, 60000);
+
     window.addEventListener("pagehide", () => {
+      flushPendingNotes();
       clearKeyboardOpen();
       window.AudioFX.stopMorse?.();
     });
@@ -2156,8 +2436,8 @@
       window.history.replaceState({ tab: "calendar", day: selectedDayNum }, "");
     }
     window.addEventListener("popstate", (e) => {
-      if (ignoreNextPopstate) {
-        ignoreNextPopstate = false;
+      if (ignorePopstateCount > 0) {
+        ignorePopstateCount -= 1;
         return;
       }
       if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
@@ -2179,6 +2459,8 @@
       if (targetTab === "day" && e.state?.day && e.state.day !== selectedDayNum) {
         selectedDayNum = e.state.day;
         lastDaySignature = "";
+        window.AudioFX.stopMorse?.();
+        window.SyncEngine.setViewingDay(selectedDayNum);
         renderDayView(true);
       }
     });
@@ -2195,7 +2477,7 @@
       renderAdminBar();
       renderActiveTab();
       updateDockIndicator();
-      if (openModalSuspectId && document.getElementById("adv-modal")?.classList.contains("open") && document.activeElement?.id !== "suspect-note-inp") {
+      if (openModalSuspectId && document.getElementById("adv-modal")?.classList.contains("open")) {
         openSuspectModal(openModalSuspectId, null, true);
       }
     });
@@ -2228,7 +2510,13 @@
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (hadController && !swRefreshing) {
           swRefreshing = true;
-          window.location.reload();
+          const ae = document.activeElement;
+          const busyEditing = Boolean(ae && /^(INPUT|TEXTAREA)$/.test(ae.tagName)) || Boolean(window.SyncEngine.getStatus().dirty);
+          if (busyEditing) {
+            showToast("Nueva versión de la app lista.", "Actualizar", () => window.location.reload());
+          } else {
+            window.location.reload();
+          }
         }
       });
     }

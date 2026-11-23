@@ -133,9 +133,9 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--adv-frost);margin-bottom:10px;">${escapeHtml(widget.caption)}</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
               ${(widget.nodes || []).map((n) => `
-                <div style="padding:10px;border-radius:10px;border:1px solid ${n.alert ? "rgba(255,45,85,0.55)" : "rgba(255,255,255,0.1)"};background:${n.alert ? "rgba(255,45,85,0.14)" : "rgba(255,255,255,0.03)"};font-size:0.78rem;">
+                <div style="padding:10px;border-radius:10px;border:1px solid ${n.alert ? "rgba(255,45,85,0.55)" : "rgba(255,255,255,0.1)"};background:${n.alert ? "rgba(255,45,85,0.14)" : "rgba(255,255,255,0.03)"};font-size:0.78rem;min-width:0;">
                   <div class="mono" style="font-weight:700;color:${n.alert ? "#FDA4AF" : "var(--vg-text-primary)"}">${escapeHtml(n.id)}</div>
                   <div style="color:var(--vg-text-secondary);margin-top:2px;">${escapeHtml(n.label)}</div>
                 </div>`).join("")}
@@ -146,25 +146,29 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--adv-cyan);margin-bottom:8px;">INSPECTOR ULTRAVIOLETA · ${escapeHtml(widget.prompt)}</div>
-            <div class="uv-surface" id="uv-surface-${dayNum}">
-              <div class="uv-base-text">[ BANDEJA DE CRISTAL LIMPIA A SIMPLE VISTA ]<br><span style="font-size:0.7rem;opacity:0.7;">Pasa el dedo para activar el haz UV 365 nm</span></div>
+            <div class="uv-surface" id="uv-surface-${dayNum}" tabindex="0" role="region" aria-label="Superficie ultravioleta interactiva">
+              <div class="uv-base-text">[ BANDEJA DE CRISTAL LIMPIA A SIMPLE VISTA ]<br><span style="font-size:0.72rem;color:#CBD5E1;">Pasa el dedo o usa el botón inferior para activar el haz UV 365 nm</span></div>
               <div class="uv-secret-layer" id="uv-secret-${dayNum}">
                 <div class="mono" style="font-size:0.68rem;letter-spacing:0.12em;color:#A5F3FC;">${escapeHtml(widget.secretSub)}</div>
                 <div class="uv-revealed-code">${escapeHtml(widget.secretCode)}</div>
                 ${widget.secretNote ? `<div class="uv-rule-note">${escapeHtml(widget.secretNote)}</div>` : ""}
               </div>
             </div>
+            <div style="display:flex;justify-content:center;margin-top:8px;">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="toggle-uv-a11y" data-day="${dayNum}" aria-expanded="false">Fijar lectura UV accesible</button>
+            </div>
+            <div id="uv-live-${dayNum}" class="sr-only" aria-live="polite"></div>
           </div>`;
 
       case "morse":
         return `
           <div class="widget-panel" style="text-align:center;">
-            <div class="morse-lamp" id="morse-lamp-${dayNum}"></div>
+            <div class="morse-lamp" id="morse-lamp-${dayNum}" aria-hidden="true"></div>
             <div class="morse-strip">${escapeHtml(widget.sequence)}</div>
             <button type="button" class="btn btn-frost btn-sm" style="margin-top:12px;" data-action="play-morse" data-seq="${escapeHtml(widget.sequence)}" data-day="${dayNum}">
               ${escapeHtml(widget.label || "Reproducir Morse")}
             </button>
-            <div id="morse-mute-note-${dayNum}" class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-top:6px;display:${window.AudioFX?.isMuted() ? "block" : "none"};">
+            <div id="morse-mute-note-${dayNum}" class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-top:6px;display:${window.AudioFX?.isMuted() ? "block" : "none"};">
               Audio silenciado: sigue los destellos de la lámpara o activa el sonido.
             </div>
           </div>`;
@@ -180,22 +184,22 @@ window.PuzzleEngine = (() => {
             const isVis = vis.includes(r);
             const isTarget = targets.includes(`${r},${c}`);
             if (!isVis) {
-              cells += `<div class="sudoku-cell masked" style="display:grid;place-items:center;" title="En el móvil de tu pareja">?</div>`;
+              cells += `<div class="sudoku-cell masked" style="display:grid;place-items:center;" title="En el móvil de tu pareja" aria-label="Casilla fila ${r + 1} columna ${c + 1}, visible en pareja">?</div>`;
             } else if (val > 0) {
-              cells += `<div class="sudoku-cell given" style="display:grid;place-items:center;">${val}</div>`;
+              cells += `<div class="sudoku-cell given" style="display:grid;place-items:center;" aria-label="Casilla fila ${r + 1} columna ${c + 1}, valor fijo ${val}">${val}</div>`;
             } else {
-              cells += `<button type="button" class="sudoku-cell ${isTarget ? "target-cell" : ""}" data-action="cycle-sudoku" data-r="${r}" data-c="${c}" data-notes="">·</button>`;
+              cells += `<button type="button" class="sudoku-cell ${isTarget ? "target-cell" : ""}" data-action="cycle-sudoku" data-r="${r}" data-c="${c}" data-notes="" aria-label="Casilla fila ${r + 1} columna ${c + 1}, vacía${isTarget ? ", objetivo" : ""}">·</button>`;
             }
           }
         }
         return `
           <div class="widget-panel">
-            <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);text-align:center;">Toca tus casillas vacías (1–4) o usa Modo Lápiz para anotar candidatos. Las casillas en cian son tu objetivo.</div>
+            <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);text-align:center;">Toca tus casillas vacías (1-4) o usa Modo Lápiz para anotar candidatos. Las casillas en cian son tu objetivo.</div>
             <div class="sudoku-grid">${cells}</div>
             <div id="sudoku-pencil-bar-${dayNum}" style="display:none;margin:0 auto 10px;max-width:260px;padding:8px;border-radius:10px;border:1px solid rgba(56,189,248,0.4);background:rgba(56,189,248,0.08);text-align:center;">
               <div class="mono" style="font-size:0.68rem;color:#7DD3FC;margin-bottom:6px;" id="sudoku-pencil-target-${dayNum}">Selecciona una casilla vacía para anotar candidatos:</div>
               <div style="display:flex;justify-content:center;gap:6px;">
-                ${[1,2,3,4].map((n) => `<button type="button" class="btn btn-sm btn-frost" data-action="toggle-sudoku-note" data-note="${n}" data-day="${dayNum}" style="min-width:44px;">${n}</button>`).join("")}
+                ${[1,2,3,4].map((n) => `<button type="button" class="btn btn-sm btn-frost" data-action="toggle-sudoku-note" data-note="${n}" data-day="${dayNum}" style="min-width:44px;" aria-label="Candidato ${n}">${n}</button>`).join("")}
               </div>
             </div>
             <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
@@ -210,21 +214,21 @@ window.PuzzleEngine = (() => {
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--adv-frost);margin-bottom:8px;text-align:center;">RUEDA CÉSAR · DESPLAZAMIENTO: <span id="caesar-shift-val-${dayNum}">0</span></div>
             <div class="cipher-controls">
-              <button type="button" class="btn btn-sm" data-action="caesar-step" data-delta="-1" data-day="${dayNum}">− 1</button>
-              <button type="button" class="btn btn-sm btn-frost" data-action="caesar-step" data-delta="1" data-day="${dayNum}">+ 1</button>
+              <button type="button" class="btn btn-sm" data-action="caesar-step" data-delta="-1" data-day="${dayNum}" aria-label="Restar 1 al desplazamiento">- 1</button>
+              <button type="button" class="btn btn-sm btn-frost" data-action="caesar-step" data-delta="1" data-day="${dayNum}" aria-label="Sumar 1 al desplazamiento">+ 1</button>
             </div>
-            <div class="cipher-output" id="caesar-out-${dayNum}" data-cipher="${escapeHtml(widget.cipherText)}" data-shift="0">${escapeHtml(String(widget.cipherText || "").replace(/\s*·\s*/g, "\n"))}</div>
+            <div class="cipher-output" id="caesar-out-${dayNum}" data-cipher="${escapeHtml(widget.cipherText)}" data-shift="0" aria-live="polite">${escapeHtml(String(widget.cipherText || "").replace(/\s*·\s*/g, "\n"))}</div>
           </div>`;
 
       case "scene-zoom":
         return `
           <div class="widget-panel">
-            <div id="zoom-viewport-${dayNum}" style="overflow:hidden;border-radius:12px;border:var(--vg-border-specular-strong);touch-action:none;">
+            <div id="zoom-viewport-${dayNum}" style="overflow:hidden;border-radius:12px;border:var(--vg-border-specular-strong);touch-action:pan-y;">
               <img src="${escapeHtml(widget.imgSrc)}" alt="Fotograma cámara" id="zoom-img-${dayNum}" style="width:100%;height:auto;display:block;transition:transform 260ms var(--vg-spring);transform-origin:70% 65%;">
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;">
               <span class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);">${escapeHtml(widget.caption)}</span>
-              <button type="button" class="btn btn-sm btn-frost" data-action="toggle-zoom" data-day="${dayNum}">Zoom 1.8x</button>
+              <button type="button" class="btn btn-sm btn-frost" data-action="toggle-zoom" data-day="${dayNum}" aria-pressed="false">Zoom 1.8x</button>
             </div>
           </div>`;
 
@@ -232,10 +236,10 @@ window.PuzzleEngine = (() => {
         return `
           <div class="widget-panel">
             <form data-manual-form="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}" style="display:flex;gap:8px;">
-              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="${escapeHtml(widget.placeholder || "Ej. C2")}" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;">
+              <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="${escapeHtml(widget.placeholder || "Ej. C2")}" aria-label="Código técnico de circuito" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;min-width:0;">
               <button type="submit" class="btn btn-frost btn-sm" style="flex-shrink:0;">Consultar</button>
             </form>
-            <div id="manual-res-${dayNum}" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
+            <div id="manual-res-${dayNum}" aria-live="polite" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
           </div>`;
 
       case "valves":
@@ -243,9 +247,9 @@ window.PuzzleEngine = (() => {
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--vg-text-secondary);margin-bottom:6px;">PULSA PARA ABRIR/CERRAR VÁLVULAS:</div>
             <div class="valve-row" id="valve-row-${dayNum}" data-target='${JSON.stringify(widget.targetState)}' data-code="${escapeHtml(widget.revealCode)}">
-              ${[1, 2, 3, 4].map((v, idx) => `<button type="button" class="valve-btn" data-action="toggle-valve" data-idx="${idx}" data-day="${dayNum}">V${v}<br><span>CERRADA</span></button>`).join("")}
+              ${[1, 2, 3, 4].map((v, idx) => `<button type="button" class="valve-btn" data-action="toggle-valve" data-idx="${idx}" data-day="${dayNum}" aria-pressed="false">V${v}<br><span>CERRADA</span></button>`).join("")}
             </div>
-            <div id="valve-gauge-${dayNum}" class="mono" style="text-align:center;font-size:0.82rem;color:var(--vg-text-muted);margin-top:6px;">PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN</div>
+            <div id="valve-gauge-${dayNum}" class="mono" aria-live="polite" style="text-align:center;font-size:0.82rem;color:var(--vg-text-muted);margin-top:6px;">PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN</div>
           </div>`;
 
       case "nonogram": {
@@ -255,7 +259,7 @@ window.PuzzleEngine = (() => {
         const renderClueHeader = (axis, idx, arr) => {
           const txt = arr.join(axis === "col" ? "<br>" : " ");
           if (arr.length === 1 && String(arr[0]) === "?") {
-            return `<button type="button" class="nono-clue-btn" data-action="edit-nono-clue" data-axis="${axis}" data-idx="${idx}" data-day="${dayNum}" title="Anotar pista dictada">?</button>`;
+            return `<button type="button" class="nono-clue-btn" data-action="edit-nono-clue" data-axis="${axis}" data-idx="${idx}" data-day="${dayNum}" title="Anotar pista dictada" aria-label="Anotar pista ${axis === "col" ? "columna" : "fila"} ${idx + 1}">?</button>`;
           }
           return txt;
         };
@@ -265,16 +269,16 @@ window.PuzzleEngine = (() => {
               <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);text-align:center;">BORRADOR TÁCTIL 5x5 (toca celda: relleno / X / vacío · toca «?» para anotar pistas)</div>
               <div id="nono-clue-editor-${dayNum}" style="display:none;width:100%;max-width:290px;">
                 <form data-nono-clue-form="${dayNum}" style="display:flex;gap:6px;align-items:center;">
-                  <input type="text" id="nono-clue-inp-${dayNum}" class="adv-input" placeholder="Ej. 1,1" style="min-height:38px;padding:6px 10px;font-size:16px;" autocomplete="off">
-                  <button type="submit" class="btn btn-sm btn-frost">Fijar</button>
+                  <input type="text" id="nono-clue-inp-${dayNum}" class="adv-input" placeholder="Ej. 1,1" aria-label="Pista de nonograma dictada" style="min-height:44px;min-width:0;padding:8px 10px;font-size:16px;" autocomplete="off">
+                  <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Fijar</button>
                 </form>
               </div>
               <table class="nono-table" id="nono-grid-${dayNum}">
-                ${hasClues ? `<thead><tr><th></th>${colClues.map((c, idx) => `<th class="nono-clue-col">${renderClueHeader("col", idx, c)}</th>`).join("")}</tr></thead>` : ""}
+                ${hasClues ? `<thead><tr><th scope="col"><span class="sr-only">Pistas</span></th>${colClues.map((c, idx) => `<th scope="col" class="nono-clue-col">${renderClueHeader("col", idx, c)}</th>`).join("")}</tr></thead>` : ""}
                 <tbody>
                   ${Array.from({ length: 5 }).map((_, r) => `
                     <tr>
-                      ${hasClues ? `<th class="nono-clue-row">${renderClueHeader("row", r, rowClues[r])}</th>` : ""}
+                      ${hasClues ? `<th scope="row" class="nono-clue-row">${renderClueHeader("row", r, rowClues[r])}</th>` : ""}
                       ${Array.from({ length: 5 }).map((__, c) => {
                         const idxCell = r * 5 + c;
                         return `<td><button type="button" class="nono-cell" data-action="toggle-nono" data-idx="${idxCell}" aria-label="Celda fila ${r + 1} columna ${c + 1}"></button></td>`;
@@ -318,11 +322,11 @@ window.PuzzleEngine = (() => {
             </div>
             <div class="freq-smeter-track"><div class="freq-smeter-fill" id="freq-smeter-${dayNum}"></div></div>
             <div class="adv-range-wrap">
-              <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="-${widget.stepHz}" aria-label="Bajar frecuencia">−</button>
-              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="${initHz}" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-bands='${escapeHtml(JSON.stringify(bands))}' data-day="${dayNum}">
+              <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="-${widget.stepHz}" aria-label="Bajar frecuencia">-</button>
+              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="${initHz}" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-bands='${escapeHtml(JSON.stringify(bands))}' data-day="${dayNum}" aria-label="Dial de frecuencia en hercios">
               <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="${widget.stepHz}" aria-label="Subir frecuencia">+</button>
             </div>
-            <div id="freq-msg-${dayNum}" class="mono" style="margin-top:8px;padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
+            <div id="freq-msg-${dayNum}" class="mono" aria-live="polite" style="margin-top:8px;padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
               [ #%&amp; RUIDO DE VENTISCA · BARRE EL DIAL BUSCANDO PICOS DE SEÑAL ##@ ]
             </div>
           </div>`;
@@ -333,9 +337,9 @@ window.PuzzleEngine = (() => {
           <div class="widget-panel">
             <div class="mono" style="font-size:0.7rem;color:var(--vg-text-secondary);margin-bottom:6px;">PARRILLA AUXILIAR (toca para alternar · / X / OK):</div>
             <table class="logic-matrix">
-              <thead><tr><th></th>${widget.cols.map((c) => `<th>${escapeHtml(c)}</th>`).join("")}</tr></thead>
+              <thead><tr><th scope="col"><span class="sr-only">Concepto</span></th>${widget.cols.map((c) => `<th scope="col">${escapeHtml(c)}</th>`).join("")}</tr></thead>
               <tbody>
-                ${widget.rows.map((r) => `<tr><th style="text-align:left;">${escapeHtml(r)}</th>${widget.cols.map(() => `<td><button type="button" class="logic-cell-btn" data-action="cycle-logic">·</button></td>`).join("")}</tr>`).join("")}
+                ${widget.rows.map((r) => `<tr><th scope="row" style="text-align:left;">${escapeHtml(r)}</th>${widget.cols.map((c) => `<td><button type="button" class="logic-cell-btn" data-action="cycle-logic" aria-label="${escapeHtml(r)} con ${escapeHtml(c)}, sin marcar">·</button></td>`).join("")}</tr>`).join("")}
               </tbody>
             </table>
             <div style="text-align:center;margin-top:8px;">
@@ -345,7 +349,7 @@ window.PuzzleEngine = (() => {
 
       case "caliper": {
         const targetCm = Number(widget.targetCm || 25.5);
-        const soleWidth = Math.round(((targetCm - 22.0) / 7.0) * 210);
+        const soleWidth = Math.max(0, Math.min(210, Math.round(((targetCm - 22.0) / 7.0) * 210)));
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;">
@@ -353,17 +357,17 @@ window.PuzzleEngine = (() => {
               <span id="caliper-val-${dayNum}">22.0 cm</span>
             </div>
             <div style="margin:10px 0;padding:14px;border-radius:10px;background:rgba(2,4,8,0.85);border:var(--vg-border-specular);position:relative;">
-              <svg viewBox="0 0 260 56" style="width:100%;height:48px;display:block;">
+              <svg viewBox="0 0 260 56" style="width:100%;height:48px;display:block;" aria-hidden="true">
                 <rect x="20" y="14" width="${soleWidth}" height="28" rx="14" fill="rgba(56,189,248,0.16)" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 3"/>
                 <line x1="20" y1="6" x2="20" y2="50" stroke="#F59E0B" stroke-width="2"/>
                 <line id="caliper-bar-${dayNum}" x1="20" y1="6" x2="20" y2="50" stroke="#10B981" stroke-width="2.5"/>
               </svg>
               <div class="adv-range-wrap">
-                <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="-0.5" aria-label="Reducir medida">−</button>
-                <input id="caliper-range-${dayNum}" type="range" class="adv-range" min="22.0" max="29.0" step="0.5" value="22.0" style="accent-color:var(--adv-pine);" data-action="slide-caliper" data-target="${widget.targetCm}" data-day="${dayNum}">
+                <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="-0.5" aria-label="Reducir medida">-</button>
+                <input id="caliper-range-${dayNum}" type="range" class="adv-range" min="22.0" max="29.0" step="0.5" value="22.0" style="accent-color:var(--adv-pine);" data-action="slide-caliper" data-target="${widget.targetCm}" data-day="${dayNum}" aria-label="Calibre ABFO en centímetros">
                 <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="0.5" aria-label="Aumentar medida">+</button>
               </div>
-              <div id="caliper-status-${dayNum}" class="mono" style="font-size:0.76rem;color:var(--vg-text-muted);margin-top:4px;">Desliza la línea verde hasta el borde derecho de la suela</div>
+              <div id="caliper-status-${dayNum}" class="mono" aria-live="polite" style="font-size:0.76rem;color:var(--vg-text-muted);margin-top:4px;">Desliza la línea verde hasta el borde derecho de la suela</div>
             </div>
             ${(widget.table && widget.table.length) ? `<div class="caliper-grid" style="font-size:0.72rem;text-align:center;">
               ${widget.table.map((t) => `<div class="stat-pill"><span class="stat-val" style="font-size:0.86rem;">T.${escapeHtml(t.size)}</span><span class="stat-lbl">${escapeHtml(t.cm)}</span></div>`).join("")}
@@ -388,11 +392,11 @@ window.PuzzleEngine = (() => {
         if (Array.isArray(widget.traces) && widget.traces.length) {
           return `
             <div class="widget-panel">
-              <div class="mono" style="font-size:0.72rem;color:var(--adv-crimson);margin-bottom:8px;">OSCILOSCOPIO 4 CIRCUITOS · T0 = 23:30 H (MARCAS +4M)</div>
+              <div class="mono" style="font-size:0.72rem;color:#FCA5A5;margin-bottom:8px;">OSCILOSCOPIO 4 CIRCUITOS · T0 = 23:30 H (MARCAS +4M)</div>
               ${widget.traces.map((tr) => `
                 <div style="margin-bottom:8px;">
                   <div class="mono" style="font-size:0.68rem;color:${escapeHtml(tr.color || "#93C5FD")};margin-bottom:2px;">${escapeHtml(tr.label)}</div>
-                  <svg viewBox="0 0 280 42" style="width:100%;height:42px;background:rgba(2,4,8,0.85);border-radius:8px;border:1px solid rgba(255,255,255,0.1);display:block;">
+                  <svg viewBox="0 0 280 42" style="width:100%;height:42px;background:rgba(2,4,8,0.85);border-radius:8px;border:1px solid rgba(255,255,255,0.1);display:block;" aria-hidden="true">
                     <line x1="20" y1="0" x2="20" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
                     <line x1="80" y1="0" x2="80" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
                     <line x1="140" y1="0" x2="140" y2="42" stroke="rgba(148,163,184,0.22)" stroke-dasharray="2 2"/>
@@ -401,15 +405,15 @@ window.PuzzleEngine = (() => {
                     <polyline points="${escapeHtml(tr.points)}" fill="none" stroke="${escapeHtml(tr.color || "#38BDF8")}" stroke-width="2.2"/>
                   </svg>
                 </div>`).join("")}
-              <div class="mono" style="display:flex;justify-content:space-between;font-size:0.66rem;color:#94A3B8;padding:2px 8px 0;">
+              <div class="mono" style="display:flex;justify-content:space-between;font-size:0.68rem;color:#94A3B8;padding:2px 8px 0;">
                 <span>+0m</span><span>+4m</span><span>+8m</span><span>+12m</span><span>+16m</span>
               </div>
             </div>`;
         }
         return `
           <div class="widget-panel">
-            <div class="mono" style="font-size:0.72rem;color:var(--adv-crimson);margin-bottom:6px;">OSCILOSCOPIO · PLANTA 1 (DIRECCIÓN)</div>
-            <svg viewBox="0 0 280 76" style="width:100%;height:76px;background:rgba(2,4,8,0.85);border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+            <div class="mono" style="font-size:0.72rem;color:#FCA5A5;margin-bottom:6px;">OSCILOSCOPIO · PLANTA 1 (DIRECCIÓN)</div>
+            <svg viewBox="0 0 280 76" style="width:100%;height:76px;background:rgba(2,4,8,0.85);border-radius:10px;border:1px solid rgba(255,255,255,0.1);" aria-label="Osciloscopio con corte a las ${escapeHtml(widget.dropTime)} horas">
               <polyline points="10,22 70,22 95,22 100,62 180,62 185,22 270,22" fill="none" stroke="#FF2D55" stroke-width="2.5"/>
               <circle cx="100" cy="62" r="4" fill="#F59E0B"/>
               <text x="106" y="54" fill="#FCD34D" font-family="monospace" font-size="11" font-weight="700">CORTE ${escapeHtml(widget.dropTime)} h</text>
@@ -522,13 +526,16 @@ window.PuzzleEngine = (() => {
       btns.forEach((b, i) => {
         const open = Boolean(data.valves[i]);
         b.classList.toggle("open", open);
+        b.classList.toggle("open", open);
+        b.setAttribute("aria-pressed", open ? "true" : "false");
         b.innerHTML = `V${i + 1}<br><span>${open ? "ABIERTA" : "CERRADA"}</span>`;
       });
       if (row) {
         const day = row.id.replace("valve-row-", "");
         const gauge = document.getElementById(`valve-gauge-${day}`);
-        const target = JSON.parse(row.dataset.target || "[]");
-        const match = target.every((v, i) => v === Boolean(data.valves[i]));
+        let target = [];
+        try { target = JSON.parse(row.dataset.target || "[]"); } catch (_) {}
+        const match = target.length && target.every((v, i) => v === Boolean(data.valves[i]));
         if (gauge && match) {
           gauge.style.color = "#6EE7B7";
           gauge.style.fontWeight = "700";
@@ -539,7 +546,7 @@ window.PuzzleEngine = (() => {
     container.dataset.restoring = "1";
     try {
       if (data.range !== undefined) {
-        const range = container.querySelector('.adv-range');
+        const range = container.querySelector(".adv-range");
         if (range) {
           range.value = data.range;
           range.dispatchEvent(new Event("input", { bubbles: true }));
@@ -549,24 +556,52 @@ window.PuzzleEngine = (() => {
         const btn = container.querySelector('[data-action="toggle-xray"]');
         if (btn) btn.click();
       }
+      if (data.manualCode) {
+        const manualForm = container.querySelector("[data-manual-form]");
+        const inp = container.querySelector('[id^="manual-code-"]');
+        const res = container.querySelector('[id^="manual-res-"]');
+        if (inp) inp.value = data.manualCode;
+        if (manualForm && res) {
+          if (normalizeAnswer(data.manualCode) === normalizeAnswer(manualForm.dataset.trigger)) {
+            res.innerHTML = `<div class="feedback-banner success">${manualForm.dataset.resp}</div>`;
+          }
+        }
+      }
     } finally {
       delete container.dataset.restoring;
-    }
-    if (data.manualCode) {
-      const inp = container.querySelector('[id^="manual-code-"]');
-      if (inp) inp.value = data.manualCode;
     }
   }
 
   function wireWidgetEvents(container, onWidgetChange) {
     const emitChange = () => {
+      if (container.dataset.restoring === "1") return;
       if (typeof onWidgetChange === "function") onWidgetChange(serializeWidgetState(container));
+    };
+
+    const playTick = () => {
+      if (window.AudioFX && typeof window.AudioFX.mechanicalTick === "function") {
+        window.AudioFX.mechanicalTick();
+      } else if (window.AudioFX && typeof window.AudioFX.click === "function") {
+        window.AudioFX.click();
+      }
+    };
+
+    const playSweep = () => {
+      if (window.AudioFX && typeof window.AudioFX.radioSweep === "function") {
+        window.AudioFX.radioSweep();
+      } else if (window.AudioFX && typeof window.AudioFX.click === "function") {
+        window.AudioFX.click();
+      }
     };
 
     // Linterna UV por puntero/táctil con offset sobre dedo y captura de puntero
     container.querySelectorAll(".uv-surface").forEach((el) => {
-      const updatePos = (clientX, clientY, pointerType) => {
+      let isDrawing = false;
+      let uvRafId = 0;
+      let pendingEvt = null;
+      const applyPos = (clientX, clientY, pointerType) => {
         const rect = el.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
         const offsetY = pointerType === "touch" ? -38 : 0;
         const x = ((clientX - rect.left) / rect.width) * 100;
         const y = ((clientY + offsetY - rect.top) / rect.height) * 100;
@@ -576,23 +611,37 @@ window.PuzzleEngine = (() => {
           sec.style.setProperty("--uv-y", `${Math.max(0, Math.min(100, y))}%`);
         }
       };
+      const schedulePos = (clientX, clientY, pointerType) => {
+        pendingEvt = { clientX, clientY, pointerType };
+        if (!uvRafId) {
+          uvRafId = requestAnimationFrame(() => {
+            uvRafId = 0;
+            if (pendingEvt) {
+              applyPos(pendingEvt.clientX, pendingEvt.clientY, pendingEvt.pointerType);
+            }
+          });
+        }
+      };
       el.addEventListener("pointerdown", (e) => {
+        isDrawing = true;
         try { el.setPointerCapture(e.pointerId); } catch (_) {}
-        updatePos(e.clientX, e.clientY, e.pointerType);
+        applyPos(e.clientX, e.clientY, e.pointerType);
       });
       el.addEventListener("pointermove", (e) => {
-        if (e.buttons > 0 || e.pointerType !== "touch") {
-          updatePos(e.clientX, e.clientY, e.pointerType);
+        if (isDrawing || e.pointerType !== "touch") {
+          schedulePos(e.clientX, e.clientY, e.pointerType);
         }
       });
+      el.addEventListener("pointerup", () => { isDrawing = false; });
+      el.addEventListener("pointercancel", () => { isDrawing = false; });
     });
 
-    // Arrastre en scene-zoom
+    // Arrastre en scene-zoom con throttle rAF
     container.querySelectorAll('[id^="zoom-viewport-"]').forEach((vp) => {
       const day = vp.id.replace("zoom-viewport-", "");
       const img = document.getElementById(`zoom-img-${day}`);
       if (!img) return;
-      let dragging = false, sx = 0, sy = 0, ox = 70, oy = 65;
+      let dragging = false, sx = 0, sy = 0, ox = 70, oy = 65, zoomRafId = 0;
       vp.addEventListener("pointerdown", (e) => {
         if (img.dataset.zoomed !== "1") return;
         dragging = true;
@@ -608,7 +657,12 @@ window.PuzzleEngine = (() => {
         sy = e.clientY;
         ox = Math.max(0, Math.min(100, ox + dx));
         oy = Math.max(0, Math.min(100, oy + dy));
-        img.style.transformOrigin = `${ox.toFixed(1)}% ${oy.toFixed(1)}%`;
+        if (!zoomRafId) {
+          zoomRafId = requestAnimationFrame(() => {
+            zoomRafId = 0;
+            img.style.transformOrigin = `${ox.toFixed(1)}% ${oy.toFixed(1)}%`;
+          });
+        }
       });
       vp.addEventListener("pointerup", () => { dragging = false; });
       vp.addEventListener("pointercancel", () => { dragging = false; });
@@ -663,7 +717,7 @@ window.PuzzleEngine = (() => {
       const act = btn.dataset.action;
 
       if (act === "step-range") {
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         const range = document.getElementById(btn.dataset.targetId);
         if (!range) return;
         const step = Number(btn.dataset.delta || 0);
@@ -672,6 +726,25 @@ window.PuzzleEngine = (() => {
         const next = Math.min(max, Math.max(min, Number(range.value) + step));
         range.value = String(next);
         range.dispatchEvent(new Event("input", { bubbles: true }));
+      } else if (act === "toggle-uv-a11y") {
+        if (window.AudioFX) window.AudioFX.click();
+        const day = btn.dataset.day;
+        const surf = document.getElementById(`uv-surface-${day}`);
+        const sec = document.getElementById(`uv-secret-${day}`);
+        const live = document.getElementById(`uv-live-${day}`);
+        if (surf && sec) {
+          const on = !surf.classList.contains("uv-revealed-a11y");
+          surf.classList.toggle("uv-revealed-a11y", on);
+          btn.setAttribute("aria-expanded", on ? "true" : "false");
+          btn.textContent = on ? "Ocultar lectura UV accesible" : "Fijar lectura UV accesible";
+          if (on) {
+            sec.style.setProperty("--uv-x", "50%");
+            sec.style.setProperty("--uv-y", "50%");
+            if (live) live.textContent = sec.textContent.replace(/\s+/g, " ").trim();
+          } else if (live) {
+            live.textContent = "";
+          }
+        }
       } else if (act === "play-morse") {
         const lamp = document.getElementById(`morse-lamp-${btn.dataset.day}`);
         btn.disabled = true;
@@ -694,7 +767,7 @@ window.PuzzleEngine = (() => {
         }
       } else if (act === "toggle-sudoku-note") {
         if (!activePencilCell) return;
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         const digit = btn.dataset.note;
         const curNotes = (activePencilCell.dataset.notes || "").split(",").filter(Boolean);
         const pos = curNotes.indexOf(digit);
@@ -702,16 +775,20 @@ window.PuzzleEngine = (() => {
         else curNotes.push(digit);
         curNotes.sort();
         activePencilCell.dataset.notes = curNotes.join(",");
+        const rNum = Number(activePencilCell.dataset.r) + 1;
+        const cNum = Number(activePencilCell.dataset.c) + 1;
         if (curNotes.length) {
           activePencilCell.classList.add("has-notes");
           activePencilCell.textContent = curNotes.join(" ");
+          activePencilCell.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, candidatos ${curNotes.join(" ")}`);
         } else {
           activePencilCell.classList.remove("has-notes");
           activePencilCell.textContent = "·";
+          activePencilCell.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, vacía`);
         }
         emitChange();
       } else if (act === "cycle-sudoku") {
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         if (pencilMode) {
           activePencilCell = btn;
           container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => { c.style.outline = c === btn ? "2px solid #FBBF24" : ""; });
@@ -723,7 +800,11 @@ window.PuzzleEngine = (() => {
         btn.dataset.notes = "";
         const seq = ["·", "1", "2", "3", "4"];
         const cur = seq.indexOf(btn.textContent.trim());
-        btn.textContent = seq[(cur + 1) % seq.length];
+        const nextVal = seq[(cur + 1) % seq.length];
+        btn.textContent = nextVal;
+        const rNum = Number(btn.dataset.r) + 1;
+        const cNum = Number(btn.dataset.c) + 1;
+        btn.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, ${nextVal === "·" ? "vacía" : `valor ${nextVal}`}`);
         emitChange();
       } else if (act === "edit-nono-clue") {
         window.AudioFX.click();
@@ -738,7 +819,7 @@ window.PuzzleEngine = (() => {
           inp.focus();
         }
       } else if (act === "caesar-step") {
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         const day = btn.dataset.day;
         const delta = Number(btn.dataset.delta);
         const out = document.getElementById(`caesar-out-${day}`);
@@ -757,23 +838,28 @@ window.PuzzleEngine = (() => {
       } else if (act === "toggle-zoom") {
         window.AudioFX.click();
         const img = document.getElementById(`zoom-img-${btn.dataset.day}`);
+        const vp = document.getElementById(`zoom-viewport-${btn.dataset.day}`);
         if (!img) return;
         const zoomed = img.dataset.zoomed === "1";
         img.dataset.zoomed = zoomed ? "0" : "1";
         img.style.transform = zoomed ? "scale(1)" : "scale(1.8)";
+        if (vp) vp.style.touchAction = zoomed ? "pan-y" : "none";
+        btn.setAttribute("aria-pressed", zoomed ? "false" : "true");
         btn.textContent = zoomed ? "Zoom 1.8x" : "Restablecer";
       } else if (act === "toggle-valve") {
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         btn.classList.toggle("open");
         const isOpen = btn.classList.contains("open");
+        btn.setAttribute("aria-pressed", isOpen ? "true" : "false");
         const idx = Number(btn.dataset.idx) + 1;
         btn.innerHTML = `V${idx}<br><span>${isOpen ? "ABIERTA" : "CERRADA"}</span>`;
         const row = document.getElementById(`valve-row-${btn.dataset.day}`);
         const gauge = document.getElementById(`valve-gauge-${btn.dataset.day}`);
         if (row && gauge) {
-          const target = JSON.parse(row.dataset.target || "[]");
+          let target = [];
+          try { target = JSON.parse(row.dataset.target || "[]"); } catch (_) {}
           const current = Array.from(row.querySelectorAll(".valve-btn")).map((b) => b.classList.contains("open"));
-          const match = target.every((v, i) => v === current[i]);
+          const match = target.length && target.every((v, i) => v === current[i]);
           if (match) {
             window.AudioFX.success();
             gauge.style.color = "#6EE7B7";
@@ -781,12 +867,13 @@ window.PuzzleEngine = (() => {
             gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
           } else {
             gauge.style.color = "var(--vg-text-muted)";
+            gauge.style.fontWeight = "400";
             gauge.textContent = "PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN";
           }
         }
         emitChange();
       } else if (act === "toggle-nono") {
-        window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
+        playTick();
         if (btn.classList.contains("on")) {
           btn.classList.remove("on");
           btn.classList.add("x-mark");
@@ -809,8 +896,18 @@ window.PuzzleEngine = (() => {
       } else if (act === "reset-board") {
         window.AudioFX.click();
         const board = btn.dataset.board;
+        const prevSnap = serializeWidgetState(container);
         if (board === "sudoku4") {
           activePencilCell = null;
+          pencilMode = false;
+          const pBtn = container.querySelector('[data-action="toggle-sudoku-pencil"]');
+          if (pBtn) {
+            pBtn.textContent = "Lápiz: OFF";
+            pBtn.setAttribute("aria-pressed", "false");
+            pBtn.classList.remove("btn-gold");
+          }
+          const pBar = container.querySelector('[id^="sudoku-pencil-bar-"]');
+          if (pBar) pBar.style.display = "none";
           container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => {
             c.classList.remove("has-notes");
             c.dataset.notes = "";
@@ -823,8 +920,28 @@ window.PuzzleEngine = (() => {
           container.querySelectorAll('[data-action="cycle-logic"]').forEach((c) => { c.textContent = "·"; c.style.color = "#CBD5E1"; });
         }
         emitChange();
+        if (prevSnap) {
+          let undoBtn = container.querySelector('[data-action="undo-reset-board"]');
+          if (!undoBtn) {
+            undoBtn = document.createElement("button");
+            undoBtn.type = "button";
+            undoBtn.className = "btn btn-sm btn-frost";
+            undoBtn.dataset.action = "undo-reset-board";
+            undoBtn.textContent = "Deshacer borrado";
+            btn.insertAdjacentElement("afterend", undoBtn);
+          }
+          container._lastBoardSnap = prevSnap;
+        }
+      } else if (act === "undo-reset-board") {
+        window.AudioFX.click();
+        if (container._lastBoardSnap) {
+          restoreWidgetState(container, container._lastBoardSnap);
+          container._lastBoardSnap = null;
+          emitChange();
+        }
+        btn.remove();
       } else if (act === "toggle-xray") {
-        if (container.dataset.restoring !== "1") window.AudioFX.radioSweep?.() || window.AudioFX.click();
+        if (container.dataset.restoring !== "1") playSweep();
         const box = document.getElementById(`xray-box-${btn.dataset.day}`);
         if (box) {
           const open = box.style.display === "none";

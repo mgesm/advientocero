@@ -2,31 +2,31 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
   <title>ADVIENTO CERO — El Misterio del Ventisquero</title>
 
   <meta name="theme-color" content="#050B12">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Adviento Cero">
-  <link rel="manifest" href="manifest.json?v=2.9.4">
-  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.9.4">
-  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.9.4">
-  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.9.4">
+  <link rel="manifest" href="manifest.json?v=2.10.0">
+  <link rel="icon" type="image/svg+xml" href="imagenes/icon.svg?v=2.10.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="imagenes/icon-192.png?v=2.10.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="imagenes/apple-touch-icon.png?v=2.10.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.9.4">
-  <link rel="stylesheet" href="css/advent-board.css?v=2.9.4">
-  <link rel="stylesheet" href="css/puzzles.css?v=2.9.4">
-  <link rel="stylesheet" href="css/artifacts.css?v=2.9.4">
-  <link rel="stylesheet" href="css/mobile-ux.css?v=2.9.4">
+  <link rel="stylesheet" href="css/liquid-christmas.css?v=2.10.0">
+  <link rel="stylesheet" href="css/advent-board.css?v=2.10.0">
+  <link rel="stylesheet" href="css/puzzles.css?v=2.10.0">
+  <link rel="stylesheet" href="css/artifacts.css?v=2.10.0">
+  <link rel="stylesheet" href="css/mobile-ux.css?v=2.10.0">
 
   <!-- Firebase Realtime Database Compat SDK (cacheado localmente para arranque offline) -->
-  <script defer src="js/vendor/firebase-app-compat.js?v=2.9.4"></script>
-  <script defer src="js/vendor/firebase-database-compat.js?v=2.9.4"></script>
+  <script defer src="js/vendor/firebase-app-compat.js?v=2.10.0"></script>
+  <script defer src="js/vendor/firebase-database-compat.js?v=2.10.0"></script>
 </head>
 <body>
   <canvas id="snow-canvas" aria-hidden="true"></canvas>
@@ -44,7 +44,7 @@
         <button type="button" class="identity-choice" data-choose-role="miguel">
           <span class="badge badge-frost">ANÁLISIS Y ARCHIVO</span>
           <strong>Miguel</strong>
-          <span>Planos, luz UV, sensores y registros digitales.</span>
+          <span>Planos, escáneres, sensores y registros digitales.</span>
         </button>
         <button type="button" class="identity-choice" data-choose-role="patri">
           <span class="badge badge-gold">CAMPO Y TESTIGOS</span>
@@ -74,22 +74,22 @@
   <!-- Dock de Navegación Inferior Mobile-First -->
   <nav class="mobile-dock" aria-label="Navegación principal">
     <button type="button" class="dock-item active" data-tab="calendar">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span>Calendario</span>
     </button>
     <button type="button" class="dock-item" data-tab="day">
       <span class="dock-badge">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <span id="day-dock-dot" class="dock-dot" aria-hidden="true"></span>
       </span>
       <span>Día Activo</span>
     </button>
     <button type="button" class="dock-item" data-tab="suspects">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Sospechosos</span>
     </button>
     <button type="button" class="dock-item" data-tab="expediente">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <span>Expediente</span>
     </button>
   </nav>
@@ -99,16 +99,16 @@
     <div id="adv-modal-body" class="adv-modal-sheet"></div>
   </div>
 
-  <script defer src="config/gift-config.js?v=2.9.4"></script>
-  <script defer src="config/firebase-config.js?v=2.9.4"></script>
-  <script defer src="data/case-lore.js?v=2.9.4"></script>
-  <script defer src="data/suspects.js?v=2.9.4"></script>
-  <script defer src="data/days.js?v=2.9.4"></script>
-  <script defer src="js/audio-fx.js?v=2.9.4"></script>
-  <script defer src="js/date-gate.js?v=2.9.4"></script>
-  <script defer src="js/sync-engine.js?v=2.9.4"></script>
-  <script defer src="js/puzzle-engine.js?v=2.9.4"></script>
-  <script defer src="js/day-artifacts.js?v=2.9.4"></script>
-  <script defer src="js/app.js?v=2.9.4"></script>
+  <script defer src="config/gift-config.js?v=2.10.0"></script>
+  <script defer src="config/firebase-config.js?v=2.10.0"></script>
+  <script defer src="data/case-lore.js?v=2.10.0"></script>
+  <script defer src="data/suspects.js?v=2.10.0"></script>
+  <script defer src="data/days.js?v=2.10.0"></script>
+  <script defer src="js/audio-fx.js?v=2.10.0"></script>
+  <script defer src="js/date-gate.js?v=2.10.0"></script>
+  <script defer src="js/sync-engine.js?v=2.10.0"></script>
+  <script defer src="js/puzzle-engine.js?v=2.10.0"></script>
+  <script defer src="js/day-artifacts.js?v=2.10.0"></script>
+  <script defer src="js/app.js?v=2.10.0"></script>
 </body>
 </html>

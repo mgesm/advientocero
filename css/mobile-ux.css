@@ -45,6 +45,7 @@ body.keyboard-open .mobile-dock {
   font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
+  touch-action: manipulation;
   transition: background 160ms ease, color 160ms ease, transform 140ms var(--vg-spring);
 }
 
@@ -94,6 +95,6 @@ body.keyboard-open .mobile-dock {
     gap: 6px;
   }
   .stat-val {
-    font-size: 1rem;
+    font-size: 0.96rem;
   }
 }

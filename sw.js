@@ -1,15 +1,9 @@
-const CACHE_NAME = "adviento-cero-v2.9.4";
-const PRECACHE_ASSETS = [
+const CACHE_NAME = "adviento-cero-v2.10.0";
+const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./video-briefing/index.html",
-  "./video-briefing/audio/act-1.mp3",
-  "./video-briefing/audio/act-2.mp3",
-  "./video-briefing/audio/act-3.mp3",
-  "./video-briefing/audio/act-4.mp3",
-  "./video-briefing/audio/act-5.mp3",
-  "./video-briefing/audio/act-6.mp3",
   "./css/liquid-christmas.css",
   "./css/advent-board.css",
   "./css/puzzles.css",
@@ -27,7 +21,16 @@ const PRECACHE_ASSETS = [
   "./js/sync-engine.js",
   "./js/puzzle-engine.js",
   "./js/day-artifacts.js",
-  "./js/app.js",
+  "./js/app.js"
+];
+
+const OPTIONAL_PRECACHE_ASSETS = [
+  "./video-briefing/audio/act-1.mp3",
+  "./video-briefing/audio/act-2.mp3",
+  "./video-briefing/audio/act-3.mp3",
+  "./video-briefing/audio/act-4.mp3",
+  "./video-briefing/audio/act-5.mp3",
+  "./video-briefing/audio/act-6.mp3",
   "./imagenes/icon.svg",
   "./imagenes/icon-192.png",
   "./imagenes/icon-512.png",
@@ -69,7 +72,10 @@ const PRECACHE_ASSETS = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => Promise.allSettled(PRECACHE_ASSETS.map((url) => cache.add(url).catch(() => null))))
+      .then((cache) =>
+        Promise.all(CRITICAL_PRECACHE_ASSETS.map((url) => cache.add(url)))
+          .then(() => Promise.allSettled(OPTIONAL_PRECACHE_ASSETS.map((url) => cache.add(url).catch(() => null))))
+      )
       .then(() => self.skipWaiting())
   );
 });
@@ -88,9 +94,16 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+function inferRangeMime(url, fallback) {
+  const clean = String(url || "").toLowerCase();
+  if (clean.endsWith(".mp4")) return "video/mp4";
+  if (clean.endsWith(".webm")) return "video/webm";
+  return fallback || "audio/mpeg";
+}
+
 async function handleRangeRequest(req, cachedResponse) {
-  const buf = await cachedResponse.arrayBuffer();
-  const total = buf.byteLength;
+  const blob = await cachedResponse.blob();
+  const total = blob.size;
   const rangeHeader = req.headers.get("range") || "";
   const match = /bytes=(\d+)-(\d*)/.exec(rangeHeader);
   const start = match ? Number(match[1]) : 0;
@@ -101,15 +114,15 @@ async function handleRangeRequest(req, cachedResponse) {
       headers: { "Content-Range": `bytes */${total}` }
     });
   }
-  const sliced = buf.slice(start, end + 1);
+  const sliced = blob.slice(start, end + 1);
   return new Response(sliced, {
     status: 206,
     statusText: "Partial Content",
     headers: {
-      "Content-Type": cachedResponse.headers.get("Content-Type") || "audio/mpeg",
+      "Content-Type": inferRangeMime(req.url, cachedResponse.headers.get("Content-Type")),
       "Content-Range": `bytes ${start}-${end}/${total}`,
       "Accept-Ranges": "bytes",
-      "Content-Length": String(sliced.byteLength)
+      "Content-Length": String(sliced.size)
     }
   });
 }
@@ -119,6 +132,11 @@ function fetchWithTimeout(req, ms) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), ms);
   return fetch(req, { signal: ctrl.signal }).finally(() => clearTimeout(t));
+}
+
+function safeCachePut(cacheName, req, res) {
+  const copy = res.clone();
+  return caches.open(cacheName).then((c) => c.put(req, copy)).catch(() => null);
 }
 
 self.addEventListener("fetch", (event) => {
@@ -142,8 +160,7 @@ self.addEventListener("fetch", (event) => {
         if (cached) return cached;
         return fetch(req).then((res) => {
           if (res && res.ok) {
-            const copy = res.clone();
-            event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+            event.waitUntil(safeCachePut(CACHE_NAME, req, res));
           }
           return res;
         });
@@ -156,8 +173,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetchWithTimeout(req, 2500).then((res) => {
         if (res && res.ok) {
-          const copy = res.clone();
-          event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+          event.waitUntil(safeCachePut(CACHE_NAME, req, res));
         }
         return res;
       }).catch(() =>
@@ -172,8 +188,7 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
         if (res && res.ok) {
-          const copy = res.clone();
-          event.waitUntil(caches.open(CACHE_NAME).then((c) => c.put(req, copy)));
+          event.waitUntil(safeCachePut(CACHE_NAME, req, res));
         }
         return res;
       });
