@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.12.0";
-  const CACHE_TAG = "adviento-cero-v2.12.0";
+  const APP_VERSION = "v2.12.1";
+  const CACHE_TAG = "adviento-cero-v2.12.1";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -173,8 +173,7 @@
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
       <video id="${esc(videoId)}" class="briefing-native-video" controls preload="metadata" poster="imagenes/cover-hotel.jpg" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
-        <source src="video-briefing/briefing.mp4?v=2.12.0" type="video/mp4">
-        <track kind="subtitles" src="video-briefing/briefing.vtt?v=2.12.0" srclang="es" label="Español" default>
+        <source src="video-briefing/briefing.mp4?v=2.12.1" type="video/mp4">
       </video>`;
   }
 
@@ -2386,7 +2385,6 @@
         const cache = await caches.open(CACHE_TAG);
         const criticalExtras = [
           "./video-briefing/briefing.mp4",
-          "./video-briefing/briefing.vtt",
           "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf"
         ];
         for (const asset of criticalExtras) {
