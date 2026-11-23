@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>ADVIENTO CERO — Dossier Editorial de Presentación</title>
+  <title>ADVIENTO CERO — Guía de Juego y Regalo para Patri</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    @page { size: A4; margin: 11mm; }
+    @page { size: A4; margin: 10mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
@@ -18,9 +18,9 @@
     }
     .page {
       width: 100%;
-      max-width: 188mm;
+      max-width: 190mm;
       margin: 0 auto 14px;
-      padding: 10mm 11mm;
+      padding: 9.5mm 10.5mm;
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
       page-break-after: always;
@@ -32,27 +32,27 @@
       align-items: flex-end;
       padding-bottom: 8px;
       border-bottom: 1.5px solid #064E3B;
-      margin-bottom: 11px;
+      margin-bottom: 10px;
     }
     .eyebrow {
       font-family: 'Courier Prime', monospace;
-      font-size: 8.8px;
-      letter-spacing: 0.14em;
+      font-size: 8.5px;
+      letter-spacing: 0.13em;
       text-transform: uppercase;
       color: #064E3B;
       font-weight: 700;
     }
     h1 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 27px;
+      font-size: 26px;
       font-weight: 700;
-      line-height: 1.05;
+      line-height: 1.06;
       color: #111827;
       margin-top: 3px;
     }
     .issue-tag {
       font-family: 'Courier Prime', monospace;
-      font-size: 8.8px;
+      font-size: 8.4px;
       color: #991B1B;
       border: 1px solid #991B1B;
       padding: 4px 9px;
@@ -60,53 +60,82 @@
       font-weight: 700;
       white-space: nowrap;
     }
-    .hero-split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 11px;
-      margin-bottom: 10px;
-    }
-    figure { margin: 0; }
-    figure img {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      border-radius: 4px;
-      display: block;
-      border: 1px solid #E5E7EB;
-    }
-    figcaption {
-      margin-top: 3.5px;
-      font-size: 8.2px;
-      color: #6B7280;
-      font-family: 'Courier Prime', monospace;
-    }
     .lead {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 13.5px;
+      font-size: 13.3px;
       line-height: 1.42;
       color: #374151;
-      padding: 8px 12px;
+      padding: 8.5px 12px;
       border-left: 3px solid #B45309;
       background: #FFFBEB;
-      margin-bottom: 11px;
+      margin-bottom: 10px;
     }
     h2 {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15.5px;
+      font-size: 15.2px;
       color: #064E3B;
       margin-bottom: 5px;
     }
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 3px;
+    }
     p, li {
-      font-size: 9.8px;
-      line-height: 1.48;
+      font-size: 9.5px;
+      line-height: 1.46;
       color: #374151;
     }
     .cols-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 11px;
       margin-bottom: 9px;
+    }
+    .role-card {
+      padding: 9px 11px;
+      border-radius: 6px;
+      border: 1px solid #E5E7EB;
+      background: #FAFAFA;
+    }
+    .role-card.patri {
+      border-top: 2.5px solid #B45309;
+      background: #FFFDF7;
+    }
+    .role-card.miguel {
+      border-top: 2.5px solid #064E3B;
+      background: #F8FCFA;
+    }
+    .role-badge {
+      display: inline-block;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .role-card.patri .role-badge { color: #B45309; }
+    .role-card.miguel .role-badge { color: #064E3B; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin: 7px 0 10px;
+    }
+    .step {
+      padding: 8.5px 9.5px;
+      border-top: 2px solid #991B1B;
+      background: #FAFAFA;
+    }
+    .step-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.4px;
+      font-weight: 700;
+      color: #991B1B;
+      margin-bottom: 3px;
     }
     .clean-block {
       padding-top: 7px;
@@ -119,73 +148,124 @@
       border-bottom: 1px dotted #D1D5DB;
     }
     .kv-list strong { color: #111827; }
-    .meta-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 9.2px;
-      margin-top: 3px;
-    }
-    .meta-table th, .meta-table td {
-      border-bottom: 1px solid #E5E7EB;
-      padding: 4px 6px;
-      text-align: left;
-      vertical-align: top;
-    }
-    .meta-table th {
-      font-family: 'Courier Prime', monospace;
-      font-size: 8.5px;
-      color: #064E3B;
-      width: 28%;
-      background: #F9FAFB;
-    }
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin: 9px 0 11px;
-    }
-    .step {
-      padding: 9px 10px;
-      border-top: 2px solid #991B1B;
-      background: #FAFAFA;
-    }
-    .step-label {
-      font-family: 'Courier Prime', monospace;
-      font-size: 8.8px;
-      font-weight: 700;
-      color: #991B1B;
-      margin-bottom: 4px;
-    }
     .callout-crimson {
-      padding: 9px 12px;
+      padding: 8.5px 11px;
       border-left: 3px solid #991B1B;
       background: #FEF2F2;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
+    }
+    .callout-video {
+      padding: 8px 11px;
+      border-left: 3px solid #064E3B;
+      background: #ECFDF5;
+      margin-bottom: 9px;
+    }
+    .mock-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 7px 0 9px;
+    }
+    .phone-mock {
+      border: 1px solid #D1D5DB;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+    .phone-head {
+      padding: 5.5px 9px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.2px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      display: flex;
+      justify-content: space-between;
+    }
+    .phone-head.patri-h { background: #92400E; }
+    .phone-head.miguel-h { background: #064E3B; }
+    .phone-body {
+      padding: 8px 9.5px;
+      font-size: 9px;
+    }
+    .mock-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.2px;
+      margin: 5px 0;
+    }
+    .mock-table th, .mock-table td {
+      border: 1px solid #E5E7EB;
+      padding: 3px 4px;
+      text-align: left;
+    }
+    .mock-table th {
+      background: #F3F4F6;
+      color: #064E3B;
+    }
+    .mock-widget {
+      margin: 5px 0;
+      padding: 6px 8px;
+      border-radius: 5px;
+      background: #F8FAFC;
+      border: 1px dashed #94A3B8;
+      font-family: 'Courier Prime', monospace;
+      font-size: 8.3px;
+      color: #1E293B;
+    }
+    .flow-box {
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      margin-bottom: 9px;
+    }
+    .mech-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 9px;
+    }
+    .mech-card {
+      padding: 7px 8.5px;
+      border-radius: 5px;
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+    }
+    .mech-tag {
+      font-family: 'Courier Prime', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      color: #064E3B;
+      text-transform: uppercase;
+      margin-bottom: 2px;
     }
     .qr-footer {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 14px;
       align-items: center;
-      padding: 12px 15px;
+      padding: 10px 14px;
       border: 1.5px solid #064E3B;
       border-radius: 6px;
       background: #F9FAFB;
-      margin-top: 9px;
+      margin-top: 7px;
     }
     .qr-wrap {
-      padding: 6px;
+      padding: 5px;
       background: #FFFFFF;
       border: 1px solid #D1D5DB;
     }
     .page-foot {
-      margin-top: 9px;
-      padding-top: 6px;
+      margin-top: 8px;
+      padding-top: 5px;
       border-top: 1px solid #F3F4F6;
       display: flex;
       justify-content: space-between;
       font-family: 'Courier Prime', monospace;
-      font-size: 8px;
+      font-size: 7.8px;
       color: #9CA3AF;
     }
     @media print {
@@ -195,146 +275,186 @@
   </style>
 </head>
 <body>
-  <!-- PÁGINA 1: PRESENTACIÓN EN PROFUNDIDAD DEL CRIMEN -->
+  <!-- PÁGINA 1: QUÉ ES ADVIENTO CERO, ROLES Y MECÁNICA COOPERATIVA -->
   <section class="page">
     <header class="masthead">
       <div>
-        <div class="eyebrow">Diligencias Previas 24-12/2026 · Pirineo Aragonés · Cota 1.940 m</div>
-        <h1>El Misterio del Ventisquero</h1>
+        <div class="eyebrow">Regalo de Adviento · Edición Especial para Patri</div>
+        <h1>ADVIENTO CERO · Cómo funciona</h1>
       </div>
-      <span class="issue-tag">EXPEDIENTE DE APERTURA · CERO SPOILERS</span>
+      <span class="issue-tag">1 AL 24 DE DICIEMBRE</span>
     </header>
 
-    <div class="hero-split">
-      <figure>
-        <img src="../imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero">
-        <figcaption>FIG. 01 · Fachada del hotel aislada por el temporal (30 nov, 19:00 h)</figcaption>
-      </figure>
-      <figure>
-        <img src="../imagenes/scene-lobby.jpg" alt="Salón Mirador">
-        <figcaption>FIG. 02 · Salón Mirador y evidencia 01 junto al abeto central (23:55 h)</figcaption>
-      </figure>
+    <div class="lead">
+      En lugar de las chocolatinas de un calendario de Adviento clásico, este diciembre abriremos juntos cada noche una puerta digital de misterio (5–10 minutos al día). Cada puerta es un pequeño reto cooperativo en pareja: ninguno tiene toda la información, así que la única forma de avanzar es hablando y uniendo vuestras dos pantallas.
     </div>
 
-    <div class="lead">
-      A las 19:00 h del 30 de noviembre, una ciclogénesis explosiva dejó completamente incomunicado el exclusivo Hotel El Mirador del Ventisquero. Cuatro horas más tarde, tras un apagón eléctrico de cuatro minutos en plena recepción de Adviento, Arturo Valdivieso apareció sin vida junto al abeto central.
+    <div class="callout-video">
+      <h2 style="margin-bottom:3px;">¿Y de qué va la historia? Descúbrelo al entrar en el Día 1</h2>
+      <p>
+        Este papel no te cuenta la trama para no estropear la sorpresa: en cuanto abras la aplicación web y entres en la <strong>Puerta 01</strong> (o en la pestaña <strong>Expediente</strong>), encontrarás un <strong>Vídeo Briefing cinematográfico narrado</strong> que os sumergirá en el misterio antes de resolver la primera pista.
+      </p>
+    </div>
+
+    <h2 style="margin-top:2px;">1. Vuestros Dos Terminales: Investigación vs. Apoyo</h2>
+    <div class="cols-2">
+      <div class="role-card patri">
+        <div class="role-badge">Móvil de Patri · Protagonista / Campo y Testigos</div>
+        <h3>Tú llevas el peso de la investigación</h3>
+        <p>
+          Al tratarse de tu calendario de regalo, tú operas los artefactos interactivos más elaborados (diales, linterna UV, cuadrantes, calibres, nonogramas, tarjetas de testigos) e introduces o validas la resolución principal de cada jornada.
+        </p>
+      </div>
+      <div class="role-card miguel">
+        <div class="role-badge">Móvil de Miguel · Apoyo / Análisis y Archivo</div>
+        <h3>Yo soy tu apoyo técnico en la sombra</h3>
+        <p>
+          Mi terminal muestra planos, tablas de registro, partes de servicio, claves de archivo y reglas de lectura. No puedo resolver las pruebas por mi cuenta: te canto los datos exactos que necesitas para que tú encajes las piezas.
+        </p>
+      </div>
+    </div>
+
+    <h2>2. Dinámica Diaria en 3 Pasos</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-label">01 · ABRIR LA PUERTA</div>
+        <p>Cada día del 1 al 24 de diciembre se desbloquea su puerta correspondiente por fecha real. Si una noche no podéis jugar, las puertas pasadas quedan abiertas para poneros al día sin perder nada.</p>
+      </div>
+      <div class="step">
+        <div class="step-label">02 · CRUZAR SIN MIRAR</div>
+        <p>Cada móvil recibe solo la mitad del enigma. Tenéis que contaros de palabra lo que veis, leer datos en voz alta y combinar la información de archivo con las herramientas interactivas.</p>
+      </div>
+      <div class="step">
+        <div class="step-label">03 · AVANZAR EN EL TABLERO</div>
+        <p>Al validar el indicio o superar el doble candado del día, el progreso se sincroniza en la nube al instante y el tablero se actualiza con una nueva pieza del puzle hasta el 24 de diciembre.</p>
+      </div>
     </div>
 
     <div class="cols-2">
       <div class="clean-block">
-        <h2>1. Crónica de la Noche del 30 de Noviembre</h2>
-        <p style="margin-bottom:5px;">
-          La carretera de acceso al valle permanece sepultada bajo dos metros de nieve, el viento supera los <strong>90 km/h</strong> y el teleférico quedó bloqueado por el hielo al caer la tarde. Ningún vehículo ni helicóptero pudo despegar ni acceder al complejo.
-        </p>
-        <p style="margin-bottom:5px;">
-          A las <strong>23:38 h</strong>, durante el brindis de bienvenida, saltó el suministro eléctrico general sumiendo el edificio en oscuridad absoluta hasta las <strong>23:42 h</strong>.
-        </p>
-        <p>
-          Al restablecerse la iluminación y revisar el Salón Mirador a las <strong>23:55 h</strong>, fue hallado el cuerpo de <strong>Arturo Valdivieso y Monreal (59 años)</strong> junto al árbol de Navidad, con su copa de ponche especiado volcada sobre la mesa de pizarra.
-        </p>
+        <h2>3. Las 4 Pestañas de la App</h2>
+        <ul class="kv-list">
+          <li><strong>Calendario (1–24):</strong> Tablero principal con las 24 puertas selladas y el estado diario de ambos móviles en tiempo real.</li>
+          <li><strong>Día Activo:</strong> Tu prueba de la jornada, sus herramientas táctiles y un botón de <strong>3 pistas progresivas</strong> por si alguna noche os atascáis.</li>
+          <li><strong>Sospechosos:</strong> Galería dinámica que va destapando fichas conforme avanzan los días, con etiquetas de estado y una <strong>libreta compartida</strong>.</li>
+          <li><strong>Expediente:</strong> Acceso permanente al Vídeo Briefing oficial del caso, las escenas principales y el plano general.</li>
+        </ul>
       </div>
 
       <div class="clean-block">
-        <h2>2. Ficha Preliminar de Inspección Ocular</h2>
-        <table class="meta-table">
-          <tr><th>VÍCTIMA</th><td>Arturo Valdivieso y Monreal (59 años), Presidente y copropietario del Grupo Valdivieso.</td></tr>
-          <tr><th>ESCENARIO</th><td>Salón Mirador (Planta 1), junto al abeto navideño y mesa de pizarra.</td></tr>
-          <tr><th>INDICIOS</th><td>Signos compatibles con intoxicación aguda tras ingerir de su copa reservada.</td></tr>
-          <tr><th>VENTANA</th><td>Entre las 23:35 h y las 23:45 h, centrada en el apagón (23:38–23:42 h).</td></tr>
-          <tr><th>PERÍMETRO</th><td><strong>25 personas aisladas</strong> en el edificio entre huéspedes VIP y personal.</td></tr>
-        </table>
+        <h2>4. Normas de Juego y Juego Limpio</h2>
+        <ul class="kv-list">
+          <li><strong>Prohibido mirar la otra pantalla:</strong> La magia está en describir símbolos, mapas, horas o cifras en voz alta en el sofá o por llamada.</li>
+          <li><strong>Sin trampas ni spoilers:</strong> Miguel tampoco conoce la solución de los enigmas ni quién está detrás del misterio; jugáis los dos a ciegas desde el primer día.</li>
+          <li><strong>A vuestro ritmo:</strong> Pensado para disfrutarse en pocos minutos cada tarde o noche, con pistas graduales si hace falta ayuda extra.</li>
+        </ul>
       </div>
     </div>
 
-    <div class="clean-block">
-      <h2>3. Distribución Arquitectónica del Complejo (Zonas de Investigación)</h2>
-      <table class="meta-table">
-        <tr><th>PLANTA 3 · SUITES</th><td>Suites Presidenciales 301 a 305: alojamiento de familiares directos, exmujer y abogada mercantil, constructor acreedor y banquero inversor.</td></tr>
-        <tr><th>PLANTA 2 · ALA SUR</th><td>Habitaciones 201–208, Biblioteca de lectura nocturna, Estudio de diseño y Archivo Histórico de obras de arte.</td></tr>
-        <tr><th>PLANTA 1 · NOBLE</th><td>Salón Mirador, Recepción principal, Despacho de Dirección, Cuadro Eléctrico general, Spa Termal y Capilla Alpina.</td></tr>
-        <tr><th>SÓTANO Y EXTERIOR</th><td>Cocina de gala, Cava inferior de vinos, Sala de Calderas, Lavandería con armario de llaves maestras, Hangar y Cabaña Norte.</td></tr>
-      </table>
-    </div>
-
-    <div class="clean-block" style="margin-bottom:0;">
-      <h2>4. Punto de Partida de la Investigación</h2>
+    <div class="callout-crimson" style="margin-bottom:0;">
+      <h2 style="color:#991B1B;margin-bottom:3px;">El Gran Final de Nochebuena (24 de diciembre)</h2>
       <p>
-        Alguien dentro del perímetro aprovechó los cuatro minutos de oscuridad o la confusión previa al brindis para actuar. Durante las 24 noches de Adviento analizaréis cámaras exteriores, registros RFID de puertas, tickets térmicos de barra, antenas Wi-Fi y coartadas cruzadas para ir descartando uno a uno a los inocentes.
+        Al completar todo el calendario, el <strong>24 de diciembre</strong> llegaréis por fin frente al culpable y podréis cerrar juntos la investigación en el Careo Final. Al emitir la orden correcta, la aplicación abrirá el epílogo de la historia y desprecintará el <strong>Sobre Secreto de Navidad</strong> con tu regalo real.
       </p>
     </div>
 
     <div class="page-foot">
-      <span>ADVIENTO CERO · EXPEDIENTE D.P. 24-12/2026</span>
+      <span>ADVIENTO CERO · GUÍA DEL REGALO COOPERATIVO</span>
       <span>PÁGINA 1 DE 2</span>
     </div>
   </section>
 
-  <!-- PÁGINA 2: QUÉ ES ADVIENTO CERO, FORMATO COOPERATIVO Y CÓDIGO QR -->
+  <!-- PÁGINA 2: EJEMPLO INVENTADO DE DINÁMICA + QR DE ACCESO -->
   <section class="page">
     <header class="masthead" style="border-color:#991B1B;">
       <div>
-        <div class="eyebrow" style="color:#991B1B;">Regalo de Adviento · Edición Especial para Patri y Miguel</div>
-        <h1>¿Qué es Adviento Cero y cómo jugamos?</h1>
+        <div class="eyebrow" style="color:#991B1B;">Ejemplo Práctico de Entrenamiento · Datos Totalmente Ficticios</div>
+        <h1>¿Cómo es un enigma por dentro?</h1>
       </div>
-      <span class="issue-tag" style="color:#064E3B;border-color:#064E3B;">1 AL 24 DE DICIEMBRE</span>
+      <span class="issue-tag" style="color:#064E3B;border-color:#064E3B;">SIMULACRO · CERO SPOILERS</span>
     </header>
 
-    <div class="lead" style="border-color:#064E3B;background:#ECFDF5;color:#064E3B;">
-      En lugar de un calendario de Adviento tradicional, este diciembre abriremos juntos cada noche una puerta digital de misterio (5–10 minutos al día). Ninguno podrá resolver un enigma en solitario: la única forma de avanzar es hablando y combinando vuestras dos pantallas.
+    <p style="margin-bottom:6px;">
+      Para que sepáis qué esperar antes de abrir el Día 1, aquí tenéis un <strong>ejemplo inventado</strong> (con un caso ficticio llamado <em>«La Consigna del Relojero»</em> cuyos datos no tienen relación alguna con el juego real):
+    </p>
+
+    <div class="mock-grid">
+      <div class="phone-mock">
+        <div class="phone-head miguel-h">
+          <span>MÓVIL DE MIGUEL · APOYO</span>
+          <span>ARCHIVO Y DATOS</span>
+        </div>
+        <div class="phone-body">
+          <p style="margin-bottom:4px;"><strong>Parte de Consigna Ferroviaria (Regla):</strong></p>
+          <p style="margin-bottom:5px;color:#475569;">
+            «Solo el tren posterior a las <strong>21:30</strong> en el <strong>Andén C</strong> dejó bulto en consigna. Para sintonizar la baliza, suma <strong>+15 kHz</strong> a su número de reloj.»
+          </p>
+          <table class="mock-table">
+            <tr><th>Tren</th><th>Andén</th><th>Salida</th><th>Reloj</th></tr>
+            <tr><td>Expreso 04</td><td>Andén B</td><td>20:45</td><td>120</td></tr>
+            <tr><td>Nocturno 07</td><td>Andén C</td><td>22:10</td><td>340</td></tr>
+            <tr><td>Correo 09</td><td>Andén C</td><td>21:05</td><td>280</td></tr>
+          </table>
+          <p style="font-size:8.4px;color:#064E3B;"><strong>Su papel:</strong> Sin ver el billete de Patri, busca las coincidencias en archivo y le canta la frecuencia y la fila válida.</p>
+        </div>
+      </div>
+
+      <div class="phone-mock">
+        <div class="phone-head patri-h">
+          <span>MÓVIL DE PATRI · PRINCIPAL</span>
+          <span>ACCIÓN Y CÓDIGO</span>
+        </div>
+        <div class="phone-body">
+          <p style="margin-bottom:4px;"><strong>Billete Rasgado Recogido en Escena:</strong></p>
+          <div class="mock-widget">
+            BILLETE N.º 88-Z · TRAYECTO: <strong>NOCTURNO 07</strong><br>
+            NOTA: «Clave final = número del tren + código revelado en el dial»
+          </div>
+          <p style="margin-bottom:3px;"><strong>Dial de Frecuencia Interactivo:</strong></p>
+          <div class="mock-widget">
+            [ 100 kHz ] &lt;=====[ <strong>??? kHz</strong> ]=====&gt; [ 500 kHz ]<br>
+            Al sintonizar 355 kHz aparece el código oculto: <strong>NORTE</strong>
+          </div>
+          <p style="font-size:8.4px;color:#92400E;"><strong>Tu papel:</strong> Ajustas el dial en tu pantalla, descifras el código oculto y validas la clave completa (<code>07NORTE</code>).</p>
+        </div>
+      </div>
     </div>
 
-    <div class="steps">
-      <div class="step">
-        <div class="step-label">01 · DOS TERMINALES</div>
-        <p>Al entrar por primera vez desde vuestros móviles, <strong>Patri</strong> elige su perfil (<em>Campo y Testigos</em>) y <strong>Miguel</strong> elige el suyo (<em>Análisis y Archivo</em>). Ambos tableros se sincronizan en tiempo real en la nube.</p>
-      </div>
-      <div class="step">
-        <div class="step-label">02 · PISTAS COMPLEMENTARIAS</div>
-        <p>Patri recibe tarjetas de sitio, partes de turno, taquillas o llaves; Miguel recibe planos arquitectónicos, luz UV, sensores RFID, osciloscopios o frecuencias. Tendréis que cruzar los datos en voz alta.</p>
-      </div>
-      <div class="step">
-        <div class="step-label">03 · 1 DESCARTE DIARIO</div>
-        <p>Al validar la clave conjunta (o superar el Doble Candado en ambos móviles), el tablero tacha automáticamente a un sospechoso inocente hasta acorralar al culpable el <strong>24 de diciembre</strong>.</p>
-      </div>
-    </div>
-
-    <div class="cols-2">
-      <div class="clean-block">
-        <h2>Las 4 Pestañas de la Aplicación</h2>
-        <ul class="kv-list">
-          <li><strong>Calendario (1–24):</strong> Las 24 puertas selladas por fecha real de diciembre. Si alguna noche no podéis jugar, las puertas pasadas quedan abiertas para poneros al día sin perder nada.</li>
-          <li><strong>Día Activo:</strong> Tu prueba exclusiva de la jornada, sus herramientas interactivas (linterna ultravioleta, Morse, sudoku, nonograma, rayos X, calibre ABFO...) y un sistema de <strong>3 pistas progresivas</strong> por si os atascáis.</li>
-          <li><strong>Sospechosos:</strong> Tablero vivo con descubrimiento progresivo conforme avanzan los días, etiquetas de estado (<em>Sospechoso</em> / <em>Descartado</em>) y una libreta compartida sincronizada.</li>
-          <li><strong>Expediente:</strong> Vídeo briefing oficial del caso (también visible en el Día 1), escenas del hotel y plano de plantas.</li>
-        </ul>
-      </div>
-
-      <div class="clean-block">
-        <h2>Reglas de Juego y Consejos</h2>
-        <ul class="kv-list">
-          <li><strong>Sin mirar la pantalla del otro:</strong> La gracia del modo cooperativo asimétrico es contarse las pistas de palabra, describiendo planos, cifras o símbolos.</li>
-          <li><strong>Cero spoilers para los dos:</strong> Miguel tampoco conoce quién es el culpable ni la solución de cada puerta; los dos investigáis en igualdad de condiciones desde el Día 1.</li>
-          <li><strong>Ritmo ligero:</strong> Cada día está pensado para disfrutarse con calma en el sofá en unos minutos, sin lecturas densas ni bloqueos largos.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="callout-crimson">
-      <h2 style="color:#991B1B;margin-bottom:3px;">El Clímax de Nochebuena (24 de diciembre)</h2>
+    <div class="flow-box">
+      <h3 style="color:#92400E;">Cómo lo resolveríais hablando en 2 minutos:</h3>
       <p>
-        Al completar las 24 puertas, quedarán 3 sospechosos finalistas en pie. Al emitir juntos en el Careo Final la Orden de Detención justificada (identificando culpable, prueba determinante, veneno y maniobra), la app desprecintará la confesión completa y desbloqueará un <strong>Sobre Secreto de Navidad</strong> con tu regalo real.
+        <strong>1.</strong> Patri le dice a Miguel que su billete corresponde al tren <strong>Nocturno 07</strong>. &nbsp;
+        <strong>2.</strong> Miguel consulta la tabla: el Nocturno 07 cumple la regla (Andén C, 22:10 h, Reloj <code>340</code>), calcula <code>340 + 15 = 355 kHz</code> y le canta el dato. &nbsp;
+        <strong>3.</strong> Patri mueve el dial hasta <strong>355 kHz</strong>, lee la palabra revelada (<code>NORTE</code>) e introduce la clave conjunta <code>07NORTE</code> para superar el día (en puertas de <em>Doble Candado</em>, cada uno valida además su propia mitad).
       </p>
+    </div>
+
+    <h2>Otros tipos de mecánicas interactivas que irán apareciendo</h2>
+    <div class="mech-strip">
+      <div class="mech-card">
+        <div class="mech-tag">Inspección Táctil</div>
+        <p><strong>Linterna UV y Calibres:</strong> deslizar el dedo sobre documentos para revelar tinta invisible o medir marcas con precisión.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-tag">Audio y Señales</div>
+        <p><strong>Morse y Frecuencias:</strong> escuchar pitidos reales, ajustar sintonizadores por porcentaje de señal y descifrar transmisiones.</p>
+      </div>
+      <div class="mech-card">
+        <div class="mech-tag">Lógica y Deducción</div>
+        <p><strong>Cifrados y Tableros:</strong> cuadrantes 4x4, ruedas de giro, nonogramas, interruptores secuenciales y cruce de testimonios.</p>
+      </div>
     </div>
 
     <div class="qr-footer">
       <div>
         <div class="eyebrow">Acceso Directo a la Aplicación Web</div>
-        <h2 style="margin:3px 0 4px;">Escanea este código QR con tu móvil</h2>
-        <p style="margin-bottom:4px;">Enlace oficial: <strong style="font-family:'Courier Prime',monospace;">https://mgesm.github.io/advientocero/</strong></p>
-        <p style="font-size:8.8px;color:#6B7280;"><strong>Instalación recomendada:</strong> Ábrela en Safari (iPhone) o Chrome (Android) y pulsa <em>Compartir → Añadir a pantalla de inicio</em> para tenerla instalada como app nativa.</p>
+        <h2 style="margin:2px 0 4px;">Escanea este código QR con tu móvil para empezar</h2>
+        <p style="margin-bottom:4px;">Enlace directo: <strong style="font-family:'Courier Prime',monospace;">https://mgesm.github.io/advientocero/</strong></p>
+        <p style="font-size:8.6px;color:#6B7280;margin-bottom:3px;"><strong>Instalación recomendada (como app nativa):</strong> Ábrela en Safari (iPhone) o Chrome (Android) y pulsa <em>Compartir → Añadir a pantalla de inicio</em>.</p>
+        <p style="font-size:8.6px;color:#6B7280;"><strong>Importante el primer día:</strong> Elige tu perfil como <strong>Patri</strong> y yo entraré como <strong>Miguel</strong> desde mi móvil.</p>
       </div>
       <div class="qr-wrap">
-        <img src="qr_advientocero.svg" alt="QR Adviento Cero" style="width:106px;height:106px;display:block;">
+        <img src="qr_advientocero.svg" alt="QR Adviento Cero" style="width:104px;height:104px;display:block;">
       </div>
     </div>
 

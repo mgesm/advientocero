@@ -7,18 +7,19 @@
 
 ## Pendientes (Por implementar)
 
-- [ ] `2026-11-17` **[Cooperativo/Sync]** Recordatorio diario para resolver la puerta del día — Añadir una opción para enviar/programar un recordatorio diario (notificación PWA/Web Push, enlace rápido por WhatsApp o evento de calendario `.ics`) que avise a la pareja para abrir la puerta del día. Posibles archivos: `js/app.js`, `sw.js`, `index.html`.
-- [ ] `2026-11-17` **[Regalo/Personalización]** Añadir guiños y menciones personales (gato Paco y otros detalles por definir) — Incorporar referencias a un gato llamado Paco y demás detalles personales que vayamos concretando más adelante en textos, fichas o dedicatorias. Posibles archivos: `config/gift-config.js`, `data/case-lore.js`, `data/days.js`.
+- *(Sin tareas pendientes por el momento).*
 
 ---
 
 ## En Revisión / Preguntas Abiertas
 
-- `2026-11-17` **[Propuesta · Imprimible vs App]** Valorar quitar la presentación en profundidad del crimen del PDF impreso (`imprimibles/PRESENTACION_ADVIENTO_CERO.pdf`) y dejar en papel únicamente la explicación del regalo, el formato de juego cooperativo y el código QR, reservando la presentación inmersiva del crimen exclusivamente para el vídeo briefing dentro de la app.
+- *(Sin propuestas abiertas).*
 
 ---
 
 ## Completadas (Histórico)
+
+- [x] `2026-11-23` **Rediseño del Dossier Imprimible sin detalles del crimen (`imprimibles/PRESENTACION_ADVIENTO_CERO.pdf`)** — Eliminada la crónica detallada del caso en papel (reservada al vídeo briefing de la app) para centrar las 2 páginas A4 en qué consiste el regalo, los roles reales (Patri protagonista y Miguel apoyo), la mecánica cooperativa, un ejemplo práctico completamente inventado y el código QR de acceso.
 
 - [x] `2026-11-19` **Dedicatoria automática a Patri + reset completo en Modo Test (`v2.8.0`)** — Al elegir el perfil de Patri por primera vez se muestra automáticamente el modal «Para Patri» (con flag `DEDICATION_SEEN_KEY` en `localStorage`); además, resetear desde Modo Test limpia por completo estado, rol elegido y flags locales para que el mensaje vuelva a mostrarse al elegir Patri.
 - [x] `2026-11-19` **Retratos realistas completos (`25/25`) (`v2.8.0`)** — Sustituidos los últimos dos retratos vectoriales (`s24.svg` y `s25.svg`) por fotografías realistas `256x256` (`s24.jpg` y `s25.jpg`), actualizando `data/suspects.js` y `sw.js`.
