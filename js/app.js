@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.9.2";
+  const APP_VERSION = "v2.9.3";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -667,7 +667,7 @@
           ${maxOpen >= 1 ? `
             <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
               <button type="button" class="btn btn-sm btn-primary" id="hero-cta-day" data-day="${ctaTargetDay}">
-                ${syncState.finalVerdictSolved ? "Ver Sobre Secreto (Día 24)" : `Ir a Puerta ${String(ctaTargetDay).padStart(2, "0")}`}
+                ${syncState.finalVerdictSolved ? (window.GIFT_CONFIG?.finalGiftReveal?.enabled ? "Ver Sobre Secreto (Día 24)" : "Ver Cierre del Caso (Día 24)") : `Ir a Puerta ${String(ctaTargetDay).padStart(2, "0")}`}
               </button>
             </div>
           ` : ""}
@@ -937,7 +937,18 @@
         }
       } else {
         const ep = syncState.finalEpilogue || {};
-        const gift = window.GIFT_CONFIG.finalGiftReveal;
+        const gift = window.GIFT_CONFIG?.finalGiftReveal;
+        const giftCardHtml = gift && gift.enabled === true ? `
+          <div class="glass-card gift-reveal-card">
+            <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
+            <h2 class="serif" style="font-size:1.7rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
+            ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
+            <div class="gift-voucher">
+              <div class="mono" style="font-size:0.78rem;color:var(--adv-gold-soft);font-weight:700;margin-bottom:6px;">${esc(gift.voucherTitle)}</div>
+              <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
+            </div>
+            <p class="serif" style="margin-top:14px;font-size:1.1rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
+          </div>` : "";
         finalTrialHtml = `
           <div class="glass-card answer-card" style="border:var(--vg-border-pine);">
             <span class="badge badge-pine">${esc(ep.title || "CASO CERRADO")}</span>
@@ -950,17 +961,7 @@
           </div>
           <div id="final-archive-box" style="display:none;">
             ${window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, (window.SUSPECTS_DATA || []).filter((s) => s.id === ep.culpritId || ["s14", "s17"].includes(s.id))) : ""}
-          </div>
-          <div class="glass-card gift-reveal-card">
-            <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
-            <h2 class="serif" style="font-size:1.7rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
-            ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
-            <div class="gift-voucher">
-              <div class="mono" style="font-size:0.78rem;color:var(--adv-gold-soft);font-weight:700;margin-bottom:6px;">${esc(gift.voucherTitle)}</div>
-              <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
-            </div>
-            <p class="serif" style="margin-top:14px;font-size:1.1rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
-          </div>`;
+          </div>${giftCardHtml}`;
       }
     }
 

@@ -22,8 +22,9 @@ window.GIFT_CONFIG = {
     signature: "Con todo mi cariño, Miguel"
   },
 
-  // Sobre secreto que SOLO se desbloquea al atrapar al culpable el 24 de diciembre
+  // Sobre secreto oculto por defecto hasta definir el regalo real (pon enabled: true para mostrarlo el 24 de diciembre)
   finalGiftReveal: {
+    enabled: false,
     badge: "SOBRE SECRETO · 24 DE DICIEMBRE",
     title: "Caso Cerrado — Y tu regalo real de Navidad",
     message: [
