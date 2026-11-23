@@ -1,14 +1,27 @@
-const CACHE_NAME = "adviento-cero-v2.11.0";
+const CACHE_NAME = "adviento-cero-v2.12.0";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./video-briefing/index.html",
+  "./video-briefing/player.css",
+  "./video-briefing/player.js",
+  "./css/fonts.css",
   "./css/liquid-christmas.css",
   "./css/advent-board.css",
   "./css/puzzles.css",
   "./css/artifacts.css",
   "./css/mobile-ux.css",
+  "./fonts/font-1.woff2",
+  "./fonts/font-2.woff2",
+  "./fonts/font-3.woff2",
+  "./fonts/font-4.woff2",
+  "./fonts/font-5.woff2",
+  "./fonts/font-6.woff2",
+  "./fonts/font-7.woff2",
+  "./fonts/font-8.woff2",
+  "./fonts/font-9.woff2",
+  "./fonts/font-10.woff2",
   "./config/gift-config.js",
   "./config/firebase-config.js",
   "./data/case-lore.js",
@@ -144,7 +157,7 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       caches.match(req, { ignoreSearch: true }).then((cached) => {
         if (cached) return handleRangeRequest(req, cached);
-        return fetch(req);
+        return fetch(req).catch(() => new Response("", { status: 503, statusText: "Offline" }));
       })
     );
     return;
@@ -159,7 +172,7 @@ self.addEventListener("fetch", (event) => {
             event.waitUntil(safeCachePut(CACHE_NAME, req, res));
           }
           return res;
-        });
+        }).catch(() => new Response("Offline", { status: 503, statusText: "Offline" }));
       })
     );
     return;
@@ -187,7 +200,7 @@ self.addEventListener("fetch", (event) => {
           event.waitUntil(safeCachePut(CACHE_NAME, req, res));
         }
         return res;
-      });
+      }).catch(() => new Response("", { status: 503, statusText: "Offline" }));
     })
   );
 });

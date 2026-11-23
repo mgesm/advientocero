@@ -1,4 +1,6 @@
-# Mantener la guía de soluciones fuera del repositorio público de GitHub Pages (Cero Spoilers)
+# Mantener la guía de soluciones y artefactos de agentes fuera del repositorio público de GitHub Pages (Cero Spoilers)
 SOLUCION_CONFIDENCIAL.md
+.agents/
+*.bak
 .DS_Store
 Thumbs.db

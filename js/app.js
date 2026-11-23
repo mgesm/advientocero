@@ -3,7 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.11.0";
+  const APP_VERSION = "v2.12.0";
+  const CACHE_TAG = "adviento-cero-v2.12.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -30,9 +31,16 @@
   let suspectFilter = "all";
   let suspectGroupFilter = "all";
   let suspectFloorFilter = "all";
+  let suspectWithNotesOnly = false;
+  let suspectFiltersExtraOpen = false;
   let suspectSearch = "";
+  let compareIds = [];
   let calendarFilter = "all";
   let expedienteFloor = "Planta 1";
+  let expSearchQuery = "";
+  let timelineFloorFilter = "all";
+  let offlinePackStatus = "";
+  let notesUndoSnapshot = null;
 
   let syncState = window.SyncEngine.getState();
   let syncMode = window.SyncEngine.getMode();
@@ -49,7 +57,7 @@
 
   const tabScrollY = { calendar: 0, day: 0, suspects: 0, expediente: 0 };
   let draftsStore = loadDraftsStorage();
-  let userPrefs = loadJsonStorage(PREFS_KEY, { fontBoost: false, nightSoft: false, reducedMotion: false });
+  let userPrefs = loadJsonStorage(PREFS_KEY, { fontBoost: false, nightSoft: false, reducedMotion: false, highContrastOutdoor: false, pwaBannerDismissed: false });
   let lastAdminSignature = "";
   let lastCalendarSignature = "";
   let lastDaySignature = "";
@@ -105,7 +113,8 @@
     document.body.classList.toggle("night-reading-soft", Boolean(userPrefs.nightSoft));
     document.body.classList.remove("Pref-reduced-motion");
     document.body.classList.toggle("pref-reduced-motion", Boolean(userPrefs.reducedMotion));
-    if (userPrefs.reducedMotion && window.clearSnow) window.clearSnow();
+    document.body.classList.toggle("high-contrast-outdoor", Boolean(userPrefs.highContrastOutdoor));
+    if ((userPrefs.reducedMotion || userPrefs.highContrastOutdoor) && window.clearSnow) window.clearSnow();
     try { Store.setItem(PREFS_KEY, JSON.stringify(userPrefs)); } catch (_) {}
   }
 
@@ -164,9 +173,33 @@
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
       <video id="${esc(videoId)}" class="briefing-native-video" controls preload="metadata" poster="imagenes/cover-hotel.jpg" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
-        <source src="video-briefing/briefing.mp4?v=2.11.0" type="video/mp4">
-        <track kind="subtitles" src="video-briefing/briefing.vtt?v=2.11.0" srclang="es" label="Español" default>
+        <source src="video-briefing/briefing.mp4?v=2.12.0" type="video/mp4">
+        <track kind="subtitles" src="video-briefing/briefing.vtt?v=2.12.0" srclang="es" label="Español" default>
       </video>`;
+  }
+
+  function wireBriefingVideoControls(mountEl) {
+    const vid = mountEl?.querySelector("video");
+    if (!vid || vid.dataset.wiredF6 === "1") return;
+    vid.dataset.wiredF6 = "1";
+    vid.addEventListener("play", () => {
+      window.AudioFX?.acquireWakeLock?.();
+      try {
+        if ("mediaSession" in navigator && typeof window.MediaMetadata === "function") {
+          navigator.mediaSession.metadata = new window.MediaMetadata({
+            title: "Briefing Oficial · El Misterio del Ventisquero",
+            artist: "UOPJ · Adviento Cero",
+            album: "D.P. 24-12/2026",
+            artwork: [{ src: "imagenes/cover-hotel.jpg", sizes: "1024x572", type: "image/jpeg" }]
+          });
+          navigator.mediaSession.setActionHandler("play", () => vid.play().catch(() => {}));
+          navigator.mediaSession.setActionHandler("pause", () => vid.pause());
+        }
+      } catch (_) {}
+    });
+    const rel = () => window.AudioFX?.releaseWakeLock?.();
+    vid.addEventListener("pause", rel);
+    vid.addEventListener("ended", rel);
   }
 
   function syncBriefingVideoMute(muted) {
@@ -215,9 +248,10 @@
 
     const sparks = [];
     let rafId = null;
+    let lastFrameTs = 0;
 
     window.triggerGoldBurst = (count = 36) => {
-      if (userPrefs.reducedMotion) return;
+      if (userPrefs.reducedMotion || userPrefs.highContrastOutdoor) return;
       for (let i = 0; i < count; i++) {
         const ang = Math.random() * Math.PI * 2;
         const spd = 1.6 + Math.random() * 4.4;
@@ -235,12 +269,17 @@
     };
 
     function shouldPauseSnow() {
-      return document.hidden || document.body.classList.contains("modal-open") || userPrefs.reducedMotion;
+      return document.hidden || document.body.classList.contains("modal-open") || userPrefs.reducedMotion || userPrefs.highContrastOutdoor;
     }
 
-    function tick() {
+    function tick(now) {
       rafId = null;
       if (shouldPauseSnow() && sparks.length === 0) return;
+      if (now && lastFrameTs && now - lastFrameTs < 38) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+      lastFrameTs = now || performance.now();
 
       ctx.clearRect(0, 0, w, h);
       for (const f of flakes) {
@@ -455,23 +494,29 @@
     const partnerLabel = partnerRole === "miguel" ? "Miguel" : "Patri";
     const partnerOnline = window.SyncEngine.isRoleOnline(partnerRole);
     const partnerData = syncState.presence?.[partnerRole];
+    const pendingPill = status.dirty
+      ? `<button type="button" class="sync-pending-pill" data-force-sync-now title="Cambios locales pendientes de subir">Pendiente · Sincronizar</button>`
+      : "";
 
+    if (navigator.onLine === false) {
+      return `<button type="button" class="badge badge-gold" data-open-sync-diag style="cursor:pointer;">Sin conexión (Modo local)</button>${pendingPill}`;
+    }
     if (status.syncError) {
-      return `<button type="button" class="badge badge-crimson" data-open-sync-diag style="cursor:pointer;">Error sync</button>`;
+      return `<button type="button" class="badge badge-crimson" data-open-sync-diag style="cursor:pointer;">Error sync</button>${pendingPill}`;
     }
     if (status.mode === "firebase") {
       if (!status.initialSynced && !status.connected) {
-        return `<button type="button" class="badge badge-gold" data-open-sync-diag style="cursor:pointer;">Conectando...</button>`;
+        return `<button type="button" class="badge badge-gold" data-open-sync-diag style="cursor:pointer;">Conectando...</button>${pendingPill}`;
       }
       if (!status.connected) {
-        return `<button type="button" class="badge badge-gold" data-open-sync-diag style="cursor:pointer;">Reconectando...</button>`;
+        return `<button type="button" class="badge badge-gold" data-open-sync-diag style="cursor:pointer;">Reconectando...</button>${pendingPill}`;
       }
       const pText = partnerOnline
         ? `${partnerLabel} online${partnerData?.viewingDay ? ` (Día ${String(partnerData.viewingDay).padStart(2, "0")})` : ""}`
         : `Nube activa${partnerData?.lastSeen ? ` · ${partnerLabel} ${formatRelTime(partnerData.lastSeen)}` : ""}`;
-      return `<button type="button" class="badge badge-pine" data-open-sync-diag style="cursor:pointer;"><span class="pulse-dot"></span> ${esc(pText)}</button>`;
+      return `<button type="button" class="badge badge-pine" data-open-sync-diag style="cursor:pointer;"><span class="pulse-dot"></span> ${esc(pText)}</button>${pendingPill}`;
     }
-    return `<button type="button" class="badge badge-crimson" data-open-sync-diag style="cursor:pointer;">Modo Local</button>`;
+    return `<button type="button" class="badge badge-crimson" data-open-sync-diag style="cursor:pointer;">Modo Local</button>${pendingPill}`;
   }
 
   function openSyncDiagModal() {
@@ -704,13 +749,16 @@
         </button>`;
     }).join("");
 
+    const isStandalone = Boolean(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches));
+    const showPwaTip = !isStandalone && !userPrefs.pwaBannerDismissed;
+
     container.innerHTML = `
       <div class="glass-card hero-dossier">
         <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/>
         </svg>
         <div class="hero-thumb-wrap">
-          <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb" width="1024" height="572" decoding="async">
+          <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb" width="1024" height="572" decoding="async" fetchpriority="high">
           <span class="hero-thumb-tag">${esc(window.CASE_LORE.caseCode)}</span>
         </div>
         <div>
@@ -746,9 +794,23 @@
                 ${syncState.finalVerdictSolved ? (window.GIFT_CONFIG?.finalGiftReveal?.enabled ? "Ver Sobre Secreto (Día 24)" : "Ver Cierre del Caso (Día 24)") : `Ir a Puerta ${String(ctaTargetDay).padStart(2, "0")}`}
               </button>
             </div>
-          ` : ""}
+          ` : `
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-primary" id="hero-open-briefing-btn">Ver Briefing de Apertura</button>
+              <button type="button" class="btn btn-sm btn-frost" id="hero-open-rules-btn">Manual de Campo</button>
+            </div>
+          `}
         </div>
       </div>
+
+      ${showPwaTip ? `
+        <div class="glass-card" style="padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-color:rgba(186,230,253,0.28);">
+          <div style="font-size:0.78rem;color:var(--vg-text-secondary);flex:1;min-width:210px;">
+            <strong style="color:var(--adv-frost);">Consejo de instalación móvil:</strong> Añade la app a tu pantalla de inicio (<em>Compartir → Añadir a pantalla de inicio</em> en Safari o <em>Instalar</em> en Chrome) para modo pantalla completa y evitar que iOS limpie la caché offline.
+          </div>
+          <button type="button" class="btn btn-sm btn-ghost" id="dismiss-pwa-banner" style="flex-shrink:0;">Entendido</button>
+        </div>
+      ` : ""}
 
       <div class="section-head" style="margin-bottom:12px;">
         <div>
@@ -787,6 +849,21 @@
       selectedDayNum = target;
       lastDaySignature = "";
       switchTab("day", { scrollToTop: true });
+    });
+
+    document.getElementById("hero-open-briefing-btn")?.addEventListener("click", () => {
+      switchTab("expediente", { scrollToTop: false });
+      setTimeout(() => {
+        document.getElementById("exp-briefing-mount")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 80);
+    });
+
+    document.getElementById("hero-open-rules-btn")?.addEventListener("click", () => openRulesModal());
+
+    document.getElementById("dismiss-pwa-banner")?.addEventListener("click", () => {
+      userPrefs.pwaBannerDismissed = true;
+      applyUserPrefs();
+      renderCalendarView(true);
     });
 
     container.querySelectorAll("[data-cal-filter]").forEach((btn) => {
@@ -834,7 +911,9 @@
       dispatch: syncState.fieldDispatch?.[key] || null,
       fv: dayNum === 24 ? syncState.finalVerdictSolved : null,
       fp: dayNum === 24 ? syncState.finalProposal : null,
-      discardedCount: dayNum === 24 ? (syncState.discardedIds || []).length : null
+      discardedCount: dayNum === 24 ? (syncState.discardedIds || []).length : null,
+      pinned: syncState.pinnedClues || [],
+      muted: window.AudioFX.isMuted()
     });
   }
 
@@ -1058,6 +1137,10 @@
             </div>
             <p class="serif" style="margin-top:14px;font-size:1.1rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
           </div>` : "";
+        const archiveRemaining = (() => {
+          const dayDiscards = new Set(Object.values(syncState.days || {}).map((d) => d?.discardId).filter(Boolean));
+          return (window.SUSPECTS_DATA || []).filter((s) => !dayDiscards.has(s.id));
+        })();
         finalTrialHtml = `
           <div class="glass-card answer-card" style="border:var(--vg-border-pine);">
             <span class="badge badge-pine">${esc(ep.title || "CASO CERRADO")}</span>
@@ -1069,7 +1152,7 @@
             </div>
           </div>
           <div id="final-archive-box" style="display:none;">
-            ${window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, (window.SUSPECTS_DATA || []).filter((s) => s.id === ep.culpritId || ["s14", "s17"].includes(s.id))) : ""}
+            ${window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, archiveRemaining) : ""}
           </div>${giftCardHtml}`;
       }
     }
@@ -1137,16 +1220,32 @@
         </div>
 
         ${dayObj.day === 1 ? `
-          <div class="glass-card" style="padding:14px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px;flex-wrap:wrap;">
+          <details class="glass-card briefing-collapse" ${!isSolved ? "open" : ""} style="padding:14px;">
+            <summary>
               <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
-              <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Informe grabado del caso</span>
-            </div>
-            <div id="day-briefing-mount" class="briefing-native-mount">
+              <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">${isSolved ? "Mostrar / Ocultar vídeo" : "Ocultar vídeo"}</span>
+            </summary>
+            <div id="day-briefing-mount" class="briefing-native-mount" style="margin-top:10px;">
               ${preservedDayVideo ? "" : renderBriefingVideoHtml("briefing-video-day")}
             </div>
-          </div>
+          </details>
         ` : ""}
+
+        <div class="cross-peek-bar">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="suspects">Consulta: Sospechosos</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="map">Plano</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="notes">Libreta</button>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            ${isSolved ? `
+              <button type="button" class="btn btn-sm btn-ghost pin-clue-btn" data-pin-clue="day-${dayObj.day}" aria-pressed="${(syncState.pinnedClues || []).includes(`day-${dayObj.day}`) ? "true" : "false"}">
+                ${(syncState.pinnedClues || []).includes(`day-${dayObj.day}`) ? "Fijada en Careo" : "Fijar en Careo"}
+              </button>
+            ` : ""}
+            <button type="button" class="btn btn-sm btn-ghost" id="day-mute-btn">${window.AudioFX.isMuted() ? "Audio OFF" : "Audio ON"}</button>
+          </div>
+        </div>
 
         <div class="glass-card terminal-card role-${role}">
           <div class="terminal-banner">
@@ -1191,12 +1290,40 @@
           </div>
           <div class="hints-accordion">${hintsHtml}</div>
         </div>
+
+        <nav class="day-footer-nav" aria-label="Navegación entre puertas">
+          <button type="button" class="btn btn-sm btn-ghost" data-day-nav="-1" ${selectedDayNum <= 1 ? "disabled" : ""}>Puerta anterior</button>
+          <button type="button" class="btn btn-sm btn-ghost" data-back-cal-bottom>Calendario</button>
+          <button type="button" class="btn btn-sm btn-primary" data-day-nav="1" ${!canGoNext ? "disabled" : ""}>Siguiente puerta</button>
+        </nav>
       </div>
     `;
 
     if (preservedDayVideo) {
       document.getElementById("day-briefing-mount")?.appendChild(preservedDayVideo);
     }
+    wireBriefingVideoControls(document.getElementById("day-briefing-mount"));
+
+    document.getElementById("day-mute-btn")?.addEventListener("click", (e) => {
+      const muted = window.AudioFX.toggleMute();
+      e.currentTarget.textContent = muted ? "Audio OFF" : "Audio ON";
+      syncBriefingVideoMute(muted);
+      const mNote = document.getElementById(`morse-mute-note-${dayObj.day}`);
+      if (mNote) mNote.style.display = muted ? "block" : "none";
+    });
+
+    container.querySelectorAll("[data-peek-sheet]").forEach((btn) => {
+      btn.addEventListener("click", () => openCrossPeekModal(btn.dataset.peekSheet, btn));
+    });
+
+    container.querySelectorAll("[data-pin-clue]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        window.AudioFX.click();
+        const pinned = window.SyncEngine.togglePinnedClue(btn.dataset.pinClue);
+        const on = pinned.includes(btn.dataset.pinClue);
+        showToast(on ? "Conclusión fijada para el Careo Final." : "Chincheta retirada.");
+      });
+    });
 
     const widgetMount = document.getElementById("widget-mount");
     const draftKey = `${dayObj.day}-${role}`;
@@ -1521,12 +1648,77 @@
     return "Sótano / Anexo";
   }
 
+  function openCrossPeekModal(kind, triggerEl) {
+    if (kind === "map") {
+      const lore = window.CASE_LORE;
+      showModal(`
+        <span class="badge badge-frost">CONSULTA RÁPIDA · PLANO DEL HOTEL</span>
+        <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:8px 0 10px;">Distribución por Plantas</h3>
+        <ul class="clue-list">
+          ${(lore.hotelZones || []).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
+        </ul>
+        <button type="button" class="btn btn-primary" style="width:100%;margin-top:14px;" id="close-modal-btn">Volver al enigma</button>
+      `, triggerEl);
+      document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+      return;
+    }
+    if (kind === "notes") {
+      const curText = syncState.sharedNotes || "";
+      showModal(`
+        <span class="badge badge-gold">CONSULTA RÁPIDA · LIBRETA COMPARTIDA</span>
+        <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:8px 0 10px;">Anotaciones de Miguel y Patri</h3>
+        <textarea id="peek-notes-area" class="adv-textarea" style="min-height:150px;" placeholder="Anota aquí sin perder tu progreso del día...">${esc(curText)}</textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="button" class="btn btn-ghost" style="flex:1;" id="close-modal-btn">Cerrar</button>
+          <button type="button" class="btn btn-primary" style="flex:1;" id="peek-save-notes-btn">Guardar libreta</button>
+        </div>
+      `, triggerEl);
+      document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+      document.getElementById("peek-save-notes-btn")?.addEventListener("click", () => {
+        const val = document.getElementById("peek-notes-area")?.value || "";
+        if (currentRole) window.SyncEngine.saveNotes(val, currentRole);
+        closeModal();
+        showToast("Libreta compartida guardada.");
+      });
+      return;
+    }
+    const discarded = syncState.discardedIds || [];
+    const solvedDays = Object.keys(syncState.days || {}).filter((k) => syncState.days[k]?.solved).map(Number);
+    const limit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDays.length ? solvedDays : [0]), 0);
+    const activeList = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= limit && !discarded.includes(s.id));
+    showModal(`
+      <span class="badge badge-gold">CONSULTA RÁPIDA · SOSPECHOSOS ACTIVOS (${activeList.length})</span>
+      <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:8px 0 10px;">Pendientes de descartar</h3>
+      <div style="display:grid;gap:8px;max-height:55dvh;overflow-y:auto;">
+        ${activeList.length ? activeList.map((s) => `
+          <button type="button" class="suspect-card" style="padding:10px;text-align:left;" data-peek-suspect="${esc(s.id)}">
+            <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="44" height="44" style="width:44px;height:44px;border-radius:10px;object-fit:cover;">
+            <div style="min-width:0;flex:1;">
+              <div style="font-weight:700;font-size:0.86rem;color:#FFFBEB;">#${esc(s.num)} · ${esc(s.name)}</div>
+              <div style="font-size:0.74rem;color:var(--vg-text-secondary);">${esc(s.role)} · ${esc(s.room)}</div>
+            </div>
+          </button>
+        `).join("") : `<p class="day-story">Sin sospechosos activos descubiertos todavía.</p>`}
+      </div>
+      <button type="button" class="btn btn-primary" style="width:100%;margin-top:12px;" id="close-modal-btn">Volver al enigma</button>
+    `, triggerEl);
+    document.querySelectorAll("[data-peek-suspect]").forEach((b) => {
+      b.addEventListener("click", () => openSuspectModal(b.dataset.peekSuspect, triggerEl));
+    });
+    document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+  }
+
   function applySuspectFilterOnly() {
     const container = document.getElementById("view-suspects");
     if (!container) return;
     container.querySelectorAll("[data-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.filter === suspectFilter));
     container.querySelectorAll("[data-group-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.groupFilter === suspectGroupFilter));
     container.querySelectorAll("[data-floor-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.floorFilter === suspectFloorFilter));
+    const notesChip = document.getElementById("suspect-notes-filter-chip");
+    if (notesChip) {
+      notesChip.classList.toggle("active", suspectWithNotesOnly);
+      notesChip.setAttribute("aria-pressed", suspectWithNotesOnly ? "true" : "false");
+    }
 
     const clearBtn = document.getElementById("suspect-search-clear");
     if (clearBtn) clearBtn.style.display = suspectSearch.trim() ? "inline-flex" : "none";
@@ -1537,12 +1729,14 @@
       const isOut = card.dataset.discarded === "1";
       const grp = card.dataset.group || "";
       const flr = card.dataset.floor || "";
+      const hasNote = card.dataset.hasNote === "1";
       const hay = (card.dataset.search || "").toLowerCase();
       const hideStatus = (suspectFilter === "pending" && isOut) || (suspectFilter === "discarded" && !isOut);
       const hideGroup = suspectGroupFilter !== "all" && grp !== suspectGroupFilter;
       const hideFloor = suspectFloorFilter !== "all" && flr !== suspectFloorFilter;
+      const hideNotes = suspectWithNotesOnly && !hasNote;
       const hideQuery = q && !hay.includes(q);
-      const hidden = Boolean(hideStatus || hideGroup || hideFloor || hideQuery);
+      const hidden = Boolean(hideStatus || hideGroup || hideFloor || hideNotes || hideQuery);
       card.classList.toggle("is-hidden-by-filter", hidden);
       if (!hidden) visibleCount += 1;
     });
@@ -1559,7 +1753,9 @@
       discarded,
       fv: syncState.finalVerdictSolved,
       culpritId: syncState.finalEpilogue?.culpritId || null,
-      sNotes: syncState.suspectNotes
+      sNotes: syncState.suspectNotes,
+      compareIds,
+      pinned: syncState.pinnedClues || []
     });
   }
 
@@ -1616,17 +1812,49 @@
           <button type="button" class="filter-chip ${suspectFilter === "all" ? "active" : ""}" data-filter="all">Todos (${discovered.length})</button>
           <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Sospechosos (${activeInView})</button>
           <button type="button" class="filter-chip ${suspectFilter === "discarded" ? "active" : ""}" data-filter="discarded">Descartados (${discardedInView})</button>
+          <button type="button" class="filter-chip ${suspectFiltersExtraOpen ? "active" : ""}" id="toggle-extra-filters-btn" aria-expanded="${suspectFiltersExtraOpen ? "true" : "false"}">Más filtros</button>
         </div>
-        <div class="suspect-filters" role="group" aria-label="Filtrar por grupo" style="margin-top:-4px;">
-          <button type="button" class="filter-chip ${suspectGroupFilter === "all" ? "active" : ""}" data-group-filter="all">Huéspedes y Personal</button>
-          <button type="button" class="filter-chip ${suspectGroupFilter === "Huésped" ? "active" : ""}" data-group-filter="Huésped">Huéspedes</button>
-          <button type="button" class="filter-chip ${suspectGroupFilter === "Personal" ? "active" : ""}" data-group-filter="Personal">Personal</button>
+        <div id="suspect-extra-filters" style="display:${suspectFiltersExtraOpen ? "block" : "none"};margin-bottom:8px;">
+          <div class="suspect-filters" role="group" aria-label="Filtrar por grupo y notas" style="margin-top:0;">
+            <button type="button" class="filter-chip ${suspectGroupFilter === "all" ? "active" : ""}" data-group-filter="all">Huéspedes y Personal</button>
+            <button type="button" class="filter-chip ${suspectGroupFilter === "Huésped" ? "active" : ""}" data-group-filter="Huésped">Huéspedes</button>
+            <button type="button" class="filter-chip ${suspectGroupFilter === "Personal" ? "active" : ""}" data-group-filter="Personal">Personal</button>
+            <button type="button" class="filter-chip ${suspectWithNotesOnly ? "active" : ""}" id="suspect-notes-filter-chip" aria-pressed="${suspectWithNotesOnly ? "true" : "false"}">Con notas</button>
+          </div>
+          <div class="suspect-filters" role="group" aria-label="Filtrar por planta" style="margin-top:-4px;">
+            ${["all", "Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
+              <button type="button" class="filter-chip ${suspectFloorFilter === fl ? "active" : ""}" data-floor-filter="${fl}">${fl === "all" ? "Todas las plantas" : fl}</button>
+            `).join("")}
+          </div>
         </div>
-        <div class="suspect-filters" role="group" aria-label="Filtrar por planta" style="margin-top:-4px;">
-          ${["all", "Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
-            <button type="button" class="filter-chip ${suspectFloorFilter === fl ? "active" : ""}" data-floor-filter="${fl}">${fl === "all" ? "Todas las plantas" : fl}</button>
-          `).join("")}
-        </div>
+        ${compareIds.length > 0 ? `
+          <div class="glass-card" style="padding:12px;margin-bottom:12px;border:var(--vg-border-frost);">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+              <span class="badge badge-frost">COMPARADOR LADO A LADO (${compareIds.length}/3)</span>
+              <button type="button" class="btn btn-sm btn-ghost" id="clear-compare-btn">Limpiar comparación</button>
+            </div>
+            <div class="compare-strip">
+              ${compareIds.map((cid) => {
+                const cs = discovered.find((x) => x.id === cid) || (window.SUSPECTS_DATA || []).find((x) => x.id === cid);
+                if (!cs) return "";
+                const sn = syncState.suspectNotes?.[cs.id] || {};
+                const mNote = sn.miguel?.note ? `M (${sn.miguel.stance}): ${sn.miguel.note}` : "Sin apunte de Miguel";
+                const pNote = sn.patri?.note ? `P (${sn.patri.stance}): ${sn.patri.note}` : "Sin apunte de Patri";
+                return `
+                  <div class="compare-card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;">
+                      <strong style="font-size:0.86rem;color:#FFFBEB;">#${esc(cs.num)} ${esc(cs.name)}</strong>
+                      <button type="button" class="btn btn-sm btn-ghost" style="min-height:30px;padding:2px 8px;" data-remove-compare="${esc(cs.id)}" aria-label="Quitar ${esc(cs.name)}">×</button>
+                    </div>
+                    <div class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);margin-bottom:4px;">${esc(cs.role)} · ${esc(cs.room)}</div>
+                    <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-bottom:4px;"><strong>Motivo:</strong> ${esc(cs.motiveHint)}</div>
+                    <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-bottom:6px;"><strong>Coartada:</strong> ${esc(cs.alibiClaim)}</div>
+                    <div class="mono" style="font-size:0.68rem;color:#BAE6FD;border-top:1px dashed rgba(255,255,255,0.12);padding-top:4px;">${esc(mNote)}<br>${esc(pNote)}</div>
+                  </div>`;
+              }).join("")}
+            </div>
+          </div>
+        ` : ""}
       ` : ""}
 
       ${discovered.length === 0 ? `
@@ -1640,13 +1868,15 @@
             const isCulprit = Boolean(syncState.finalVerdictSolved && culpritId && s.id === culpritId);
             const isExonerated = Boolean(syncState.finalVerdictSolved && !isCulprit);
             const floor = getRoomFloor(s.room);
+            const sNotesObj = syncState.suspectNotes?.[s.id] || {};
+            const hasAnyNote = Boolean((sNotesObj.miguel?.note || "").trim() || (sNotesObj.patri?.note || "").trim());
             const statusPill = isCulprit
               ? `<span class="badge badge-gold" style="padding:2px 7px;font-size:0.65rem;">CULPABLE</span>`
               : (isOut || isExonerated)
                 ? `<span class="badge badge-crimson" style="padding:2px 7px;font-size:0.65rem;">${isExonerated && !isOut ? "EXONERADO" : "DESCARTADO"}</span>`
                 : `<span class="badge badge-frost" style="padding:2px 7px;font-size:0.65rem;">SOSPECHOSO</span>`;
             return `
-              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-search="${esc(`${s.name} ${s.role} ${s.room}`)}">
+              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-has-note="${hasAnyNote ? "1" : "0"}" data-search="${esc(`${s.name} ${s.role} ${s.room}`)}">
                 <div class="suspect-avatar-wrap">
                   <img src="${esc(s.portrait)}" alt="${esc(s.name)}" class="suspect-avatar" width="78" height="78" loading="lazy" decoding="async">
                   ${(isOut || isExonerated) ? `<div class="suspect-stamp">${isExonerated && !isOut ? "Exonerado" : "Descartado"}</div>` : ""}
@@ -1704,10 +1934,32 @@
       suspectFilter = "all";
       suspectGroupFilter = "all";
       suspectFloorFilter = "all";
+      suspectWithNotesOnly = false;
       suspectSearch = "";
       const inp = document.getElementById("suspect-search-input");
       if (inp) inp.value = "";
       applySuspectFilterOnly();
+    });
+    document.getElementById("toggle-extra-filters-btn")?.addEventListener("click", (e) => {
+      suspectFiltersExtraOpen = !suspectFiltersExtraOpen;
+      const box = document.getElementById("suspect-extra-filters");
+      if (box) box.style.display = suspectFiltersExtraOpen ? "block" : "none";
+      e.currentTarget.classList.toggle("active", suspectFiltersExtraOpen);
+      e.currentTarget.setAttribute("aria-expanded", suspectFiltersExtraOpen ? "true" : "false");
+    });
+    document.getElementById("suspect-notes-filter-chip")?.addEventListener("click", () => {
+      suspectWithNotesOnly = !suspectWithNotesOnly;
+      applySuspectFilterOnly();
+    });
+    document.getElementById("clear-compare-btn")?.addEventListener("click", () => {
+      compareIds = [];
+      renderSuspectsView(true);
+    });
+    container.querySelectorAll("[data-remove-compare]").forEach((b) => {
+      b.addEventListener("click", () => {
+        compareIds = compareIds.filter((id) => id !== b.dataset.removeCompare);
+        renderSuspectsView(true);
+      });
     });
     container.querySelectorAll("[data-filter]").forEach((btn) => {
       btn.addEventListener("click", () => { suspectFilter = btn.dataset.filter; applySuspectFilterOnly(); });
@@ -1724,6 +1976,8 @@
     });
 
     const ta = document.getElementById("shared-notes-area");
+    const statusLbl = document.getElementById("notes-status");
+    let prevNotesBeforeEdit = ta ? ta.value : "";
     if (wasFocused && ta) {
       try {
         ta.focus({ preventScroll: true });
@@ -1733,10 +1987,25 @@
       } catch (_) {}
     }
     ta?.addEventListener("input", () => {
+      if (statusLbl) statusLbl.textContent = "Guardando...";
+      const snapshotBeforeWipe = prevNotesBeforeEdit;
+      prevNotesBeforeEdit = ta.value;
       clearTimeout(noteTimer);
       noteTimer = setTimeout(() => {
         noteTimer = null;
         window.SyncEngine.saveNotes(ta.value, currentRole);
+        const nowStr = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+        if (statusLbl) statusLbl.textContent = `${syncMode === "firebase" ? "Guardado en nube" : "Guardado local"} · ${nowStr}`;
+        if (snapshotBeforeWipe.trim().length >= 20 && ta.value.trim().length === 0) {
+          notesUndoSnapshot = snapshotBeforeWipe;
+          showToast("Libreta vaciada.", "Deshacer", () => {
+            if (!notesUndoSnapshot) return;
+            ta.value = notesUndoSnapshot;
+            prevNotesBeforeEdit = notesUndoSnapshot;
+            window.SyncEngine.saveNotes(notesUndoSnapshot, currentRole);
+            notesUndoSnapshot = null;
+          });
+        }
       }, 450);
     });
 
@@ -1760,7 +2029,12 @@
       maxOpen: window.DateGate.getMaxOpenDay(),
       days: syncState.days,
       hints: syncState.hintsUnlocked,
+      dispatch: syncState.fieldDispatch,
+      sNotes: syncState.suspectNotes,
+      pinned: syncState.pinnedClues,
       floor: expedienteFloor,
+      timelineFloor: timelineFloorFilter,
+      offlinePackStatus,
       fv: syncState.finalVerdictSolved,
       prefs: userPrefs
     });
@@ -1811,15 +2085,57 @@
         </div>
 
         <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:10px;">Cronología Forense y Diligencias Abiertas</h3>
-          <ul class="clue-list" style="margin-bottom:12px;">
-            <li><strong>19:00 h:</strong> Tormenta severa aísla la carretera y detiene el teleférico.</li>
-            <li><strong>23:38–23:42 h:</strong> Apagón eléctrico exacto de cuatro minutos durante el brindis.</li>
-            <li><strong>23:55 h:</strong> Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño.</li>
-            ${solvedDaysArr.map((d) => `<li><strong>Puerta ${String(d.day).padStart(2, "0")} (${esc(d.forensicTag || "Resuelta")}):</strong> ${esc(d.conclusion)}</li>`).join("")}
-          </ul>
+          <h3 style="font-size:1rem;margin-bottom:8px;">Buscador Global y Chinchetas para el Careo</h3>
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <input type="search" id="exp-search-input" class="adv-input" value="${esc(expSearchQuery)}" placeholder="Buscar en resoluciones, partes y notas..." aria-label="Buscar en pistas y notas" style="min-height:44px;flex:1;min-width:0;">
+            <button type="button" id="exp-search-clear" class="btn btn-sm btn-ghost" style="display:${expSearchQuery.trim() ? "inline-flex" : "none"};">Limpiar</button>
+          </div>
+          <div id="search-results-list" class="search-results-list"></div>
+          ${(syncState.pinnedClues || []).length ? `
+            <div style="margin-top:10px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:8px;">
+              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-bottom:6px;">PISTAS FIJADAS CON CHINCHETA (${syncState.pinnedClues.length}):</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${syncState.pinnedClues.map((pid) => {
+                  if (pid.startsWith("day-")) {
+                    const dNum = Number(pid.replace("day-", ""));
+                    return `<button type="button" class="btn btn-sm btn-gold" data-jump-pinned-day="${dNum}">Día ${String(dNum).padStart(2, "0")}</button>`;
+                  }
+                  if (pid.startsWith("suspect-")) {
+                    const sid = pid.replace("suspect-", "");
+                    const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
+                    return `<button type="button" class="btn btn-sm btn-frost" data-jump-pinned-suspect="${esc(sid)}">#${esc(sp?.num || "?")} ${esc(sp?.name || sid)}</button>`;
+                  }
+                  return "";
+                }).join("")}
+              </div>
+            </div>
+          ` : `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:6px;">Aún no hay pistas fijadas con chincheta. Fija días resueltos o fichas desde su vista.</div>`}
+        </div>
+
+        <div class="glass-card" style="padding:18px;">
+          <h3 style="font-size:1rem;margin-bottom:10px;">Cronología Forense · Noche del 30 de Noviembre</h3>
+          <div class="suspect-filters" role="group" aria-label="Filtrar cronología por planta" style="margin-bottom:8px;">
+            ${["all", "Planta 1", "Planta 2", "Planta 3", "Sótano / Anexo"].map((tf) => `
+              <button type="button" class="filter-chip ${timelineFloorFilter === tf ? "active" : ""}" data-timeline-floor="${tf}">${tf === "all" ? "Todas" : tf}</button>
+            `).join("")}
+          </div>
+          <div class="timeline-list">
+            ${[
+              { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m." },
+              { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador." },
+              { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador." },
+              { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño." },
+              ...solvedDaysArr.map((d) => {
+                const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
+                const flr = susp ? getRoomFloor(susp.room) : "Planta 1";
+                return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}` };
+              })
+            ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter)
+             .map((ev) => `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`)
+             .join("")}
+          </div>
           ${openInquiries.length ? `
-            <div class="feedback-banner success" style="border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
+            <div class="feedback-banner success" style="margin-top:10px;border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
               <strong>Diligencias sin descarte (${openInquiries.length}):</strong> ${openInquiries.map((d) => `Día ${String(d.day).padStart(2, "0")}`).join(" y ")} siguen abiertas para el Careo Final de Nochebuena.
             </div>
           ` : ""}
@@ -1842,7 +2158,7 @@
         <div class="glass-card" style="padding:18px;">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
             <h3 style="font-size:1rem;">Vídeo Briefing del Caso</h3>
-            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
           <div id="exp-briefing-mount" class="briefing-native-mount">
             ${preservedExpVideo ? "" : renderBriefingVideoHtml("briefing-video-exp")}
@@ -1867,16 +2183,24 @@
         </div>
 
         <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:10px;">Confort Nocturno y Copia de Seguridad</h3>
+          <h3 style="font-size:1rem;margin-bottom:10px;">Confort Visual, Offline y Copia de Seguridad</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
             <button type="button" class="btn btn-sm ${userPrefs.fontBoost ? "btn-gold" : "btn-ghost"}" id="pref-font-btn">Texto +15%: ${userPrefs.fontBoost ? "ON" : "OFF"}</button>
             <button type="button" class="btn btn-sm ${userPrefs.nightSoft ? "btn-gold" : "btn-ghost"}" id="pref-night-btn">Lectura Nocturna: ${userPrefs.nightSoft ? "ON" : "OFF"}</button>
             <button type="button" class="btn btn-sm ${userPrefs.reducedMotion ? "btn-gold" : "btn-ghost"}" id="pref-motion-btn">Animación reducida: ${userPrefs.reducedMotion ? "ON" : "OFF"}</button>
+            <button type="button" class="btn btn-sm ${userPrefs.highContrastOutdoor ? "btn-gold" : "btn-ghost"}" id="pref-outdoor-btn">Contraste Solar: ${userPrefs.highContrastOutdoor ? "ON" : "OFF"}</button>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
             <button type="button" class="btn btn-sm btn-frost" id="export-diary-btn">Exportar Diario (.md)</button>
             <button type="button" class="btn btn-sm btn-ghost" id="export-json-btn">Backup JSON</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="import-json-btn">Restaurar Backup (.json)</button>
+            <input type="file" id="import-json-file" accept="application/json,.json" style="display:none;">
           </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <button type="button" class="btn btn-sm btn-ghost" id="verify-offline-btn">Verificar paquete offline</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="copy-spoilerfree-btn">Copiar resumen sin spoilers</button>
+          </div>
+          ${offlinePackStatus ? `<div class="mono" style="font-size:0.72rem;color:var(--adv-pine);margin-top:8px;">${esc(offlinePackStatus)}</div>` : ""}
         </div>
 
         <div style="text-align:center;padding:10px 0;">
@@ -1890,6 +2214,73 @@
     if (preservedExpVideo) {
       document.getElementById("exp-briefing-mount")?.appendChild(preservedExpVideo);
     }
+    wireBriefingVideoControls(document.getElementById("exp-briefing-mount"));
+
+    const renderExpSearchResults = () => {
+      const box = document.getElementById("search-results-list");
+      const clr = document.getElementById("exp-search-clear");
+      if (clr) clr.style.display = expSearchQuery.trim() ? "inline-flex" : "none";
+      if (!box) return;
+      const q = expSearchQuery.trim().toLowerCase();
+      if (!q) {
+        box.innerHTML = "";
+        return;
+      }
+      const hits = [];
+      solvedDaysArr.forEach((d) => {
+        const txt = `Puerta ${String(d.day).padStart(2, "0")} [${d.forensicTag || ""}]: ${d.conclusion || ""}`;
+        if (txt.toLowerCase().includes(q)) hits.push({ label: `Día ${String(d.day).padStart(2, "0")}`, text: txt, day: d.day });
+      });
+      Object.entries(syncState.fieldDispatch || {}).forEach(([dKey, entry]) => {
+        ["miguel", "patri"].forEach((rk) => {
+          const msg = entry?.[rk]?.text;
+          if (msg && msg.toLowerCase().includes(q)) {
+            hits.push({ label: `Parte Día ${String(dKey).padStart(2, "0")} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: msg, day: Number(dKey) });
+          }
+        });
+      });
+      Object.entries(syncState.suspectNotes || {}).forEach(([sid, entry]) => {
+        const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
+        ["miguel", "patri"].forEach((rk) => {
+          const n = entry?.[rk]?.note;
+          if (n && n.toLowerCase().includes(q)) {
+            hits.push({ label: `Ficha ${sp ? sp.name : sid} (${rk})`, text: n, sid });
+          }
+        });
+      });
+      box.innerHTML = hits.length
+        ? hits.slice(0, 12).map((h) => `<div class="search-result-card"><strong>${esc(h.label)}:</strong> ${esc(h.text)}</div>`).join("")
+        : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin coincidencias para "${esc(expSearchQuery)}".</div>`;
+    };
+    renderExpSearchResults();
+
+    document.getElementById("exp-search-input")?.addEventListener("input", (e) => {
+      expSearchQuery = e.target.value;
+      renderExpSearchResults();
+    });
+    document.getElementById("exp-search-clear")?.addEventListener("click", () => {
+      expSearchQuery = "";
+      const inp = document.getElementById("exp-search-input");
+      if (inp) inp.value = "";
+      renderExpSearchResults();
+    });
+    container.querySelectorAll("[data-jump-pinned-day]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        selectedDayNum = Number(btn.dataset.jumpPinnedDay || 1);
+        userPickedDay = true;
+        lastDaySignature = "";
+        switchTab("day", { scrollToTop: true });
+      });
+    });
+    container.querySelectorAll("[data-jump-pinned-suspect]").forEach((btn) => {
+      btn.addEventListener("click", () => openSuspectModal(btn.dataset.jumpPinnedSuspect, btn));
+    });
+    container.querySelectorAll("[data-timeline-floor]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        timelineFloorFilter = btn.dataset.timelineFloor;
+        renderExpedienteView(true);
+      });
+    });
 
     document.getElementById("exp-manual-btn")?.addEventListener("click", openRulesModal);
     document.getElementById("exp-dedication-btn")?.addEventListener("click", (e) => openDedicationModal(e.currentTarget));
@@ -1917,18 +2308,24 @@
     document.getElementById("pref-motion-btn")?.addEventListener("click", () => {
       userPrefs.reducedMotion = !userPrefs.reducedMotion;
       applyUserPrefs();
-      if (!userPrefs.reducedMotion && window.resumeSnow) window.resumeSnow();
+      if (!userPrefs.reducedMotion && !userPrefs.highContrastOutdoor && window.resumeSnow) window.resumeSnow();
+      renderExpedienteView();
+    });
+    document.getElementById("pref-outdoor-btn")?.addEventListener("click", () => {
+      userPrefs.highContrastOutdoor = !userPrefs.highContrastOutdoor;
+      applyUserPrefs();
+      if (!userPrefs.reducedMotion && !userPrefs.highContrastOutdoor && window.resumeSnow) window.resumeSnow();
       renderExpedienteView();
     });
 
     document.getElementById("export-diary-btn")?.addEventListener("click", () => {
       const lines = [
-        `# DIARIO DE INVESTIGACION — ADVIENTO CERO`,
-        `Fecha exportacion: ${new Date().toLocaleString("es-ES")}`,
+        `# DIARIO DE INVESTIGACIÓN — ADVIENTO CERO`,
+        `Fecha exportación: ${new Date().toLocaleString("es-ES")}`,
         `Puertas resueltas: ${solvedDaysArr.length}/24`,
         ``,
         `## Resoluciones`,
-        ...solvedDaysArr.map((d) => `- Dia ${String(d.day).padStart(2, "0")} [${d.forensicTag || "Resuelta"}]: ${d.conclusion}`),
+        ...solvedDaysArr.map((d) => `- Día ${String(d.day).padStart(2, "0")} [${d.forensicTag || "Resuelta"}]: ${d.conclusion}`),
         ``,
         `## Libreta Compartida`,
         syncState.sharedNotes || "(Sin anotaciones)"
@@ -1937,7 +2334,87 @@
     });
 
     document.getElementById("export-json-btn")?.addEventListener("click", () => {
-      downloadBlob(JSON.stringify(syncState, null, 2), "adviento-cero-backup.json", "application/json;charset=utf-8");
+      const payload = {
+        schemaVersion: 2,
+        appVersion: APP_VERSION,
+        exportedAt: new Date().toISOString(),
+        role: currentRole,
+        dedicationSeen: Store.getItem(DEDICATION_SEEN_KEY) === "1",
+        syncState,
+        draftsStore,
+        userPrefs
+      };
+      downloadBlob(JSON.stringify(payload, null, 2), "adviento-cero-backup.json", "application/json;charset=utf-8");
+    });
+
+    const importFileInp = document.getElementById("import-json-file");
+    document.getElementById("import-json-btn")?.addEventListener("click", () => importFileInp?.click());
+    importFileInp?.addEventListener("change", async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+          throw new Error("El archivo JSON no es un respaldo válido.");
+        }
+        const incomingSync = parsed.syncState && typeof parsed.syncState === "object" ? parsed.syncState : parsed;
+        window.SyncEngine.importBackupState(incomingSync);
+        if (parsed.draftsStore && typeof parsed.draftsStore === "object" && !Array.isArray(parsed.draftsStore)) {
+          draftsStore = Object.assign(loadDraftsStorage(), parsed.draftsStore);
+          saveDrafts();
+        }
+        if (parsed.userPrefs && typeof parsed.userPrefs === "object" && !Array.isArray(parsed.userPrefs)) {
+          userPrefs = Object.assign(userPrefs, parsed.userPrefs);
+          applyUserPrefs();
+        }
+        showToast("Backup JSON restaurado y fusionado sin pérdida de progreso.");
+        renderActiveTab();
+      } catch (err) {
+        showToast(`No se pudo importar el backup: ${err?.message || "archivo inválido"}`);
+      }
+    });
+
+    document.getElementById("verify-offline-btn")?.addEventListener("click", async () => {
+      if (!("caches" in window)) {
+        offlinePackStatus = "Cache API no disponible en este navegador.";
+        renderExpedienteView(true);
+        return;
+      }
+      try {
+        const cache = await caches.open(CACHE_TAG);
+        const criticalExtras = [
+          "./video-briefing/briefing.mp4",
+          "./video-briefing/briefing.vtt",
+          "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf"
+        ];
+        for (const asset of criticalExtras) {
+          const hit = await cache.match(asset, { ignoreSearch: true });
+          if (!hit) {
+            try {
+              const resp = await fetch(asset);
+              if (resp && resp.ok) await cache.put(asset, resp);
+            } catch (_) {}
+          }
+        }
+        const keys = await cache.keys();
+        offlinePackStatus = `Paquete offline verificado (${keys.length} recursos listos sin cobertura).`;
+      } catch (_) {
+        offlinePackStatus = "No se pudo verificar completamente la caché offline.";
+      }
+      renderExpedienteView(true);
+    });
+
+    document.getElementById("copy-spoilerfree-btn")?.addEventListener("click", async () => {
+      const remCount = syncState.finalVerdictSolved ? 1 : 25 - (syncState.discardedIds?.length || 0);
+      const summary = `ADVIENTO CERO · El Misterio del Ventisquero — Puertas resueltas: ${solvedDaysArr.length}/24 · Sospechosos activos: ${remCount}/25 (Sin spoilers)`;
+      try {
+        await navigator.clipboard.writeText(summary);
+        showToast("Resumen sin spoilers copiado al portapapeles.");
+      } catch (_) {
+        showToast(summary);
+      }
     });
 
     document.getElementById("version-secret-trigger")?.addEventListener("click", () => {
@@ -1961,8 +2438,19 @@
     });
   }
 
-  function downloadBlob(content, filename, mime) {
+  async function downloadBlob(content, filename, mime) {
     const blob = new Blob([content], { type: mime });
+    try {
+      if (typeof navigator.share === "function" && typeof File === "function") {
+        const f = new File([blob], filename, { type: mime });
+        if (!navigator.canShare || navigator.canShare({ files: [f] })) {
+          await navigator.share({ files: [f], title: filename });
+          return;
+        }
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") return;
+    }
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -1994,6 +2482,20 @@
     modal.classList.add("open");
     lockBodyScroll();
     document.getElementById("adv-modal-x-btn")?.addEventListener("click", () => closeModal());
+    const topStrip = body.querySelector(".adv-modal-topstrip");
+    if (topStrip) {
+      let swipeY0 = 0;
+      topStrip.addEventListener("touchstart", (e) => {
+        swipeY0 = e.touches?.[0]?.clientY || 0;
+      }, { passive: true });
+      topStrip.addEventListener("touchend", (e) => {
+        const swipeY1 = e.changedTouches?.[0]?.clientY || 0;
+        if (swipeY0 && swipeY1 - swipeY0 > 70) {
+          closeModal();
+        }
+        swipeY0 = 0;
+      }, { passive: true });
+    }
     if (!opts.fromHistory && !modalHistoryPushed && window.history?.pushState) {
       modalHistoryPushed = true;
       window.history.pushState({ modal: true, tab: activeTab, day: selectedDayNum }, "");
@@ -2158,7 +2660,11 @@
           <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Guardar</button>
         </div>
       </form>
-      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:14px;" id="close-modal-btn">Cerrar ficha</button>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+        <button type="button" class="btn btn-sm btn-ghost pin-clue-btn" style="flex:1;" id="modal-pin-suspect-btn" aria-pressed="${(syncState.pinnedClues || []).includes(`suspect-${s.id}`) ? "true" : "false"}">${(syncState.pinnedClues || []).includes(`suspect-${s.id}`) ? "Fijada en Careo" : "Fijar en Careo"}</button>
+        <button type="button" class="btn btn-sm ${compareIds.includes(s.id) ? "btn-gold" : "btn-frost"}" style="flex:1;" id="modal-compare-suspect-btn">${compareIds.includes(s.id) ? "En comparador (quitar)" : `Comparar (${compareIds.length}/3)`}</button>
+      </div>
+      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:10px;" id="close-modal-btn">Cerrar ficha</button>
     `, triggerEl, { preserveFocus, fromHistory: preserveFocus });
 
     let chosenStance = mySNote.stance || "duda";
@@ -2171,6 +2677,29 @@
           x.setAttribute("aria-pressed", on ? "true" : "false");
         });
       });
+    });
+    document.getElementById("modal-pin-suspect-btn")?.addEventListener("click", (e) => {
+      window.AudioFX.click();
+      const pinned = window.SyncEngine.togglePinnedClue(`suspect-${s.id}`);
+      const on = pinned.includes(`suspect-${s.id}`);
+      e.currentTarget.setAttribute("aria-pressed", on ? "true" : "false");
+      e.currentTarget.textContent = on ? "Fijada en Careo" : "Fijar en Careo";
+      showToast(on ? `Ficha #${s.num} fijada para el Careo.` : "Chincheta retirada.");
+    });
+    document.getElementById("modal-compare-suspect-btn")?.addEventListener("click", (e) => {
+      window.AudioFX.click();
+      const idx = compareIds.indexOf(s.id);
+      if (idx >= 0) {
+        compareIds.splice(idx, 1);
+      } else {
+        if (compareIds.length >= 3) compareIds.shift();
+        compareIds.push(s.id);
+      }
+      const inCmp = compareIds.includes(s.id);
+      e.currentTarget.className = `btn btn-sm ${inCmp ? "btn-gold" : "btn-frost"}`;
+      e.currentTarget.textContent = inCmp ? "En comparador (quitar)" : `Comparar (${compareIds.length}/3)`;
+      lastSuspectsSignature = "";
+      if (activeTab === "suspects") renderSuspectsView(true);
     });
     document.getElementById("suspect-note-form")?.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -2234,6 +2763,32 @@
         showToast(`${partnerName} desbloqueó la Pista ${curH} del Día ${String(k).padStart(2, "0")}.`);
       }
     });
+
+    Object.keys(newSt.fieldDispatch || {}).forEach((k) => {
+      const prevTxt = prevSyncSnap.fieldDispatch?.[k]?.[partnerRole]?.text || "";
+      const curTxt = newSt.fieldDispatch?.[k]?.[partnerRole]?.text || "";
+      if (curTxt && curTxt !== prevTxt) {
+        window.AudioFX.partnerPing?.();
+        showToast(`${partnerName} te envió un dato en el Día ${String(k).padStart(2, "0")}.`);
+      }
+    });
+
+    Object.keys(newSt.suspectNotes || {}).forEach((sid) => {
+      const prevAt = Number(prevSyncSnap.suspectNotes?.[sid]?.[partnerRole]?.at || 0);
+      const curEntry = newSt.suspectNotes?.[sid]?.[partnerRole];
+      if (curEntry && Number(curEntry.at || 0) > prevAt) {
+        const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
+        showToast(`${partnerName} anotó en la ficha de ${sp ? sp.name : sid}.`);
+      }
+    });
+
+    const prevPropAt = Number(prevSyncSnap.finalProposal?.proposedAt || 0);
+    const curProp = newSt.finalProposal;
+    if (curProp && curProp.byRole === partnerRole && Number(curProp.proposedAt || 0) > prevPropAt) {
+      window.AudioFX.partnerPing?.();
+      showToast(`${partnerName} ha enviado una propuesta conjunta para el Careo Final.`);
+    }
+
     prevSyncSnap = JSON.parse(JSON.stringify(newSt));
   }
 
@@ -2286,7 +2841,35 @@
     document.addEventListener("click", (e) => {
       if (e.target.closest("[data-open-sync-diag]")) {
         openSyncDiagModal();
+      } else if (e.target.closest("[data-force-sync-now]")) {
+        window.SyncEngine.forceSyncNow?.();
+        showToast("Intentando sincronizar cambios pendientes...");
       }
+    });
+
+    if (window.AudioFX && typeof window.AudioFX.onVisualCue === "function") {
+      window.AudioFX.onVisualCue((kind, msg) => {
+        const dock = document.querySelector(".mobile-dock");
+        if (dock) {
+          dock.classList.remove("audio-visual-pulse");
+          void dock.offsetWidth;
+          dock.classList.add("audio-visual-pulse");
+        }
+        if (kind === "partner") showToast(msg);
+      });
+    }
+
+    window.addEventListener("error", (ev) => {
+      if (ev?.target && ev.target.tagName === "IMG") {
+        ev.target.style.background = "rgba(15, 23, 42, 0.85)";
+        ev.target.style.minHeight = ev.target.style.minHeight || "44px";
+        return;
+      }
+      console.warn("Runtime error capturado:", ev?.message || ev);
+    }, true);
+
+    window.addEventListener("unhandledrejection", (ev) => {
+      console.warn("Promise rejection capturada:", ev?.reason);
     });
 
     document.addEventListener("keydown", (e) => {

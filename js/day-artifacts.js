@@ -44,7 +44,7 @@ window.DayArtifacts = (() => {
             </svg>
           </div>
           <div class="cctv-frame">
-            <img src="imagenes/scene-lobby.jpg" alt="Salón Mirador" width="1024" height="572" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+            <img src="imagenes/scene-lobby.jpg" alt="Salón Mirador" width="1024" height="572" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
             <div class="cctv-hud"><span>REGISTRO ÓPTICO · SALÓN MIRADOR</span><span>REF: ESCENA-01</span></div>
           </div>`;
       case "1-patri":
@@ -592,11 +592,11 @@ window.DayArtifacts = (() => {
           <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Han llegado los resultados del laboratorio sobre los <strong>${(remaining || []).length} finalistas</strong> (${names}). Contrasta estas trazas físicas con las coartadas de Patri:</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px;">
             <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/cuadro_electrico_final.jpg" data-lightbox-cap="MARCA 1: DISYUNTOR APAGÓN 23:38 · MARCA 2: LLAVE KEY-DIR-01" style="padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;cursor:pointer;">
-              <img src="imagenes/evidence/cuadro_electrico_final.jpg" alt="Cuadro eléctrico 23:38 h" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+              <img src="imagenes/evidence/cuadro_electrico_final.jpg" alt="Cuadro eléctrico 23:38 h" width="960" height="540" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
               <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#FDE68A;">[Toca para ampliar] MARCA 1: DISYUNTOR 23:38 · MARCA 2: KEY-DIR-01</div>
             </button>
             <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/afis_huellas_final.jpg" data-lightbox-cap="HUELLA LATENTE EN PALANCA: PATRÓN VERTICILO W-14 + FIBRA LANA AZUL MARINO" style="padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;cursor:pointer;">
-              <img src="imagenes/evidence/afis_huellas_final.jpg" alt="Cotejo UV dactiloscópico AFIS" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+              <img src="imagenes/evidence/afis_huellas_final.jpg" alt="Cotejo UV dactiloscópico AFIS" width="960" height="540" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
               <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#67E8F9;">[Toca para ampliar] HUELLA LATENTE: VERTICILO W-14 + FIBRA LANA</div>
             </button>
           </div>
@@ -613,7 +613,7 @@ window.DayArtifacts = (() => {
         <span class="badge badge-gold">CAREO FINAL · TOXICOLOGÍA Y TESTIGOS (SOLO PATRI)</span>
         <p class="day-story" style="margin:8px 0 10px;font-size:0.82rem;">Parte final de testigos y toxicología LC-MS sobre los <strong>${(remaining || []).length} sospechosos activos</strong> (${names}). Contrasta las coartadas reales con las huellas de Miguel:</p>
         <button type="button" class="lightbox-thumb" data-lightbox-img="imagenes/evidence/viales_toxicologia_final.jpg" data-lightbox-cap="BOLSA A: FRASCOS AMBAR DEL SPA (0,00 mg ALCALOIDES) · BOLSA B: TORUNDA COPA (ACONITINA)" style="width:100%;padding:0;text-align:left;border-radius:10px;overflow:hidden;border:var(--vg-border-specular);background:#020408;margin-bottom:12px;cursor:pointer;display:block;">
-          <img src="imagenes/evidence/viales_toxicologia_final.jpg" alt="Frascos incautados y torunda de copa" width="960" height="540" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+          <img src="imagenes/evidence/viales_toxicologia_final.jpg" alt="Frascos incautados y torunda de copa" width="960" height="540" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
           <div class="mono" style="padding:7px 9px;font-size:0.72rem;color:#FDE68A;">[Toca para ampliar] BOLSA A: FRASCOS SPA (0,00 mg) · BOLSA B: TORUNDA (ACONITINA)</div>
         </button>
         <ul class="clue-list" style="font-size:0.8rem;">

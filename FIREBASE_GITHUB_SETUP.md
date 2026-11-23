@@ -18,23 +18,63 @@ Esta guía conecta la sincronización en tiempo real entre el móvil de **Miguel
 2. Pulsa **Agregar proyecto** (p. ej. `adviento-cero-2026`), desactiva Google Analytics si no lo necesitas y crea el proyecto.
 3. En el menú izquierdo, entra en **Compilación → Realtime Database** y pulsa **Crear base de datos**.
 4. Elige la ubicación **Europe (europe-west1)** y empieza en **Modo de prueba** (o aplica las reglas de abajo).
-5. Ve a **Reglas** en Realtime Database y pega estas reglas para restringir el acceso únicamente a vuestra sala de pareja:
+5. Ve a **Reglas** en Realtime Database y pega estas reglas endurecidas para restringir el acceso, impedir borrados accidentales de la sala real y validar el esquema y longitud de cada campo:
    ```json
    {
      "rules": {
+       ".read": false,
+       ".write": false,
        "rooms": {
          "miguel-patri-ventisquero-2026": {
            ".read": true,
-           ".write": true
+           ".write": "newData.exists() && (!data.exists() || (newData.hasChild('meta') && (!newData.child('sharedNotes').exists() || (newData.child('sharedNotes').isString() && newData.child('sharedNotes').val().length <= 20000))))",
+           "days": {
+             "$dayKey": {
+               ".validate": "newData.hasChildren(['solved']) && newData.child('solved').isBoolean()"
+             }
+           },
+           "discardedIds": {
+             "$idx": {
+               ".validate": "newData.isString() && newData.val().length <= 8"
+             }
+           },
+           "sharedNotes": {
+             ".validate": "newData.isString() && newData.val().length <= 20000"
+           },
+           "fieldDispatch": {
+             ".validate": "newData.isString() && newData.val().length <= 4000"
+           },
+           "suspectNotes": {
+             "$sid": {
+               ".validate": "newData.isString() && newData.val().length <= 600"
+             }
+           },
+           "pinnedClues": {
+             "$idx": {
+               ".validate": "newData.isString() && newData.val().length <= 16"
+             }
+           },
+           "finalProposal": {
+             ".validate": "!newData.exists() || (newData.hasChildren(['culpritId', 'proposedBy']) && newData.child('culpritId').isString() && newData.child('culpritId').val().length <= 8)"
+           },
+           "presence": {
+             "$role": {
+               ".validate": "!newData.exists() || (newData.child('online').isBoolean() && newData.child('lastSeen').isNumber())"
+             }
+           },
+           "meta": {
+             ".validate": "newData.hasChildren(['updatedAt']) && newData.child('updatedAt').isNumber()"
+           }
          },
          "miguel-patri-ventisquero-2026-test": {
            ".read": true,
-           ".write": true
+           ".write": "!newData.exists() || !newData.child('sharedNotes').exists() || (newData.child('sharedNotes').isString() && newData.child('sharedNotes').val().length <= 20000)"
          }
        }
      }
    }
    ```
+   *(Endurecimiento adicional recomendado — **Anonymous Auth**: si activas **Authentication → Sign-in method → Anónimo** en Firebase Console, puedes cambiar `".read": true` y `".write": ...` en la sala real por `"auth != null"` y `"auth != null && ..."` cargando `firebase-auth-compat.js`.)*
    *(Consejo: si cambias el `roomId` en `config/firebase-config.js`, usa exactamente el mismo nombre aquí).*
 6. Para obtener tus credenciales (`firebaseConfig`), tienes **dos caminos equivalentes**:
    - **Camino rápido:** En el menú lateral izquierdo haz clic arriba del todo en **Descripción general del proyecto** (*Project Overview*). En el centro verás *"Comienza agregando Firebase a tu app"* con iconos redondos (`iOS`, `Android`, **`</>` Web**). Pulsa **`</>`**, escribe `advientocero-web` y haz clic en **Registrar app**.

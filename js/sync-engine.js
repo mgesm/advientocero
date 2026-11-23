@@ -64,6 +64,7 @@ window.SyncEngine = (() => {
       fieldDispatch: {},   // { "1": { miguel: { text, at }, patri: { text, at } } }
       suspectNotes: {},    // { "s03": { miguel: { stance, note, at }, patri: { stance, note, at } } }
       hintsUnlocked: {},   // { "1": 0..3 }
+      pinnedClues: [],     // ["day-1", "suspect-s03", ...]
       presence: {}
     };
   }
@@ -123,6 +124,11 @@ window.SyncEngine = (() => {
 
     out.discardedIds = Array.from(idSet);
     out.discardedIds.forEach((id) => { out.discardedMap[id] = true; });
+    out.pinnedClues = Array.isArray(out.pinnedClues)
+      ? Array.from(new Set(out.pinnedClues.map((x) => String(x || "").trim()).filter(Boolean)))
+      : out.pinnedClues && typeof out.pinnedClues === "object"
+        ? Array.from(new Set(Object.values(out.pinnedClues).map((x) => String(x || "").trim()).filter(Boolean)))
+        : [];
     return out;
   }
 
@@ -158,6 +164,7 @@ window.SyncEngine = (() => {
     merged.discardedIds = Array.from(mergedIds);
     merged.discardedMap = {};
     merged.discardedIds.forEach((id) => { merged.discardedMap[id] = true; });
+    merged.pinnedClues = Array.from(new Set([...(l.pinnedClues || []), ...(r.pinnedClues || [])]));
 
     merged.finalVerdictSolved = Boolean(l.finalVerdictSolved || r.finalVerdictSolved);
     merged.finalEpilogue = r.finalEpilogue || l.finalEpilogue || null;
@@ -313,6 +320,9 @@ window.SyncEngine = (() => {
       patch.sharedNotes = typeof merged.sharedNotes === "string" ? merged.sharedNotes : "";
       if (merged.notesMeta) patch.notesMeta = merged.notesMeta;
     }
+    if (Array.isArray(merged.pinnedClues) && merged.pinnedClues.length) {
+      patch.pinnedClues = merged.pinnedClues;
+    }
     return patch;
   }
 
@@ -340,9 +350,8 @@ window.SyncEngine = (() => {
       window.addEventListener("online", () => {
         if (mode === "local" && isFirebaseConfigured()) {
           init();
-        } else if (mode === "firebase") {
-          connected = true;
-          if (activeRole) applyPresenceConnection();
+        } else if (mode === "firebase" && dbRef) {
+          try { dbRef.goOnline(); } catch (_) {}
           notify();
         }
       });
@@ -645,7 +654,89 @@ window.SyncEngine = (() => {
     return Object.keys(p.connections).length > 0;
   }
 
-  function resetAll() {
+  function togglePinnedClue(clueId) {
+    const clean = String(clueId || "").trim();
+    if (!clean) return [];
+    const cur = Array.isArray(state.pinnedClues) ? state.pinnedClues.slice() : [];
+    const idx = cur.indexOf(clean);
+    if (idx >= 0) cur.splice(idx, 1);
+    else cur.push(clean);
+    state.pinnedClues = cur;
+    saveLocal();
+    setDirty(true);
+    const seq = ++writeSeq;
+    if (mode === "firebase" && roomRef) {
+      roomRef.update({ pinnedClues: cur }).then(() => clearWriteOk(seq)).catch(handleWriteError);
+    }
+    notify();
+    return cur;
+  }
+
+  function sanitizePlainObject(obj) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return {};
+    const out = {};
+    Object.keys(obj).forEach((k) => {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") return;
+      const v = obj[k];
+      out[k] = (v && typeof v === "object" && !Array.isArray(v)) ? sanitizePlainObject(v) : v;
+    });
+    return out;
+  }
+
+  function importBackupState(rawState) {
+    if (!rawState || typeof rawState !== "object" || Array.isArray(rawState)) {
+      throw new Error("Formato de estado inválido.");
+    }
+    const clean = sanitizePlainObject(rawState);
+    if (!clean.days || typeof clean.days !== "object") {
+      throw new Error("El archivo no contiene datos válidos de los días.");
+    }
+    state = mergeMonotone(clean, state);
+    saveLocal();
+    setDirty(true);
+    if (mode === "firebase" && roomRef) {
+      const seq = ++writeSeq;
+      const patch = buildDeltaPatch(state);
+      if (Object.keys(patch).length > 0) {
+        roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
+      } else {
+        clearWriteOk(seq);
+      }
+    }
+    notify();
+    return state;
+  }
+
+  function forceSyncNow() {
+    if (mode === "local") {
+      init();
+      return;
+    }
+    if (mode === "firebase" && roomRef) {
+      try { dbRef?.goOnline(); } catch (_) {}
+      const seq = ++writeSeq;
+      const patch = buildDeltaPatch(state);
+      if (Object.keys(patch).length > 0) {
+        roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
+      } else {
+        roomRef.once("value").then((snap) => {
+          const remote = snap.val();
+          if (remote && typeof remote === "object") {
+            state = mergeMonotone(state, remote);
+            saveLocal();
+          }
+          clearWriteOk(seq);
+          notify();
+        }).catch(handleWriteError);
+      }
+    }
+  }
+
+  function resetAll(forceConfirm = false) {
+    if (!isAdminRoom() && forceConfirm !== true) {
+      console.warn("Reset bloqueado fuera del Modo Test.");
+      return false;
+    }
     state = createDefaultState();
     saveLocal();
     if (mode === "firebase" && roomRef) {
@@ -664,6 +755,7 @@ window.SyncEngine = (() => {
       setDirty(false);
     }
     notify();
+    return true;
   }
 
   function forceReconnect() {
@@ -705,6 +797,9 @@ window.SyncEngine = (() => {
     saveNotes,
     sendFieldDispatch,
     saveSuspectNote,
+    togglePinnedClue,
+    importBackupState,
+    forceSyncNow,
     setFinalProposal,
     solveFinalVerdict,
     markPresence,

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /SOLUCION_CONFIDENCIAL.md
+Disallow: /BACKLOG_NOTAS.md
+Disallow: /FIREBASE_GITHUB_SETUP.md
+Disallow: /CONTEXTO_PROYECTO.md
+Disallow: /scripts/

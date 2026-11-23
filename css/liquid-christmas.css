@@ -715,6 +715,166 @@ body.night-reading-soft .paper-subcard {
   border-color: #64748B !important;
 }
 
+/* F7 · Modo Contraste Solar Exterior */
+body.high-contrast-outdoor {
+  --vg-bg-deep: #000000;
+  --vg-bg-surface: #0A0F16;
+  --vg-bg-surface-strong: #0F1722;
+  --vg-text-secondary: #E2E8F0;
+  --vg-text-muted: #CBD5E1;
+  --vg-border-specular: 1px solid rgba(255, 255, 255, 0.34);
+  --vg-border-specular-strong: 1.5px solid rgba(251, 191, 36, 0.65);
+  background: #000000;
+}
+
+body.high-contrast-outdoor #snow-canvas,
+body.high-contrast-outdoor::before,
+body.high-contrast-outdoor::after {
+  display: none !important;
+}
+
+body.high-contrast-outdoor .glass-card,
+body.high-contrast-outdoor .mobile-dock,
+body.high-contrast-outdoor .adv-modal-sheet {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: #0B111A !important;
+}
+
+@media (max-width: 768px) {
+  .identity-overlay {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+/* QoL 1 · Hoja rápida Consulta Cruzada y navegación inferior del día */
+.cross-peek-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(186, 230, 253, 0.24);
+  background: rgba(6, 24, 20, 0.72);
+  margin-bottom: 12px;
+}
+
+.day-footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.briefing-collapse {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.briefing-collapse summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--adv-gold-soft);
+  min-height: 34px;
+}
+
+.briefing-collapse summary::-webkit-details-marker {
+  display: none;
+}
+
+/* QoL 6 · Banner cola pendiente */
+.sync-pending-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(251, 191, 36, 0.48);
+  color: #FDE68A;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* F1 · Buscador y chinchetas */
+.search-results-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.search-result-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: var(--vg-border-specular);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.82rem;
+}
+
+.pin-clue-btn[aria-pressed="true"] {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(251, 191, 36, 0.55);
+  color: #FDE68A;
+}
+
+/* F2 · Comparador lado a lado */
+.compare-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.compare-card {
+  flex: 0 0 min(260px, 82vw);
+  scroll-snap-align: start;
+  padding: 12px;
+  border-radius: 12px;
+  border: var(--vg-border-specular);
+  background: rgba(6, 24, 20, 0.85);
+}
+
+/* F3 · Línea temporal dinámica noche del crimen */
+.timeline-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  border-left: 2px solid rgba(251, 191, 36, 0.35);
+  padding-left: 12px;
+}
+
+.timeline-node {
+  position: relative;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+}
+
+/* F5 · Pulso visual cuando audio está silenciado */
+@keyframes audioVisualFlash {
+  0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6); }
+  100% { box-shadow: 0 0 0 14px rgba(56, 189, 248, 0); }
+}
+
+.audio-visual-pulse {
+  animation: audioVisualFlash 520ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .view-panel.active, .identity-overlay.open, .identity-modal, .adv-modal-backdrop.open, .adv-modal-sheet,
   .pulse-dot, .door-card, .door-card.state-available::before, .door-card.state-available::after,

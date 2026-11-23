@@ -50,6 +50,37 @@ window.AudioFX = (() => {
   let ctx = null;
   let muted = window.SafeStorage.getItem("adviento_muted") === "1";
   let morseRunId = 0;
+  let wakeSentinel = null;
+  const visualCueHandlers = new Set();
+
+  function emitVisualCue(kind, text) {
+    if (!muted) return;
+    visualCueHandlers.forEach((fn) => {
+      try { fn(kind, text); } catch (_) {}
+    });
+  }
+
+  function onVisualCue(fn) {
+    if (typeof fn === "function") visualCueHandlers.add(fn);
+    return () => visualCueHandlers.delete(fn);
+  }
+
+  async function acquireWakeLock() {
+    if (!("wakeLock" in navigator) || !navigator.wakeLock?.request) return false;
+    try {
+      if (wakeSentinel && !wakeSentinel.released) return true;
+      wakeSentinel = await navigator.wakeLock.request("screen");
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  async function releaseWakeLock() {
+    if (!wakeSentinel) return;
+    try { await wakeSentinel.release(); } catch (_) {}
+    wakeSentinel = null;
+  }
 
   function isReducedMotion() {
     return (
@@ -148,27 +179,38 @@ window.AudioFX = (() => {
     haptic(25);
   }
 
+  function partnerPing() {
+    tone(587.33, 120, "sine", 0.05, 0);
+    tone(783.99, 180, "sine", 0.05, 95);
+    haptic([18, 25, 22]);
+    emitVisualCue("partner", "Aviso sonoro de tu pareja (Modo silencio visual)");
+  }
+
   function success() {
     tone(523.25, 140, "sine", 0.07, 0);
     tone(659.25, 160, "sine", 0.07, 90);
     tone(783.99, 260, "sine", 0.08, 180);
     haptic([24, 30, 40]);
+    emitVisualCue("success", "Confirmación acústica (Silencio activo)");
   }
 
   function error() {
     tone(190, 140, "sawtooth", 0.05, 0);
     tone(155, 180, "sawtooth", 0.05, 120);
     haptic([35, 35, 35]);
+    emitVisualCue("error", "Error de código (Silencio activo)");
   }
 
   function stopMorse() {
     morseRunId += 1;
+    releaseWakeLock();
   }
 
   async function playMorse(sequence, onLight) {
     const myId = ++morseRunId;
     const unit = 160;
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    acquireWakeLock();
     try {
       for (const ch of sequence) {
         if (myId !== morseRunId) break;
@@ -192,6 +234,7 @@ window.AudioFX = (() => {
       }
     } finally {
       if (onLight) onLight(false);
+      releaseWakeLock();
     }
   }
 
@@ -226,6 +269,9 @@ window.AudioFX = (() => {
     isMuted,
     toggleMute,
     setMuted,
+    onVisualCue,
+    acquireWakeLock,
+    releaseWakeLock,
     haptic
   };
 })();

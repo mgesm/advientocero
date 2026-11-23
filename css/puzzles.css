@@ -611,20 +611,7 @@ body.briefing-fs-active #admin-bar {
 }
 
 @media (max-width: 420px) {
-  .briefing-native-mount {
-  width: 100%;
-}
-
-.briefing-native-video {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: block;
-  border-radius: 12px;
-  border: 1px solid rgba(251, 191, 36, 0.30);
-  background: #020408;
-}
-
-.valve-row {
+  .valve-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

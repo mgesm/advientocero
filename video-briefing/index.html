@@ -3,56 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; media-src 'self' blob:; object-src 'none'; base-uri 'self';">
   <title>ADVIENTO CERO — Vídeo Briefing Oficial</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      background: #040907;
-      color: #F8FAFC;
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-      display: grid;
-      place-items: center;
-      padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
-    }
-    main {
-      width: 100%;
-      max-width: 960px;
-    }
-    video {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      display: block;
-      border-radius: 12px;
-      border: 1px solid rgba(251, 191, 36, 0.32);
-      background: #020408;
-    }
-  </style>
+  <link rel="stylesheet" href="player.css?v=2.12.0">
 </head>
 <body>
   <main>
     <video id="briefing-video" controls preload="metadata" poster="../imagenes/cover-hotel.jpg" aria-label="Vídeo Briefing Oficial de Adviento Cero">
-      <source src="briefing.mp4?v=2.11.0" type="video/mp4">
-      <track kind="subtitles" src="briefing.vtt?v=2.11.0" srclang="es" label="Español" default>
+      <source src="briefing.mp4?v=2.12.0" type="video/mp4">
+      <track kind="subtitles" src="briefing.vtt?v=2.12.0" srclang="es" label="Español" default>
     </video>
   </main>
-  <script>
-    (() => {
-      const vid = document.getElementById("briefing-video");
-      if (!vid) return;
-      try {
-        if (window.localStorage.getItem("adviento_muted") === "1") {
-          vid.muted = true;
-        }
-      } catch (_) {}
-      document.addEventListener("visibilitychange", () => {
-        if (document.hidden && !vid.paused) vid.pause();
-      });
-      window.addEventListener("pagehide", () => {
-        if (!vid.paused) vid.pause();
-      });
-    })();
-  </script>
+  <script defer src="player.js?v=2.12.0"></script>
 </body>
 </html>

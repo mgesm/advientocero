@@ -4,9 +4,9 @@ $errors = 0
 
 Write-Host "=== ADVIENTO CERO: AUDITORÍA DE INTEGRIDAD (CERO SPOILERS) ==="
 
-# 1. Cero Emojis & UTF-8 sin BOM
+# 1. Cero Emojis (BMP + Astrales) & UTF-8 sin BOM
 $files = Get-ChildItem -Path $root -Recurse -File | Where-Object {
-  $_.Extension -in @(".html", ".css", ".js", ".md", ".json") -and $_.FullName -notlike "*\.git\*"
+  $_.Extension -in @(".html", ".css", ".js", ".md", ".json", ".ps1", ".svg") -and $_.FullName -notlike "*\.git\*" -and $_.Name -ne "verify_integrity.ps1"
 }
 foreach ($f in $files) {
   $bytes = [System.IO.File]::ReadAllBytes($f.FullName)
@@ -15,8 +15,8 @@ foreach ($f in $files) {
     $errors++
   }
   $text = [System.IO.File]::ReadAllText($f.FullName, [System.Text.Encoding]::UTF8)
-  if ($text -match "[\uD83C-\uDBFF][\uDC00-\uDFFF]") {
-    Write-Host "[FAIL] Emoji Unicode detectado en $($f.FullName)" -ForegroundColor Red
+  if ($text -match "[\uD83C-\uDBFF][\uDC00-\uDFFF]" -or $text -match "[\u2600-\u27BF\u2300-\u23FF\uFE0F]") {
+    Write-Host "[FAIL] Emoji o pictograma Unicode detectado en $($f.FullName)" -ForegroundColor Red
     $errors++
   }
 }

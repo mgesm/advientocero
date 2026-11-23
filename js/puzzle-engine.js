@@ -109,12 +109,25 @@ window.PuzzleEngine = (() => {
     }
   }
 
+  const widgetSecrets = new Map();
+
+  function makeWidgetKey(dayNum, role, type) {
+    return `${dayNum}:${role || "shared"}:${type}`;
+  }
+
   function escapeHtml(str) {
     return String(str || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function renderSafeStrong(rawHtml) {
+    return escapeHtml(rawHtml)
+      .replace(/&lt;strong&gt;/gi, "<strong>")
+      .replace(/&lt;\/strong&gt;/gi, "</strong>");
   }
 
   function renderWidgetHtml(dayNum, role, widget) {
@@ -232,25 +245,37 @@ window.PuzzleEngine = (() => {
             </div>
           </div>`;
 
-      case "manual-lookup":
+      case "manual-lookup": {
+        const wkey = makeWidgetKey(dayNum, role, "manual-lookup");
+        widgetSecrets.set(wkey, {
+          triggerCode: widget.triggerCode || "",
+          responseHtml: widget.responseHtml || ""
+        });
         return `
           <div class="widget-panel">
-            <form data-manual-form="${dayNum}" data-trigger="${escapeHtml(widget.triggerCode)}" data-resp="${escapeHtml(widget.responseHtml)}" style="display:flex;gap:8px;">
+            <form data-manual-form="${dayNum}" data-wkey="${escapeHtml(wkey)}" style="display:flex;gap:8px;">
               <input type="text" class="adv-input" id="manual-code-${dayNum}" placeholder="${escapeHtml(widget.placeholder || "Ej. C2")}" aria-label="Código técnico de circuito" autocapitalize="characters" autocorrect="off" spellcheck="false" enterkeyhint="search" style="min-height:44px;min-width:0;">
               <button type="submit" class="btn btn-frost btn-sm" style="flex-shrink:0;">Consultar</button>
             </form>
             <div id="manual-res-${dayNum}" aria-live="polite" style="margin-top:10px;font-size:0.83rem;color:var(--vg-text-secondary);"></div>
           </div>`;
+      }
 
-      case "valves":
+      case "valves": {
+        const wkey = makeWidgetKey(dayNum, role, "valves");
+        widgetSecrets.set(wkey, {
+          targetState: Array.isArray(widget.targetState) ? widget.targetState.slice() : [],
+          revealCode: widget.revealCode || ""
+        });
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.72rem;color:var(--vg-text-secondary);margin-bottom:6px;">PULSA PARA ABRIR/CERRAR VÁLVULAS:</div>
-            <div class="valve-row" id="valve-row-${dayNum}" data-target='${JSON.stringify(widget.targetState)}' data-code="${escapeHtml(widget.revealCode)}">
+            <div class="valve-row" id="valve-row-${dayNum}" data-wkey="${escapeHtml(wkey)}">
               ${[1, 2, 3, 4].map((v, idx) => `<button type="button" class="valve-btn" data-action="toggle-valve" data-idx="${idx}" data-day="${dayNum}" aria-pressed="false">V${v}<br><span>CERRADA</span></button>`).join("")}
             </div>
             <div id="valve-gauge-${dayNum}" class="mono" aria-live="polite" style="text-align:center;font-size:0.82rem;color:var(--vg-text-muted);margin-top:6px;">PRESIÓN INESTABLE · ESPERANDO COMBINACIÓN</div>
           </div>`;
+      }
 
       case "nonogram": {
         const colClues = widget.clues?.cols || [];
@@ -314,6 +339,8 @@ window.PuzzleEngine = (() => {
           ? widget.bands
           : [{ hz: Number(widget.targetHz || 440), text: widget.clearText || "" }];
         const initHz = Number(widget.initHz || widget.minHz || 200);
+        const wkey = makeWidgetKey(dayNum, role, "frequency");
+        widgetSecrets.set(wkey, { bands });
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
@@ -323,7 +350,7 @@ window.PuzzleEngine = (() => {
             <div class="freq-smeter-track"><div class="freq-smeter-fill" id="freq-smeter-${dayNum}"></div></div>
             <div class="adv-range-wrap">
               <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="-${widget.stepHz}" aria-label="Bajar frecuencia">-</button>
-              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="${initHz}" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-bands='${escapeHtml(JSON.stringify(bands))}' data-day="${dayNum}" aria-label="Dial de frecuencia en hercios">
+              <input id="freq-range-${dayNum}" type="range" class="adv-range" min="${widget.minHz}" max="${widget.maxHz}" step="${widget.stepHz}" value="${initHz}" style="accent-color:var(--adv-cyan);" data-action="tune-freq" data-wkey="${escapeHtml(wkey)}" data-day="${dayNum}" aria-label="Dial de frecuencia en hercios">
               <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="freq-range-${dayNum}" data-delta="${widget.stepHz}" aria-label="Subir frecuencia">+</button>
             </div>
             <div id="freq-msg-${dayNum}" class="mono" aria-live="polite" style="margin-top:8px;padding:10px;border-radius:10px;background:rgba(2,4,8,0.8);border:var(--vg-border-specular);font-size:0.8rem;color:var(--vg-text-muted);">
@@ -350,6 +377,8 @@ window.PuzzleEngine = (() => {
       case "caliper": {
         const targetCm = Number(widget.targetCm || 25.5);
         const soleWidth = Math.max(0, Math.min(210, Math.round(((targetCm - 22.0) / 7.0) * 210)));
+        const wkey = makeWidgetKey(dayNum, role, "caliper");
+        widgetSecrets.set(wkey, { targetCm });
         return `
           <div class="widget-panel">
             <div class="mono" style="font-size:0.74rem;color:var(--adv-frost);display:flex;justify-content:space-between;">
@@ -364,7 +393,7 @@ window.PuzzleEngine = (() => {
               </svg>
               <div class="adv-range-wrap">
                 <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="-0.5" aria-label="Reducir medida">-</button>
-                <input id="caliper-range-${dayNum}" type="range" class="adv-range" min="22.0" max="29.0" step="0.5" value="22.0" style="accent-color:var(--adv-pine);" data-action="slide-caliper" data-target="${widget.targetCm}" data-day="${dayNum}" aria-label="Calibre ABFO en centímetros">
+                <input id="caliper-range-${dayNum}" type="range" class="adv-range" min="22.0" max="29.0" step="0.5" value="22.0" style="accent-color:var(--adv-pine);" data-action="slide-caliper" data-wkey="${escapeHtml(wkey)}" data-day="${dayNum}" aria-label="Calibre ABFO en centímetros">
                 <button type="button" class="btn btn-sm btn-ghost" data-action="step-range" data-target-id="caliper-range-${dayNum}" data-delta="0.5" aria-label="Aumentar medida">+</button>
               </div>
               <div id="caliper-status-${dayNum}" class="mono" aria-live="polite" style="font-size:0.76rem;color:var(--vg-text-muted);margin-top:4px;">Desliza la línea verde hasta el borde derecho de la suela</div>
@@ -492,7 +521,9 @@ window.PuzzleEngine = (() => {
     }
     if (Array.isArray(data.nonoClues)) {
       data.nonoClues.forEach((item) => {
-        const b = container.querySelector(`[data-action="edit-nono-clue"][data-axis="${item.axis}"][data-idx="${item.idx}"]`);
+        const axisEsc = (window.CSS && typeof window.CSS.escape === "function") ? window.CSS.escape(String(item.axis || "")) : String(item.axis || "").replace(/[^a-zA-Z0-9_-]/g, "");
+        const idxNum = Number(item.idx);
+        const b = container.querySelector(`[data-action="edit-nono-clue"][data-axis="${axisEsc}"][data-idx="${idxNum}"]`);
         if (b && item.val) {
           b.dataset.custom = item.val;
           b.innerHTML = item.axis === "col" ? escapeHtml(item.val).split(",").join("<br>") : escapeHtml(item.val).split(",").join(" ");
@@ -533,13 +564,13 @@ window.PuzzleEngine = (() => {
       if (row) {
         const day = row.id.replace("valve-row-", "");
         const gauge = document.getElementById(`valve-gauge-${day}`);
-        let target = [];
-        try { target = JSON.parse(row.dataset.target || "[]"); } catch (_) {}
+        const sec = widgetSecrets.get(row.dataset.wkey || "") || {};
+        const target = Array.isArray(sec.targetState) ? sec.targetState : [];
         const match = target.length && target.every((v, i) => v === Boolean(data.valves[i]));
         if (gauge && match) {
           gauge.style.color = "#6EE7B7";
           gauge.style.fontWeight = "700";
-          gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
+          gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(sec.revealCode || "")}</strong>`;
         }
       }
     }
@@ -562,8 +593,9 @@ window.PuzzleEngine = (() => {
         const res = container.querySelector('[id^="manual-res-"]');
         if (inp) inp.value = data.manualCode;
         if (manualForm && res) {
-          if (normalizeAnswer(data.manualCode) === normalizeAnswer(manualForm.dataset.trigger)) {
-            res.innerHTML = `<div class="feedback-banner success">${manualForm.dataset.resp}</div>`;
+          const sec = widgetSecrets.get(manualForm.dataset.wkey || "") || {};
+          if (normalizeAnswer(data.manualCode) === normalizeAnswer(sec.triggerCode || "")) {
+            res.innerHTML = `<div class="feedback-banner success">${renderSafeStrong(sec.responseHtml || "")}</div>`;
           }
         }
       }
@@ -703,8 +735,9 @@ window.PuzzleEngine = (() => {
       const inp = document.getElementById(`manual-code-${day}`);
       const res = document.getElementById(`manual-res-${day}`);
       if (!inp || !res) return;
-      if (normalizeAnswer(inp.value) === normalizeAnswer(form.dataset.trigger)) {
-        res.innerHTML = `<div class="feedback-banner success">${form.dataset.resp}</div>`;
+      const sec = widgetSecrets.get(form.dataset.wkey || "") || {};
+      if (normalizeAnswer(inp.value) === normalizeAnswer(sec.triggerCode || "")) {
+        res.innerHTML = `<div class="feedback-banner success">${renderSafeStrong(sec.responseHtml || "")}</div>`;
       } else {
         res.innerHTML = `<div class="feedback-banner error">Circuito no reconocido. Revisa el código rojo en la pantalla de tu pareja.</div>`;
       }
@@ -856,15 +889,15 @@ window.PuzzleEngine = (() => {
         const row = document.getElementById(`valve-row-${btn.dataset.day}`);
         const gauge = document.getElementById(`valve-gauge-${btn.dataset.day}`);
         if (row && gauge) {
-          let target = [];
-          try { target = JSON.parse(row.dataset.target || "[]"); } catch (_) {}
+          const sec = widgetSecrets.get(row.dataset.wkey || "") || {};
+          const target = Array.isArray(sec.targetState) ? sec.targetState : [];
           const current = Array.from(row.querySelectorAll(".valve-btn")).map((b) => b.classList.contains("open"));
           const match = target.length && target.every((v, i) => v === current[i]);
           if (match) {
             window.AudioFX.success();
             gauge.style.color = "#6EE7B7";
             gauge.style.fontWeight = "700";
-            gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(row.dataset.code)}</strong>`;
+            gauge.innerHTML = `PRESIÓN ESTABILIZADA · SERIE MANÓMETRO: <strong style="font-size:1rem;">${escapeHtml(sec.revealCode || "")}</strong>`;
           } else {
             gauge.style.color = "var(--vg-text-muted)";
             gauge.style.fontWeight = "400";
@@ -959,11 +992,8 @@ window.PuzzleEngine = (() => {
       if (inp.dataset.action === "tune-freq") {
         const day = inp.dataset.day;
         const val = Number(inp.value);
-        let bands = [];
-        try { bands = JSON.parse(inp.dataset.bands || "[]"); } catch (_) {}
-        if (!bands.length && inp.dataset.target) {
-          bands = [{ hz: Number(inp.dataset.target), text: inp.dataset.clear || "" }];
-        }
+        const sec = widgetSecrets.get(inp.dataset.wkey || "") || {};
+        const bands = Array.isArray(sec.bands) ? sec.bands : [];
         const lbl = document.getElementById(`freq-val-${day}`);
         const sigEl = document.getElementById(`freq-sig-${day}`);
         const smeter = document.getElementById(`freq-smeter-${day}`);
@@ -1000,7 +1030,8 @@ window.PuzzleEngine = (() => {
       } else if (inp.dataset.action === "slide-caliper") {
         const day = inp.dataset.day;
         const val = Number(inp.value);
-        const target = Number(inp.dataset.target);
+        const sec = widgetSecrets.get(inp.dataset.wkey || "") || {};
+        const target = Number(sec.targetCm || 25.5);
         const lbl = document.getElementById(`caliper-val-${day}`);
         const bar = document.getElementById(`caliper-bar-${day}`);
         const st = document.getElementById(`caliper-status-${day}`);
