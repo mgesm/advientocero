@@ -536,16 +536,21 @@ window.PuzzleEngine = (() => {
         }
       }
     }
-    if (data.range !== undefined) {
-      const range = container.querySelector('.adv-range');
-      if (range) {
-        range.value = data.range;
-        range.dispatchEvent(new Event("input", { bubbles: true }));
+    container.dataset.restoring = "1";
+    try {
+      if (data.range !== undefined) {
+        const range = container.querySelector('.adv-range');
+        if (range) {
+          range.value = data.range;
+          range.dispatchEvent(new Event("input", { bubbles: true }));
+        }
       }
-    }
-    if (data.xrayOpen) {
-      const btn = container.querySelector('[data-action="toggle-xray"]');
-      if (btn) btn.click();
+      if (data.xrayOpen) {
+        const btn = container.querySelector('[data-action="toggle-xray"]');
+        if (btn) btn.click();
+      }
+    } finally {
+      delete container.dataset.restoring;
     }
     if (data.manualCode) {
       const inp = container.querySelector('[id^="manual-code-"]');
@@ -683,6 +688,10 @@ window.PuzzleEngine = (() => {
         btn.classList.toggle("btn-gold", pencilMode);
         const bar = document.getElementById(`sudoku-pencil-bar-${btn.dataset.day}`);
         if (bar) bar.style.display = pencilMode ? "block" : "none";
+        if (!pencilMode) {
+          activePencilCell = null;
+          container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => { c.style.outline = ""; });
+        }
       } else if (act === "toggle-sudoku-note") {
         if (!activePencilCell) return;
         window.AudioFX.mechanicalTick?.() || window.AudioFX.click();
@@ -810,13 +819,12 @@ window.PuzzleEngine = (() => {
           });
         } else if (board === "nonogram") {
           container.querySelectorAll('[data-action="toggle-nono"]').forEach((c) => { c.classList.remove("on", "x-mark"); c.textContent = ""; });
-          container.querySelectorAll('[data-action="edit-nono-clue"]').forEach((c) => { c.dataset.custom = ""; c.textContent = "?"; });
         } else if (board === "logic3x3") {
           container.querySelectorAll('[data-action="cycle-logic"]').forEach((c) => { c.textContent = "·"; c.style.color = "#CBD5E1"; });
         }
         emitChange();
       } else if (act === "toggle-xray") {
-        window.AudioFX.radioSweep?.() || window.AudioFX.click();
+        if (container.dataset.restoring !== "1") window.AudioFX.radioSweep?.() || window.AudioFX.click();
         const box = document.getElementById(`xray-box-${btn.dataset.day}`);
         if (box) {
           const open = box.style.display === "none";
@@ -859,7 +867,7 @@ window.PuzzleEngine = (() => {
         }
         if (msg) {
           if (hitBand) {
-            window.AudioFX.radioSweep?.();
+            if (container.dataset.restoring !== "1") window.AudioFX.radioSweep?.();
             msg.style.color = "#67E8F9";
             msg.style.borderColor = "rgba(0,229,255,0.5)";
             msg.textContent = hitBand.text || "";

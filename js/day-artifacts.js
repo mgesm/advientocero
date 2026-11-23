@@ -85,13 +85,6 @@ window.DayArtifacts = (() => {
       // === DÍA 3 ===
       case "3-miguel":
         return `
-          <div class="bank-slip" style="margin-bottom:10px;">
-            <div style="color:#FDE68A;margin-bottom:6px;font-weight:700;">CONSOLA CENTRALITA · REGISTRO 23:39:08 H</div>
-            <div class="bank-row"><span>CANAL EMERGENCIA</span><span>PULSADOR INTERIOR</span></div>
-            <div class="bank-row"><span>TRAMA CAPTADA</span><span>5 CARACTERES MORSE</span></div>
-          </div>`;
-      case "3-patri":
-        return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>TABLA MORSE INTERNACIONAL (A–Z)</span><span class="paper-stamp">CONSERJERÍA</span></div>
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-family:monospace;font-size:0.68rem;margin-bottom:8px;">
@@ -107,6 +100,13 @@ window.DayArtifacts = (() => {
               <strong>EXTENSIONES RONDA (T. Bermúdez):</strong><br>
               Sótano (SOTAN) = <strong>04</strong> · Azotea (AZOTE) = <strong>09</strong> · Garaje (GARAJ) = <strong>12</strong> · Calderas (CALDE) = <strong>18</strong>
             </div>
+          </div>`;
+      case "3-patri":
+        return `
+          <div class="bank-slip" style="margin-bottom:10px;">
+            <div style="color:#FDE68A;margin-bottom:6px;font-weight:700;">CONSOLA CENTRALITA · REGISTRO 23:39:08 H</div>
+            <div class="bank-row"><span>CANAL EMERGENCIA</span><span>PULSADOR INTERIOR</span></div>
+            <div class="bank-row"><span>TRAMA CAPTADA</span><span>5 CARACTERES MORSE</span></div>
           </div>`;
 
       // === DÍA 4 ===
@@ -126,6 +126,14 @@ window.DayArtifacts = (() => {
       // === DÍA 5 ===
       case "5-miguel":
         return `
+          <div class="rfid-cards-grid">
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-B2</strong><span style="font-size:0.73rem;">Anulada 22:10 (Reserva)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-C7</strong><span style="font-size:0.73rem;">Lucía Montalvo (Hab. 204)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-E4</strong><span style="font-size:0.73rem;">Elena Valls (Hab. 203)</span></div>
+            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-F9</strong><span style="font-size:0.73rem;">Inés Casado (Hab. 206)</span></div>
+          </div>`;
+      case "5-patri":
+        return `
           <div class="blueprint-box">
             <div class="blueprint-cap">PLANO PLANTA 2 · REGISTRO DE ANTENAS RFID</div>
             <svg viewBox="0 0 320 110" style="width:100%;display:block;border-radius:8px;background:#031019;">
@@ -135,14 +143,6 @@ window.DayArtifacts = (() => {
               <rect x="160" y="28" width="70" height="54" fill="rgba(255,255,255,0.06)" stroke="#38BDF8" stroke-width="1.4"/><text x="195" y="52" text-anchor="middle" fill="#67E8F9" font-family="monospace" font-size="10.5" font-weight="700">BIBLIOTECA</text><text x="195" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">ANTENA 02</text>
               <rect x="240" y="28" width="60" height="54" fill="rgba(255,255,255,0.04)" stroke="#475569"/><text x="270" y="52" text-anchor="middle" fill="#CBD5E1" font-family="monospace" font-size="10.5">ESCALERA</text><text x="270" y="66" text-anchor="middle" fill="#94A3B8" font-family="monospace" font-size="10">P1/P2</text>
             </svg>
-          </div>`;
-      case "5-patri":
-        return `
-          <div class="rfid-cards-grid">
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-B2</strong><span style="font-size:0.73rem;">Anulada 22:10 (Reserva)</span></div>
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-C7</strong><span style="font-size:0.73rem;">Lucía Montalvo (Hab. 204)</span></div>
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-E4</strong><span style="font-size:0.73rem;">Elena Valls (Hab. 203)</span></div>
-            <div class="rfid-card"><div class="rfid-chip"></div><strong class="mono" style="font-size:0.78rem;color:#FDE68A;">TAG-F9</strong><span style="font-size:0.73rem;">Inés Casado (Hab. 206)</span></div>
           </div>`;
 
       // === DÍA 6 ===
@@ -353,9 +353,9 @@ window.DayArtifacts = (() => {
         return `
           <div class="bank-slip" style="margin-bottom:8px;">
             <div style="color:#FDE68A;font-weight:700;margin-bottom:6px;">TORRE RADAR MILITAR · HORA CET = UTC + 1 H</div>
-            <div class="bank-row"><span>HEL-418 (121.5 MHz)</span><span>-78 dBm · Eco de ladera</span></div>
-            <div class="bank-row"><span>HEL-735 (121.5 MHz)</span><span>Apagada a las 22:15 Z</span></div>
-            <div class="bank-row"><span>HEL-902 (121.5 MHz)</span><span>-42 dBm · Activa 22:37 Z · Hangar H4</span></div>
+            <div class="bank-row"><span>HEL-418 (121.5 MHz)</span><span>-78 dBm · Pulso 22:36 Z · Hangar H2</span></div>
+            <div class="bank-row"><span>HEL-735 (121.5 MHz)</span><span>-55 dBm · Señal 22:15 Z · Hangar H1</span></div>
+            <div class="bank-row"><span>HEL-902 (121.5 MHz)</span><span>-42 dBm · Pulso 22:37 Z · Hangar H4</span></div>
           </div>`;
 
       // === DÍA 14 ===
@@ -466,7 +466,7 @@ window.DayArtifacts = (() => {
         return `
           <div class="paper-ledger">
             <div class="paper-ledger-head"><span>MATRIZ SWIFT 6x6 + FIRMA BIOMÉTRICA</span><span class="paper-stamp">SUITE 303</span></div>
-            <div class="mono" style="font-size:0.72rem;margin-bottom:6px;">Firma facial en directo: <strong>Suite 303 · 23:39:14 h</strong> (orden &gt; 30.000 EUR hacia Zúrich durante el apagón).</div>
+            <div class="mono" style="font-size:0.72rem;margin-bottom:6px;">Registro biométrico captado desde IP Suite 303 · <strong>23:39:14 h</strong> (orden &gt; 30.000 EUR hacia Zúrich durante el apagón; pendiente cotejar presencia física).</div>
             <div class="mono" style="font-size:0.7rem;padding:6px;background:#FFFDF7;border:1px solid #D97706;border-radius:6px;line-height:1.45;">
               Cols 1..6:<br>
               F1: A B C D E F<br>

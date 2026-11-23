@@ -99,7 +99,7 @@ window.ADVENT_DAYS = [
                                       "caption":  "Construcción del Código de Almacén",
                                       "items":  [
                                                     "1 cifra: Nº turno del empleado que bajó a las 23:34 h",
-                                                    "3 cifras: Código UV de Miguel leído de derecha a izquierda"
+                                                    "3 cifras obtenidas bajo la luz UV de Patri siguiendo su regla oculta"
                                                 ]
                                   },
                        "partnerHint":  "Pide a Patri los 3 dígitos UV y la regla oculta; identifica el turno de las 23:34 h en tu tabla."
@@ -143,29 +143,29 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Receptor de Audio/Luz",
-                       "brief":  "Reproduce la secuencia completa de cinco letras y díctala grupo a grupo a Patri.",
-                       "clueHtml":  "\u003cp\u003eLa centralita captó \u003cstrong\u003e5 letras\u003c/strong\u003e a las 23:39 h. Escucha o sigue la lámpara de destellos separando bien las cinco pausas.\u003c/p\u003e",
+                       "roleBadge":  "Miguel · Tabla Morse Internacional",
+                       "brief":  "Traduce cada grupo de puntos y rayas que te dicte Patri usando el alfabeto completo A–Z y localiza la extensión.",
+                       "clueHtml":  "<p>La tabla de conserjería incluye el alfabeto Morse íntegro y cuatro sectores de ronda nocturna. Traduce las <strong>5 letras</strong> que reproduzca Patri y pásale los <strong>2 dígitos de su extensión</strong>.</p>",
                        "widget":  {
-                                      "type":  "morse",
-                                      "label":  "Reproducir trama de 5 letras",
-                                      "sequence":  "... --- - .- -."
+                                      "type":  "dossier-card",
+                                      "caption":  "Formato de Validación",
+                                      "items":  [
+                                                    "5 letras descifradas en Morse + 2 dígitos de extensión",
+                                                    "Ejemplo orientativo: CALDE18"
+                                                ]
                                   },
-                       "partnerHint":  "Dicta a Patri los 5 bloques de puntos (·) y rayas (−) para que los descifre con la tabla completa A–Z."
+                       "partnerHint":  "Traduce letra por letra el código que reproduzca Patri y confirma qué sector y extensión coincide en el directorio."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Tabla Morse Internacional",
-                      "brief":  "Traduce las 5 letras usando el alfabeto completo A–Z y cruza el sector con su extensión de ronda.",
-                      "clueHtml":  "\u003cp\u003eLa tabla de conserjería incluye el alfabeto Morse íntegro y cuatro sectores de ronda nocturna. Une las \u003cstrong\u003e5 letras descifradas\u003c/strong\u003e seguidas de los \u003cstrong\u003e2 dígitos de su extensión\u003c/strong\u003e.\u003c/p\u003e",
+                      "roleBadge":  "Patri · Receptor de Audio y Luz",
+                      "brief":  "Reproduce la secuencia completa de cinco letras, díctasela grupo a grupo a Miguel y valida el código.",
+                      "clueHtml":  "<p>La centralita captó <strong>5 letras</strong> a las 23:39 h. Escucha o sigue la lámpara de destellos separando bien las cinco pausas para dictárselas a Miguel y unir <strong>5 letras + 2 dígitos de extensión</strong>.</p>",
                       "widget":  {
-                                     "type":  "dossier-card",
-                                     "caption":  "Formato de Validación",
-                                     "items":  [
-                                                   "5 letras descifradas en Morse + 2 dígitos de extensión",
-                                                   "Ejemplo orientativo: CALDE18"
-                                               ]
+                                     "type":  "morse",
+                                     "label":  "Reproducir trama de 5 letras",
+                                     "sequence":  "... --- - .- -."
                                  },
-                      "partnerHint":  "Traduce el código de Miguel letra por letra y busca qué sector coincide en el directorio de Tomás Bermúdez."
+                      "partnerHint":  "Dicta a Miguel los 5 bloques de puntos (·) y rayas (−) para que los descifre con su tabla A–Z y te confirme la extensión."
                   },
         "jointInput":  {
                            "label":  "Palabra de 5 letras + Extensión (2 dígitos)",
@@ -309,34 +309,34 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "dual-lock",
         "miguel":  {
-                       "roleBadge":  "Miguel · Log Técnico RFID",
-                       "brief":  "Filtra los falsos pasos de pasillo y salidas tempranas para aislar qué TAG quedó dentro a las 23:39 h.",
-                       "clueHtml":  "\u003cp\u003e\u003cstrong\u003eLecturas completas Planta 2:\u003c/strong\u003e\u003c/p\u003e\u003cul class=\u0027clue-list\u0027\u003e\u003cli\u003e23:31:04 · TAG-B2 · Pasillo Sur (hacia Escalera) · 23:36:10 · Ascensor P1.\u003c/li\u003e\u003cli\u003e23:35:10 · TAG-E4 · Entrada Biblioteca · \u003cstrong\u003e23:36:40 · Salida Biblioteca\u003c/strong\u003e.\u003c/li\u003e\u003cli\u003e\u003cstrong\u003e23:39:12 · TAG-C7 · Entrada Puerta Biblioteca\u003c/strong\u003e (sin lectura de salida hasta 23:58:04).\u003c/li\u003e\u003cli\u003e23:41:05 · TAG-F9 · Escalera P1/P2.\u003c/li\u003e\u003c/ul\u003e",
+                       "roleBadge":  "Miguel · Libro de Tarjetas",
+                       "brief":  "Consulta el libro de tarjetas de recepción y la nota de reasignación de las 22:10 h para asistir a Patri.",
+                       "clueHtml":  "<p><strong>Incidencia Recepción 22:10 h:</strong> Por desmagnetización se anuló una tarjeta de reserva (TAG-B2) y se reasignó <strong>TAG-C7</strong> a la Hab. 204.</p><p>Cuando Patri te diga qué TAG quedó dentro durante el apagón, confírmale su habitación y anota aquí su primer apellido.</p>",
                        "widget":  {
                                       "type":  "dossier-card",
-                                      "caption":  "Filtro de Permanencia 23:38–23:42 h",
+                                      "caption":  "Cotejo Recepción 22:10 h",
                                       "items":  [
-                                                    "Descartar tarjetas que salieron antes del apagón",
-                                                    "Comunicar el TAG válido a Patri y pedir apellido titular"
+                                                    "Pide a Patri qué TAG permaneció dentro de Biblioteca entre 23:38 y 23:42 h",
+                                                    "Confírmale su nº de habitación e introduce aquí el primer apellido titular"
                                                 ]
                                   },
-                       "inputLabel":  "Primer apellido de la titular que permaneció dentro (dato de Patri)",
+                       "inputLabel":  "Primer apellido de la titular que permaneció dentro",
                        "inputPlaceholder":  "Ej. navarro",
                        "acceptedHashes":  [
                                               "b74c3a133a11e1a0514c3841cd80b051cb6b18b28e58b2b0c9107cfdae9e9a06"
                                           ],
-                       "partnerHint":  "Dile a Patri cuál de los tres TAG permaneció dentro de la Biblioteca entre 23:39 y 23:58 h. Pídele el apellido de su titular."
+                       "partnerHint":  "Pregunta a Patri qué TAG quedó dentro de la Biblioteca entre 23:38 y 23:42 h para darle su habitación y extraer el apellido."
                    },
         "patri":  {
-                      "roleBadge":  "Patri · Libro de Tarjetas",
-                      "brief":  "Coteja el TAG activo con la nota de reasignación de las 22:10 h para verificar titular y habitación.",
-                      "clueHtml":  "\u003cp\u003e\u003cstrong\u003eIncidencia Recepción 22:10 h:\u003c/strong\u003e Por desmagnetización, se anuló TAG-B2 en la Hab. 204 y se entregó \u003cstrong\u003eTAG-C7\u003c/strong\u003e a su ocupante.\u003c/p\u003e\u003cp\u003eIntroduce el \u003cstrong\u003eTAG válido (2 caracteres) + Nº de habitación (3 dígitos)\u003c/strong\u003e de su titular (ej. A1201).\u003c/p\u003e",
+                      "roleBadge":  "Patri · Log Técnico RFID",
+                      "brief":  "Filtra los pasos de pasillo y salidas tempranas para aislar qué TAG quedó dentro durante el apagón.",
+                      "clueHtml":  "<p><strong>Lecturas completas Planta 2:</strong></p><ul class='clue-list'><li>23:31:04 · TAG-B2 · Pasillo Sur (hacia Escalera) · 23:36:10 · Ascensor P1.</li><li>23:35:10 · TAG-E4 · Entrada Biblioteca · <strong>23:36:40 · Salida Biblioteca</strong>.</li><li><strong>23:39:12 · TAG-C7 · Entrada Puerta Biblioteca</strong> (sin lectura de salida hasta 23:58:04).</li><li>23:41:05 · TAG-F9 · Escalera P1/P2.</li></ul><p>Introduce el <strong>TAG válido (2 caract.) + Nº de habitación (3 dígitos)</strong> que confirme Miguel.</p>",
                       "widget":  {
                                      "type":  "dossier-card",
-                                     "caption":  "Formato Compacto Patri",
+                                     "caption":  "Filtro de Permanencia 23:38–23:42 h",
                                      "items":  [
-                                                   "2 caracteres del TAG activo + 3 dígitos de habitación",
-                                                   "Nota: TAG-E4 (Hab. 203) salió antes del apagón"
+                                                   "Descartar tarjetas de pasillo o salidas previas al apagón",
+                                                   "2 caracteres del TAG válido + 3 dígitos de habitación (ej. A1201)"
                                                ]
                                  },
                       "inputLabel":  "TAG (2 caract.) + Habitación (3 dígitos)",
@@ -344,7 +344,7 @@ window.ADVENT_DAYS = [
                       "acceptedHashes":  [
                                              "ed19e45703a29a51059d74e5ad3c013e284d92631e07541e5ccd3666faa1ad0d"
                                          ],
-                      "partnerHint":  "Confirma a Miguel el apellido titular de la tarjeta válida tras la reasignación de las 22:10 h."
+                      "partnerHint":  "Comunica a Miguel qué TAG permaneció dentro de Biblioteca entre 23:39 y 23:58 h para que te dé la habitación titular."
                   },
         "hints":  [
                       "TAG-B2 bajó a P1 y TAG-E4 salió de Biblioteca a las 23:36:40. Solo TAG-C7 siguió dentro durante el apagón.",
@@ -381,7 +381,7 @@ window.ADVENT_DAYS = [
                        "acceptedHashes":  [
                                               "a3c12abbf4fdec4fa2d0cd7185b353eb07a1a37a6fe1dd6a41c292d4d0904b5c"
                                           ],
-                       "partnerHint":  "Cuenta en el pentagrama las 4 notas negras + 5 estrellas doradas (desplazamiento = 09), díselo a Patri e identifica su sala acústica."
+                       "partnerHint":  "Cuenta en la partitura las notas negras + las estrellas doradas para calcular el desplazamiento, díselo a Patri e identifica qué sala coincide con tu parte acústico."
                    },
         "patri":  {
                       "roleBadge":  "Patri · Decodificador César",
@@ -602,7 +602,7 @@ window.ADVENT_DAYS = [
                                                      ],
                                      "revealCode":  "6194"
                                  },
-                      "partnerHint":  "Indica a Miguel el código del circuito crítico (C9). Deduce con él las 4 válvulas e invierte los dos pares de dígitos finales."
+                      "partnerHint":  "Indica a Miguel qué circuito cumple la condición de presión y temperatura. Deduce con él las 4 válvulas e invierte los dos pares de dígitos finales."
                   },
         "jointInput":  {
                            "label":  "Código oficial ajustado [CD][AB] (4 dígitos)",
@@ -885,7 +885,7 @@ window.ADVENT_DAYS = [
                                                    "Últimos 4 hex MAC de RC-AUDIT-09 (sin \u0027:\u0027)"
                                                ]
                                  },
-                      "partnerHint":  "Con -63 dBm (3 puertas desde 208) salen {205, 211}. Cruzadlo con las candidatas de Miguel y extraed los últimos 4 hex de la MAC corporativa."
+                      "partnerHint":  "Pide a Miguel la escala de puertas por dBm para calcular tus habitaciones candidatas desde la 208, intersecta con las suyas y extrae los últimos 4 hex de la MAC corporativa."
                   },
         "jointInput":  {
                            "label":  "Habitación (3 díg.) + 4 hex finales de MAC",
@@ -1121,7 +1121,7 @@ window.ADVENT_DAYS = [
                            },
         "mode":  "code",
         "miguel":  {
-                       "roleBadge":  "Miguel · Tabla de Horma y Taquillas",
+                       "roleBadge":  "Miguel · Regla de Suela y Taquillas",
                        "brief":  "Proporciona a Patri el descuento biomecánico de la goma (-1.5 cm) y los datos de la taquilla guardabotas de Adriana Orozco.",
                        "clueHtml":  "\u003cp\u003eLa goma exterior de las botas ALP-40 añade \u003cstrong\u003e1.5 cm\u003c/strong\u003e de cerco (\u003ccode\u003eL_pie = L_suela - 1.5 cm\u003c/code\u003e). Comparte con Patri esta regla y la talla registrada de Adriana Orozco en recepción.\u003c/p\u003e",
                        "widget":  {
@@ -1157,7 +1157,7 @@ window.ADVENT_DAYS = [
                        },
         "hints":  [
                       "El calibre alinea la suela exterior en 26.5 cm. Descontando el cerco de 1.5 cm resulta L_pie = 25.0 cm.",
-                      "En la tabla de Miguel, L_pie = 25.0 cm corresponde a Talla 40 (Adriana calza Talla 37).",
+                      "En la tabla de horma de Patri, L_pie = 25.0 cm corresponde a Talla 40 (Adriana calza Talla 37).",
                       "Solución del Día 18: 4037ALP40."
                   ],
         "unlockPayload":  "eyJkaXNjYXJkSWQiOiJzMjUiLCJmb3JlbnNpY1RhZyI6IkNBTFpBRE8gU0VDTyBFTiBUQVFVSUxMQSAyMzozMiBIIiwiY29uY2x1c2lvbiI6IkFkcmlhbmEgT3JvemNvIGRlasOzIHN1cyBib3RhcyB0YWxsYSAzNyBzZWNhcyBlbiByZWNlcGNpw7NuIGEgbGFzIDIzOjMyIGggeSBudW5jYSBwaXPDsyBlbCBwYXRpbyBjb24gYm90YXMgQUxQLTQwIHRhbGxhIDQwLiBRdWVkYSBkZXNjYXJ0YWRhLiJ9"
@@ -1242,7 +1242,7 @@ window.ADVENT_DAYS = [
                        "acceptedHashes":  [
                                               "071cb3361a8ef2107426acb161ca48c4b328ba90aa8ede3a208fc0c2b43cc411"
                                           ],
-                       "partnerHint":  "Dicta a Patri los 5 cortes [2-5-1-4-3] y la temperatura (+11 °C). Pídele qué añada permanece precintada en la cava y qué código de estante le corresponde."
+                       "partnerHint":  "Activa tu escáner metálico y dicta a Patri los 5 cortes de la llave junto con la temperatura del termómetro. Pídele qué añada permanece precintada y qué estante le corresponde."
                    },
         "patri":  {
                       "roleBadge":  "Patri · Espectro Orgánico y Tablas",
@@ -1260,7 +1260,7 @@ window.ADVENT_DAYS = [
                       "acceptedHashes":  [
                                              "02bb43b4328c0c089761aec7469b194eb5b479bcb74f06e82e21370034a39ed3"
                                          ],
-                      "partnerHint":  "Dile a Miguel la añada intacta (1998) y su estante en cava (B4). Pídele los 5 cortes para buscar su llave en la tabla de cerrajero."
+                      "partnerHint":  "Activa tu escáner orgánico para localizar la añada intacta de las 23:40 h, cruza la temperatura con tu mapa de cava para dar el estante a Miguel y coteja los 5 cortes en tu tabla de cerrajero."
                   },
         "hints":  [
                       "El escáner metálico revela 5 dientes de altura [2-5-1-4-3] y +11 °C; el orgánico muestra intacta la añada 1998.",
@@ -1345,32 +1345,32 @@ window.ADVENT_DAYS = [
                                                     "Ejemplo orientativo: C012334CP"
                                                 ]
                                   },
-                       "partnerHint":  "Verifica con Patri qué circuito hace caída vertical (C03) en la marca +8m (23:30 + 8 min = 23:38) y añade CP."
+                       "partnerHint":  "Pregunta a Patri qué circuito cae verticalmente de forma cuadrada a 0 V y a qué minuto desde las 23:30 h ocurre para añadir el código del sensor."
                    },
         "patri":  {
                       "roleBadge":  "Patri · Osciloscopio 4 Circuitos",
                       "brief":  "Identifica qué circuito cae verticalmente de forma cuadrada a 0 V y calcula su hora sumando minutos a 23:30 h.",
-                      "clueHtml":  "\u003cp\u003eLa escala horizontal empieza en \u003cstrong\u003eT0 = 23:30 h\u003c/strong\u003e con marcas verticales cada \u003cstrong\u003e+4 minutos\u003c/strong\u003e (+0m, +4m, +8m, +12m, +16m). Descarta caídas suaves o SAI continuo para hallar el corte manual.\u003c/p\u003e",
+                      "clueHtml":  "\u003cp\u003eLa escala horizontal empieza en \u003cstrong\u003eT0 = 23:30 h\u003c/strong\u003e con marcas verticales cada \u003cstrong\u003e+4 minutos\u003c/strong\u003e (+0m, +4m, +8m, +12m, +16m). Descarta caídas suaves o línea estable para hallar el corte manual.\u003c/p\u003e",
                       "widget":  {
                                      "type":  "voltage",
                                      "traces":  [
                                                     {
-                                                        "label":  "C-01 · Exterior (fluctuación lenta por tormenta)",
+                                                        "label":  "C-01 · Exterior",
                                                         "color":  "#38BDF8",
                                                         "points":  "10,10 60,14 110,20 170,24 230,28 270,30"
                                                     },
                                                     {
-                                                        "label":  "C-02 · Cocina (carga estable con micro-bache)",
+                                                        "label":  "C-02 · Cocina",
                                                         "color":  "#34D399",
                                                         "points":  "10,12 160,12 170,20 180,12 270,12"
                                                     },
                                                     {
-                                                        "label":  "C-03 · Dirección P1 (corte vertical abrupto)",
+                                                        "label":  "C-03 · Dirección P1",
                                                         "color":  "#FF2D55",
                                                         "points":  "10,10 138,10 140,36 198,36 200,10 270,10"
                                                     },
                                                     {
-                                                        "label":  "C-04 · Calderas (respaldo SAI continuo)",
+                                                        "label":  "C-04 · Calderas",
                                                         "color":  "#FBBF24",
                                                         "points":  "10,14 270,14"
                                                     }
@@ -1439,7 +1439,7 @@ window.ADVENT_DAYS = [
                       "acceptedHashes":  [
                                              "3d734d729009b74c011651eb24b06a74151fb99b8da5110295da8bb77ec3f92d"
                                          ],
-                      "partnerHint":  "1560 s / 60 = 26 min (Cell 4E); comunica Cell 4E a Miguel y calcula D3 sabiendo D1=8, D2=7 y suma=19."
+                      "partnerHint":  "Convierte a minutos las duraciones del anexo CDR para encontrar la llamada >= 25 min, comunica esa Cell-ID a Miguel y calcula D3 combinando tu convenio con sus cifras del protocolo."
                   },
         "hints":  [
                       "1560 segundos = 26 minutos ininterrumpidos (23:28–23:54) en Cell 4E -\u003e en la tabla de Miguel equivale a V304E.",
@@ -1508,7 +1508,19 @@ window.ADVENT_DAYS = [
                                                   "8d56b8693ae6c0cad69cb368b032771fca1662a021f34e55a08c3fe937ce9696",
                                                   "fb4b4fa0e6034e97e308de8fed645cceec79c5815f98c3e2fd67c10b6344c61a",
                                                   "a6c8eb06d8cbb823d1be11d23bda3427467f31b6c692c4200bf99326cef3d911",
-                                                  "c6ce5f796115921afe158021f045e7c6d6820383191907ff6add8b3f502082a1"
+                                                  "c6ce5f796115921afe158021f045e7c6d6820383191907ff6add8b3f502082a1",
+                                                  "7333ac4a9a32cc9a6f50c10f2e31f7ca8505604437427b1c6a372ca6a0e60f8e",
+                                                  "21af01b22a54ccae0e30f902b7b82406e7bcf449a0c092feb06c9ec4f12beba1",
+                                                  "04c9b7435d8709abf948deb8a1fe29a86bcb3b63f66e83be7207efaef27ac81a",
+                                                  "da2a0ab6d6e65f80a1bc3227b4e54881a4db91870bed2469fd2690bace2b07ba",
+                                                  "b751885c3a6be469f284c421ddcb76101b1b16f1ba175c1cd90d593517db3e66",
+                                                  "b8cefe9431832b7c4aa8346d3bf30b6a614c1e620183f572250a0e983cf90708",
+                                                  "581c14430e78d58dceaa99b7a760b1fb3b514245dced05f2f372631dcba1dd0b",
+                                                  "8045f0396479806473b8cf0e913a8c925e07c85dcdecb3640a51827401bef0b1",
+                                                  "a7332bdad077adff33e10e00283f35b9ff800c7a44672b074c4dc097ac471279",
+                                                  "2ce938220cb7f0a4af9610468d9908cb3139a4456ba64b42a03a24069b8bf41d",
+                                                  "541044ef8179cd19a163d58703ac80652617a4626bd949cbb84139991f3711d7",
+                                                  "3af0f2f030eb780f57e02557ad59d9a9802d1e6c93353e258121629941f13e9b"
                                               ],
                              "reasonHashes":  [
                                                   "fb01ef138f44fcfe4e13ea3956c6fbc6b8970abe5908735ce1ff514229f9e0f9"

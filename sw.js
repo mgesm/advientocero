@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.9.3";
+const CACHE_NAME = "adviento-cero-v2.9.4";
 const PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -69,7 +69,7 @@ const PRECACHE_ASSETS = [
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_ASSETS))
+      .then((cache) => Promise.allSettled(PRECACHE_ASSETS.map((url) => cache.add(url).catch(() => null))))
       .then(() => self.skipWaiting())
   );
 });

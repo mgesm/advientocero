@@ -336,11 +336,30 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .nono-table {
   border-collapse: separate;
   border-spacing: 4px;
+}
+
+@media (max-width: 400px) {
+  .nono-table {
+    border-spacing: 3px;
+  }
+  .nono-clue-row {
+    font-size: 0.66rem;
+    padding-right: 4px;
+  }
+  .nono-clue-col {
+    font-size: 0.65rem;
+  }
+  .nono-cell {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .nono-clue-col {

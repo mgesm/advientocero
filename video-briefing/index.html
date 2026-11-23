@@ -814,8 +814,11 @@
     document.getElementById("stage").onclick = () => togglePlay();
     document.getElementById("play-btn").onclick = () => togglePlay();
     document.getElementById("audio-blocked-btn").onclick = () => {
+      clearTimeout(timer);
       document.getElementById("audio-blocked-btn").classList.remove("visible");
-      voiceAudio.play().catch(() => {});
+      voiceAudio.play().catch(() => {
+        timer = setTimeout(advance, (ACTS[idx]?.dur || 12000) / playbackRate);
+      });
     };
     document.getElementById("voice-btn").onclick = (e) => {
       voiceOn = !voiceOn;

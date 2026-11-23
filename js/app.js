@@ -3,11 +3,16 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.9.3";
+  const APP_VERSION = "v2.9.4";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
   const PREFS_KEY = "adviento_prefs_v1";
+
+  let overlayHistoryPushed = false;
+  let modalHistoryPushed = false;
+  let briefingFsHistoryPushed = false;
+  let ignoreNextPopstate = false;
 
   const DAY_SUSPECT_FOCUS = {
     1: { id: "s16", hideBeforeSolve: true }, 2: { id: "s20" }, 3: { id: "s08" }, 4: { id: "s15" },
@@ -114,7 +119,7 @@
 
   let briefingFsScrollY = 0;
 
-  function setBriefingFullscreen(active, targetFrame = null) {
+  function setBriefingFullscreen(active, targetFrame = null, fromHistory = false) {
     const frames = targetFrame ? [targetFrame] : Array.from(document.querySelectorAll(".briefing-frame"));
     if (active) {
       if (!frames.length) return;
@@ -126,7 +131,8 @@
         fr.classList.add("briefing-fullscreen");
         try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: true }, "*"); } catch (_) {}
       });
-      if (window.history?.pushState) {
+      if (!fromHistory && !briefingFsHistoryPushed && window.history?.pushState) {
+        briefingFsHistoryPushed = true;
         window.history.pushState({ briefingFs: true, tab: activeTab, day: selectedDayNum }, "");
       }
     } else {
@@ -138,6 +144,13 @@
       });
       if (wasActive) {
         window.scrollTo(0, briefingFsScrollY);
+      }
+      if (briefingFsHistoryPushed) {
+        briefingFsHistoryPushed = false;
+        if (!fromHistory && window.history?.back) {
+          ignoreNextPopstate = true;
+          window.history.back();
+        }
       }
     }
   }
@@ -282,17 +295,25 @@
 
     overlay.classList.add("open");
     lockBodyScroll();
-    if (!fromHistory && currentRole && window.history?.pushState) {
+    if (!fromHistory && currentRole && !overlayHistoryPushed && window.history?.pushState) {
+      overlayHistoryPushed = true;
       window.history.pushState({ overlay: "identity", tab: activeTab, day: selectedDayNum }, "");
     }
   }
 
-  function closeIdentityOverlay() {
+  function closeIdentityOverlay(fromHistory = false) {
     if (!currentRole) return;
     document.getElementById("identity-overlay")?.classList.remove("open");
     if (!document.getElementById("adv-modal")?.classList.contains("open")) {
       unlockBodyScroll();
       if (window.resumeSnow) window.resumeSnow();
+    }
+    if (overlayHistoryPushed) {
+      overlayHistoryPushed = false;
+      if (!fromHistory && window.history?.back) {
+        ignoreNextPopstate = true;
+        window.history.back();
+      }
     }
   }
 
@@ -770,6 +791,13 @@
     if (!force && sig === lastDaySignature && container.innerHTML.trim() !== "") {
       return;
     }
+    const prevDispatchOpen = Boolean(document.getElementById("day-dispatch-details")?.open);
+    const prevScratchOpen = Boolean(container.querySelector(".widget-scratchpad")?.open);
+    const prevDispatchDraft = document.getElementById("dispatch-input")?.value;
+    const ae = document.activeElement;
+    const prevFocusState = ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
+      ? { id: ae.id, start: ae.selectionStart, end: ae.selectionEnd }
+      : null;
     lastDaySignature = sig;
 
     const dayObj = (window.ADVENT_DAYS || []).find((x) => x.day === selectedDayNum);
@@ -868,18 +896,21 @@
     if (dayObj.day === 24 && isSolved) {
       if (!syncState.finalVerdictSolved) {
         const remaining = (window.SUSPECTS_DATA || []).filter((s) => !(syncState.discardedIds || []).includes(s.id));
-        if (remaining.length > 3) {
+        const solvedCount = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
+        if (solvedCount < 24 || remaining.length > 3) {
           finalTrialHtml = `
             <div class="glass-card answer-card" style="border:var(--vg-border-gold);">
               <span class="badge badge-gold">CAREO FINAL BLOQUEADO POR PRERREQUISITO</span>
               <h3 style="margin:10px 0 6px;font-size:1.1rem;">Faltan puertas anteriores por resolver</h3>
-              <p class="day-story">Aún quedan <strong>${remaining.length} sospechosos activos</strong> en vuestro tablero. Completad los descartes pendientes antes de celebrar el Careo Final entre los 3 finalistas.</p>
+              <p class="day-story">Lleváis <strong>${solvedCount}/24 puertas resueltas</strong> y quedan <strong>${remaining.length} sospechosos activos</strong> en vuestro tablero. Completad todas las puertas pendientes antes de celebrar el Careo Final.</p>
               <button type="button" class="btn btn-sm btn-primary" style="margin-top:12px;" data-back-cal-bottom>Ir al Calendario</button>
             </div>`;
         } else {
           const showdownHtml = window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, remaining) : "";
           const prop = syncState.finalProposal;
           const vDraft = prop || draftsStore.verdict;
+          const isPartnerProposal = Boolean(prop && prop.byRole && prop.byRole !== role);
+          const isMyProposal = Boolean(prop && prop.byRole === role);
           const reasons = [
             { id: "viales-spa", txt: "Alcaloides positivos en frascos del spa y estancia sin testigos en Cabina 2" },
             { id: "huella-coartada", txt: "Huella AFIS W-14 en el disyuntor, llave KEY-DIR-01 y coartada rota (los otros dos confirmados)" },
@@ -892,9 +923,13 @@
               <span class="badge badge-crimson">PASO 2 · CAREO FINAL ENTRE ${remaining.length} SOSPECHOSOS</span>
               <h3 style="margin:10px 0 6px;font-size:1.15rem;">Emitir Acusación Conjunta y Justificada</h3>
               <p class="day-story" style="margin-bottom:12px;">Cruzad el laboratorio de Miguel y las coartadas de Patri para señalar al culpable y justificar la detención:</p>
-              ${prop && prop.byRole !== role ? `
+              ${isPartnerProposal ? `
                 <div class="feedback-banner success" style="margin-bottom:12px;">
-                  <strong>${prop.byRole === "miguel" ? "Miguel" : "Patri"}</strong> propone acusar y pide tu segunda firma abajo.
+                  <strong>${prop.byRole === "miguel" ? "Miguel" : "Patri"}</strong> ha enviado esta propuesta de acusación y pide tu segunda firma para ejecutar el arresto.
+                </div>
+              ` : isMyProposal ? `
+                <div class="feedback-banner info" style="margin-bottom:12px;background:rgba(56,189,248,0.12);border:var(--vg-border-frost);color:#BAE6FD;">
+                  Propuesta enviada a <strong>${partnerName}</strong>. Puede revisarla y firmar desde su móvil, o podéis confirmarla aquí si estáis juntos.
                 </div>
               ` : ""}
               <form id="final-verdict-form">
@@ -930,7 +965,10 @@
                   <label class="input-label" for="fv-method">4. Maniobra ejecutada desde Planta 1 a las 23:38 h</label>
                   <input id="fv-method" type="text" class="adv-input" value="${esc(vDraft.method || "")}" placeholder="Ej. palabra clave de la maniobra" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width:100%;">Ejecutar Orden de Detención</button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  ${!isPartnerProposal ? `<button type="button" id="fv-propose-btn" class="btn btn-frost" style="flex:1;min-width:170px;">Proponer a ${partnerName}</button>` : ""}
+                  <button type="submit" class="btn btn-primary" style="flex:1;min-width:190px;">${isPartnerProposal ? "Firmar y Ejecutar Orden" : "Ejecutar Orden de Detención"}</button>
+                </div>
               </form>
               <div id="final-feedback"></div>
             </div>`;
@@ -1051,17 +1089,17 @@
           </div>
           <div id="widget-mount">${window.PuzzleEngine.renderWidgetHtml(dayObj.day, role, roleData.widget)}</div>
 
-          <details class="widget-scratchpad" ${(draftsStore.scratch?.[String(dayObj.day)]) ? "open" : ""}>
+          <details class="widget-scratchpad" ${(prevScratchOpen || draftsStore.scratch?.[String(dayObj.day)]) ? "open" : ""}>
             <summary>Bloc de cálculo local · Día ${String(dayObj.day).padStart(2, "0")} (solo este móvil)</summary>
             <textarea id="widget-scratch-area" class="adv-textarea" style="min-height:78px;margin-top:8px;font-size:16px;" placeholder="Anota aquí pistas dictadas, cuentas o descartes rápidos para no necesitar papel...">${esc(draftsStore.scratch?.[String(dayObj.day)] || "")}</textarea>
           </details>
 
-          <details style="margin-top:12px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:10px;">
+          <details id="day-dispatch-details" ${prevDispatchOpen ? "open" : ""} style="margin-top:12px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:10px;">
             <summary class="mono" style="font-size:0.74rem;color:var(--adv-frost);cursor:pointer;">Parte de Enlace Asimétrico con ${partnerName}</summary>
             <div style="margin-top:8px;">
               ${partnerDispatch?.text ? `<div class="clue-box" style="margin-bottom:8px;font-size:0.8rem;"><strong>Dato enviado por ${partnerName}:</strong> ${esc(partnerDispatch.text)}</div>` : `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-bottom:8px;">${partnerName} aún no ha remitido ningún dato en esta puerta.</div>`}
               <form id="dispatch-form" style="display:flex;gap:8px;">
-                <input type="text" id="dispatch-input" class="adv-input" value="${esc(myDispatch?.text || "")}" placeholder="Enviar dato breve a ${partnerName}..." style="min-height:44px;">
+                <input type="text" id="dispatch-input" class="adv-input" value="${esc(prevFocusState?.id === "dispatch-input" && prevDispatchDraft !== undefined ? prevDispatchDraft : (myDispatch?.text || ""))}" placeholder="Enviar dato breve a ${partnerName}..." style="min-height:44px;">
                 <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Enviar</button>
               </form>
             </div>
@@ -1319,6 +1357,29 @@
       );
     });
 
+    document.getElementById("fv-propose-btn")?.addEventListener("click", () => {
+      const sVal = draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
+      const rVal = draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
+      const pVal = document.getElementById("fv-poison")?.value?.trim() || "";
+      const mVal = document.getElementById("fv-method")?.value?.trim() || "";
+      const fb = document.getElementById("final-feedback");
+      if (!sVal || !rVal || !pVal || !mVal) {
+        window.AudioFX.error();
+        if (fb) fb.innerHTML = `<div class="feedback-banner error">Completa los 4 campos de la acusación antes de enviársela a ${partnerName}.</div>`;
+        return;
+      }
+      window.AudioFX.click();
+      window.SyncEngine.setFinalProposal({
+        byRole: role,
+        suspectId: sVal,
+        reason: rVal,
+        poison: pVal,
+        method: mVal,
+        proposedAt: Date.now()
+      });
+      showToast(`Propuesta enviada a ${partnerName} para su segunda firma.`);
+    });
+
     document.getElementById("print-closing-btn")?.addEventListener("click", () => {
       window.print();
     });
@@ -1327,6 +1388,18 @@
       const box = document.getElementById("final-archive-box");
       if (box) box.style.display = box.style.display === "none" ? "block" : "none";
     });
+
+    if (prevFocusState) {
+      const el = document.getElementById(prevFocusState.id);
+      if (el) {
+        try {
+          el.focus({ preventScroll: true });
+          if (typeof prevFocusState.start === "number" && typeof el.setSelectionRange === "function") {
+            el.setSelectionRange(prevFocusState.start, prevFocusState.end ?? prevFocusState.start);
+          }
+        } catch (_) {}
+      }
+    }
   }
 
   function getRoomFloor(roomStr) {
@@ -1409,7 +1482,7 @@
         <h2 class="section-title">Sospechosos descubiertos (${discovered.length}/25)</h2>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
           <span class="badge badge-crimson">${discardedInView} descartados · ${activeInView} activos</span>
-          <a href="#notes-card-anchor" class="btn btn-sm btn-ghost" style="min-height:36px;">Ir a Libreta</a>
+          <button type="button" id="jump-to-notes-btn" class="btn btn-sm btn-ghost" style="min-height:36px;">Ir a Libreta</button>
         </div>
       </div>
 
@@ -1485,6 +1558,10 @@
 
     applySuspectFilterOnly();
     updateSyncBadgesOnly();
+
+    document.getElementById("jump-to-notes-btn")?.addEventListener("click", () => {
+      document.getElementById("notes-card-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
 
     document.getElementById("suspect-search-input")?.addEventListener("input", (e) => {
       suspectSearch = e.target.value;
@@ -1599,7 +1676,7 @@
         <div class="glass-card" style="padding:18px;">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
             <h3 style="font-size:1rem;">Vídeo Briefing del Caso</h3>
-            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (2,1 MB)</a>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
           <div id="exp-briefing-mount">
             ${preservedIframeEl ? "" : `<button type="button" class="btn btn-frost" id="exp-load-briefing-btn" style="width:100%;">Reproducir Vídeo Briefing Oficial</button>`}
@@ -1614,7 +1691,7 @@
             `).join("")}
           </div>
           <ul class="clue-list" style="margin-bottom:10px;">
-            ${lore.hotelZones.filter((z) => z.floor.includes(expedienteFloor.split(" ")[0])).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
+            ${lore.hotelZones.filter((z) => z.floor === expedienteFloor).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
           </ul>
           ${floorSuspects.length ? `
             <div style="display:flex;gap:8px;flex-wrap:wrap;">
@@ -1750,8 +1827,9 @@
     `;
     modal.classList.add("open");
     lockBodyScroll();
-    document.getElementById("adv-modal-x-btn")?.addEventListener("click", closeModal);
-    if (!opts.fromHistory && window.history?.pushState) {
+    document.getElementById("adv-modal-x-btn")?.addEventListener("click", () => closeModal());
+    if (!opts.fromHistory && !modalHistoryPushed && window.history?.pushState) {
+      modalHistoryPushed = true;
       window.history.pushState({ modal: true, tab: activeTab, day: selectedDayNum }, "");
     }
     if (!opts.preserveFocus) {
@@ -1760,7 +1838,7 @@
     }
   }
 
-  function closeModal() {
+  function closeModal(fromHistory = false) {
     const modal = document.getElementById("adv-modal");
     if (!modal) return;
     modal.classList.remove("open");
@@ -1773,6 +1851,13 @@
       lastFocusedEl.focus();
     }
     lastFocusedEl = null;
+    if (modalHistoryPushed) {
+      modalHistoryPushed = false;
+      if (!fromHistory && window.history?.back) {
+        ignoreNextPopstate = true;
+        window.history.back();
+      }
+    }
   }
 
   function openImageLightbox(src, caption, triggerEl) {
@@ -2071,16 +2156,20 @@
       window.history.replaceState({ tab: "calendar", day: selectedDayNum }, "");
     }
     window.addEventListener("popstate", (e) => {
+      if (ignoreNextPopstate) {
+        ignoreNextPopstate = false;
+        return;
+      }
       if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
-        setBriefingFullscreen(false);
+        setBriefingFullscreen(false, null, true);
         return;
       }
       if (document.getElementById("adv-modal")?.classList.contains("open")) {
-        closeModal();
+        closeModal(true);
         return;
       }
       if (document.getElementById("identity-overlay")?.classList.contains("open") && currentRole) {
-        closeIdentityOverlay();
+        closeIdentityOverlay(true);
         return;
       }
       const targetTab = e.state?.tab || "calendar";
@@ -2106,7 +2195,7 @@
       renderAdminBar();
       renderActiveTab();
       updateDockIndicator();
-      if (openModalSuspectId && document.getElementById("adv-modal")?.classList.contains("open")) {
+      if (openModalSuspectId && document.getElementById("adv-modal")?.classList.contains("open") && document.activeElement?.id !== "suspect-note-inp") {
         openSuspectModal(openModalSuspectId, null, true);
       }
     });

@@ -155,6 +155,43 @@ window.SyncEngine = (() => {
 
     merged.finalVerdictSolved = Boolean(l.finalVerdictSolved || r.finalVerdictSolved);
     merged.finalEpilogue = r.finalEpilogue || l.finalEpilogue || null;
+    if (merged.finalVerdictSolved) {
+      merged.finalProposal = null;
+    } else if (l.finalProposal && r.finalProposal) {
+      merged.finalProposal = Number(l.finalProposal.proposedAt || 0) > Number(r.finalProposal.proposedAt || 0)
+        ? l.finalProposal
+        : r.finalProposal;
+    } else {
+      merged.finalProposal = r.finalProposal || l.finalProposal || null;
+    }
+
+    const allDispDays = new Set([...Object.keys(l.fieldDispatch), ...Object.keys(r.fieldDispatch)]);
+    allDispDays.forEach((k) => {
+      const ld = l.fieldDispatch[k] || {};
+      const rd = r.fieldDispatch[k] || {};
+      const outD = {};
+      ["miguel", "patri"].forEach((rk) => {
+        const le = ld[rk];
+        const re = rd[rk];
+        if (le && re) outD[rk] = Number(le.at || 0) > Number(re.at || 0) ? le : re;
+        else if (le || re) outD[rk] = re || le;
+      });
+      if (Object.keys(outD).length) merged.fieldDispatch[k] = outD;
+    });
+
+    const allNoteSids = new Set([...Object.keys(l.suspectNotes), ...Object.keys(r.suspectNotes)]);
+    allNoteSids.forEach((sid) => {
+      const ls = l.suspectNotes[sid] || {};
+      const rs = r.suspectNotes[sid] || {};
+      const outS = {};
+      ["miguel", "patri"].forEach((rk) => {
+        const le = ls[rk];
+        const re = rs[rk];
+        if (le && re) outS[rk] = Number(le.at || 0) > Number(re.at || 0) ? le : re;
+        else if (le || re) outS[rk] = re || le;
+      });
+      if (Object.keys(outS).length) merged.suspectNotes[sid] = outS;
+    });
 
     if (!r.sharedNotes && l.sharedNotes) {
       merged.sharedNotes = l.sharedNotes;
@@ -242,7 +279,22 @@ window.SyncEngine = (() => {
     if (merged.finalVerdictSolved) {
       patch.finalVerdictSolved = true;
       patch.finalEpilogue = merged.finalEpilogue;
+      patch.finalProposal = null;
+    } else if (merged.finalProposal) {
+      patch.finalProposal = merged.finalProposal;
     }
+    Object.keys(merged.fieldDispatch || {}).forEach((k) => {
+      const fd = merged.fieldDispatch[k] || {};
+      ["miguel", "patri"].forEach((rk) => {
+        if (fd[rk]) patch[`fieldDispatch/${k}/${rk}`] = fd[rk];
+      });
+    });
+    Object.keys(merged.suspectNotes || {}).forEach((sid) => {
+      const sn = merged.suspectNotes[sid] || {};
+      ["miguel", "patri"].forEach((rk) => {
+        if (sn[rk]) patch[`suspectNotes/${sid}/${rk}`] = sn[rk];
+      });
+    });
     if (merged.sharedNotes) {
       patch.sharedNotes = merged.sharedNotes;
       if (merged.notesMeta) patch.notesMeta = merged.notesMeta;
