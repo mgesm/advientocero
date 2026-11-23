@@ -3,7 +3,7 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.10.0";
+  const APP_VERSION = "v2.11.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -12,7 +12,6 @@
 
   let overlayHistoryPushed = false;
   let modalHistoryPushed = false;
-  let briefingFsHistoryPushed = false;
   let ignorePopstateCount = 0;
 
   const DAY_SUSPECT_FOCUS = {
@@ -161,43 +160,25 @@
     window.scrollTo(0, lockedScrollY);
   }
 
-  let briefingFsScrollY = 0;
+  function renderBriefingVideoHtml(videoId) {
+    const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
+    return `
+      <video id="${esc(videoId)}" class="briefing-native-video" controls preload="metadata" poster="imagenes/cover-hotel.jpg" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
+        <source src="video-briefing/briefing.mp4?v=2.11.0" type="video/mp4">
+        <track kind="subtitles" src="video-briefing/briefing.vtt?v=2.11.0" srclang="es" label="Español" default>
+      </video>`;
+  }
 
-  function setBriefingFullscreen(active, targetFrame = null, fromHistory = false) {
-    const frames = targetFrame ? [targetFrame] : Array.from(document.querySelectorAll(".briefing-frame"));
-    const origin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
-    if (active) {
-      if (!frames.length) return;
-      if (!document.body.classList.contains("briefing-fs-active")) {
-        briefingFsScrollY = window.scrollY || window.pageYOffset || 0;
-        document.body.classList.add("briefing-fs-active");
-      }
-      frames.forEach((fr) => {
-        fr.classList.add("briefing-fullscreen");
-        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: true }, origin); } catch (_) {}
-      });
-      if (!fromHistory && !briefingFsHistoryPushed && window.history?.pushState) {
-        briefingFsHistoryPushed = true;
-        window.history.pushState({ briefingFs: true, tab: activeTab, day: selectedDayNum }, "");
-      }
-    } else {
-      const wasActive = document.body.classList.contains("briefing-fs-active") || Boolean(document.querySelector(".briefing-frame.briefing-fullscreen"));
-      document.body.classList.remove("briefing-fs-active");
-      document.querySelectorAll(".briefing-frame").forEach((fr) => {
-        fr.classList.remove("briefing-fullscreen");
-        try { fr.contentWindow?.postMessage({ type: "fullscreen-state", active: false }, origin); } catch (_) {}
-      });
-      if (wasActive) {
-        window.scrollTo(0, briefingFsScrollY);
-      }
-      if (briefingFsHistoryPushed) {
-        briefingFsHistoryPushed = false;
-        if (!fromHistory && window.history?.back) {
-          ignorePopstateCount += 1;
-          window.history.back();
-        }
-      }
-    }
+  function syncBriefingVideoMute(muted) {
+    document.querySelectorAll(".briefing-native-video").forEach((vid) => {
+      try { vid.muted = Boolean(muted); } catch (_) {}
+    });
+  }
+
+  function pauseBriefingVideos() {
+    document.querySelectorAll(".briefing-native-video").forEach((vid) => {
+      try { if (!vid.paused) vid.pause(); } catch (_) {}
+    });
   }
 
   function initSnowCanvas() {
@@ -312,13 +293,6 @@
     ensureTicking();
   }
 
-  function postToBriefings(payload) {
-    const origin = window.location.origin && window.location.origin !== "null" ? window.location.origin : "*";
-    document.querySelectorAll('iframe[src*="video-briefing"]').forEach((fr) => {
-      try { fr.contentWindow?.postMessage(payload, origin); } catch (_) {}
-    });
-  }
-
   function selectDefaultDay() {
     const maxOpen = window.DateGate.getMaxOpenDay();
     if (maxOpen <= 0) {
@@ -413,12 +387,11 @@
   function switchTab(tab, opts = {}) {
     if (activeTab === tab && !opts.force) return;
     flushPendingNotes();
-    setBriefingFullscreen(false);
     clearKeyboardOpen();
     window.AudioFX.stopMorse?.();
     tabScrollY[activeTab] = window.scrollY;
     if (activeTab === "day" || activeTab === "expediente") {
-      postToBriefings({ type: "pause" });
+      pauseBriefingVideos();
     }
     activeTab = tab;
     if (!opts.silent) window.AudioFX.click();
@@ -803,7 +776,7 @@
     document.getElementById("hero-mute-btn")?.addEventListener("click", (e) => {
       const muted = window.AudioFX.toggleMute();
       e.currentTarget.textContent = muted ? "Audio OFF" : "Audio ON";
-      postToBriefings({ type: "mute", muted });
+      syncBriefingVideoMute(muted);
       const mNote = document.getElementById(`morse-mute-note-${selectedDayNum}`);
       if (mNote) mNote.style.display = muted ? "block" : "none";
     });
@@ -877,9 +850,9 @@
     const prevScratchOpen = Boolean(container.querySelector(".widget-scratchpad")?.open);
     const prevDispatchDraft = document.getElementById("dispatch-input")?.value;
     const prevDayBriefingMount = document.getElementById("day-briefing-mount");
-    const preservedDayIframe = selectedDayNum === 1 && prevDayBriefingMount ? prevDayBriefingMount.querySelector("iframe") : null;
-    if (preservedDayIframe && preservedDayIframe.parentNode) {
-      preservedDayIframe.parentNode.removeChild(preservedDayIframe);
+    const preservedDayVideo = selectedDayNum === 1 && prevDayBriefingMount ? prevDayBriefingMount.querySelector("video") : null;
+    if (preservedDayVideo && preservedDayVideo.parentNode) {
+      preservedDayVideo.parentNode.removeChild(preservedDayVideo);
     }
     const ae = document.activeElement;
     const prevFocusState = ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
@@ -1169,8 +1142,8 @@
               <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
               <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Informe grabado del caso</span>
             </div>
-            <div id="day-briefing-mount">
-              ${preservedDayIframe ? "" : `<iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>`}
+            <div id="day-briefing-mount" class="briefing-native-mount">
+              ${preservedDayVideo ? "" : renderBriefingVideoHtml("briefing-video-day")}
             </div>
           </div>
         ` : ""}
@@ -1221,8 +1194,8 @@
       </div>
     `;
 
-    if (preservedDayIframe) {
-      document.getElementById("day-briefing-mount")?.appendChild(preservedDayIframe);
+    if (preservedDayVideo) {
+      document.getElementById("day-briefing-mount")?.appendChild(preservedDayVideo);
     }
 
     const widgetMount = document.getElementById("widget-mount");
@@ -1808,10 +1781,12 @@
     const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDaysNums.length ? solvedDaysNums : [0]), 0);
     const floorSuspects = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit && getRoomFloor(s.room) === expedienteFloor);
 
-    // Preservar iframe si ya estaba montado
+    // Preservar video nativo si ya estaba montado
     const existingMount = document.getElementById("exp-briefing-mount");
-    const hadIframe = existingMount && existingMount.querySelector("iframe");
-    const preservedIframeEl = hadIframe ? existingMount.querySelector("iframe") : null;
+    const preservedExpVideo = existingMount ? existingMount.querySelector("video") : null;
+    if (preservedExpVideo && preservedExpVideo.parentNode) {
+      preservedExpVideo.parentNode.removeChild(preservedExpVideo);
+    }
 
     container.innerHTML = `
       <div class="day-workspace">
@@ -1869,8 +1844,8 @@
             <h3 style="font-size:1rem;">Vídeo Briefing del Caso</h3>
             <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
-          <div id="exp-briefing-mount">
-            ${preservedIframeEl ? "" : `<button type="button" class="btn btn-frost" id="exp-load-briefing-btn" style="width:100%;">Reproducir Vídeo Briefing Oficial</button>`}
+          <div id="exp-briefing-mount" class="briefing-native-mount">
+            ${preservedExpVideo ? "" : renderBriefingVideoHtml("briefing-video-exp")}
           </div>
         </div>
 
@@ -1912,16 +1887,12 @@
       </div>
     `;
 
-    if (preservedIframeEl) {
-      document.getElementById("exp-briefing-mount")?.appendChild(preservedIframeEl);
+    if (preservedExpVideo) {
+      document.getElementById("exp-briefing-mount")?.appendChild(preservedExpVideo);
     }
 
     document.getElementById("exp-manual-btn")?.addEventListener("click", openRulesModal);
     document.getElementById("exp-dedication-btn")?.addEventListener("click", (e) => openDedicationModal(e.currentTarget));
-    document.getElementById("exp-load-briefing-btn")?.addEventListener("click", () => {
-      const mount = document.getElementById("exp-briefing-mount");
-      if (mount) mount.innerHTML = `<iframe src="video-briefing/index.html" title="Vídeo Briefing del Caso" class="briefing-frame" allow="fullscreen" allowfullscreen style="width:100%;height:360px;border:none;border-radius:12px;background:#040907;display:block;"></iframe>`;
-    });
 
     container.querySelectorAll("[data-lightbox-img]").forEach((btn) => {
       btn.addEventListener("click", () => openImageLightbox(btn.dataset.lightboxImg, btn.dataset.lightboxCap, btn));
@@ -2320,10 +2291,6 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
-          setBriefingFullscreen(false);
-          return;
-        }
         if (document.getElementById("adv-modal")?.classList.contains("open")) {
           closeModal();
         } else if (document.getElementById("identity-overlay")?.classList.contains("open") && currentRole) {
@@ -2399,6 +2366,7 @@
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         flushPendingNotes();
+        pauseBriefingVideos();
       } else {
         refreshDateGateIfNeeded();
       }
@@ -2410,26 +2378,9 @@
 
     window.addEventListener("pagehide", () => {
       flushPendingNotes();
+      pauseBriefingVideos();
       clearKeyboardOpen();
       window.AudioFX.stopMorse?.();
-    });
-
-    window.addEventListener("message", (e) => {
-      if (e.origin && e.origin !== window.location.origin && window.location.origin !== "null") return;
-      if (e.data && e.data.type === "briefing-height" && Number(e.data.height) > 200) {
-        document.querySelectorAll(".briefing-frame").forEach((fr) => {
-          if (!fr.classList.contains("briefing-fullscreen")) {
-            fr.style.height = `${Math.ceil(Number(e.data.height))}px`;
-          }
-        });
-      } else if (e.data && e.data.type === "toggle-fullscreen") {
-        document.querySelectorAll(".briefing-frame").forEach((fr) => {
-          if (fr.contentWindow === e.source || document.querySelectorAll(".briefing-frame").length === 1) {
-            const active = !fr.classList.contains("briefing-fullscreen");
-            setBriefingFullscreen(active, fr);
-          }
-        });
-      }
     });
 
     if (window.history?.replaceState) {
@@ -2438,10 +2389,6 @@
     window.addEventListener("popstate", (e) => {
       if (ignorePopstateCount > 0) {
         ignorePopstateCount -= 1;
-        return;
-      }
-      if (document.body.classList.contains("briefing-fs-active") || document.querySelector(".briefing-frame.briefing-fullscreen")) {
-        setBriefingFullscreen(false, null, true);
         return;
       }
       if (document.getElementById("adv-modal")?.classList.contains("open")) {
