@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.12.3";
-  const CACHE_TAG = "adviento-cero-v2.12.3";
+  const APP_VERSION = "v2.12.4";
+  const CACHE_TAG = "adviento-cero-v2.12.4";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -172,8 +172,8 @@
   function renderBriefingVideoHtml(videoId) {
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
-      <video id="${esc(videoId)}" class="briefing-native-video" controls preload="metadata" poster="imagenes/cover-hotel.jpg" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
-        <source src="video-briefing/briefing.mp4?v=2.12.3" type="video/mp4">
+      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.12.4" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
+        <source src="video-briefing/briefing.mp4?v=2.12.4" type="video/mp4">
       </video>`;
   }
 
@@ -189,7 +189,7 @@
             title: "Briefing Oficial · El Misterio del Ventisquero",
             artist: "UOPJ · Adviento Cero",
             album: "D.P. 24-12/2026",
-            artwork: [{ src: "imagenes/cover-hotel.jpg", sizes: "1024x572", type: "image/jpeg" }]
+            artwork: [{ src: "video-briefing/poster.jpg", sizes: "1280x720", type: "image/jpeg" }]
           });
           navigator.mediaSession.setActionHandler("play", () => vid.play().catch(() => {}));
           navigator.mediaSession.setActionHandler("pause", () => vid.pause());
@@ -702,6 +702,11 @@
       updateSyncBadgesOnly();
       return;
     }
+    const prevHeroBriefingMount = document.getElementById("hero-briefing-mount");
+    const preservedHeroVideo = prevHeroBriefingMount ? prevHeroBriefingMount.querySelector("video") : null;
+    if (preservedHeroVideo && preservedHeroVideo.parentNode) {
+      preservedHeroVideo.parentNode.removeChild(preservedHeroVideo);
+    }
     lastCalendarSignature = calSig;
 
     const solvedCount = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
@@ -756,11 +761,10 @@
         <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/>
         </svg>
-        <div class="hero-thumb-wrap">
-          <img src="imagenes/cover-hotel.jpg" alt="Hotel El Mirador del Ventisquero" class="hero-thumb" width="1024" height="572" decoding="async" fetchpriority="high">
-          <span class="hero-thumb-tag">${esc(window.CASE_LORE.caseCode)}</span>
+        <div id="hero-briefing-mount" class="briefing-native-mount hero-briefing-mount">
+          ${preservedHeroVideo ? "" : renderBriefingVideoHtml("briefing-video-hero")}
         </div>
-        <div>
+        <div class="hero-meta-col">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
             <span class="badge badge-gold">${esc(gift.editionLabel)}</span>
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -768,9 +772,8 @@
               <button type="button" id="hero-mute-btn" class="btn btn-sm btn-ghost">${window.AudioFX.isMuted() ? "Audio OFF" : "Audio ON"}</button>
             </div>
           </div>
-          <h1 class="hero-title">El Misterio del Ventisquero</h1>
-          <p class="hero-summary">
-            Nieve, 25 sospechosos incomunicados y 24 noches de investigación cooperativa.
+          <p class="hero-status-line">
+            <span class="mono" style="color:var(--adv-gold-soft);margin-right:6px;">${esc(window.CASE_LORE.caseCode)}</span>
             ${maxOpen === 0 ? `<strong style="color:var(--adv-gold-soft);">${esc(window.DateGate.getCountdownText())}.</strong>` : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
           </p>
           <div class="stats-strip">
@@ -795,7 +798,7 @@
             </div>
           ` : `
             <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-sm btn-primary" id="hero-open-briefing-btn">Ver Briefing de Apertura</button>
+              <button type="button" class="btn btn-sm btn-primary" id="hero-open-briefing-btn">Reproducir Briefing</button>
               <button type="button" class="btn btn-sm btn-frost" id="hero-open-rules-btn">Manual de Campo</button>
             </div>
           `}
@@ -832,6 +835,11 @@
       <div class="advent-grid">${doorsHtml}</div>
     `;
 
+    if (preservedHeroVideo) {
+      document.getElementById("hero-briefing-mount")?.appendChild(preservedHeroVideo);
+    }
+    wireBriefingVideoControls(document.getElementById("hero-briefing-mount"));
+
     document.getElementById("hero-role-btn")?.addEventListener("click", () => openIdentityOverlay());
 
     document.getElementById("hero-mute-btn")?.addEventListener("click", (e) => {
@@ -851,10 +859,11 @@
     });
 
     document.getElementById("hero-open-briefing-btn")?.addEventListener("click", () => {
-      switchTab("expediente", { scrollToTop: false });
-      setTimeout(() => {
-        document.getElementById("exp-briefing-mount")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 80);
+      const vid = document.getElementById("briefing-video-hero");
+      if (vid) {
+        vid.scrollIntoView({ behavior: "smooth", block: "center" });
+        vid.play().catch(() => {});
+      }
     });
 
     document.getElementById("hero-open-rules-btn")?.addEventListener("click", () => openRulesModal());
@@ -927,11 +936,6 @@
     const prevDispatchOpen = Boolean(document.getElementById("day-dispatch-details")?.open);
     const prevScratchOpen = Boolean(container.querySelector(".widget-scratchpad")?.open);
     const prevDispatchDraft = document.getElementById("dispatch-input")?.value;
-    const prevDayBriefingMount = document.getElementById("day-briefing-mount");
-    const preservedDayVideo = selectedDayNum === 1 && prevDayBriefingMount ? prevDayBriefingMount.querySelector("video") : null;
-    if (preservedDayVideo && preservedDayVideo.parentNode) {
-      preservedDayVideo.parentNode.removeChild(preservedDayVideo);
-    }
     const ae = document.activeElement;
     const prevFocusState = ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
       ? { id: ae.id, start: ae.selectionStart, end: ae.selectionEnd }
@@ -1218,18 +1222,6 @@
           ` : ""}
         </div>
 
-        ${dayObj.day === 1 ? `
-          <details class="glass-card briefing-collapse" ${!isSolved ? "open" : ""} style="padding:14px;">
-            <summary>
-              <span class="badge badge-crimson">VÍDEO BRIEFING OFICIAL · DÍA 01</span>
-              <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">${isSolved ? "Mostrar / Ocultar vídeo" : "Ocultar vídeo"}</span>
-            </summary>
-            <div id="day-briefing-mount" class="briefing-native-mount" style="margin-top:10px;">
-              ${preservedDayVideo ? "" : renderBriefingVideoHtml("briefing-video-day")}
-            </div>
-          </details>
-        ` : ""}
-
         <div class="cross-peek-bar">
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
             <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="suspects">Consulta: Sospechosos</button>
@@ -1297,11 +1289,6 @@
         </nav>
       </div>
     `;
-
-    if (preservedDayVideo) {
-      document.getElementById("day-briefing-mount")?.appendChild(preservedDayVideo);
-    }
-    wireBriefingVideoControls(document.getElementById("day-briefing-mount"));
 
     document.getElementById("day-mute-btn")?.addEventListener("click", (e) => {
       const muted = window.AudioFX.toggleMute();
@@ -2385,6 +2372,7 @@
         const cache = await caches.open(CACHE_TAG);
         const criticalExtras = [
           "./video-briefing/briefing.mp4",
+          "./video-briefing/poster.jpg",
           "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf"
         ];
         for (const asset of criticalExtras) {
