@@ -29,7 +29,7 @@ window.DoorRituals = (() => {
     { day: 21, label: "Reloj rebobinando", accent: "#FCA5A5", peakMs: 840 },
     { day: 22, label: "Pico de voltaje", accent: "#FBBF24", peakMs: 680 },
     { day: 23, label: "Sello forense", accent: "#EF4444", peakMs: 680 },
-    { day: 24, label: "Gran Sello Nochebuena", accent: "#FDE68A", peakMs: 820 }
+    { day: 24, label: "Bóveda de Nochebuena", accent: "#FDE68A", peakMs: 1620 }
   ];
 
   let activeCleanup = null;
@@ -701,43 +701,117 @@ window.DoorRituals = (() => {
           </div>`;
 
       case 24:
-      default:
+      default: {
+        const constellationNodes = Array.from({ length: 24 }, (_, idx) => {
+          const deg = idx * 15 - 90;
+          const rad = (deg * Math.PI) / 180;
+          const x = (143 + Math.cos(rad) * 124).toFixed(1);
+          const y = (137 + Math.sin(rad) * 124).toFixed(1);
+          const isQuarter = idx % 6 === 0;
+          const col = idx === 23 ? "#FFFBEB" : idx < 12 ? "#78D7F2" : "#F2A84B";
+          const delay = 70 + idx * 26;
+          return `<circle class="r24-node" style="--nd:${delay}ms;" cx="${x}" cy="${y}" r="${isQuarter ? 3.5 : 2.2}" fill="${col}"/>`;
+        }).join("");
+
         return `
-          <div class="ritual-arena">
-            <div class="ritual-halo" style="--rh-core:rgba(254,243,199,0.72);--rh-mid:rgba(251,191,36,0.36);"></div>
-            <svg class="ritual-svg" viewBox="0 0 240 220" aria-hidden="true">
-              <defs>
-                <clipPath id="r24ClipTL"><polygon points="0,0 240,0 166,64 134,94 120,110 102,126 74,154 0,220"/></clipPath>
-                <clipPath id="r24ClipBR"><polygon points="240,0 240,220 0,220 74,154 102,126 120,110 134,94 166,64"/></clipPath>
-                <radialGradient id="r24Wax" cx="38%" cy="32%" r="70%">
-                  <stop offset="0%" stop-color="#FF5A5F"/>
-                  <stop offset="45%" stop-color="#DC2626"/>
-                  <stop offset="100%" stop-color="#580C0C"/>
-                </radialGradient>
-              </defs>
-              <g class="r24-star-rays">
-                <polygon points="120,16 130,86 200,110 130,134 120,204 110,134 40,110 110,86" fill="rgba(253,230,138,0.28)" stroke="#FDE68A" stroke-width="1.3"/>
-                <polygon points="120,42 126,94 176,110 126,126 120,178 114,126 64,110 114,94" fill="rgba(254,243,199,0.44)"/>
-              </g>
-              <g class="r24-ring-c">
-                <path d="M114 32 A78 78 0 0 0 114 188" fill="none" stroke="#78D7F2" stroke-width="2.6" stroke-linecap="round"/>
-              </g>
-              <g class="r24-ring-a">
-                <path d="M126 32 A78 78 0 0 1 126 188" fill="none" stroke="#F2A84B" stroke-width="2.6" stroke-linecap="round"/>
-              </g>
-              <g class="r24-seal-tl" clip-path="url(#r24ClipTL)">
-                <circle cx="120" cy="110" r="52" fill="url(#r24Wax)" stroke="#FECACA" stroke-width="2"/>
-                <circle cx="120" cy="110" r="42" fill="none" stroke="#FDE68A" stroke-width="1.3" stroke-dasharray="4 3"/>
-                <text x="120" y="121" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, serif" font-size="34" font-weight="700">24</text>
-              </g>
-              <g class="r24-seal-br" clip-path="url(#r24ClipBR)">
-                <circle cx="120" cy="110" r="52" fill="url(#r24Wax)" stroke="#FECACA" stroke-width="2"/>
-                <circle cx="120" cy="110" r="42" fill="none" stroke="#FDE68A" stroke-width="1.3" stroke-dasharray="4 3"/>
-                <text x="120" y="121" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, serif" font-size="34" font-weight="700">24</text>
-              </g>
+          <div class="r24-stage-arena">
+            <div class="r24-aurora"></div>
+            <div class="r24-flare"></div>
+            <svg class="r24-bg-svg" viewBox="0 0 286 274" aria-hidden="true">
+              <circle class="r24-astro-ring" cx="143" cy="137" r="124" fill="none" stroke="rgba(253,230,138,0.20)" stroke-width="1" stroke-dasharray="3 5"/>
+              <path class="r24-arc-c" d="M139 249 A112 112 0 0 1 139 25" fill="none" stroke="#78D7F2" stroke-width="2.4" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(120,215,242,0.85));"/>
+              <path class="r24-arc-a" d="M147 249 A112 112 0 0 0 147 25" fill="none" stroke="#F2A84B" stroke-width="2.4" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(242,168,75,0.85));"/>
+              ${constellationNodes}
             </svg>
-            ${makeShards(28, ["#FDE68A", "#78D7F2", "#F2A84B", "#EF4444", "#FFFFFF"], 560, 108, 96)}
+
+            <div class="r24-vault-frame">
+              <div class="r24-sanctuary">
+                <svg class="r24-sanctuary-svg" viewBox="0 0 170 200" aria-hidden="true">
+                  <defs>
+                    <radialGradient id="r24HallGlow" cx="50%" cy="44%" r="62%">
+                      <stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.96"/>
+                      <stop offset="34%" stop-color="#FDE68A" stop-opacity="0.58"/>
+                      <stop offset="68%" stop-color="#B45309" stop-opacity="0.28"/>
+                      <stop offset="100%" stop-color="#050C14" stop-opacity="0.96"/>
+                    </radialGradient>
+                    <linearGradient id="r24TreeGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+                      <stop offset="0%" stop-color="#FEF3C7"/>
+                      <stop offset="55%" stop-color="#F59E0B"/>
+                      <stop offset="100%" stop-color="#78350F"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="170" height="200" fill="url(#r24HallGlow)"/>
+                  <g class="r24-inner-glow">
+                    <path d="M85 46 L18 192 H152 Z" fill="rgba(254,243,199,0.18)"/>
+                    <polygon points="85,62 56,104 68,104 46,138 62,138 38,174 132,174 108,138 124,138 102,104 114,104" fill="url(#r24TreeGrad)" opacity="0.34" stroke="#FDE68A" stroke-width="1.2"/>
+                    <g class="r24-star-crown">
+                      <polygon points="85,20 89,40 109,46 89,52 85,72 81,52 61,46 81,40" fill="#FFFBEB" style="filter:drop-shadow(0 0 10px #FBBF24);"/>
+                      <polygon points="85,31 87.5,43.5 100,46 87.5,48.5 85,61 82.5,48.5 70,46 82.5,43.5" fill="#FDE68A"/>
+                    </g>
+                    <g class="r24-pillar" style="--pd:1220ms;">
+                      <rect x="34" y="138" width="16" height="44" rx="8" fill="rgba(120,215,242,0.28)" stroke="#78D7F2" stroke-width="1.3"/>
+                      <circle cx="42" cy="127" r="6" fill="rgba(120,215,242,0.45)" stroke="#E0F2FE" stroke-width="1.2"/>
+                    </g>
+                    <g class="r24-pillar" style="--pd:1340ms;">
+                      <rect x="77" y="132" width="16" height="50" rx="8" fill="rgba(254,243,199,0.34)" stroke="#FFFBEB" stroke-width="1.4"/>
+                      <circle cx="85" cy="120" r="6.5" fill="rgba(253,230,138,0.62)" stroke="#FFFBEB" stroke-width="1.2"/>
+                    </g>
+                    <g class="r24-pillar" style="--pd:1460ms;">
+                      <rect x="120" y="138" width="16" height="44" rx="8" fill="rgba(242,168,75,0.28)" stroke="#F2A84B" stroke-width="1.3"/>
+                      <circle cx="128" cy="127" r="6" fill="rgba(242,168,75,0.45)" stroke="#FEF3C7" stroke-width="1.2"/>
+                    </g>
+                    <text x="85" y="102" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, serif" font-size="36" font-weight="700" style="filter:drop-shadow(0 2px 12px rgba(0,0,0,0.85));">24</text>
+                  </g>
+                </svg>
+              </div>
+
+              <div class="r24-doors-3d">
+                <div class="r24-door-leaf r24-door-l">
+                  <svg viewBox="0 0 85 200" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="r24LeafL" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#132928"/>
+                        <stop offset="60%" stop-color="#0A161F"/>
+                        <stop offset="100%" stop-color="#050B12"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="85" height="200" fill="url(#r24LeafL)"/>
+                    <path d="M12 186 V74 C12 36 42 14 78 12 V186 Z" fill="none" stroke="rgba(120,215,242,0.45)" stroke-width="1.4"/>
+                    <path d="M22 176 V80 C22 48 44 28 70 25 V176 Z" fill="none" stroke="rgba(253,230,138,0.34)" stroke-width="1"/>
+                    <circle cx="72" cy="108" r="4" fill="#78D7F2"/>
+                  </svg>
+                </div>
+                <div class="r24-door-leaf r24-door-r">
+                  <svg viewBox="0 0 85 200" preserveAspectRatio="none" aria-hidden="true">
+                    <defs>
+                      <linearGradient id="r24LeafR" x1="100%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#1A2228"/>
+                        <stop offset="60%" stop-color="#0D161E"/>
+                        <stop offset="100%" stop-color="#050B12"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="85" height="200" fill="url(#r24LeafR)"/>
+                    <path d="M73 186 V74 C73 36 43 14 7 12 V186 Z" fill="none" stroke="rgba(242,168,75,0.48)" stroke-width="1.4"/>
+                    <path d="M63 176 V80 C63 48 41 28 15 25 V176 Z" fill="none" stroke="rgba(253,230,138,0.34)" stroke-width="1"/>
+                    <circle cx="13" cy="108" r="4" fill="#F2A84B"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="r24-medallion">
+                <svg viewBox="0 0 66 66" aria-hidden="true">
+                  <circle cx="33" cy="33" r="30" fill="#18090B" stroke="#FDE68A" stroke-width="2.2"/>
+                  <circle cx="33" cy="33" r="24" fill="none" stroke="rgba(253,230,138,0.55)" stroke-width="1" stroke-dasharray="3 3"/>
+                  <path d="M33 9 A24 24 0 0 0 33 57" fill="none" stroke="#78D7F2" stroke-width="2"/>
+                  <path d="M33 9 A24 24 0 0 1 33 57" fill="none" stroke="#F2A84B" stroke-width="2"/>
+                  <text x="33" y="40" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, serif" font-size="22" font-weight="700">24</text>
+                </svg>
+              </div>
+              <div class="r24-caption-pill">NOCHEBUENA · CAREO FINAL</div>
+            </div>
+            ${makeShards(34, ["#FFFBEB", "#FDE68A", "#78D7F2", "#F2A84B", "#FCA5A5"], 940, 128, 114)}
           </div>`;
+      }
     }
   }
 
@@ -817,12 +891,12 @@ window.DoorRituals = (() => {
     playRitualSound(dNum);
 
     if (dNum === 24 && window.triggerGoldBurst) {
-      timers.push(setTimeout(() => window.triggerGoldBurst(64), 600));
+      timers.push(setTimeout(() => window.triggerGoldBurst(92), 960));
     }
 
     layer.onclick = () => cleanup(!previewOnly);
-    const revealAt = dNum === 24 ? 1180 : 1040;
-    const closeAt = dNum === 24 ? 1520 : 1340;
+    const revealAt = dNum === 24 ? 2250 : 1040;
+    const closeAt = dNum === 24 ? 2680 : 1340;
     const endAt = closeAt + 260;
 
     if (!previewOnly) timers.push(setTimeout(revealOnce, revealAt));

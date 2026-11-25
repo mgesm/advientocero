@@ -485,15 +485,25 @@ window.AudioFX = (() => {
           scheduleTone(c, 440, 420, "sine", 0.04, 470);
           scheduleTone(c, 659.25, 460, "sine", 0.032, 510);
           break;
-        case 24: // Gran Sello Nochebuena: fractura + arpegio celesta solemne
-        default:
-          scheduleBandNoise(c, 0.56, 0.07, 2900, 1600, 2.0, 0.15);
-          scheduleTone(c, 265, 70, "triangle", 0.075, 560);
-          scheduleTone(c, 587.33, 520, "sine", 0.048, 340);
-          scheduleTone(c, 739.99, 560, "sine", 0.044, 480);
-          scheduleTone(c, 880.0, 620, "sine", 0.046, 610);
-          scheduleTone(c, 1174.66, 780, "sine", 0.042, 740);
+        case 24: // Bóveda de Nochebuena: cascada de los 24 días + desbloqueo de bronce + acorde sinfónico Dmaj9
+        default: {
+          const notes = [587.33, 659.25, 739.99, 880.0, 987.77, 1174.66, 1318.51, 1479.98];
+          notes.forEach((f, idx) => scheduleTone(c, f, 120, "sine", 0.026, 90 + idx * 78));
+          // 2) Desbloqueo solemne de la bóveda (820ms)
+          scheduleTone(c, 146.83, 520, "triangle", 0.11, 820);
+          scheduleTone(c, 293.66, 320, "sine", 0.07, 825);
+          scheduleBandNoise(c, 0.82, 0.11, 2400, 900, 1.8, 0.16);
+          // 3) Apertura majestuosa de las puertas dobles (1020ms)
+          scheduleBandNoise(c, 1.02, 0.62, 420, 1150, 1.2, 0.085);
+          // 4) Acorde cálido de Nochebuena (Dmaj9 en celesta/cuerda) + campanada alpina
+          scheduleTone(c, 293.66, 1450, "sine", 0.068, 1080);
+          scheduleTone(c, 440.0, 1420, "sine", 0.052, 1120);
+          scheduleTone(c, 554.37, 1380, "sine", 0.045, 1170);
+          scheduleTone(c, 659.25, 1350, "sine", 0.042, 1230);
+          scheduleTone(c, 880.0, 1320, "triangle", 0.036, 1310);
+          scheduleTone(c, 1174.66, 1400, "sine", 0.044, 1400);
           break;
+        }
       }
     };
     if (c.state !== "running") {
