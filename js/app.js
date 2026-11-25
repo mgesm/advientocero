@@ -3,12 +3,13 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.12.4";
-  const CACHE_TAG = "adviento-cero-v2.12.4";
+  const APP_VERSION = "v2.13.0";
+  const CACHE_TAG = "adviento-cero-v2.13.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
   const PREFS_KEY = "adviento_prefs_v1";
+  const UNSEALED_DOORS_KEY = "adviento_unsealed_doors_v1";
   const Store = window.SafeStorage || window.localStorage;
 
   let overlayHistoryPushed = false;
@@ -36,11 +37,14 @@
   let suspectSearch = "";
   let compareIds = [];
   let calendarFilter = "all";
+  let expedienteTab = "case";
   let expedienteFloor = "Planta 1";
   let expSearchQuery = "";
   let timelineFloorFilter = "all";
   let offlinePackStatus = "";
   let notesUndoSnapshot = null;
+  const celebratedLockDays = new Set();
+  let cinemaActiveCleanup = null;
 
   let syncState = window.SyncEngine.getState();
   let syncMode = window.SyncEngine.getMode();
@@ -169,11 +173,286 @@
     window.scrollTo(0, lockedScrollY);
   }
 
+  function isReducedMotionPref() {
+    return Boolean(userPrefs.reducedMotion || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches));
+  }
+
+  function getUnsealedDoors() {
+    try {
+      const raw = Store.getItem(UNSEALED_DOORS_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) ? arr.map(Number).filter(Number.isFinite) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function isDoorUnsealed(dayNum) {
+    return getUnsealedDoors().includes(Number(dayNum));
+  }
+
+  function markDoorUnsealed(dayNum) {
+    const n = Number(dayNum);
+    if (!Number.isFinite(n)) return;
+    const set = new Set(getUnsealedDoors());
+    set.add(n);
+    try { Store.setItem(UNSEALED_DOORS_KEY, JSON.stringify([...set])); } catch (_) {}
+  }
+
+  function buildWaxSealSvg(dayNum, uid) {
+    const numStr = String(dayNum).padStart(2, "0");
+    const clipPoly = uid === "tl"
+      ? "0,0 144,0 122,22 96,46 89,58 70,72 60,86 44,96 22,122 0,144"
+      : "144,0 144,144 0,144 22,122 44,96 60,86 70,72 89,58 96,46 122,22";
+    return `
+      <svg viewBox="0 0 144 144" width="164" height="164" aria-hidden="true">
+        <defs>
+          <clipPath id="waxClip_${uid}">
+            <polygon points="${clipPoly}"/>
+          </clipPath>
+          <radialGradient id="waxBody_${uid}" cx="36%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#FF5A5F"/>
+            <stop offset="38%" stop-color="#DC2626"/>
+            <stop offset="76%" stop-color="#991B1B"/>
+            <stop offset="100%" stop-color="#580C0C"/>
+          </radialGradient>
+          <radialGradient id="waxInner_${uid}" cx="44%" cy="38%" r="60%">
+            <stop offset="0%" stop-color="#B91C1C"/>
+            <stop offset="72%" stop-color="#881313"/>
+            <stop offset="100%" stop-color="#4C0A0A"/>
+          </radialGradient>
+          <linearGradient id="waxRim_${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FECACA" stop-opacity="0.88"/>
+            <stop offset="45%" stop-color="#EF4444" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#3B0606" stop-opacity="0.92"/>
+          </linearGradient>
+        </defs>
+        <g clip-path="url(#waxClip_${uid})">
+          <path d="M72 8 C84 6 97 11 107 18 C119 23 130 33 132 47 C138 59 138 75 133 88 C130 103 121 117 108 124 C95 133 80 137 65 135 C51 135 37 128 27 118 C16 108 9 94 10 79 C7 64 11 48 20 36 C28 23 41 14 55 11 C61 9 67 9 72 8 Z" fill="url(#waxBody_${uid})" stroke="url(#waxRim_${uid})" stroke-width="2.4"/>
+          <circle cx="72" cy="72" r="51" fill="url(#waxInner_${uid})" stroke="#450A0A" stroke-width="2.6"/>
+          <circle cx="72" cy="72" r="47.5" fill="none" stroke="rgba(254,226,226,0.34)" stroke-width="1.1"/>
+          <circle cx="72" cy="72" r="43" fill="none" stroke="#FDE68A" stroke-opacity="0.82" stroke-width="1.35" stroke-dasharray="4 3"/>
+          <path d="M35 50 A44 44 0 0 1 88 29" fill="none" stroke="rgba(255,241,242,0.48)" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="72,34 74.3,40.4 80.8,42.7 74.3,45 72,51.4 69.7,45 63.2,42.7 69.7,40.4" fill="#FEF08A"/>
+          <text x="72" y="83" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="700" letter-spacing="1.5">${numStr}</text>
+          <text x="72" y="97.5" text-anchor="middle" fill="#FDE68A" fill-opacity="0.94" font-family="ui-monospace, Consolas, monospace" font-size="7.1" font-weight="700" letter-spacing="2">DIC · UOPJ</text>
+        </g>
+      </svg>`;
+  }
+
+  function playDoorWaxUnseal(dayObj, onReveal) {
+    markDoorUnsealed(dayObj.day);
+    const layer = document.getElementById("cinema-fx-layer");
+    if (!layer || isReducedMotionPref()) {
+      window.AudioFX.waxSealBreak?.();
+      onReveal();
+      return;
+    }
+
+    if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+    let revealed = false;
+    let finished = false;
+    const timers = [];
+    const revealOnce = () => {
+      if (revealed) return;
+      revealed = true;
+      onReveal();
+    };
+    const cleanup = (skipToReveal = false) => {
+      if (finished) return;
+      finished = true;
+      timers.forEach(clearTimeout);
+      if (skipToReveal) revealOnce();
+      layer.classList.remove("active", "closing");
+      layer.setAttribute("aria-hidden", "true");
+      layer.innerHTML = "";
+      layer.onclick = null;
+      if (cinemaActiveCleanup === cleanup) cinemaActiveCleanup = null;
+    };
+    cinemaActiveCleanup = cleanup;
+
+    const shardColors = ["#EF4444", "#DC2626", "#FEF08A", "#F59E0B", "#FCA5A5"];
+    const shardsHtml = Array.from({ length: 24 }, (_, i) => {
+      const ang = (Math.PI * 2 * i) / 24 + (i % 2 === 0 ? 0.14 : -0.11);
+      const dist = 62 + ((i * 23) % 86);
+      const sx = Math.round(Math.cos(ang) * dist);
+      const sy = Math.round(Math.sin(ang) * dist);
+      const sr = (i % 2 === 0 ? 1 : -1) * (95 + ((i * 37) % 180));
+      const sz = 4 + (i % 5);
+      const dl = 545 + ((i * 17) % 75);
+      const sc = shardColors[i % shardColors.length];
+      const br = i % 3 === 0 ? "50%" : "2px";
+      return `<span class="cinema-shard" style="--sx:${sx}px;--sy:${sy}px;--sr:${sr}deg;--sz:${sz}px;--sc:${sc};--br:${br};--dl:${dl}ms;"></span>`;
+    }).join("");
+
+    const numStr = String(dayObj.day).padStart(2, "0");
+    layer.innerHTML = `
+      <div class="cinema-stage">
+        <div class="cinema-kicker">DICIEMBRE · PUERTA ${numStr}</div>
+        <div class="cinema-headline">${esc(dayObj.title)}</div>
+        <div class="cinema-slit"></div>
+        <div class="wax-seal-arena">
+          <div class="wax-lantern-glow"></div>
+          <div class="wax-half wax-half-tl">${buildWaxSealSvg(dayObj.day, "tl")}</div>
+          <div class="wax-half wax-half-br">${buildWaxSealSvg(dayObj.day, "br")}</div>
+          <svg class="wax-crack-svg" viewBox="0 0 144 144" aria-hidden="true">
+            <path class="wax-crack-line" d="M 122 22 L 96 46 L 89 58 L 70 72 L 60 86 L 44 96 L 22 122" fill="none"/>
+          </svg>
+          ${shardsHtml}
+        </div>
+        <div class="cinema-skip-hint">Toca para omitir</div>
+      </div>`;
+
+    layer.setAttribute("aria-hidden", "false");
+    layer.classList.remove("closing");
+    layer.classList.add("active");
+    window.AudioFX.waxSealBreak?.();
+
+    layer.onclick = () => cleanup(true);
+    timers.push(setTimeout(revealOnce, 1020));
+    timers.push(setTimeout(() => layer.classList.add("closing"), 1280));
+    timers.push(setTimeout(() => cleanup(false), 1540));
+  }
+
+  function playDoubleLockCinema(dayNum, opts = {}) {
+    const dNum = Number(dayNum || 1);
+    if (!opts.force && celebratedLockDays.has(dNum)) return;
+    celebratedLockDays.add(dNum);
+
+    window.AudioFX.doubleLockOpen?.();
+    const layer = document.getElementById("cinema-fx-layer");
+    if (!layer || isReducedMotionPref()) {
+      if (window.triggerGoldBurst) window.triggerGoldBurst(34);
+      return;
+    }
+
+    if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+    let finished = false;
+    const timers = [];
+    const cleanup = () => {
+      if (finished) return;
+      finished = true;
+      timers.forEach(clearTimeout);
+      layer.classList.remove("active", "closing");
+      layer.setAttribute("aria-hidden", "true");
+      layer.innerHTML = "";
+      layer.onclick = null;
+      if (cinemaActiveCleanup === cleanup) cinemaActiveCleanup = null;
+    };
+    cinemaActiveCleanup = cleanup;
+
+    const sparkColors = ["#78D7F2", "#F2A84B", "#FFFFFF", "#FDE68A", "#9BE8FF", "#FBBF24"];
+    const sparksHtml = Array.from({ length: 26 }, (_, i) => {
+      const ang = (Math.PI * 2 * i) / 26 + (i % 3 === 0 ? 0.08 : -0.06);
+      const dist = 62 + ((i * 29) % 106);
+      const sx = Math.round(Math.cos(ang) * dist);
+      const sy = Math.round(Math.sin(ang) * dist * 0.72);
+      const sr = (i % 2 === 0 ? 1 : -1) * (110 + ((i * 31) % 160));
+      const sz = 3 + (i % 4);
+      const dl = 465 + ((i * 13) % 75);
+      const sc = sparkColors[i % sparkColors.length];
+      return `<span class="cinema-shard" style="--sx:${sx}px;--sy:${sy}px;--sr:${sr}deg;--sz:${sz}px;--sc:${sc};--br:50%;--dl:${dl}ms;"></span>`;
+    }).join("");
+
+    const numStr = String(dNum).padStart(2, "0");
+    const kicker = opts.kicker || (opts.isJoint ? "CLAVE CONJUNTA VALIDADA" : "SINCRONIZACIÓN EN VIVO");
+    const headline = opts.headline || (opts.isJoint ? "ENIGMA RESUELTO" : "DOBLE CANDADO ABIERTO");
+    const subline = opts.subline || `DÍA ${numStr} · MIGUEL Y PATRI SINCRONIZADOS`;
+
+    layer.innerHTML = `
+      <div class="cinema-stage">
+        <div class="cinema-kicker">${esc(kicker)}</div>
+        <div class="dlock-arena">
+          <div class="dlock-glint"></div>
+          ${sparksHtml}
+          <svg class="dlock-svg" viewBox="0 0 380 144" aria-hidden="true">
+            <defs>
+              <linearGradient id="dlockBeamL" x1="0%" y1="50%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#78D7F2" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#78D7F2" stop-opacity="0.02"/>
+              </linearGradient>
+              <linearGradient id="dlockBeamR" x1="100%" y1="50%" x2="0%" y2="50%">
+                <stop offset="0%" stop-color="#F2A84B" stop-opacity="0.30"/>
+                <stop offset="100%" stop-color="#F2A84B" stop-opacity="0.02"/>
+              </linearGradient>
+              <radialGradient id="dlockCoreGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#EF4444" stop-opacity="0.72"/>
+                <stop offset="58%" stop-color="#991B1B" stop-opacity="0.46"/>
+                <stop offset="100%" stop-color="#450A0A" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="dlockBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FFFFFF"/>
+                <stop offset="55%" stop-color="#F4EFE6"/>
+                <stop offset="100%" stop-color="#CBD5E1"/>
+              </linearGradient>
+            </defs>
+            <polygon points="14,57 152,68 152,76 14,87" fill="url(#dlockBeamL)"/>
+            <polygon points="366,57 228,68 228,76 366,87" fill="url(#dlockBeamR)"/>
+            <path class="dlock-wave-l" d="M 14 72 L 32 72 L 42 54 L 52 90 L 63 60 L 74 82 L 86 67 L 98 76 L 112 71 L 148 72"/>
+            <path class="dlock-wave-r" d="M 366 72 L 348 72 L 338 56 L 328 88 L 317 58 L 306 84 L 294 67 L 282 77 L 268 71 L 232 72"/>
+            <text x="16" y="106" fill="#78D7F2" fill-opacity="0.86" font-family="ui-monospace, Consolas, monospace" font-size="9" font-weight="700" letter-spacing="1.6">MIGUEL</text>
+            <text x="364" y="106" text-anchor="end" fill="#F2A84B" fill-opacity="0.88" font-family="ui-monospace, Consolas, monospace" font-size="9" font-weight="700" letter-spacing="1.6">PATRI</text>
+            <circle cx="190" cy="72" r="33" fill="url(#dlockCoreGlow)"/>
+            <circle cx="190" cy="72" r="25" fill="rgba(127,29,29,0.52)" stroke="rgba(252,165,165,0.42)" stroke-width="1.2"/>
+            <circle cx="190" cy="72" r="31" fill="none" stroke="rgba(244,239,230,0.22)" stroke-width="1" stroke-dasharray="3 4"/>
+            <g class="dlock-ring-cyan">
+              <path d="M 186 34.2 A 38 38 0 0 0 186 109.8" fill="none" stroke="#78D7F2" stroke-width="2.4" stroke-linecap="round"/>
+              <line x1="146" y1="72" x2="152" y2="72" stroke="#78D7F2" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g class="dlock-ring-amber">
+              <path d="M 194 34.2 A 38 38 0 0 1 194 109.8" fill="none" stroke="#F2A84B" stroke-width="2.4" stroke-linecap="round"/>
+              <line x1="228" y1="72" x2="234" y2="72" stroke="#F2A84B" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <path class="dlock-shackle" d="M 180 67 V 57 A 10 10 0 0 1 200 57 V 67" fill="none" stroke="#F4EFE6" stroke-width="3.6" stroke-linecap="round"/>
+            <rect x="175" y="67" width="30" height="21" rx="3.8" fill="url(#dlockBody)" stroke="#FFFFFF" stroke-width="1.1"/>
+            <circle class="dlock-keyhole" cx="190" cy="75.5" r="2.6"/>
+            <path class="dlock-keyhole" d="M 188.9 77.2 L 188.2 82.8 L 191.8 82.8 L 191.1 77.2 Z"/>
+          </svg>
+        </div>
+        <div class="cinema-headline">${esc(headline)}</div>
+        <div class="cinema-slit"></div>
+        <div class="cinema-subline">${esc(subline)}</div>
+        <div class="cinema-skip-hint">Toca para continuar</div>
+      </div>`;
+
+    layer.setAttribute("aria-hidden", "false");
+    layer.classList.remove("closing");
+    layer.classList.add("active");
+
+    layer.onclick = () => cleanup();
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(52); }, 480));
+    timers.push(setTimeout(() => layer.classList.add("closing"), 1750));
+    timers.push(setTimeout(() => cleanup(), 2020));
+  }
+
+  function openAdventDay(dayNum) {
+    const d = Number(dayNum || 1);
+    if (!window.DateGate.isDayOpen(d)) {
+      window.AudioFX.error();
+      openNoticeModal(`Puerta ${String(d).padStart(2, "0")} precintada`, `Esta puerta se abrirá automáticamente el ${d} de diciembre.`);
+      return;
+    }
+    const dayObj = (window.ADVENT_DAYS || []).find((x) => x.day === d);
+    const navigateToDay = () => {
+      userPickedDay = true;
+      selectedDayNum = d;
+      lastDaySignature = "";
+      switchTab("day", { scrollToTop: true });
+    };
+    const alreadySolved = Boolean(syncState.days?.[String(d)]?.solved);
+    if (dayObj && !alreadySolved && !isDoorUnsealed(d)) {
+      playDoorWaxUnseal(dayObj, navigateToDay);
+      return;
+    }
+    navigateToDay();
+  }
+
   function renderBriefingVideoHtml(videoId) {
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
-      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.12.4" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
-        <source src="video-briefing/briefing.mp4?v=2.12.4" type="video/mp4">
+      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.13.0" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
+        <source src="video-briefing/briefing.mp4?v=2.13.0" type="video/mp4">
       </video>`;
   }
 
@@ -364,8 +643,8 @@
 
     overlay.classList.add("open");
     lockBodyScroll();
-    const firstBtn = overlay.querySelector("[data-choose-role]");
-    if (firstBtn) setTimeout(() => { try { firstBtn.focus({ preventScroll: true }); } catch (_) {} }, 20);
+    const modalBox = overlay.querySelector(".identity-modal");
+    if (modalBox) setTimeout(() => { try { modalBox.focus({ preventScroll: true }); } catch (_) {} }, 20);
     if (!fromHistory && currentRole && !overlayHistoryPushed && window.history?.pushState) {
       overlayHistoryPushed = true;
       window.history.pushState({ overlay: "identity", tab: activeTab, day: selectedDayNum }, "");
@@ -656,7 +935,10 @@
             Store.removeItem(DEDICATION_SEEN_KEY);
             Store.removeItem(ROLE_KEY);
             Store.removeItem(DRAFTS_KEY);
+            Store.removeItem(UNSEALED_DOORS_KEY);
           } catch (_) {}
+          celebratedLockDays.clear();
+          expedienteTab = "case";
           currentRole = "";
           draftsStore = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
           const ta = document.getElementById("shared-notes-area");
@@ -806,22 +1088,19 @@
       </div>
 
       ${showPwaTip ? `
-        <div class="glass-card" style="padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-color:rgba(186,230,253,0.28);">
-          <div style="font-size:0.78rem;color:var(--vg-text-secondary);flex:1;min-width:210px;">
-            <strong style="color:var(--adv-frost);">Consejo de instalación móvil:</strong> Añade la app a tu pantalla de inicio (<em>Compartir → Añadir a pantalla de inicio</em> en Safari o <em>Instalar</em> en Chrome) para modo pantalla completa y evitar que iOS limpie la caché offline.
+        <div class="glass-card pwa-tip-bar">
+          <div class="pwa-tip-text">
+            <strong style="color:var(--adv-frost);">Instalar app:</strong> <em>Compartir → Añadir a inicio</em> (iOS) o <em>Instalar</em> (Chrome) para pantalla completa y caché offline.
           </div>
-          <button type="button" class="btn btn-sm btn-ghost" id="dismiss-pwa-banner" style="flex-shrink:0;">Entendido</button>
+          <button type="button" class="btn btn-sm btn-ghost" id="dismiss-pwa-banner" style="flex-shrink:0;">Ocultar</button>
         </div>
       ` : ""}
 
-      <div class="section-head" style="margin-bottom:12px;">
+      <div class="section-head" style="margin-bottom:10px;">
         <div>
           <h2 class="section-title">Calendario de Adviento (1–24 de diciembre)</h2>
-          <div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);margin-top:3px;">
-            ${maxOpen === 0 ? esc(window.DateGate.getCountdownText()) : `Puertas abiertas hasta el ${maxOpen} de diciembre · Toca una puerta`}
-          </div>
+          ${maxOpen > 0 ? `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:2px;">Toca una puerta desbloqueada para romper el lacre</div>` : ""}
         </div>
-        <span class="badge badge-pine">${solvedCount}/24 resueltas</span>
       </div>
 
       ${maxOpen >= 4 ? `
@@ -852,10 +1131,7 @@
 
     document.getElementById("hero-cta-day")?.addEventListener("click", (e) => {
       const target = Number(e.currentTarget.dataset.day || 1);
-      userPickedDay = true;
-      selectedDayNum = target;
-      lastDaySignature = "";
-      switchTab("day", { scrollToTop: true });
+      openAdventDay(target);
     });
 
     document.getElementById("hero-open-briefing-btn")?.addEventListener("click", () => {
@@ -883,16 +1159,7 @@
 
     container.querySelectorAll("[data-open-day]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const d = Number(btn.dataset.openDay);
-        if (!window.DateGate.isDayOpen(d)) {
-          window.AudioFX.error();
-          openNoticeModal(`Puerta ${String(d).padStart(2, "0")} precintada`, `Esta puerta se abrirá automáticamente el ${d} de diciembre.`);
-          return;
-        }
-        userPickedDay = true;
-        selectedDayNum = d;
-        lastDaySignature = "";
-        switchTab("day", { scrollToTop: true });
+        openAdventDay(Number(btn.dataset.openDay));
       });
     });
     updateDockIndicator();
@@ -1473,9 +1740,16 @@
         delete draftsStore.inputs[String(dayObj.day)];
         delete draftsStore.widgets[draftKey];
         saveDrafts();
-        if (typeof window.AudioFX.sealBreak === "function") window.AudioFX.sealBreak();
-        else window.AudioFX.success();
-        if (window.triggerGoldBurst) window.triggerGoldBurst(34);
+        const prevDs = syncState.days?.[String(dayObj.day)] || {};
+        const partnerFlag = role === "miguel" ? "patriSolved" : "miguelSolved";
+        const completesNow = dayObj.mode !== "dual-lock" || Boolean(prevDs[partnerFlag]);
+        if (completesNow) {
+          playDoubleLockCinema(dayObj.day, { isJoint: dayObj.mode !== "dual-lock" });
+        } else {
+          if (typeof window.AudioFX.sealBreak === "function") window.AudioFX.sealBreak();
+          else window.AudioFX.success();
+          if (window.triggerGoldBurst) window.triggerGoldBurst(34);
+        }
         const decoded = window.PuzzleEngine.decodePayload(dayObj.unlockPayload);
         window.SyncEngine.solveDayPart(dayObj.day, role, dayObj.mode, decoded);
       } finally {
@@ -1564,7 +1838,13 @@
             }
 
             clearKeyboardOpen();
-            window.AudioFX.success();
+            playDoubleLockCinema(24, {
+              isJoint: true,
+              force: true,
+              kicker: "VEREDICTO DEFINITIVO",
+              headline: "CASO RESUELTO",
+              subline: "NOCHEBUENA · ORDEN DE DETENCIÓN EMITIDA"
+            });
             if (window.triggerGoldBurst) window.triggerGoldBurst(72);
             const decoded = window.PuzzleEngine.decodePayload(dayObj.unlockPayload);
             const remainingNow = (window.SUSPECTS_DATA || []).filter((s) => !(syncState.discardedIds || []).includes(s.id));
@@ -2012,6 +2292,7 @@
 
     const expSig = JSON.stringify({
       role: currentRole,
+      tab: expedienteTab,
       maxOpen: window.DateGate.getMaxOpenDay(),
       days: syncState.days,
       hints: syncState.hintsUnlocked,
@@ -2041,155 +2322,173 @@
     const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDaysNums.length ? solvedDaysNums : [0]), 0);
     const floorSuspects = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit && getRoomFloor(s.room) === expedienteFloor);
 
-    // Preservar video nativo si ya estaba montado
-    const existingMount = document.getElementById("exp-briefing-mount");
-    const preservedExpVideo = existingMount ? existingMount.querySelector("video") : null;
-    if (preservedExpVideo && preservedExpVideo.parentNode) {
-      preservedExpVideo.parentNode.removeChild(preservedExpVideo);
-    }
+    const subtabsHtml = `
+      <div class="exp-subtabs" role="tablist" aria-label="Secciones del expediente">
+        <button type="button" role="tab" aria-selected="${expedienteTab === "case"}" class="exp-subtab ${expedienteTab === "case" ? "active" : ""}" data-exp-tab="case">Atestado</button>
+        <button type="button" role="tab" aria-selected="${expedienteTab === "clues"}" class="exp-subtab ${expedienteTab === "clues" ? "active" : ""}" data-exp-tab="clues">Pistas</button>
+        <button type="button" role="tab" aria-selected="${expedienteTab === "hotel"}" class="exp-subtab ${expedienteTab === "hotel" ? "active" : ""}" data-exp-tab="hotel">Hotel</button>
+        <button type="button" role="tab" aria-selected="${expedienteTab === "settings"}" class="exp-subtab ${expedienteTab === "settings" ? "active" : ""}" data-exp-tab="settings">Ajustes</button>
+      </div>`;
+
+    const caseTabHtml = `
+      <div class="glass-card" style="padding:18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="badge badge-crimson">ATESTADO INICIAL · 30 NOV</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm btn-frost" id="exp-manual-btn">Manual de Campo</button>
+            <button type="button" class="btn btn-sm btn-gold" id="exp-dedication-btn">${getSvg("gift")} Dedicatoria</button>
+          </div>
+        </div>
+        <h2 class="serif" style="font-size:1.5rem;margin:10px 0 6px;">${esc(lore.victim.name)} (${lore.victim.age} años)</h2>
+        <p class="day-story" style="margin-bottom:8px;"><strong>Cargo:</strong> ${esc(lore.victim.role)}</p>
+        <p class="day-story" style="margin-bottom:8px;"><strong>Hallazgo:</strong> ${esc(lore.victim.foundAt)}</p>
+        <p class="day-story">${esc(lore.victim.initialFinding)}</p>
+        <ul class="clue-list" style="margin-top:12px;">
+          ${lore.incidentSummary.map((line) => `<li>${esc(line)}</li>`).join("")}
+        </ul>
+        <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:10px;">
+          Pistas utilizadas en el caso: ${totalHintsUsed} / 72 · Puertas resueltas: ${solvedDaysArr.length} / 24
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding:16px 18px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div>
+            <h3 style="font-size:0.98rem;margin-bottom:2px;">Material Oficial del Caso</h3>
+            <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);">Vídeo briefing cinematográfico en portada y dossier imprimible</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm btn-primary" id="exp-go-briefing-btn">Ver Vídeo Briefing</button>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
+          </div>
+        </div>
+      </div>`;
+
+    const cluesTabHtml = `
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:8px;">Buscador Global y Chinchetas para el Careo</h3>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input type="search" id="exp-search-input" class="adv-input" value="${esc(expSearchQuery)}" placeholder="Buscar en resoluciones, partes y notas..." aria-label="Buscar en pistas y notas" style="min-height:44px;flex:1;min-width:0;">
+          <button type="button" id="exp-search-clear" class="btn btn-sm btn-ghost" style="display:${expSearchQuery.trim() ? "inline-flex" : "none"};">Limpiar</button>
+        </div>
+        <div id="search-results-list" class="search-results-list"></div>
+        ${(syncState.pinnedClues || []).length ? `
+          <div style="margin-top:10px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:8px;">
+            <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-bottom:6px;">PISTAS FIJADAS CON CHINCHETA (${syncState.pinnedClues.length}):</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              ${syncState.pinnedClues.map((pid) => {
+                if (pid.startsWith("day-")) {
+                  const dNum = Number(pid.replace("day-", ""));
+                  return `<button type="button" class="btn btn-sm btn-gold" data-jump-pinned-day="${dNum}">Día ${String(dNum).padStart(2, "0")}</button>`;
+                }
+                if (pid.startsWith("suspect-")) {
+                  const sid = pid.replace("suspect-", "");
+                  const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
+                  return `<button type="button" class="btn btn-sm btn-frost" data-jump-pinned-suspect="${esc(sid)}">#${esc(sp?.num || "?")} ${esc(sp?.name || sid)}</button>`;
+                }
+                return "";
+              }).join("")}
+            </div>
+          </div>
+        ` : `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:6px;">Aún no hay pistas fijadas con chincheta. Fija días resueltos o fichas desde su vista.</div>`}
+      </div>
+
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:10px;">Cronología Forense · Noche del 30 de Noviembre</h3>
+        <div class="suspect-filters" role="group" aria-label="Filtrar cronología por planta" style="margin-bottom:8px;">
+          ${["all", "Planta 1", "Planta 2", "Planta 3", "Sótano / Anexo"].map((tf) => `
+            <button type="button" class="filter-chip ${timelineFloorFilter === tf ? "active" : ""}" data-timeline-floor="${tf}">${tf === "all" ? "Todas" : tf}</button>
+          `).join("")}
+        </div>
+        <div class="timeline-list">
+          ${[
+            { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m." },
+            { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador." },
+            { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador." },
+            { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño." },
+            ...solvedDaysArr.map((d) => {
+              const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
+              const flr = susp ? getRoomFloor(susp.room) : "Planta 1";
+              return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}` };
+            })
+          ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter)
+           .map((ev) => `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`)
+           .join("")}
+        </div>
+        ${openInquiries.length ? `
+          <div class="feedback-banner success" style="margin-top:10px;border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
+            <strong>Diligencias sin descarte (${openInquiries.length}):</strong> ${openInquiries.map((d) => `Día ${String(d.day).padStart(2, "0")}`).join(" y ")} siguen abiertas para el Careo Final de Nochebuena.
+          </div>
+        ` : ""}
+      </div>`;
+
+    const hotelTabHtml = `
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:12px;">Escenas del Complejo (toca para ampliar)</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
+          ${lore.scenes.map((sc) => `
+            <button type="button" data-lightbox-img="${esc(sc.src)}" data-lightbox-cap="${esc(`${sc.title} — ${sc.caption}`)}" style="padding:0;text-align:left;border-radius:14px;overflow:hidden;border:var(--vg-border-specular);background:rgba(5,11,18,0.65);cursor:pointer;">
+              <img src="${esc(sc.src)}" alt="${esc(sc.title)}" width="1024" height="572" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
+              <div style="padding:10px 12px;">
+                <div style="font-weight:600;font-size:0.86rem;color:#FFFBEB;">${esc(sc.title)}</div>
+                <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-top:3px;">${esc(sc.caption)}</div>
+              </div>
+            </button>`).join("")}
+        </div>
+      </div>
+
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:10px;">Plano Interactivo por Plantas</h3>
+        <div class="suspect-filters" style="margin-bottom:10px;">
+          ${["Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
+            <button type="button" class="filter-chip ${expedienteFloor === fl ? "active" : ""}" data-exp-floor="${fl}">${fl}</button>
+          `).join("")}
+        </div>
+        <ul class="clue-list" style="margin-bottom:10px;">
+          ${lore.hotelZones.filter((z) => z.floor === expedienteFloor).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
+        </ul>
+        ${floorSuspects.length ? `
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${floorSuspects.map((s) => `<button type="button" class="btn btn-sm btn-ghost" data-exp-suspect="${esc(s.id)}">${esc(s.room)} · ${esc(s.name)}</button>`).join("")}
+          </div>
+        ` : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin sospechosos descubiertos en esta planta todavía.</div>`}
+      </div>`;
+
+    const settingsTabHtml = `
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:10px;">Confort Visual, Offline y Copia de Seguridad</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <button type="button" class="btn btn-sm ${userPrefs.fontBoost ? "btn-gold" : "btn-ghost"}" id="pref-font-btn">Texto +15%: ${userPrefs.fontBoost ? "ON" : "OFF"}</button>
+          <button type="button" class="btn btn-sm ${userPrefs.nightSoft ? "btn-gold" : "btn-ghost"}" id="pref-night-btn">Lectura Nocturna: ${userPrefs.nightSoft ? "ON" : "OFF"}</button>
+          <button type="button" class="btn btn-sm ${userPrefs.reducedMotion ? "btn-gold" : "btn-ghost"}" id="pref-motion-btn">Animación reducida: ${userPrefs.reducedMotion ? "ON" : "OFF"}</button>
+          <button type="button" class="btn btn-sm ${userPrefs.highContrastOutdoor ? "btn-gold" : "btn-ghost"}" id="pref-outdoor-btn">Contraste Solar: ${userPrefs.highContrastOutdoor ? "ON" : "OFF"}</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <button type="button" class="btn btn-sm btn-frost" id="export-diary-btn">Exportar Diario (.md)</button>
+          <button type="button" class="btn btn-sm btn-ghost" id="export-json-btn">Backup JSON</button>
+          <button type="button" class="btn btn-sm btn-ghost" id="import-json-btn">Restaurar Backup (.json)</button>
+          <input type="file" id="import-json-file" accept="application/json,.json" style="display:none;">
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="btn btn-sm btn-ghost" id="verify-offline-btn">Verificar paquete offline</button>
+          <button type="button" class="btn btn-sm btn-ghost" id="copy-spoilerfree-btn">Copiar resumen sin spoilers</button>
+        </div>
+        ${offlinePackStatus ? `<div class="mono" style="font-size:0.72rem;color:var(--adv-pine);margin-top:8px;">${esc(offlinePackStatus)}</div>` : ""}
+      </div>`;
+
+    const activePanelHtml = expedienteTab === "clues"
+      ? cluesTabHtml
+      : expedienteTab === "hotel"
+        ? hotelTabHtml
+        : expedienteTab === "settings"
+          ? settingsTabHtml
+          : caseTabHtml;
 
     container.innerHTML = `
       <div class="day-workspace">
-        <div class="glass-card" style="padding:18px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-            <span class="badge badge-crimson">ATESTADO INICIAL · 30 NOV</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-sm btn-frost" id="exp-manual-btn">Manual de Campo</button>
-              <button type="button" class="btn btn-sm btn-gold" id="exp-dedication-btn">${getSvg("gift")} Dedicatoria</button>
-            </div>
-          </div>
-          <h2 class="serif" style="font-size:1.5rem;margin:10px 0 6px;">${esc(lore.victim.name)} (${lore.victim.age} años)</h2>
-          <p class="day-story" style="margin-bottom:8px;"><strong>Cargo:</strong> ${esc(lore.victim.role)}</p>
-          <p class="day-story" style="margin-bottom:8px;"><strong>Hallazgo:</strong> ${esc(lore.victim.foundAt)}</p>
-          <p class="day-story">${esc(lore.victim.initialFinding)}</p>
-          <ul class="clue-list" style="margin-top:12px;">
-            ${lore.incidentSummary.map((line) => `<li>${esc(line)}</li>`).join("")}
-          </ul>
-          <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:10px;">
-            Pistas utilizadas en el caso: ${totalHintsUsed} / 72 · Puertas resueltas: ${solvedDaysArr.length} / 24
-          </div>
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:8px;">Buscador Global y Chinchetas para el Careo</h3>
-          <div style="display:flex;gap:8px;margin-bottom:8px;">
-            <input type="search" id="exp-search-input" class="adv-input" value="${esc(expSearchQuery)}" placeholder="Buscar en resoluciones, partes y notas..." aria-label="Buscar en pistas y notas" style="min-height:44px;flex:1;min-width:0;">
-            <button type="button" id="exp-search-clear" class="btn btn-sm btn-ghost" style="display:${expSearchQuery.trim() ? "inline-flex" : "none"};">Limpiar</button>
-          </div>
-          <div id="search-results-list" class="search-results-list"></div>
-          ${(syncState.pinnedClues || []).length ? `
-            <div style="margin-top:10px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:8px;">
-              <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-bottom:6px;">PISTAS FIJADAS CON CHINCHETA (${syncState.pinnedClues.length}):</div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                ${syncState.pinnedClues.map((pid) => {
-                  if (pid.startsWith("day-")) {
-                    const dNum = Number(pid.replace("day-", ""));
-                    return `<button type="button" class="btn btn-sm btn-gold" data-jump-pinned-day="${dNum}">Día ${String(dNum).padStart(2, "0")}</button>`;
-                  }
-                  if (pid.startsWith("suspect-")) {
-                    const sid = pid.replace("suspect-", "");
-                    const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
-                    return `<button type="button" class="btn btn-sm btn-frost" data-jump-pinned-suspect="${esc(sid)}">#${esc(sp?.num || "?")} ${esc(sp?.name || sid)}</button>`;
-                  }
-                  return "";
-                }).join("")}
-              </div>
-            </div>
-          ` : `<div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:6px;">Aún no hay pistas fijadas con chincheta. Fija días resueltos o fichas desde su vista.</div>`}
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:10px;">Cronología Forense · Noche del 30 de Noviembre</h3>
-          <div class="suspect-filters" role="group" aria-label="Filtrar cronología por planta" style="margin-bottom:8px;">
-            ${["all", "Planta 1", "Planta 2", "Planta 3", "Sótano / Anexo"].map((tf) => `
-              <button type="button" class="filter-chip ${timelineFloorFilter === tf ? "active" : ""}" data-timeline-floor="${tf}">${tf === "all" ? "Todas" : tf}</button>
-            `).join("")}
-          </div>
-          <div class="timeline-list">
-            ${[
-              { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m." },
-              { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador." },
-              { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador." },
-              { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño." },
-              ...solvedDaysArr.map((d) => {
-                const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
-                const flr = susp ? getRoomFloor(susp.room) : "Planta 1";
-                return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}` };
-              })
-            ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter)
-             .map((ev) => `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`)
-             .join("")}
-          </div>
-          ${openInquiries.length ? `
-            <div class="feedback-banner success" style="margin-top:10px;border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
-              <strong>Diligencias sin descarte (${openInquiries.length}):</strong> ${openInquiries.map((d) => `Día ${String(d.day).padStart(2, "0")}`).join(" y ")} siguen abiertas para el Careo Final de Nochebuena.
-            </div>
-          ` : ""}
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:12px;">Escenas del Complejo (toca para ampliar)</h3>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
-            ${lore.scenes.map((sc) => `
-              <button type="button" data-lightbox-img="${esc(sc.src)}" data-lightbox-cap="${esc(`${sc.title} — ${sc.caption}`)}" style="padding:0;text-align:left;border-radius:14px;overflow:hidden;border:var(--vg-border-specular);background:rgba(5,11,18,0.65);cursor:pointer;">
-                <img src="${esc(sc.src)}" alt="${esc(sc.title)}" width="1024" height="572" loading="lazy" decoding="async" style="width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;display:block;">
-                <div style="padding:10px 12px;">
-                  <div style="font-weight:600;font-size:0.86rem;color:#FFFBEB;">${esc(sc.title)}</div>
-                  <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-top:3px;">${esc(sc.caption)}</div>
-                </div>
-              </button>`).join("")}
-          </div>
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <h3 style="font-size:1rem;">Vídeo Briefing del Caso</h3>
-            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
-          </div>
-          <div id="exp-briefing-mount" class="briefing-native-mount">
-            ${preservedExpVideo ? "" : renderBriefingVideoHtml("briefing-video-exp")}
-          </div>
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:10px;">Plano Interactivo por Plantas</h3>
-          <div class="suspect-filters" style="margin-bottom:10px;">
-            ${["Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
-              <button type="button" class="filter-chip ${expedienteFloor === fl ? "active" : ""}" data-exp-floor="${fl}">${fl}</button>
-            `).join("")}
-          </div>
-          <ul class="clue-list" style="margin-bottom:10px;">
-            ${lore.hotelZones.filter((z) => z.floor === expedienteFloor).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
-          </ul>
-          ${floorSuspects.length ? `
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              ${floorSuspects.map((s) => `<button type="button" class="btn btn-sm btn-ghost" data-exp-suspect="${esc(s.id)}">${esc(s.room)} · ${esc(s.name)}</button>`).join("")}
-            </div>
-          ` : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin sospechosos descubiertos en esta planta todavía.</div>`}
-        </div>
-
-        <div class="glass-card" style="padding:18px;">
-          <h3 style="font-size:1rem;margin-bottom:10px;">Confort Visual, Offline y Copia de Seguridad</h3>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
-            <button type="button" class="btn btn-sm ${userPrefs.fontBoost ? "btn-gold" : "btn-ghost"}" id="pref-font-btn">Texto +15%: ${userPrefs.fontBoost ? "ON" : "OFF"}</button>
-            <button type="button" class="btn btn-sm ${userPrefs.nightSoft ? "btn-gold" : "btn-ghost"}" id="pref-night-btn">Lectura Nocturna: ${userPrefs.nightSoft ? "ON" : "OFF"}</button>
-            <button type="button" class="btn btn-sm ${userPrefs.reducedMotion ? "btn-gold" : "btn-ghost"}" id="pref-motion-btn">Animación reducida: ${userPrefs.reducedMotion ? "ON" : "OFF"}</button>
-            <button type="button" class="btn btn-sm ${userPrefs.highContrastOutdoor ? "btn-gold" : "btn-ghost"}" id="pref-outdoor-btn">Contraste Solar: ${userPrefs.highContrastOutdoor ? "ON" : "OFF"}</button>
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
-            <button type="button" class="btn btn-sm btn-frost" id="export-diary-btn">Exportar Diario (.md)</button>
-            <button type="button" class="btn btn-sm btn-ghost" id="export-json-btn">Backup JSON</button>
-            <button type="button" class="btn btn-sm btn-ghost" id="import-json-btn">Restaurar Backup (.json)</button>
-            <input type="file" id="import-json-file" accept="application/json,.json" style="display:none;">
-          </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <button type="button" class="btn btn-sm btn-ghost" id="verify-offline-btn">Verificar paquete offline</button>
-            <button type="button" class="btn btn-sm btn-ghost" id="copy-spoilerfree-btn">Copiar resumen sin spoilers</button>
-          </div>
-          ${offlinePackStatus ? `<div class="mono" style="font-size:0.72rem;color:var(--adv-pine);margin-top:8px;">${esc(offlinePackStatus)}</div>` : ""}
-        </div>
-
-        <div style="text-align:center;padding:10px 0;">
+        ${subtabsHtml}
+        ${activePanelHtml}
+        <div style="text-align:center;padding:8px 0;">
           <button type="button" id="version-secret-trigger" class="mono" style="min-height:44px;padding:8px 12px;background:none;border:none;color:var(--vg-text-muted);font-size:0.74rem;cursor:pointer;">
             ${APP_VERSION} · ADVIENTO CERO · MODO CERO SPOILERS
           </button>
@@ -2197,10 +2496,27 @@
       </div>
     `;
 
-    if (preservedExpVideo) {
-      document.getElementById("exp-briefing-mount")?.appendChild(preservedExpVideo);
-    }
-    wireBriefingVideoControls(document.getElementById("exp-briefing-mount"));
+    container.querySelectorAll("[data-exp-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const nextTab = btn.dataset.expTab || "case";
+        if (nextTab === expedienteTab) return;
+        expedienteTab = nextTab;
+        window.AudioFX.click();
+        renderExpedienteView(true);
+      });
+    });
+
+    document.getElementById("exp-go-briefing-btn")?.addEventListener("click", () => {
+      window.AudioFX.click();
+      switchTab("calendar", { scrollToTop: true });
+      setTimeout(() => {
+        const vid = document.getElementById("briefing-video-hero");
+        if (vid) {
+          vid.scrollIntoView({ behavior: "smooth", block: "center" });
+          vid.play().catch(() => {});
+        }
+      }, 120);
+    });
 
     const renderExpSearchResults = () => {
       const box = document.getElementById("search-results-list");
@@ -2739,7 +3055,10 @@
     Object.keys(newSt.days || {}).forEach((k) => {
       const prevD = prevSyncSnap.days?.[k] || {};
       const curD = newSt.days[k] || {};
-      if (!prevD[pFlag] && curD[pFlag]) {
+      if (!prevD.solved && curD.solved && !celebratedLockDays.has(Number(k))) {
+        playDoubleLockCinema(Number(k), { isJoint: false });
+        showToast(`¡Doble candado abierto! Día ${String(k).padStart(2, "0")} completado junto a ${partnerName}.`);
+      } else if (!prevD[pFlag] && curD[pFlag]) {
         window.AudioFX.partnerPing?.();
         showToast(`${partnerName} acaba de validar su parte del Día ${String(k).padStart(2, "0")}.`);
       }

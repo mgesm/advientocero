@@ -162,6 +162,97 @@ window.AudioFX = (() => {
     haptic(10);
   }
 
+  function createNoiseBuffer(c, durationSec) {
+    const len = Math.max(1, Math.floor(c.sampleRate * durationSec));
+    const buf = c.createBuffer(1, len, c.sampleRate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) {
+      ch[i] = Math.random() * 2 - 1;
+    }
+    return buf;
+  }
+
+  function scheduleBandNoise(c, delaySec, durationSec, freqStart, freqEnd, qVal, gainPeak) {
+    try {
+      const now = c.currentTime + delaySec;
+      const src = c.createBufferSource();
+      src.buffer = createNoiseBuffer(c, durationSec);
+      const flt = c.createBiquadFilter();
+      flt.type = "bandpass";
+      flt.Q.setValueAtTime(qVal, now);
+      flt.frequency.setValueAtTime(freqStart, now);
+      if (freqEnd && freqEnd !== freqStart) {
+        flt.frequency.exponentialRampToValueAtTime(freqEnd, now + durationSec);
+      }
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(gainPeak, now + Math.min(0.015, durationSec * 0.25));
+      g.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
+      src.connect(flt);
+      flt.connect(g);
+      g.connect(c.destination);
+      src.start(now);
+      src.stop(now + durationSec + 0.02);
+    } catch (_) {}
+  }
+
+  function waxSealBreak() {
+    haptic([14, 24, 34]);
+    emitVisualCue("wax", "Sello de lacre abierto");
+    const c = ensureCtx(false);
+    if (!c) return;
+    const play = () => {
+      // 1) Hairline golden fracture stress tick (310ms)
+      scheduleBandNoise(c, 0.31, 0.04, 3400, 2200, 3.0, 0.085);
+      scheduleTone(c, 1680, 26, "triangle", 0.032, 310);
+      // 2) Crisp crimson wax crack snap on split (555ms)
+      scheduleBandNoise(c, 0.555, 0.06, 2900, 1650, 2.1, 0.17);
+      scheduleTone(c, 265, 62, "triangle", 0.08, 555);
+      scheduleTone(c, 148, 82, "sine", 0.058, 568);
+      // 3) Tactile parchment envelope fiber rustle (620ms)
+      scheduleBandNoise(c, 0.62, 0.28, 1550, 3100, 1.5, 0.068);
+      // 4) Warm golden mystery fifth shimmer (665ms)
+      scheduleTone(c, 523.25, 310, "sine", 0.04, 665);
+      scheduleTone(c, 783.99, 420, "sine", 0.034, 715);
+    };
+    if (c.state !== "running") {
+      c.resume().then(play).catch(() => {});
+    } else {
+      play();
+    }
+  }
+
+  function doubleLockOpen() {
+    haptic([24, 42, 58]);
+    emitVisualCue("doublelock", "Doble Candado abierto (Silencio activo)");
+    const c = ensureCtx(false);
+    if (!c) return;
+    const play = () => {
+      // 1) Opposing polarized harmonic convergence (0..380ms)
+      scheduleTone(c, 440.0, 360, "sine", 0.036, 0);
+      scheduleTone(c, 554.37, 360, "sine", 0.036, 25);
+      // 2) Fine brass tumbler pre-click (410ms)
+      scheduleTone(c, 2450, 20, "sine", 0.055, 410);
+      scheduleTone(c, 4820, 18, "triangle", 0.042, 412);
+      scheduleBandNoise(c, 0.41, 0.025, 3600, 2200, 3.0, 0.08);
+      // 3) Authoritative metallic shackle UNLATCH clack (475ms, matching briefing video!)
+      scheduleTone(c, 390, 82, "triangle", 0.11, 475);
+      scheduleTone(c, 880, 95, "sine", 0.075, 475);
+      scheduleTone(c, 3420, 48, "sine", 0.065, 476);
+      scheduleTone(c, 6180, 36, "triangle", 0.045, 478);
+      scheduleBandNoise(c, 0.475, 0.065, 3400, 1800, 2.5, 0.17);
+      // 4) Luminous alabaster chord bloom (515ms)
+      scheduleTone(c, 587.33, 520, "sine", 0.045, 515);
+      scheduleTone(c, 880.0, 620, "sine", 0.042, 545);
+      scheduleTone(c, 1174.66, 700, "sine", 0.032, 585);
+    };
+    if (c.state !== "running") {
+      c.resume().then(play).catch(() => {});
+    } else {
+      play();
+    }
+  }
+
   function sealBreak() {
     tone(220, 120, "triangle", 0.07, 0);
     tone(330, 180, "sine", 0.06, 65);
@@ -171,12 +262,6 @@ window.AudioFX = (() => {
   function radioSweep() {
     tone(420, 90, "sine", 0.04, 0);
     tone(580, 120, "sine", 0.045, 75);
-  }
-
-  function partnerPing() {
-    tone(660, 110, "sine", 0.05, 0);
-    tone(880, 180, "sine", 0.06, 110);
-    haptic(25);
   }
 
   function partnerPing() {
@@ -260,6 +345,8 @@ window.AudioFX = (() => {
     click,
     mechanicalTick,
     sealBreak,
+    waxSealBreak,
+    doubleLockOpen,
     radioSweep,
     partnerPing,
     success,

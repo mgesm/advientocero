@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v2.12.4 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v2.13.0 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -60,5 +60,5 @@ Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardi
 | `js/date-gate.js` | Bloqueo por fecha de diciembre y Modo Test oculto |
 | `js/audio-fx.js` | Síntesis Web Audio API, pulso visual silencioso, Wake Lock y señal Morse |
 | `js/app.js` | Controlador principal, consulta cruzada, comparador, cronología, buscador, confort visual y libreta |
-| `sw.js` | Precaché offline PWA (`adviento-cero-v2.12.4`) |
+| `sw.js` | Precaché offline PWA (`adviento-cero-v2.13.0`) |
 | `scripts/verify_integrity.ps1` | Auditoría automatizada (cero emojis BMP+astrales, UTF-8 sin BOM, 24 descartes únicos, hashes válidos) |
