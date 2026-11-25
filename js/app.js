@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.13.0";
-  const CACHE_TAG = "adviento-cero-v2.13.0";
+  const APP_VERSION = "v2.14.0";
+  const CACHE_TAG = "adviento-cero-v2.14.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -241,12 +241,17 @@
       </svg>`;
   }
 
-  function playDoorWaxUnseal(dayObj, onReveal) {
-    markDoorUnsealed(dayObj.day);
+  function playDoorWaxUnseal(dayObj, onReveal, opts = {}) {
+    if (!opts.previewOnly) markDoorUnsealed(dayObj.day);
+    if (window.DoorRituals && typeof window.DoorRituals.play === "function") {
+      if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+      window.DoorRituals.play(dayObj, onReveal, opts);
+      return;
+    }
     const layer = document.getElementById("cinema-fx-layer");
     if (!layer || isReducedMotionPref()) {
       window.AudioFX.waxSealBreak?.();
-      onReveal();
+      if (typeof onReveal === "function") onReveal();
       return;
     }
 
@@ -328,6 +333,7 @@
     }
 
     if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+    window.DoorRituals?.stop?.();
     let finished = false;
     const timers = [];
     const cleanup = () => {
@@ -451,8 +457,8 @@
   function renderBriefingVideoHtml(videoId) {
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
-      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.13.0" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
-        <source src="video-briefing/briefing.mp4?v=2.13.0" type="video/mp4">
+      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.14.0" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
+        <source src="video-briefing/briefing.mp4?v=2.14.0" type="video/mp4">
       </video>`;
   }
 
@@ -855,6 +861,48 @@
     dot.classList.toggle("visible", hasPending);
   }
 
+  function openRitualPreviewModal(triggerEl) {
+    const catalog = window.DoorRituals?.CATALOG || [];
+    const daysByNum = new Map((window.ADVENT_DAYS || []).map((d) => [Number(d.day), d]));
+    const cardsHtml = catalog.map((item) => {
+      const numStr = String(item.day).padStart(2, "0");
+      return `
+        <button type="button" class="ritual-preview-btn" data-preview-ritual-day="${item.day}">
+          <span class="ritual-preview-num" style="color:${esc(item.accent)};">PUERTA ${numStr}</span>
+          <span class="ritual-preview-name">${esc(item.label)}</span>
+        </button>`;
+    }).join("");
+
+    showModal(`
+      <span class="badge badge-gold">MODO TEST · SIN SPOILERS</span>
+      <h2 id="adv-modal-title" class="serif" style="font-size:1.55rem;margin:8px 0 6px;">Previsualizar 24 Rituales de Apertura</h2>
+      <p class="day-story" style="font-size:0.84rem;margin-bottom:12px;">
+        Toca cualquier puerta para ver su animación y escuchar su firma sonora a pantalla completa sin abrir ni alterar la partida real.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+        <button type="button" class="btn btn-sm btn-primary" id="preview-dlock-btn">Probar Doble Candado</button>
+      </div>
+      <div class="ritual-preview-grid">${cardsHtml}</div>
+    `, triggerEl);
+
+    document.getElementById("preview-dlock-btn")?.addEventListener("click", () => {
+      playDoubleLockCinema(1, {
+        force: true,
+        kicker: "VISTA PREVIA · SINCRONIZACIÓN",
+        headline: "DOBLE CANDADO ABIERTO",
+        subline: "MIGUEL Y PATRI SINCRONIZADOS"
+      });
+    });
+
+    document.querySelectorAll("[data-preview-ritual-day]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dNum = Number(btn.dataset.previewRitualDay || 1);
+        const dayObj = daysByNum.get(dNum) || { day: dNum, title: `Puerta ${String(dNum).padStart(2, "0")}` };
+        playDoorWaxUnseal(dayObj, null, { previewOnly: true });
+      });
+    });
+  }
+
   function renderAdminBar() {
     const bar = document.getElementById("admin-bar");
     if (!bar) return;
@@ -883,11 +931,13 @@
           ${Array.from({ length: 24 }, (_, i) => i + 1).map((d) => `<option value="${d}" ${sim === d ? "selected" : ""}>${d} de diciembre</option>`).join("")}
         </select>
       </label>
+      <button type="button" class="btn btn-sm btn-gold" id="admin-preview-rituals-btn">Probar 24 aperturas</button>
       <button type="button" class="btn btn-sm btn-ghost" id="admin-reset-btn" style="color:#FDA4AF;border-color:rgba(255,45,85,0.4);">Resetear partida test</button>
       <button type="button" class="btn btn-sm btn-ghost" id="admin-exit-btn">Salir test</button>
     `;
 
     document.getElementById("admin-switch-role-btn")?.addEventListener("click", () => applyRoleSwitch(otherRole));
+    document.getElementById("admin-preview-rituals-btn")?.addEventListener("click", (e) => openRitualPreviewModal(e.currentTarget));
 
     document.getElementById("admin-sim-select")?.addEventListener("change", (e) => {
       window.DateGate.setSimulatedDay(e.target.value);

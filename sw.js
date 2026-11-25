@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.13.0";
+const CACHE_NAME = "adviento-cero-v2.14.0";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -8,6 +8,7 @@ const CRITICAL_PRECACHE_ASSETS = [
   "./video-briefing/player.js",
   "./css/fonts.css",
   "./css/liquid-christmas.css",
+  "./css/door-rituals.css",
   "./css/advent-board.css",
   "./css/puzzles.css",
   "./css/artifacts.css",
@@ -30,6 +31,7 @@ const CRITICAL_PRECACHE_ASSETS = [
   "./js/vendor/firebase-app-compat.js",
   "./js/vendor/firebase-database-compat.js",
   "./js/audio-fx.js",
+  "./js/door-rituals.js",
   "./js/date-gate.js",
   "./js/sync-engine.js",
   "./js/puzzle-engine.js",

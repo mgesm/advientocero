@@ -1,0 +1,881 @@
+/* =====================================================================
+   ADVIENTO CERO — 24 RITUALES CINEMATOGRÁFICOS DE APERTURA (V2.14)
+   Estética Liquid Noir Polarizada · 100% SVG GPU + Web Audio
+   ===================================================================== */
+
+.ritual-arena {
+  position: relative;
+  width: 240px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 10px;
+}
+
+.ritual-svg {
+  width: 240px;
+  height: 220px;
+  display: block;
+  overflow: visible;
+}
+
+.ritual-halo {
+  position: absolute;
+  inset: -68px;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, var(--rh-core, rgba(251, 191, 36, 0.55)) 0%, var(--rh-mid, rgba(120, 215, 242, 0.22)) 36%, transparent 66%);
+  animation: ritualHaloPulse 1180ms 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.ritual-svg * {
+  transform-box: view-box;
+}
+
+@keyframes ritualHaloPulse {
+  0% { opacity: 0; transform: scale(0.32); }
+  45% { opacity: 0.92; transform: scale(1.12); }
+  100% { opacity: 0.12; transform: scale(1.45); }
+}
+
+@keyframes ritualPop {
+  from { opacity: 0; transform: scale(0.86); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ritualDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes ritualPulseOut {
+  0% { opacity: 0; transform: scale(0.45); }
+  28% { opacity: 0.92; }
+  100% { opacity: 0; transform: scale(1.65); }
+}
+
+/* --- Galería de Previsualización en Modo Test --- */
+.ritual-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+@media (min-width: 560px) {
+  .ritual-preview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ritual-preview-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 52px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 17, 25, 0.78);
+  color: #F8FAFC;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.ritual-preview-btn:hover,
+.ritual-preview-btn:focus-visible {
+  border-color: var(--adv-gold-soft);
+  background: rgba(20, 36, 48, 0.92);
+  transform: translateY(-1px);
+}
+
+.ritual-preview-num {
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--adv-gold-soft);
+}
+
+.ritual-preview-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.22;
+  color: #F4EFE6;
+}
+
+/* =====================================================================
+   02 · MANCHAS BAJO LUZ UV
+   ===================================================================== */
+.r02-beam {
+  animation: r02Sweep 980ms 140ms cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
+}
+
+.r02-reveal-rect {
+  animation: r02ClipSweep 980ms 140ms cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
+}
+
+.r02-glow-spots {
+  opacity: 0;
+  animation: r02SpotsIn 520ms 380ms ease-out forwards;
+}
+
+@keyframes r02Sweep {
+  0% { transform: translateX(-115px); opacity: 0.25; }
+  14% { opacity: 0.95; }
+  84% { opacity: 0.95; }
+  100% { transform: translateX(115px); opacity: 0.45; }
+}
+
+@keyframes r02ClipSweep {
+  0% { width: 0px; }
+  100% { width: 196px; }
+}
+
+@keyframes r02SpotsIn {
+  to { opacity: 1; }
+}
+
+/* =====================================================================
+   03 · MORSE EN LA CENTRALITA
+   ===================================================================== */
+.r03-bulb-glow {
+  opacity: 0.12;
+  animation: r03MorseFlash 1160ms 120ms linear forwards;
+}
+
+.r03-wave-1 {
+  transform-origin: 120px 92px;
+  opacity: 0;
+  animation: ritualPulseOut 460ms 160ms ease-out forwards;
+}
+
+.r03-wave-2 {
+  transform-origin: 120px 92px;
+  opacity: 0;
+  animation: ritualPulseOut 560ms 410ms ease-out forwards;
+}
+
+.r03-wave-3 {
+  transform-origin: 120px 92px;
+  opacity: 0;
+  animation: ritualPulseOut 460ms 860ms ease-out forwards;
+}
+
+.r03-sym { opacity: 0.22; }
+.r03-s1 { animation: r03SymOn 200ms 160ms forwards; }
+.r03-s2 { animation: r03SymOn 260ms 410ms forwards; }
+.r03-s3 { animation: r03SymOn 200ms 790ms forwards; }
+.r03-s4 { animation: r03SymOn 200ms 960ms forwards; }
+
+@keyframes r03MorseFlash {
+  0% { opacity: 0.14; }
+  5% { opacity: 1; }
+  14% { opacity: 1; }
+  18% { opacity: 0.14; }
+  26% { opacity: 1; }
+  48% { opacity: 1; }
+  53% { opacity: 0.14; }
+  61% { opacity: 1; }
+  70% { opacity: 1; }
+  74% { opacity: 0.14; }
+  80% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { opacity: 0.78; }
+}
+
+@keyframes r03SymOn {
+  to { opacity: 1; fill: #FDE68A; filter: drop-shadow(0 0 6px #F59E0B); }
+}
+
+/* =====================================================================
+   04 · CUADRANTE DE LLAVES MAESTRAS
+   ===================================================================== */
+.r04-key {
+  transform-origin: 120px 110px;
+  animation: r04KeyTurn 620ms 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r04-pin-1 { animation: r04PinShift 220ms 180ms ease-out forwards; }
+.r04-pin-2 { animation: r04PinShift 220ms 300ms ease-out forwards; }
+.r04-pin-3 { animation: r04PinShift 220ms 420ms ease-out forwards; }
+.r04-pin-4 { animation: r04PinShift 220ms 540ms ease-out forwards; }
+
+.r04-ring-ok {
+  transform-origin: 120px 110px;
+  opacity: 0;
+  animation: r04RingFlash 540ms 680ms ease-out forwards;
+}
+
+@keyframes r04KeyTurn {
+  0% { transform: rotate(-18deg) scale(0.95); }
+  25% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(90deg) scale(1.03); }
+}
+
+@keyframes r04PinShift {
+  0% { fill: #64748B; transform: scale(1); }
+  60% { fill: #FDE68A; transform: scale(1.16); }
+  100% { fill: #34D399; transform: scale(1.04); }
+}
+
+@keyframes r04RingFlash {
+  0% { opacity: 0; transform: scale(0.84); }
+  45% { opacity: 1; transform: scale(1.04); }
+  100% { opacity: 0.85; transform: scale(1.08); }
+}
+
+/* =====================================================================
+   05 · LECTURA RFID DE PASILLOS
+   ===================================================================== */
+.r05-card {
+  animation: r05CardTap 640ms 120ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r05-rf-1 {
+  transform-origin: 146px 110px;
+  opacity: 0;
+  animation: ritualPulseOut 560ms 460ms ease-out forwards;
+}
+
+.r05-rf-2 {
+  transform-origin: 146px 110px;
+  opacity: 0;
+  animation: ritualPulseOut 560ms 590ms ease-out forwards;
+}
+
+.r05-led {
+  fill: #EF4444;
+  animation: r05LedOk 240ms 620ms ease forwards;
+}
+
+.r05-badge-ok {
+  opacity: 0;
+  animation: r05BadgeIn 260ms 650ms ease-out forwards;
+}
+
+@keyframes r05CardTap {
+  0% { transform: translate(-48px, 14px) rotate(-12deg); opacity: 0; }
+  25% { opacity: 1; }
+  80% { transform: translate(6px, -2px) rotate(-2deg); opacity: 1; }
+  100% { transform: translate(0px, 0px) rotate(-4deg); opacity: 1; }
+}
+
+@keyframes r05LedOk {
+  to { fill: #34D399; filter: drop-shadow(0 0 8px #34D399); }
+}
+
+@keyframes r05BadgeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =====================================================================
+   06 · EL CRIPTOGRAMA DEL ROPERO
+   ===================================================================== */
+.r06-outer {
+  transform-origin: 120px 110px;
+  animation: r06SpinOuter 760ms 120ms cubic-bezier(0.18, 0.88, 0.28, 1) both;
+}
+
+.r06-inner {
+  transform-origin: 120px 110px;
+  animation: r06SpinInner 760ms 140ms cubic-bezier(0.18, 0.88, 0.28, 1) both;
+}
+
+.r06-sight {
+  opacity: 0.45;
+  animation: r06SightLock 360ms 720ms ease-out forwards;
+}
+
+@keyframes r06SpinOuter {
+  from { transform: rotate(-68deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes r06SpinInner {
+  from { transform: rotate(84deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes r06SightLock {
+  0% { opacity: 0.5; stroke: #94A3B8; }
+  55% { opacity: 1; stroke: #FFFBEB; filter: drop-shadow(0 0 10px #FBBF24); }
+  100% { opacity: 1; stroke: #FDE68A; filter: drop-shadow(0 0 7px #F59E0B); }
+}
+
+/* =====================================================================
+   07 · SEIS COARTADAS, CINCO SENSORES
+   ===================================================================== */
+.r07-scan {
+  animation: r07ScanLine 780ms 140ms cubic-bezier(0.25, 0.8, 0.3, 1) forwards;
+}
+
+.r07-n1 { animation: r07NodeOk 200ms 200ms forwards; }
+.r07-n2 { animation: r07NodeOk 200ms 330ms forwards; }
+.r07-n3 { animation: r07NodeOk 200ms 460ms forwards; }
+.r07-n4 { animation: r07NodeOk 200ms 590ms forwards; }
+.r07-n5 { animation: r07NodeAlert 260ms 710ms forwards; }
+
+.r07-alert-ring {
+  transform-origin: 198px 104px;
+  opacity: 0;
+  animation: ritualPulseOut 620ms 710ms ease-out forwards;
+}
+
+@keyframes r07ScanLine {
+  0% { transform: translateX(0px); opacity: 0; }
+  10% { opacity: 0.9; }
+  90% { opacity: 0.9; }
+  100% { transform: translateX(176px); opacity: 0.15; }
+}
+
+@keyframes r07NodeOk {
+  to { fill: #78D7F2; stroke: #E0F2FE; filter: drop-shadow(0 0 7px #38BDF8); }
+}
+
+@keyframes r07NodeAlert {
+  to { fill: #EF4444; stroke: #FECACA; filter: drop-shadow(0 0 10px #EF4444); }
+}
+
+/* =====================================================================
+   08 · LA BALANZA DEL PONCHE
+   ===================================================================== */
+.r08-drop-1 {
+  opacity: 0;
+  animation: r08DropFall 340ms 120ms ease-in forwards;
+}
+
+.r08-drop-2 {
+  opacity: 0;
+  animation: r08DropFall 340ms 260ms ease-in forwards;
+}
+
+.r08-beam-group {
+  transform-origin: 120px 84px;
+  animation: r08BalanceSwing 920ms 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r08-zero-glow {
+  opacity: 0;
+  animation: r08ZeroLock 340ms 760ms ease-out forwards;
+}
+
+@keyframes r08DropFall {
+  0% { opacity: 0; transform: translateY(-28px) scale(0.7); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(30px) scale(1.05); }
+}
+
+@keyframes r08BalanceSwing {
+  0% { transform: rotate(-11deg); }
+  32% { transform: rotate(9deg); }
+  62% { transform: rotate(-4deg); }
+  82% { transform: rotate(1.5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes r08ZeroLock {
+  to { opacity: 1; filter: drop-shadow(0 0 8px #FBBF24); }
+}
+
+/* =====================================================================
+   09 · FOTOGRAMAS DEL MIRADOR (OBTURADOR IRIS)
+   ===================================================================== */
+.r09-iris {
+  transform-origin: 120px 110px;
+  animation: r09IrisSnap 880ms 140ms cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+}
+
+.r09-flash {
+  opacity: 0;
+  animation: r09CameraFlash 420ms 430ms ease-out forwards;
+}
+
+.r09-reticle {
+  opacity: 0;
+  animation: r09ReticleIn 320ms 580ms ease-out forwards;
+}
+
+@keyframes r09IrisSnap {
+  0% { transform: scale(1.42) rotate(0deg); opacity: 0.72; }
+  34% { transform: scale(0.28) rotate(42deg); opacity: 1; }
+  48% { transform: scale(0.24) rotate(46deg); opacity: 1; }
+  100% { transform: scale(1.56) rotate(10deg); opacity: 0.24; }
+}
+
+@keyframes r09CameraFlash {
+  0% { opacity: 0; }
+  18% { opacity: 0.96; }
+  100% { opacity: 0; }
+}
+
+@keyframes r09ReticleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* =====================================================================
+   10 · VÁLVULAS DE LA CALDERA
+   ===================================================================== */
+.r10-wheel {
+  transform-origin: 96px 124px;
+  animation: r10WheelSpin 860ms 140ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r10-needle {
+  transform-origin: 176px 72px;
+  animation: r10NeedleRise 760ms 180ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r10-steam-1 {
+  opacity: 0;
+  animation: r10SteamPuff 740ms 520ms ease-out forwards;
+}
+
+.r10-steam-2 {
+  opacity: 0;
+  animation: r10SteamPuff 760ms 620ms ease-out forwards;
+}
+
+@keyframes r10WheelSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(180deg); }
+}
+
+@keyframes r10NeedleRise {
+  0% { transform: rotate(-54deg); }
+  75% { transform: rotate(42deg); }
+  100% { transform: rotate(34deg); }
+}
+
+@keyframes r10SteamPuff {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.45); }
+  28% { opacity: 0.85; }
+  100% { opacity: 0; transform: translate(34px, -36px) scale(1.6); }
+}
+
+/* =====================================================================
+   11 · EL TICKET TÉRMICO ROTO
+   ===================================================================== */
+.r11-paper-top {
+  animation: r11Feed 560ms 100ms steps(4, end) forwards;
+}
+
+.r11-paper-bot {
+  transform-origin: 120px 126px;
+  animation: r11Feed 560ms 100ms steps(4, end) forwards, r11TearDrop 540ms 660ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r11-tear-glow {
+  opacity: 0;
+  animation: r11TearFlash 420ms 640ms ease-out forwards;
+}
+
+@keyframes r11Feed {
+  from { transform: translateY(-48px); opacity: 0.4; }
+  to { transform: translateY(0px); opacity: 1; }
+}
+
+@keyframes r11TearDrop {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(12px, 24px) rotate(7deg); opacity: 0.92; }
+}
+
+@keyframes r11TearFlash {
+  0% { opacity: 0; }
+  35% { opacity: 1; }
+  100% { opacity: 0.35; }
+}
+
+/* =====================================================================
+   12 · NONOGRAMA DEL ARCHIVO
+   ===================================================================== */
+.r12-cell {
+  opacity: 0.14;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: r12CellLit 280ms var(--cd, 160ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes r12CellLit {
+  0% { opacity: 0.14; transform: scale(0.76); }
+  65% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* =====================================================================
+   13 · CHATS FRAGMENTADOS
+   ===================================================================== */
+.r13-left {
+  opacity: 0;
+  animation: r13SlideL 560ms var(--cd, 140ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r13-right {
+  opacity: 0;
+  animation: r13SlideR 560ms var(--cd, 200ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r13-sync-line {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: ritualDraw 360ms 620ms ease-out forwards;
+}
+
+@keyframes r13SlideL {
+  0% { opacity: 0; transform: translateX(-44px); }
+  75% { opacity: 1; transform: translateX(3px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes r13SlideR {
+  0% { opacity: 0; transform: translateX(44px); }
+  75% { opacity: 1; transform: translateX(-3px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* =====================================================================
+   14 · TRIANGULACIÓN WI-FI
+   ===================================================================== */
+.r14-w1 { transform-origin: 120px 38px; opacity: 0; animation: ritualPulseOut 620ms 160ms ease-out forwards; }
+.r14-w2 { transform-origin: 48px 164px; opacity: 0; animation: ritualPulseOut 620ms 300ms ease-out forwards; }
+.r14-w3 { transform-origin: 192px 164px; opacity: 0; animation: ritualPulseOut 620ms 440ms ease-out forwards; }
+
+.r14-ray {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: ritualDraw 420ms 340ms ease-out forwards;
+}
+
+.r14-target {
+  transform-origin: 120px 116px;
+  opacity: 0;
+  animation: r14Lock 380ms 660ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes r14Lock {
+  0% { opacity: 0; transform: scale(1.75) rotate(-30deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* =====================================================================
+   15 · LA CAJA FUERTE DE RECEPCIÓN
+   ===================================================================== */
+.r15-dial {
+  transform-origin: 120px 110px;
+  animation: r15DialCombo 760ms 120ms cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
+}
+
+.r15-bolt-l {
+  animation: r15BoltL 300ms 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r15-bolt-r {
+  animation: r15BoltR 300ms 720ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r15-core {
+  animation: r15CoreOk 260ms 740ms ease forwards;
+}
+
+@keyframes r15DialCombo {
+  0% { transform: rotate(0deg); }
+  35% { transform: rotate(62deg); }
+  68% { transform: rotate(-44deg); }
+  100% { transform: rotate(18deg); }
+}
+
+@keyframes r15BoltL {
+  to { transform: translateX(18px); fill: #34D399; }
+}
+
+@keyframes r15BoltR {
+  to { transform: translateX(-18px); fill: #34D399; }
+}
+
+@keyframes r15CoreOk {
+  to { stroke: #34D399; filter: drop-shadow(0 0 8px #34D399); }
+}
+
+/* =====================================================================
+   16 · FRECUENCIA EN EL BUZÓN
+   ===================================================================== */
+.r16-needle {
+  animation: r16Tune 740ms 140ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r16-wave {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: ritualDraw 560ms 460ms ease-out forwards;
+}
+
+.r16-lock {
+  opacity: 0;
+  animation: r05BadgeIn 280ms 720ms ease-out forwards;
+}
+
+@keyframes r16Tune {
+  0% { transform: translateX(-68px); }
+  58% { transform: translateX(28px); }
+  80% { transform: translateX(-8px); }
+  100% { transform: translateX(8px); }
+}
+
+/* =====================================================================
+   17 · PARRILLA DEDUCTIVA DEL COMEDOR
+   ===================================================================== */
+.r17-x {
+  stroke-dasharray: 44;
+  stroke-dashoffset: 44;
+  animation: ritualDraw 200ms var(--cd, 160ms) ease-out forwards;
+}
+
+.r17-win-cell {
+  opacity: 0.15;
+  animation: r17WinGlow 380ms 680ms ease-out forwards;
+}
+
+.r17-check {
+  stroke-dasharray: 44;
+  stroke-dashoffset: 44;
+  animation: ritualDraw 260ms 720ms ease-out forwards;
+}
+
+@keyframes r17WinGlow {
+  to { opacity: 1; fill: rgba(52, 211, 153, 0.28); stroke: #34D399; filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.7)); }
+}
+
+/* =====================================================================
+   18 · HUELLAS EN LA NIEVE DEL PATIO
+   ===================================================================== */
+.r18-boot-1 {
+  opacity: 0;
+  transform-origin: 90px 132px;
+  animation: r18StepIn 360ms 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r18-boot-2 {
+  opacity: 0;
+  transform-origin: 152px 86px;
+  animation: r18StepIn 360ms 460ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r18-beam {
+  opacity: 0;
+  animation: r18BeamSweep 960ms 120ms ease-out forwards;
+}
+
+@keyframes r18StepIn {
+  0% { opacity: 0; transform: scale(1.18); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes r18BeamSweep {
+  0% { opacity: 0; transform: rotate(-14deg); transform-origin: 24px 198px; }
+  30% { opacity: 0.9; }
+  100% { opacity: 0.72; transform: rotate(8deg); transform-origin: 24px 198px; }
+}
+
+/* =====================================================================
+   19 · TRANSFERENCIAS DE MEDIANOCHE
+   ===================================================================== */
+.r19-bar {
+  animation: r19BarFill 680ms 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r19-arrow {
+  stroke-dasharray: 150;
+  stroke-dashoffset: 150;
+  animation: ritualDraw 480ms 280ms ease-out forwards;
+}
+
+.r19-stamp {
+  opacity: 0;
+  animation: r05BadgeIn 280ms 680ms ease-out forwards;
+}
+
+@keyframes r19BarFill {
+  from { width: 0px; }
+  to { width: 156px; }
+}
+
+/* =====================================================================
+   20 · ESCÁNER DE EQUIPAJE (RAYOS X)
+   ===================================================================== */
+.r20-beam {
+  animation: r20ScanX 880ms 140ms cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
+}
+
+.r20-xray-clip {
+  animation: r20ClipX 880ms 140ms cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes r20ScanX {
+  0% { transform: translateX(0px); opacity: 0.2; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateX(158px); opacity: 0.45; }
+}
+
+@keyframes r20ClipX {
+  0% { width: 0px; }
+  100% { width: 162px; }
+}
+
+/* =====================================================================
+   21 · CRONOLOGÍA DE LA PLANTA 3 (RELOJ REBOBINANDO)
+   ===================================================================== */
+.r21-min-hand {
+  transform-origin: 120px 110px;
+  animation: r21RewindMin 760ms 140ms cubic-bezier(0.18, 0.9, 0.25, 1) forwards;
+}
+
+.r21-hr-hand {
+  transform-origin: 120px 110px;
+  animation: r21RewindHr 760ms 140ms cubic-bezier(0.18, 0.9, 0.25, 1) forwards;
+}
+
+.r21-arc-alert {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: ritualDraw 340ms 660ms ease-out forwards;
+}
+
+@keyframes r21RewindMin {
+  from { transform: rotate(210deg); }
+  to { transform: rotate(-30deg); }
+}
+
+@keyframes r21RewindHr {
+  from { transform: rotate(45deg); }
+  to { transform: rotate(-6deg); }
+}
+
+/* =====================================================================
+   22 · PICO DE VOLTAJE EN PLANTA 1
+   ===================================================================== */
+.r22-trace {
+  stroke-dasharray: 290;
+  stroke-dashoffset: 290;
+  animation: ritualDraw 520ms 120ms linear forwards;
+}
+
+.r22-surge-flash {
+  opacity: 0;
+  animation: r22SurgeBlink 620ms 440ms ease-out forwards;
+}
+
+.r22-spark {
+  opacity: 0;
+  animation: r22SparkPop 360ms 500ms ease-out forwards;
+}
+
+@keyframes r22SurgeBlink {
+  0% { opacity: 0; }
+  16% { opacity: 0.92; }
+  36% { opacity: 0.08; }
+  56% { opacity: 0.72; }
+  100% { opacity: 0.16; }
+}
+
+@keyframes r22SparkPop {
+  0% { opacity: 0; transform: scale(0.5); }
+  35% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0.4; transform: scale(1.3); }
+}
+
+/* =====================================================================
+   23 · LA PENÚLTIMA COARTADA (SELLO DE IMPACTO)
+   ===================================================================== */
+.r23-stamp {
+  transform-origin: 120px 112px;
+  opacity: 0;
+  animation: r23StampSlam 340ms 320ms cubic-bezier(0.2, 0.95, 0.3, 1) forwards;
+}
+
+.r23-paper {
+  transform-origin: 120px 110px;
+  animation: r23PaperRecoil 260ms 450ms ease-out forwards;
+}
+
+@keyframes r23StampSlam {
+  0% { opacity: 0; transform: scale(2.15) rotate(-18deg); }
+  70% { opacity: 1; transform: scale(0.95) rotate(-9deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-10deg); }
+}
+
+@keyframes r23PaperRecoil {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.965); }
+  100% { transform: scale(1); }
+}
+
+/* =====================================================================
+   24 · NOCHEBUENA: GRAN SELLO POLARIZADO
+   ===================================================================== */
+.r24-star-rays {
+  transform-origin: 120px 110px;
+  opacity: 0;
+  animation: r24StarBloom 960ms 260ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.r24-ring-c {
+  transform-origin: 120px 110px;
+  animation: r24SpinC 780ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.r24-ring-a {
+  transform-origin: 120px 110px;
+  animation: r24SpinA 780ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.r24-seal-tl {
+  transform-origin: 120px 110px;
+  animation: waxPopIn 240ms ease-out both, r24SplitTL 740ms 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.r24-seal-br {
+  transform-origin: 120px 110px;
+  animation: waxPopIn 240ms ease-out both, r24SplitBR 740ms 620ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes r24StarBloom {
+  0% { opacity: 0; transform: scale(0.32) rotate(-24deg); }
+  55% { opacity: 1; transform: scale(1.08) rotate(8deg); }
+  100% { opacity: 0.92; transform: scale(1.16) rotate(14deg); }
+}
+
+@keyframes r24SpinC {
+  from { transform: rotate(-56deg); opacity: 0.25; }
+  to { transform: rotate(0deg); opacity: 1; }
+}
+
+@keyframes r24SpinA {
+  from { transform: rotate(56deg); opacity: 0.25; }
+  to { transform: rotate(0deg); opacity: 1; }
+}
+
+@keyframes r24SplitTL {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  55% { transform: translate(-22px, -16px) rotate(-11deg); opacity: 0.96; }
+  100% { transform: translate(-42px, -28px) rotate(-20deg); opacity: 0; }
+}
+
+@keyframes r24SplitBR {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  55% { transform: translate(22px, 16px) rotate(11deg); opacity: 0.96; }
+  100% { transform: translate(42px, 28px) rotate(20deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ritual-arena *,
+  .ritual-halo {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}

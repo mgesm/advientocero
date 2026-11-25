@@ -341,11 +341,174 @@ window.AudioFX = (() => {
     return muted;
   }
 
+  function playDoorRitual(dayNum) {
+    const d = Number(dayNum || 1);
+    if (d === 1) {
+      waxSealBreak();
+      return;
+    }
+    haptic([12, 24, 28]);
+    emitVisualCue("door", `Apertura Puerta ${String(d).padStart(2, "0")}`);
+    const c = ensureCtx(false);
+    if (!c) return;
+    const play = () => {
+      switch (d) {
+        case 2: // Luz UV: click táctil + zumbido UV limpio + destello fluorescente
+          scheduleTone(c, 2200, 18, "square", 0.045, 90);
+          scheduleBandNoise(c, 0.09, 0.03, 3200, 1900, 2.5, 0.08);
+          scheduleTone(c, 185, 620, "sine", 0.03, 140);
+          scheduleTone(c, 1480, 380, "sine", 0.025, 420);
+          break;
+        case 3: // Morse centralita: · − · · a 740 Hz
+          scheduleTone(c, 740, 82, "sine", 0.068, 160);
+          scheduleTone(c, 740, 235, "sine", 0.068, 410);
+          scheduleTone(c, 740, 82, "sine", 0.068, 790);
+          scheduleTone(c, 740, 85, "sine", 0.068, 960);
+          break;
+        case 4: // Llavín maestro: 4 pernos en cascada + cerrojo de latón
+          [180, 300, 420, 540].forEach((ms, i) => {
+            scheduleTone(c, 1380 + i * 190, 22, "triangle", 0.055, ms);
+            scheduleBandNoise(c, ms / 1000, 0.02, 3400, 2200, 3.0, 0.06);
+          });
+          scheduleTone(c, 290, 95, "triangle", 0.095, 680);
+          scheduleTone(c, 660, 260, "sine", 0.042, 710);
+          break;
+        case 5: // RFID: doble bip de acceso autorizado
+          scheduleTone(c, 320, 260, "sine", 0.022, 340);
+          scheduleTone(c, 1760, 75, "sine", 0.062, 620);
+          scheduleTone(c, 2093, 95, "sine", 0.062, 725);
+          break;
+        case 6: // Disco de cifrado: engranajes mecánicos + campana fina
+          [160, 240, 320, 410, 510, 620].forEach((ms, i) => {
+            scheduleTone(c, 1100 + i * 70, 16, "square", 0.028, ms);
+          });
+          scheduleTone(c, 880, 320, "sine", 0.048, 730);
+          scheduleTone(c, 1318.5, 360, "sine", 0.032, 760);
+          break;
+        case 7: // 5 sensores: 4 pings ascendentes + alerta carmesí en S5
+          [523, 587, 659, 740].forEach((f, i) => scheduleTone(c, f, 72, "sine", 0.048, 200 + i * 130));
+          scheduleTone(c, 440, 260, "sawtooth", 0.042, 710);
+          scheduleTone(c, 622, 260, "triangle", 0.042, 715);
+          break;
+        case 8: // Balanza analítica: dos gotas líquidas + resonancia de cristal
+          scheduleTone(c, 880, 48, "sine", 0.055, 220);
+          scheduleTone(c, 1280, 36, "sine", 0.045, 248);
+          scheduleTone(c, 988, 48, "sine", 0.055, 360);
+          scheduleTone(c, 1480, 38, "sine", 0.045, 388);
+          scheduleTone(c, 1046.5, 420, "sine", 0.045, 760);
+          break;
+        case 9: // Obturador iris: ka-clack mecánico + carga de flash
+          scheduleBandNoise(c, 0.36, 0.042, 2800, 1400, 2.0, 0.16);
+          scheduleTone(c, 220, 45, "triangle", 0.08, 360);
+          scheduleBandNoise(c, 0.44, 0.05, 4200, 2400, 2.2, 0.14);
+          scheduleTone(c, 1950, 280, "sine", 0.024, 520);
+          break;
+        case 10: // Válvula de caldera: chirrido metálico + siseo de vapor
+          scheduleTone(c, 210, 260, "triangle", 0.042, 160);
+          scheduleTone(c, 340, 220, "sine", 0.032, 260);
+          scheduleBandNoise(c, 0.50, 0.48, 1250, 3600, 1.3, 0.14);
+          break;
+        case 11: // Ticket térmico: pasos de impresora + rasgado de papel
+          [130, 270, 410, 540].forEach((ms) => scheduleBandNoise(c, ms / 1000, 0.055, 1900, 2700, 2.4, 0.075));
+          scheduleBandNoise(c, 0.65, 0.24, 2400, 4400, 1.6, 0.15);
+          break;
+        case 12: // Nonograma 5x5: cascada de teclado mecánico + verificación
+          [160, 230, 300, 370, 440, 510, 580, 650].forEach((ms, i) => {
+            scheduleTone(c, 680 + i * 85, 28, "triangle", 0.036, ms);
+          });
+          scheduleTone(c, 1174.66, 320, "sine", 0.042, 740);
+          break;
+        case 13: // Chats fragmentados: burbujas duales cian/ámbar + unión
+          scheduleTone(c, 660, 75, "sine", 0.055, 180);
+          scheduleTone(c, 880, 75, "sine", 0.055, 330);
+          scheduleTone(c, 784, 85, "sine", 0.052, 480);
+          scheduleTone(c, 1046.5, 280, "sine", 0.042, 650);
+          break;
+        case 14: // Triangulación Wi-Fi: 3 sonares + fijación de objetivo
+          scheduleTone(c, 988, 90, "sine", 0.048, 170);
+          scheduleTone(c, 1175, 90, "sine", 0.048, 320);
+          scheduleTone(c, 1318, 90, "sine", 0.048, 470);
+          scheduleTone(c, 1568, 320, "sine", 0.052, 660);
+          break;
+        case 15: // Caja fuerte: clics de dial + golpe profundo de bulones
+          [160, 230, 300, 440, 510, 620].forEach((ms, i) => {
+            scheduleTone(c, 1650 + (i % 2) * 320, 16, "square", 0.034, ms);
+          });
+          scheduleTone(c, 175, 120, "triangle", 0.11, 720);
+          scheduleBandNoise(c, 0.72, 0.06, 2800, 1200, 2.4, 0.14);
+          scheduleTone(c, 784, 290, "sine", 0.042, 760);
+          break;
+        case 16: // Dial de radio: barrido de estática blanca -> sintonía pura
+          scheduleBandNoise(c, 0.14, 0.56, 950, 2650, 2.2, 0.095);
+          scheduleTone(c, 587.33, 380, "sine", 0.048, 720);
+          scheduleTone(c, 880.0, 420, "sine", 0.035, 760);
+          break;
+        case 17: // Parrilla deductiva: trazos de pluma + acorde de acierto
+          [170, 260, 350, 440, 530].forEach((ms) => scheduleBandNoise(c, ms / 1000, 0.05, 2900, 4100, 2.6, 0.06));
+          scheduleTone(c, 587.33, 180, "sine", 0.048, 700);
+          scheduleTone(c, 880.0, 340, "sine", 0.048, 750);
+          break;
+        case 18: // Huellas en la nieve: dos pisadas crujientes en escarcha
+          scheduleBandNoise(c, 0.20, 0.16, 950, 2400, 1.4, 0.13);
+          scheduleBandNoise(c, 0.48, 0.18, 1050, 2600, 1.4, 0.14);
+          scheduleTone(c, 1318.5, 360, "sine", 0.028, 660);
+          break;
+        case 19: // Transferencias 00:00: contador digital + confirmación bancaria
+          [170, 230, 290, 350, 410, 470, 530].forEach((ms, i) => {
+            scheduleTone(c, 920 + i * 55, 20, "square", 0.024, ms);
+          });
+          scheduleTone(c, 880, 120, "sine", 0.055, 670);
+          scheduleTone(c, 1318.5, 320, "sine", 0.052, 760);
+          break;
+        case 20: // Escáner Rayos X: motor suave + barrido espectral cian
+          scheduleTone(c, 145, 720, "sine", 0.038, 140);
+          scheduleTone(c, 620, 260, "sine", 0.03, 240);
+          scheduleTone(c, 980, 280, "sine", 0.032, 480);
+          scheduleTone(c, 1240, 260, "sine", 0.028, 720);
+          break;
+        case 21: // Reloj rebobinando: tictac inverso acelerado + campanada grave
+          [160, 235, 305, 370, 430, 495, 565].forEach((ms, i) => {
+            scheduleTone(c, 1520 - i * 80, 16, "triangle", 0.038, ms);
+          });
+          scheduleTone(c, 220, 560, "sine", 0.085, 690);
+          scheduleTone(c, 440, 480, "triangle", 0.042, 695);
+          break;
+        case 22: // Pico de voltaje: zumbido 50Hz + chispazo eléctrico + golpe de disyuntor
+          scheduleTone(c, 100, 340, "sawtooth", 0.028, 120);
+          scheduleBandNoise(c, 0.44, 0.14, 4200, 1400, 1.5, 0.17);
+          scheduleTone(c, 1620, 95, "sawtooth", 0.065, 450);
+          scheduleTone(c, 130, 140, "triangle", 0.10, 680);
+          break;
+        case 23: // Tampón forense: impacto contundente de sello + tensión
+          scheduleTone(c, 118, 120, "triangle", 0.13, 390);
+          scheduleBandNoise(c, 0.39, 0.075, 1600, 800, 1.8, 0.18);
+          scheduleTone(c, 440, 420, "sine", 0.04, 470);
+          scheduleTone(c, 659.25, 460, "sine", 0.032, 510);
+          break;
+        case 24: // Gran Sello Nochebuena: fractura + arpegio celesta solemne
+        default:
+          scheduleBandNoise(c, 0.56, 0.07, 2900, 1600, 2.0, 0.15);
+          scheduleTone(c, 265, 70, "triangle", 0.075, 560);
+          scheduleTone(c, 587.33, 520, "sine", 0.048, 340);
+          scheduleTone(c, 739.99, 560, "sine", 0.044, 480);
+          scheduleTone(c, 880.0, 620, "sine", 0.046, 610);
+          scheduleTone(c, 1174.66, 780, "sine", 0.042, 740);
+          break;
+      }
+    };
+    if (c.state !== "running") {
+      c.resume().then(play).catch(() => {});
+    } else {
+      play();
+    }
+  }
+
   return {
     click,
     mechanicalTick,
     sealBreak,
     waxSealBreak,
+    playDoorRitual,
     doubleLockOpen,
     radioSweep,
     partnerPing,

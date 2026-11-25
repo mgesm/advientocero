@@ -939,7 +939,7 @@ body.high-contrast-outdoor .adv-modal-sheet {
 .cinema-fx-layer {
   position: fixed;
   inset: 0;
-  z-index: 160;
+  z-index: 220;
   display: none;
   align-items: center;
   justify-content: center;
@@ -990,7 +990,8 @@ body.high-contrast-outdoor .adv-modal-sheet {
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  line-height: 1.12;
+  line-height: 1.14;
+  text-wrap: balance;
   color: #F4EFE6;
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.92);
   animation: cinemaFadeUp 380ms 60ms var(--vg-spring) both;
