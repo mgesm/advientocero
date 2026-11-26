@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.23.0";
-  const CACHE_TAG = "adviento-cero-v2.23.0";
+  const APP_VERSION = "v2.24.0";
+  const CACHE_TAG = "adviento-cero-v2.24.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -3461,7 +3461,7 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             ${syncState.finalVerdictSolved ? `<button type="button" class="btn btn-sm btn-gold" id="exp-memories-btn">Álbum: Recuerdos del Mes</button>` : ""}
             <button type="button" class="btn btn-sm btn-primary" id="exp-go-briefing-btn">Ver Vídeo Briefing</button>
-            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf?v=2.15.0" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf?v=2.24.0" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
         </div>
       </div>`;
