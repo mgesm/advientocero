@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.21.0";
-  const CACHE_TAG = "adviento-cero-v2.21.0";
+  const APP_VERSION = "v2.22.0";
+  const CACHE_TAG = "adviento-cero-v2.22.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -1104,10 +1104,10 @@
               <rect x="0" y="0" width="320" height="206" filter="url(#e24Grain_${uid})" opacity="0.55"/>
               <!-- Ribetes metálicos dorados en pliegues -->
               <polyline points="0,206 160,100 320,206" fill="none" stroke="url(#e24Gold_${uid})" stroke-width="1.3"/>
-              <line x1="0" y1="0" x2="112" y2="80" stroke="rgba(253,230,138,0.24)" stroke-width="0.9"/>
-              <line x1="320" y1="0" x2="208" y2="80" stroke="rgba(253,230,138,0.24)" stroke-width="0.9"/>
-              <!-- Doble marco ornamental -->
-              <rect x="6" y="6" width="308" height="194" rx="7" fill="none" stroke="rgba(253,230,138,0.34)" stroke-width="0.9"/>
+              <line x1="0" y1="0" x2="112" y2="80" stroke="rgba(253,230,138,0.28)" stroke-width="0.95"/>
+              <line x1="320" y1="0" x2="208" y2="80" stroke="rgba(253,230,138,0.28)" stroke-width="0.95"/>
+              <!-- Marco ornamental abierto arriba (respeta la boca física del sobre) -->
+              <path d="M6 12 L6 194 Q6 200 12 200 L308 200 Q314 200 314 194 L314 12" fill="none" stroke="rgba(253,230,138,0.34)" stroke-width="0.9"/>
               <path d="M12 182 L12 194 L24 194 M16 188 L20 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
               <path d="M308 182 L308 194 L296 194 M304 188 L300 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
               <!-- Caligrafía dorada y matasellos alpino -->
@@ -1131,11 +1131,13 @@
                       <stop offset="100%" stop-color="#4B0C16"/>
                     </linearGradient>
                   </defs>
-                  <polygon points="0,4 320,4 160,127" fill="rgba(0,0,0,0.48)"/>
-                  <polygon points="0,0 320,0 160,121" fill="url(#e24FlapF_${uid})"/>
-                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.80" stroke-width="1.45"/>
-                  <polyline points="14,6 160,111 306,6" fill="none" stroke="#FDE68A" stroke-opacity="0.32" stroke-width="0.9" stroke-dasharray="3 3"/>
-                  <!-- Emblema alpino dorado simétrico centrado en la solapa (sin cortes de pliegue) -->
+                  <!-- Sombra realista bajo la solapa cerrada -->
+                  <path class="env24-flap-drop" d="M 0 3 L 320 3 L 172 119 Q 160 128 148 119 Z" fill="rgba(0,0,0,0.48)"/>
+                  <!-- Solapa triangular con punta de papelería fina suavizada -->
+                  <path d="M 0 0 L 320 0 L 172 114 Q 160 123 148 114 Z" fill="url(#e24FlapF_${uid})"/>
+                  <path d="M 2 1 L 148 113 Q 160 122 172 113 L 318 1" fill="none" stroke="#FDE68A" stroke-opacity="0.82" stroke-width="1.45"/>
+                  <path d="M 14 6 L 151 105 Q 160 112 169 105 L 306 6" fill="none" stroke="#FDE68A" stroke-opacity="0.32" stroke-width="0.9" stroke-dasharray="3 3"/>
+                  <!-- Emblema alpino dorado simétrico centrado en la solapa -->
                   <g opacity="0.88">
                     <path d="M98 28 Q124 22 146 28" fill="none" stroke="#FDE68A" stroke-opacity="0.58" stroke-width="1"/>
                     <path d="M222 28 Q196 22 174 28" fill="none" stroke="#FDE68A" stroke-opacity="0.58" stroke-width="1"/>
@@ -1149,18 +1151,37 @@
               <div class="env24-flap-face env24-flap-back">
                 <svg viewBox="0 0 320 128" preserveAspectRatio="none">
                   <defs>
-                    <linearGradient id="e24FlapB_${uid}" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#0B2E25"/>
-                      <stop offset="100%" stop-color="#174D3F"/>
+                    <linearGradient id="e24FlapRim_${uid}" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stop-color="#4A0B15"/>
+                      <stop offset="55%" stop-color="#6F1421"/>
+                      <stop offset="100%" stop-color="#8F1D2C"/>
+                    </linearGradient>
+                    <linearGradient id="e24FlapB_${uid}" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stop-color="#07211B"/>
+                      <stop offset="52%" stop-color="#0E382D"/>
+                      <stop offset="100%" stop-color="#195243"/>
+                    </linearGradient>
+                    <linearGradient id="e24Crease_${uid}" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stop-color="rgba(0,0,0,0.52)"/>
+                      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
                     </linearGradient>
                     <pattern id="e24Damask_${uid}" width="16" height="16" patternUnits="userSpaceOnUse">
                       <path d="M8 0 L16 8 L8 16 L0 8 Z" fill="none" stroke="#FDE68A" stroke-opacity="0.18" stroke-width="0.7"/>
                     </pattern>
                   </defs>
-                  <polygon points="0,0 320,0 160,121" fill="url(#e24FlapB_${uid})"/>
-                  <polygon points="0,0 320,0 160,121" fill="url(#e24Damask_${uid})"/>
-                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.84" stroke-width="1.5"/>
-                  <polygon points="160,30 163.5,41 174.5,44.5 163.5,48 160,59 156.5,48 145.5,44.5 156.5,41" fill="#FEF08A" fill-opacity="0.90"/>
+                  <!-- Base exacta en y=128 (bisagra pegada a la boca) y punta arriba en y=5 (simétrica 3D perfecta con flap-front) -->
+                  <path d="M 0 128 L 320 128 L 172 14 Q 160 5 148 14 Z" fill="url(#e24FlapRim_${uid})"/>
+                  <!-- Forro interior de seda verde esmeralda con margen artesanal de papel carmesí -->
+                  <path d="M 10 128 L 310 128 L 169 21 Q 160 14 151 21 Z" fill="url(#e24FlapB_${uid})"/>
+                  <path d="M 10 128 L 310 128 L 169 21 Q 160 14 151 21 Z" fill="url(#e24Damask_${uid})"/>
+                  <!-- Sombra suave de pliegue en la bisagra -->
+                  <rect x="0" y="112" width="320" height="16" fill="url(#e24Crease_${uid})"/>
+                  <!-- Ribetes dorados en borde exterior y forro interior -->
+                  <path d="M 2 127 L 148 15 Q 160 6 172 15 L 318 127" fill="none" stroke="#FDE68A" stroke-opacity="0.78" stroke-width="1.35"/>
+                  <path d="M 12 127 L 151 22 Q 160 15 169 22 L 308 127" fill="none" stroke="#FDE68A" stroke-opacity="0.45" stroke-width="0.9"/>
+                  <!-- Estrella Polar dorada centrada correctamente dentro de la solapa abierta (^) -->
+                  <polygon points="160,55 163.6,66.4 175,70 163.6,73.6 160,85 156.4,73.6 145,70 156.4,66.4" fill="#FEF08A" fill-opacity="0.94"/>
+                  <path d="M126 92 Q160 85 194 92" fill="none" stroke="#FDE68A" stroke-opacity="0.46" stroke-width="0.95"/>
                 </svg>
               </div>
             </div>
@@ -1292,11 +1313,11 @@
       cleanup(true);
     };
 
-    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(96); }, 600));
-    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(68); }, 1750));
-    timers.push(setTimeout(() => { unveilOnce(); }, 2960));
-    timers.push(setTimeout(() => { layer.classList.add("closing"); }, 3080));
-    timers.push(setTimeout(() => { cleanup(false); }, 3400));
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(96); }, 590));
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(72); }, 2320));
+    timers.push(setTimeout(() => { unveilOnce(); }, 3420));
+    timers.push(setTimeout(() => { layer.classList.add("closing"); }, 3540));
+    timers.push(setTimeout(() => { cleanup(false); }, 3880));
   }
 
   function wireEnv24ParallaxTilt(stageEl) {

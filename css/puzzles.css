@@ -1021,18 +1021,19 @@ body.briefing-fs-active #admin-bar {
   position: absolute;
   inset: 0;
   z-index: 1;
-  border-radius: 11px;
+  border-radius: 3px 3px 11px 11px;
   background:
     radial-gradient(circle at 50% 24%, rgba(251, 191, 36, 0.24), transparent 62%),
     repeating-linear-gradient(45deg, rgba(253, 230, 138, 0.07) 0 1px, transparent 1px 11px),
     repeating-linear-gradient(-45deg, rgba(253, 230, 138, 0.07) 0 1px, transparent 1px 11px),
     linear-gradient(160deg, #10382D 0%, #071D18 58%, #040E0D 100%);
-  border: 1.2px solid rgba(253, 230, 138, 0.48);
+  border: 1.2px solid rgba(253, 230, 138, 0.42);
   box-shadow:
     0 22px 44px rgba(0, 0, 0, 0.80),
     0 4px 12px rgba(0, 0, 0, 0.55),
     inset 0 0 28px rgba(0, 0, 0, 0.62);
   overflow: hidden;
+  will-change: transform, opacity;
 }
 
 /* 2) Carta de pergamino marfil y oro con filigranas de esquina */
@@ -1128,7 +1129,7 @@ body.briefing-fs-active #admin-bar {
   position: absolute;
   inset: 0;
   z-index: 4;
-  border-radius: 11px;
+  border-radius: 3px 3px 11px 11px;
   overflow: hidden;
   pointer-events: none;
   will-change: transform, opacity;
@@ -1140,7 +1141,7 @@ body.briefing-fs-active #admin-bar {
   display: block;
 }
 
-/* 4) Haz volumétrico de luz dorada en abanico + rayo anamórfico al abrir */
+/* 4) Haz volumétrico de luz dorada en abanico + destello screen limpio al abrir */
 .env24-light-fan {
   position: absolute;
   left: -26%;
@@ -1161,14 +1162,15 @@ body.briefing-fs-active #admin-bar {
 
 .env24-anamorphic-beam {
   position: absolute;
-  left: -10%;
-  right: -10%;
-  top: 2%;
-  height: 2px;
+  left: 2%;
+  right: 2%;
+  top: 0%;
+  height: 3px;
   z-index: 8;
   border-radius: 99px;
-  background: linear-gradient(90deg, transparent 4%, rgba(251, 191, 36, 0.62) 28%, #FFFBEB 50%, rgba(251, 191, 36, 0.62) 72%, transparent 96%);
-  box-shadow: 0 0 12px 2px rgba(251, 191, 36, 0.36);
+  mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent 2%, rgba(251, 191, 36, 0.58) 26%, rgba(255, 251, 235, 0.95) 50%, rgba(251, 191, 36, 0.58) 74%, transparent 98%);
+  box-shadow: 0 0 14px 3px rgba(251, 191, 36, 0.44);
   opacity: 0;
   transform: scaleX(0.08);
   pointer-events: none;
@@ -1463,7 +1465,7 @@ body.briefing-fs-active #admin-bar {
   font-weight: 700;
   color: #FFFBEB;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9);
-  margin-bottom: 136px;
+  margin-bottom: 156px;
   animation: cinemaFadeUp 460ms 60ms var(--vg-spring) both;
 }
 
@@ -1478,7 +1480,7 @@ body.briefing-fs-active #admin-bar {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: rgba(253, 230, 138, 0.72);
-  margin-top: 8px;
+  margin-top: 28px;
   animation: cinemaFadeUp 500ms 180ms ease both;
 }
 
@@ -1537,48 +1539,46 @@ body.briefing-fs-active #admin-bar {
   animation: env24ShardFly 720ms var(--dl, 600ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Acto 3 (990-1690ms): Apertura 3D limpia de la solapa + abanico de luz + rayo */
+/* Acto 3 (960-1740ms): Apertura 3D real de la solapa (^) con rebote orgánico de papel + luz */
 .env24-stage.is-opening .env24-flap-3d {
-  animation: env24FlapSwing 700ms 990ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: env24FlapSwing 780ms 960ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-flap-drop {
+  animation: env24FlapDropFade 280ms 960ms ease-out forwards;
 }
 
 .env24-stage.is-opening .env24-flap-stage {
-  animation: env24FlapDepthSwap 1ms 1330ms forwards;
+  animation: env24FlapDepthSwap 1ms 1300ms forwards, env24PocketRecede 1380ms 1640ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-light-fan {
-  animation: env24LightFanBloom 1450ms 1160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: env24LightFanBloom 1650ms 1140ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-anamorphic-beam {
-  animation: env24BeamFlash 780ms 1210ms ease-out forwards;
+  animation: env24BeamFlash 680ms 1200ms ease-out forwards;
 }
 
 .env24-stage.is-opening .env24-spark {
-  animation: env24SparkRise 1450ms var(--dl, 1200ms) ease-out forwards;
+  animation: env24SparkRise 1550ms var(--dl, 1180ms) ease-out forwards;
 }
 
-/* Acto 4 (1460-2960ms): Carta sale completa y avanza mientras el sobre retrocede suavemente */
+/* Acto 4 (1480-3160ms): Extracción física real a dos manos (carta sube + sobre desciende unido) */
 .env24-stage.is-opening .env24-letter-slip {
-  animation: env24LetterRise 1100ms 1460ms cubic-bezier(0.16, 1, 0.3, 1) forwards, env24LetterFocus 650ms 2300ms ease-out forwards;
+  animation: env24LetterExtract 1680ms 1480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-letter-slip::after {
-  animation: env24FoilSweep 860ms 1960ms ease-out forwards;
-}
-
-.env24-stage.is-opening .env24-pocket,
-.env24-stage.is-opening .env24-back,
-.env24-stage.is-opening .env24-flap-stage {
-  animation-composition: add;
+  animation: env24FoilSweep 860ms 2420ms ease-out forwards;
 }
 
 .env24-stage.is-opening .env24-pocket {
-  animation: env24PocketRecede 780ms 2120ms ease-in-out forwards;
+  animation: env24PocketRecede 1380ms 1640ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-back {
-  animation: env24PocketRecede 780ms 2120ms ease-in-out forwards;
+  animation: env24PocketRecede 1380ms 1640ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Tarjeta final revelada de lujo con filigranas, divisor estrella polar y vale iluminado */
@@ -1710,8 +1710,8 @@ body.briefing-fs-active #admin-bar {
 }
 
 @keyframes env24TheaterEntry {
-  from { opacity: 0; transform: scale(0.88) translateY(18px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 0; transform: rotateX(12deg) scale(0.88) translateY(20px); }
+  to { opacity: 1; transform: rotateX(0deg) scale(1) translateY(0); }
 }
 
 @keyframes env24SealBreath {
@@ -1775,8 +1775,14 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24FlapSwing {
   0% { transform: rotateX(0deg); }
-  50% { transform: rotateX(-96deg); }
+  26% { transform: rotateX(-38deg); }
+  52% { transform: rotateX(-106deg); }
+  82% { transform: rotateX(-184deg); }
   100% { transform: rotateX(-178deg); }
+}
+
+@keyframes env24FlapDropFade {
+  to { opacity: 0; }
 }
 
 @keyframes env24FlapDepthSwap {
@@ -1791,24 +1797,22 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24BeamFlash {
   0% { opacity: 0; transform: scaleX(0.08); }
-  36% { opacity: 1; transform: scaleX(1.08); }
-  100% { opacity: 0; transform: scaleX(1.3); }
+  36% { opacity: 1; transform: scaleX(1.04); }
+  100% { opacity: 0; transform: scaleX(1.12); }
 }
 
-@keyframes env24LetterRise {
-  0% { opacity: 0.92; transform: translateY(12px) scale(0.94); z-index: 3; }
-  42% { opacity: 1; transform: translateY(-38%) scale(1.02); z-index: 3; }
-  100% { opacity: 1; transform: translateY(-68%) scale(1.08); z-index: 12; }
-}
-
-@keyframes env24LetterFocus {
-  0% { transform: translateY(-68%) scale(1.08); }
-  100% { transform: translateY(-48%) scale(1.14); }
+@keyframes env24LetterExtract {
+  0% { opacity: 0; transform: translateY(16%) scale(0.92); z-index: 3; }
+  10% { opacity: 1; transform: translateY(4%) scale(0.94); z-index: 3; }
+  48% { opacity: 1; transform: translateY(-74%) scale(0.98); z-index: 3; }
+  51% { opacity: 1; transform: translateY(-76%) scale(1.01); z-index: 12; }
+  100% { opacity: 1; transform: translateY(-20%) scale(1.13); z-index: 12; }
 }
 
 @keyframes env24PocketRecede {
   0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0.42; transform: translateY(28px) scale(0.95); }
+  46% { opacity: 0.94; transform: translateY(38px) scale(0.97); }
+  100% { opacity: 0.42; transform: translateY(48px) scale(0.91); }
 }
 
 @keyframes env24FoilSweep {
