@@ -1102,11 +1102,15 @@ body.briefing-fs-active #admin-bar {
 
 .env24-slip-title {
   font-family: var(--vg-font-serif);
-  font-size: 1.16rem;
+  font-size: clamp(0.96rem, 3.6vw, 1.14rem);
   font-weight: 700;
   color: #450A0A;
   margin: 5px 0 8px;
   line-height: 1.14;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .env24-slip-lines {

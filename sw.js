@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.22.0";
+const CACHE_NAME = "adviento-cero-v2.23.0";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -174,6 +174,18 @@ self.addEventListener("fetch", (event) => {
           return res;
         }).catch(() => new Response("Offline", { status: 503, statusText: "Offline" }));
       })
+    );
+    return;
+  }
+
+  if (url.pathname.toLowerCase().endsWith("/config/gift-config.js")) {
+    event.respondWith(
+      fetchWithTimeout(req, 1500).then((res) => {
+        if (res && res.ok) {
+          event.waitUntil(safeCachePut(CACHE_NAME, req, res));
+        }
+        return res;
+      }).catch(() => caches.match(req, { ignoreSearch: true }))
     );
     return;
   }

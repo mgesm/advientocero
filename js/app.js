@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.22.0";
-  const CACHE_TAG = "adviento-cero-v2.22.0";
+  const APP_VERSION = "v2.23.0";
+  const CACHE_TAG = "adviento-cero-v2.23.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -1111,7 +1111,7 @@
               <path d="M12 182 L12 194 L24 194 M16 188 L20 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
               <path d="M308 182 L308 194 L296 194 M304 188 L300 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
               <!-- Caligrafía dorada y matasellos alpino -->
-              <text x="160" y="168" text-anchor="middle" fill="#FFFBEB" fill-opacity="0.95" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="13.8" letter-spacing="0.4">Para Patri · Nochebuena</text>
+              <text x="160" y="168" text-anchor="middle" fill="#FFFBEB" fill-opacity="0.95" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="13.8" letter-spacing="0.4">Para ${esc(window.GIFT_CONFIG?.recipientName || "Patri")} · Nochebuena</text>
               <text x="160" y="185" text-anchor="middle" fill="#FDE68A" fill-opacity="0.68" font-family="ui-monospace, Consolas, monospace" font-size="6.8" letter-spacing="2.2">EL MIRADOR DEL VENTISQUERO · 24 DIC</text>
             </svg>
           </div>
@@ -1245,7 +1245,7 @@
           <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
         </div>
         <p class="serif" style="margin-top:14px;font-size:1.12rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
-        ${!isPreview ? `<button type="button" class="btn btn-sm btn-ghost" id="replay-secret-envelope-btn" style="margin-top:12px;">Volver a ver apertura del sobre</button>` : ""}
+        ${!isPreview ? `<button type="button" class="btn btn-sm btn-ghost" id="replay-secret-envelope-btn" style="margin-top:14px;width:100%;">Volver a ver apertura del sobre</button>` : ""}
       </div>`;
   }
 
@@ -1786,11 +1786,13 @@
           </div>
           <p class="hero-status-line">
             <span class="mono" style="color:var(--adv-gold-soft);margin-right:6px;">${esc(window.CASE_LORE.caseCode)}</span>
-            ${maxOpen === 0
-              ? `<strong style="color:var(--adv-gold-soft);" data-live-countdown="predec-dot">${esc(window.DateGate.getCountdownText())}.</strong>`
-              : (maxOpen < 24 && solvedCount >= maxOpen && window.DateGate.getNextDoorCountdownText?.())
-                ? `Al día hasta el <strong>${maxOpen} de diciembre</strong> · <strong style="color:var(--adv-gold-soft);" data-live-countdown="next-door">${esc(window.DateGate.getNextDoorCountdownText())}</strong>`
-                : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
+            ${syncState.finalVerdictSolved
+              ? `<strong style="color:var(--adv-pine);">Caso cerrado</strong> · 24/24 puertas completadas en Nochebuena.`
+              : maxOpen === 0
+                ? `<strong style="color:var(--adv-gold-soft);" data-live-countdown="predec-dot">${esc(window.DateGate.getCountdownText())}.</strong>`
+                : (maxOpen < 24 && solvedCount >= maxOpen && window.DateGate.getNextDoorCountdownText?.())
+                  ? `Al día hasta el <strong>${maxOpen} de diciembre</strong> · <strong style="color:var(--adv-gold-soft);" data-live-countdown="next-door">${esc(window.DateGate.getNextDoorCountdownText())}</strong>`
+                  : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
           </p>
           <div class="stats-strip">
             <div class="stat-pill">
@@ -1868,6 +1870,11 @@
     document.getElementById("hero-cta-day")?.addEventListener("click", (e) => {
       const target = Number(e.currentTarget.dataset.day || 1);
       openAdventDay(target);
+      if (syncState.finalVerdictSolved && target === 24 && window.GIFT_CONFIG?.finalGiftReveal?.enabled) {
+        setTimeout(() => {
+          document.getElementById("secret-envelope-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 160);
+      }
     });
 
     document.getElementById("hero-memories-btn")?.addEventListener("click", (e) => {
@@ -2356,15 +2363,17 @@
         ${validationHtml}
         ${finalTrialHtml}
 
-        <div class="glass-card day-hints-card" style="padding:16px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-            <span style="font-size:0.84rem;font-weight:600;">¿Atascados? Pistas graduadas (${hintsCount}/3)</span>
-            <button type="button" class="btn btn-sm btn-ghost" id="reveal-hint-btn" ${hintsCount >= 3 ? "disabled" : ""}>
-              ${hintsCount >= 3 ? "Máximo alcanzado" : `Mostrar Pista ${hintsCount + 1}`}
-            </button>
+        ${(!isSolved && !(dayObj.day === 24 && syncState.finalVerdictSolved)) ? `
+          <div class="glass-card day-hints-card" style="padding:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+              <span style="font-size:0.84rem;font-weight:600;">¿Atascados? Pistas graduadas (${hintsCount}/3)</span>
+              <button type="button" class="btn btn-sm btn-ghost" id="reveal-hint-btn" ${hintsCount >= 3 ? "disabled" : ""}>
+                ${hintsCount >= 3 ? "Máximo alcanzado" : `Mostrar Pista ${hintsCount + 1}`}
+              </button>
+            </div>
+            <div class="hints-accordion">${hintsHtml}</div>
           </div>
-          <div class="hints-accordion">${hintsHtml}</div>
-        </div>
+        ` : ""}
 
         <nav class="day-footer-nav" aria-label="Navegación entre puertas">
           <button type="button" class="btn btn-sm btn-ghost" data-day-nav="-1" ${selectedDayNum <= 1 ? "disabled" : ""}>Puerta anterior</button>
@@ -4284,6 +4293,9 @@
           if (syncState.finalVerdictSolved) {
             closeModal();
             openAdventDay(24);
+            setTimeout(() => {
+              document.getElementById("secret-envelope-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 160);
           } else {
             openSecretEnvelopePreviewModal(e.currentTarget);
           }
