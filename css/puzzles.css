@@ -934,104 +934,119 @@ body.briefing-fs-active #admin-bar {
 }
 
 /* =====================================================================
-   SOBRE SECRETO 3D DE NOCHEBUENA (DÍA 24) · PAPEL, LACRE Y REVELACIÓN
+   SOBRE SECRETO 3D DE NOCHEBUENA (DÍA 24) · PAPELERÍA, CINTA Y TEATRO 5 ACTOS
    ===================================================================== */
 .secret-envelope-sealed {
   position: relative;
   padding: 20px 16px 18px;
   text-align: center;
   border: 1.5px solid rgba(251, 191, 36, 0.56);
-  background: radial-gradient(circle at 50% 34%, rgba(153, 27, 27, 0.34), rgba(6, 18, 20, 0.96) 66%, rgba(120, 53, 15, 0.22));
+  background:
+    radial-gradient(circle at 50% 34%, rgba(153, 27, 27, 0.34), rgba(6, 18, 20, 0.96) 66%, rgba(120, 53, 15, 0.22));
   box-shadow: 0 18px 42px rgba(0, 0, 0, 0.65), 0 0 28px rgba(245, 158, 11, 0.16);
-  overflow: visible;
-}
-
-.secret-envelope-sealed > .badge {
-  transition: opacity 260ms ease, transform 260ms ease;
-}
-
-.secret-envelope-sealed.is-opening-card > .badge {
-  opacity: 0;
-  transform: translateY(-6px);
+  overflow: hidden;
 }
 
 .env24-stage {
   position: relative;
   width: min(312px, 100%);
-  margin: 46px auto 16px;
-  padding-bottom: 6px;
+  margin: 18px auto 16px;
+  padding-bottom: 4px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 .env24-ambient-aura {
   position: absolute;
-  inset: -24px -18px;
+  inset: -26px -22px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.26) 0%, rgba(185, 28, 28, 0.18) 42%, transparent 72%);
-  filter: blur(10px);
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.30) 0%, rgba(185, 28, 28, 0.20) 44%, transparent 72%);
+  filter: blur(12px);
   pointer-events: none;
-  opacity: 0.72;
-  transition: opacity 420ms ease, transform 680ms ease;
-}
-
-.env24-stage.is-opening .env24-ambient-aura {
-  opacity: 1;
-  transform: scale(1.24);
+  opacity: 0.78;
 }
 
 .env24-envelope {
   position: relative;
   width: 100%;
   aspect-ratio: 320 / 206;
-  border-radius: 10px;
-  transition: transform 320ms var(--vg-spring);
+  border-radius: 11px;
+  transform-style: flat;
+  transition: transform 280ms var(--vg-spring);
 }
 
-.env24-stage:not(.is-opening) .env24-envelope {
-  animation: env24FloatIdle 4.4s ease-in-out infinite;
+.env24-stage.is-idle .env24-envelope {
+  animation: env24FloatIdle 4.6s ease-in-out infinite;
 }
 
-.env24-stage.is-opening .env24-envelope {
-  animation: env24StageLift 1.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.env24-stage.is-idle .env24-envelope:active {
+  transform: scale(0.975);
 }
 
-/* 1) Cuerpo trasero + forro interior damasco dorado */
+/* Destello diagonal de lámina dorada en reposo */
+.env24-idle-sheen {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  border-radius: 11px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.env24-idle-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(112deg, transparent 30%, rgba(254, 243, 199, 0.16) 49%, rgba(251, 191, 36, 0.08) 56%, transparent 72%);
+  transform: translateX(-130%);
+  animation: env24IdleSheen 5.8s ease-in-out infinite;
+}
+
+/* 1) Cuerpo trasero + forro interior damasco verde esmeralda y oro */
 .env24-back {
   position: absolute;
   inset: 0;
   z-index: 1;
-  border-radius: 10px;
+  border-radius: 11px;
   background:
-    radial-gradient(circle at 50% 24%, rgba(251, 191, 36, 0.20), transparent 62%),
-    repeating-linear-gradient(45deg, rgba(253, 230, 138, 0.05) 0 1px, transparent 1px 11px),
-    repeating-linear-gradient(-45deg, rgba(253, 230, 138, 0.05) 0 1px, transparent 1px 11px),
-    linear-gradient(160deg, #0E2F26 0%, #071915 58%, #040E0D 100%);
-  border: 1px solid rgba(251, 191, 36, 0.42);
-  box-shadow: 0 20px 38px rgba(0, 0, 0, 0.76), inset 0 0 26px rgba(0, 0, 0, 0.65);
+    radial-gradient(circle at 50% 24%, rgba(251, 191, 36, 0.24), transparent 62%),
+    repeating-linear-gradient(45deg, rgba(253, 230, 138, 0.07) 0 1px, transparent 1px 11px),
+    repeating-linear-gradient(-45deg, rgba(253, 230, 138, 0.07) 0 1px, transparent 1px 11px),
+    linear-gradient(160deg, #10382D 0%, #071D18 58%, #040E0D 100%);
+  border: 1.2px solid rgba(253, 230, 138, 0.48);
+  box-shadow:
+    0 22px 44px rgba(0, 0, 0, 0.80),
+    0 4px 12px rgba(0, 0, 0, 0.55),
+    inset 0 0 28px rgba(0, 0, 0, 0.62);
   overflow: hidden;
 }
 
-/* 2) Carta / Tarjeta de Nochebuena alojada dentro del bolsillo */
+/* 2) Carta de pergamino dorado alojada dentro del bolsillo */
 .env24-letter-slip {
   position: absolute;
-  left: 7%;
-  right: 7%;
-  top: 10%;
-  bottom: 10%;
+  left: 6.5%;
+  right: 6.5%;
+  top: 8%;
+  bottom: 8%;
   z-index: 3;
-  border-radius: 8px;
-  padding: 12px 14px;
-  background: linear-gradient(165deg, #FFFDF5 0%, #FEF3C7 56%, #FDE68A 100%);
+  border-radius: 9px;
+  padding: 13px 16px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.92), transparent 58%),
+    linear-gradient(165deg, #FFFDF7 0%, #FEF3C7 54%, #FDE68A 100%);
   border: 1.5px solid #B45309;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55), inset 0 0 0 3px rgba(180, 83, 9, 0.16);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.62),
+    0 0 26px rgba(251, 191, 36, 0.28),
+    inset 0 0 0 3.5px rgba(180, 83, 9, 0.16),
+    inset 0 0 0 5px rgba(255, 255, 255, 0.55);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   text-align: center;
   overflow: hidden;
-  transform: translateY(10px) scale(0.95);
+  transform: translateY(12px) scale(0.94);
   opacity: 0;
   pointer-events: none;
 }
@@ -1040,36 +1055,28 @@ body.briefing-fs-active #admin-bar {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 22%, rgba(255, 255, 255, 0.78) 48%, transparent 72%);
-  transform: translateX(-130%);
+  background: linear-gradient(112deg, transparent 18%, rgba(255, 255, 255, 0.88) 48%, rgba(254, 240, 138, 0.4) 55%, transparent 76%);
+  transform: translateX(-140%);
   pointer-events: none;
-}
-
-.env24-stage.is-opening .env24-letter-slip {
-  animation: env24LetterRise 920ms 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.env24-stage.is-opening .env24-letter-slip::after {
-  animation: env24FoilSweep 760ms 960ms ease-out forwards;
 }
 
 .env24-slip-kicker {
   font-family: var(--vg-font-mono);
-  font-size: 0.58rem;
+  font-size: 0.6rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #92400E;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .env24-slip-title {
   font-family: var(--vg-font-serif);
-  font-size: 1.05rem;
+  font-size: 1.14rem;
   font-weight: 700;
   color: #450A0A;
-  margin: 4px 0 6px;
-  line-height: 1.15;
+  margin: 5px 0 7px;
+  line-height: 1.14;
 }
 
 .env24-slip-lines {
@@ -1084,15 +1091,15 @@ body.briefing-fs-active #admin-bar {
   display: block;
   height: 2px;
   border-radius: 99px;
-  background: linear-gradient(90deg, transparent, rgba(146, 64, 14, 0.38), transparent);
+  background: linear-gradient(90deg, transparent, rgba(146, 64, 14, 0.42), transparent);
 }
 
-/* 3) Bolsillo frontal SVG (alas laterales + pliegue inferior) */
+/* 3) Bolsillo frontal SVG (papel algodón carmesí + costuras doradas + sello postal) */
 .env24-pocket {
   position: absolute;
   inset: 0;
   z-index: 4;
-  border-radius: 10px;
+  border-radius: 11px;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1103,36 +1110,43 @@ body.briefing-fs-active #admin-bar {
   display: block;
 }
 
-/* 4) Resplandor dorado interior al abrir */
+/* 4) Resplandor dorado interior + rayo anamórfico al abrir */
 .env24-inner-glow {
   position: absolute;
-  left: 10%;
-  right: 10%;
-  top: -16%;
-  height: 62%;
+  left: 6%;
+  right: 6%;
+  top: -22%;
+  height: 70%;
   z-index: 5;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 80%, rgba(254, 243, 199, 0.92), rgba(251, 191, 36, 0.45) 44%, transparent 74%);
+  background: radial-gradient(ellipse at 50% 82%, rgba(255, 251, 235, 0.96), rgba(251, 191, 36, 0.52) 42%, transparent 74%);
   opacity: 0;
-  transform: scale(0.35);
+  transform: scale(0.28);
   pointer-events: none;
 }
 
-.env24-stage.is-opening .env24-inner-glow {
-  animation: env24InnerGlowBloom 1050ms 430ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.env24-anamorphic-beam {
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  top: 2%;
+  height: 3px;
+  z-index: 8;
+  border-radius: 99px;
+  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.65) 26%, #FFFBEB 50%, rgba(251, 191, 36, 0.65) 74%, transparent);
+  box-shadow: 0 0 18px 4px rgba(251, 191, 36, 0.55);
+  opacity: 0;
+  transform: scaleX(0.08);
+  pointer-events: none;
 }
 
-/* 5) Solapa superior 3D con bisagra real y forro interior */
+/* 5) Solapa superior 3D con bisagra real y forro interior esmeralda */
 .env24-flap-stage {
   position: absolute;
   inset: 0;
   z-index: 6;
-  perspective: 960px;
+  perspective: 1050px;
   pointer-events: none;
-}
-
-.env24-stage.is-opening .env24-flap-stage {
-  animation: env24FlapDepthSwap 1ms 660ms forwards;
 }
 
 .env24-flap-3d {
@@ -1146,15 +1160,14 @@ body.briefing-fs-active #admin-bar {
   will-change: transform;
 }
 
-.env24-stage.is-opening .env24-flap-3d {
-  animation: env24FlapSwing 720ms 390ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
 .env24-flap-face {
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  border-top-left-radius: 11px;
+  border-top-right-radius: 11px;
+  overflow: visible;
 }
 
 .env24-flap-face svg {
@@ -1168,14 +1181,46 @@ body.briefing-fs-active #admin-bar {
   transform: rotateX(180deg);
 }
 
-/* 6) Sello de lacre rojo 24 interactivo en dos mitades + grieta dorada */
+/* 6) Cinta satinada dorada horizontal (sin tapar la caligrafía) + colas de seda bajo el lacre */
+.env24-ribbon-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  border-radius: 11px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.env24-ribbon-band {
+  position: absolute;
+  top: 56%;
+  height: 16px;
+  margin-top: -8px;
+  background: linear-gradient(180deg, #92400E 0%, #FDE68A 22%, #F59E0B 52%, #FFFBEB 70%, #B45309 88%, #78350F 100%);
+  border-top: 0.8px solid rgba(255, 251, 235, 0.72);
+  border-bottom: 0.8px solid rgba(120, 53, 15, 0.8);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.58), 0 -1px 4px rgba(0, 0, 0, 0.28);
+  will-change: transform, opacity;
+}
+
+.env24-ribbon-l {
+  left: 0;
+  width: 50.5%;
+}
+
+.env24-ribbon-r {
+  right: 0;
+  width: 50.5%;
+}
+
+/* 7) Sello de lacre rojo 24 esculpido en relieve + grieta dorada */
 .env24-seal-btn {
   position: absolute;
   left: 50%;
   top: 56%;
   z-index: 9;
-  width: 82px;
-  height: 82px;
+  width: 88px;
+  height: 88px;
   padding: 0;
   border: none;
   background: transparent;
@@ -1192,17 +1237,11 @@ body.briefing-fs-active #admin-bar {
 
 .env24-seal-halo {
   position: absolute;
-  inset: -10px;
+  inset: -12px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.52), rgba(220, 38, 38, 0.24) 48%, transparent 72%);
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.56), rgba(220, 38, 38, 0.24) 48%, transparent 72%);
   animation: env24SealBreath 2.6s ease-in-out infinite;
   pointer-events: none;
-}
-
-.env24-stage.is-opening .env24-seal-halo {
-  animation: none;
-  opacity: 0;
-  transition: opacity 220ms ease;
 }
 
 .env24-seal-half {
@@ -1218,19 +1257,11 @@ body.briefing-fs-active #admin-bar {
   width: 100%;
   height: 100%;
   display: block;
-  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.72));
+  filter: drop-shadow(0 7px 14px rgba(0, 0, 0, 0.78));
 }
 
-.env24-stage:not(.is-opening) .env24-seal-btn:active {
-  transform: translate(-50%, -50%) scale(0.93);
-}
-
-.env24-stage.is-opening .env24-seal-tl {
-  animation: env24SealStress 280ms ease-in-out, env24SealSplitTL 620ms 340ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.env24-stage.is-opening .env24-seal-br {
-  animation: env24SealStress 280ms ease-in-out, env24SealSplitBR 620ms 340ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.env24-stage.is-idle .env24-seal-btn:active {
+  transform: translate(-50%, -50%) scale(0.92);
 }
 
 .env24-crack-svg {
@@ -1244,19 +1275,15 @@ body.briefing-fs-active #admin-bar {
 
 .env24-crack-path {
   stroke: #FFFBEB;
-  stroke-width: 3.2;
+  stroke-width: 3.4;
   stroke-linecap: round;
   fill: none;
-  stroke-dasharray: 160;
-  stroke-dashoffset: 160;
-  filter: drop-shadow(0 0 6px #FEF08A) drop-shadow(0 0 12px #F59E0B);
+  stroke-dasharray: 165;
+  stroke-dashoffset: 165;
+  filter: drop-shadow(0 0 6px #FEF08A) drop-shadow(0 0 14px #F59E0B);
 }
 
-.env24-stage.is-opening .env24-crack-path {
-  animation: env24CrackZip 230ms 140ms cubic-bezier(0.14, 0.85, 0.25, 1) forwards, waxCrackFade 220ms 410ms ease-out forwards;
-}
-
-/* Fragmentos de lacre y chispas doradas ascendentes */
+/* Fragmentos de lacre y chispas doradas */
 .env24-fx-layer {
   position: absolute;
   inset: 0;
@@ -1274,27 +1301,19 @@ body.briefing-fs-active #admin-bar {
   background: var(--sc, #DC2626);
   border-radius: var(--br, 2px);
   opacity: 0;
-  box-shadow: 0 0 8px var(--sc, #DC2626);
-}
-
-.env24-stage.is-opening .env24-shard {
-  animation: env24ShardFly 720ms var(--dl, 340ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 0 9px var(--sc, #DC2626);
 }
 
 .env24-spark {
   position: absolute;
   left: var(--x, 50%);
-  top: 42%;
+  top: 38%;
   width: var(--sz, 5px);
   height: var(--sz, 5px);
   border-radius: 50%;
   background: #FEF08A;
-  box-shadow: 0 0 10px #FBBF24, 0 0 18px rgba(254, 240, 138, 0.8);
+  box-shadow: 0 0 10px #FBBF24, 0 0 20px rgba(254, 240, 138, 0.85);
   opacity: 0;
-}
-
-.env24-stage.is-opening .env24-spark {
-  animation: env24SparkRise 1050ms var(--dl, 560ms) ease-out forwards;
 }
 
 .env24-tap-caption {
@@ -1302,28 +1321,164 @@ body.briefing-fs-active #admin-bar {
   font-size: 0.68rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(253, 230, 138, 0.84);
-  margin-bottom: 8px;
+  color: rgba(253, 230, 138, 0.88);
+  margin-bottom: 6px;
 }
 
-/* Tarjeta de revelación de lujo con filigranas y barrido dorado */
+/* =====================================================================
+   TEATRO PANTALLA COMPLETA DEL SOBRE 24 (5 ACTOS SIN RECORTES)
+   ===================================================================== */
+.env24-theater {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 12px 14px;
+}
+
+.env24-theater-bokeh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
+    radial-gradient(circle at 82% 28%, rgba(220, 38, 38, 0.16), transparent 32%),
+    radial-gradient(circle at 50% 54%, rgba(245, 158, 11, 0.14), transparent 46%),
+    radial-gradient(circle at 26% 78%, rgba(16, 185, 129, 0.12), transparent 30%);
+  animation: env24BokehPulse 2.9s ease-in-out forwards;
+}
+
+.env24-theater-kicker {
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #FDE68A;
+  margin-bottom: 4px;
+  animation: cinemaFadeUp 400ms var(--vg-spring) both;
+}
+
+.env24-theater-headline {
+  font-family: var(--vg-font-serif);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #FFFBEB;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9);
+  margin-bottom: 132px;
+  animation: cinemaFadeUp 460ms 60ms var(--vg-spring) both;
+}
+
+.env24-theater .env24-stage {
+  width: min(330px, 86vw);
+  margin: 0 auto 24px;
+}
+
+.env24-theater-sub {
+  font-family: var(--vg-font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(253, 230, 138, 0.72);
+  margin-top: 8px;
+  animation: cinemaFadeUp 500ms 180ms ease both;
+}
+
+/* Coreografía 5 Actos dentro de .env24-theater .env24-stage.is-opening */
+.env24-stage.is-opening .env24-ambient-aura {
+  animation: env24AuraSwell 3.0s ease-out forwards;
+}
+
+.env24-stage.is-opening .env24-idle-sheen {
+  display: none;
+}
+
+.env24-stage.is-opening .env24-envelope {
+  animation: env24TheaterEntry 400ms cubic-bezier(0.16, 1, 0.3, 1) both, env24TheaterDrift 900ms 1540ms ease-in-out forwards;
+}
+
+/* Acto 2a (360-600ms): Tensión y grieta dorada */
+.env24-stage.is-opening .env24-seal-halo {
+  animation: env24SealFlash 560ms 300ms ease-out forwards;
+}
+
+.env24-stage.is-opening .env24-crack-path {
+  animation: env24CrackZip 220ms 360ms cubic-bezier(0.14, 0.85, 0.25, 1) forwards, waxCrackFade 150ms 610ms ease-out forwards;
+}
+
+/* Acto 2b (600-960ms): Lacre partido rápido + cinta dorada deslizándose fuera ANTES de la solapa */
+.env24-stage.is-opening .env24-seal-tl {
+  animation: env24SealStress 240ms 330ms ease-in-out, env24SealSplitTL 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-seal-br {
+  animation: env24SealStress 240ms 330ms ease-in-out, env24SealSplitBR 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-ribbon-l {
+  animation: env24RibbonSlideL 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-ribbon-r {
+  animation: env24RibbonSlideR 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-shard {
+  animation: env24ShardFly 720ms var(--dl, 600ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Acto 3 (990-1690ms): Apertura 3D limpia de la solapa + resplandor interior + rayo */
+.env24-stage.is-opening .env24-flap-3d {
+  animation: env24FlapSwing 700ms 990ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-flap-stage {
+  animation: env24FlapDepthSwap 1ms 1330ms forwards;
+}
+
+.env24-stage.is-opening .env24-inner-glow {
+  animation: env24InnerGlowBloom 1250ms 1160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-anamorphic-beam {
+  animation: env24BeamFlash 780ms 1210ms ease-out forwards;
+}
+
+.env24-stage.is-opening .env24-spark {
+  animation: env24SparkRise 1350ms var(--dl, 1200ms) ease-out forwards;
+}
+
+/* Acto 4 (1460-2420ms): Carta de pergamino deslizándose fuera y reposando luminosa */
+.env24-stage.is-opening .env24-letter-slip {
+  animation: env24LetterRise 960ms 1460ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-letter-slip::after {
+  animation: env24FoilSweep 820ms 1920ms ease-out forwards;
+}
+
+/* Tarjeta final revelada de lujo con filigranas, polvo dorado y vale tipo pergamino oscuro */
 .gift-reveal-card {
   position: relative;
   padding: 24px 20px 22px;
-  border: 1.5px solid rgba(251, 191, 36, 0.66);
+  border: 1.5px solid rgba(251, 191, 36, 0.72);
   background:
-    radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.18), transparent 46%),
-    linear-gradient(155deg, rgba(153, 27, 27, 0.28), rgba(6, 22, 20, 0.96) 54%, rgba(180, 83, 9, 0.20));
-  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.68), 0 0 30px rgba(245, 158, 11, 0.20);
+    radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.24), transparent 48%),
+    radial-gradient(circle at 86% 92%, rgba(185, 28, 28, 0.24), transparent 42%),
+    linear-gradient(155deg, rgba(127, 29, 29, 0.32), rgba(6, 22, 20, 0.97) 52%, rgba(146, 64, 14, 0.22));
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.72), 0 0 34px rgba(245, 158, 11, 0.24), inset 0 1px 0 rgba(254, 243, 199, 0.28);
   overflow: hidden;
-  animation: env24CardUnveil 580ms var(--vg-spring) both;
+  animation: env24CardUnveil 620ms var(--vg-spring) both;
 }
 
 .gift-corner-ornament {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  color: rgba(253, 230, 138, 0.58);
+  width: 26px;
+  height: 26px;
+  color: rgba(253, 230, 138, 0.68);
   pointer-events: none;
 }
 
@@ -1336,21 +1491,29 @@ body.briefing-fs-active #admin-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.gift-reveal-head .badge {
+  font-size: 0.68rem;
+  padding: 5px 10px;
+  min-width: 0;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 .gift-keepsake-seal {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #EF4444, #991B1B 68%, #450A0A);
+  background: radial-gradient(circle at 34% 28%, #FF6266, #DC2626 42%, #991B1B 74%, #450A0A);
   border: 1.5px solid #FDE68A;
-  box-shadow: 0 0 12px rgba(220, 38, 38, 0.45);
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.55), inset 0 0 0 3px rgba(69, 10, 10, 0.45);
   display: grid;
   place-items: center;
   font-family: var(--vg-font-serif);
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #FEF3C7;
   flex-shrink: 0;
@@ -1359,10 +1522,13 @@ body.briefing-fs-active #admin-bar {
 .gift-voucher {
   position: relative;
   margin-top: 14px;
-  padding: 16px;
+  padding: 18px 16px;
   border-radius: var(--vg-radius-md);
-  border: 1.5px dashed rgba(252, 211, 77, 0.68);
-  background: rgba(5, 11, 18, 0.78);
+  border: 1.5px dashed rgba(252, 211, 77, 0.78);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(254, 243, 199, 0.12), transparent 56%),
+    linear-gradient(160deg, rgba(20, 28, 36, 0.88), rgba(7, 14, 20, 0.95) 60%, rgba(120, 53, 15, 0.18));
+  box-shadow: inset 0 0 26px rgba(251, 191, 36, 0.11), 0 8px 20px rgba(0, 0, 0, 0.42);
   overflow: hidden;
 }
 
@@ -1370,27 +1536,61 @@ body.briefing-fs-active #admin-bar {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(110deg, transparent 28%, rgba(254, 243, 199, 0.14) 50%, transparent 72%);
+  background: linear-gradient(110deg, transparent 28%, rgba(254, 243, 199, 0.16) 50%, transparent 72%);
   transform: translateX(-120%);
-  animation: env24VoucherSheen 6.5s ease-in-out infinite;
+  animation: env24VoucherSheen 6s ease-in-out infinite;
   pointer-events: none;
 }
 
 @keyframes env24FloatIdle {
-  0%, 100% { transform: translateY(0px) rotate(-0.4deg); }
-  50% { transform: translateY(-4px) rotate(0.4deg); }
+  0%, 100% { transform: translateY(0px) rotate(-0.35deg); }
+  50% { transform: translateY(-4px) rotate(0.35deg); }
+}
+
+@keyframes env24IdleSheen {
+  0%, 64% { transform: translateX(-130%); }
+  100% { transform: translateX(140%); }
+}
+
+@keyframes env24BokehPulse {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+@keyframes env24AuraSwell {
+  0% { opacity: 0.65; transform: scale(0.95); }
+  55% { opacity: 1; transform: scale(1.36); }
+  100% { opacity: 0.92; transform: scale(1.24); }
+}
+
+@keyframes env24TheaterEntry {
+  from { opacity: 0; transform: scale(0.88) translateY(18px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes env24TheaterDrift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(26px); }
 }
 
 @keyframes env24SealBreath {
-  0%, 100% { transform: scale(0.95); opacity: 0.62; }
-  50% { transform: scale(1.12); opacity: 1; }
+  0%, 100% { transform: scale(0.94); opacity: 0.64; }
+  50% { transform: scale(1.14); opacity: 1; }
+}
+
+@keyframes env24SealFlash {
+  0% { opacity: 0.7; transform: scale(1); }
+  55% { opacity: 1; transform: scale(1.5); }
+  100% { opacity: 0; transform: scale(1.85); }
 }
 
 @keyframes env24SealStress {
   0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(-1.5px, 1px) scale(1.04); }
-  55% { transform: translate(1.5px, -1px) scale(1.06); }
-  80% { transform: translate(-1px, -1px) scale(1.03); }
+  22% { transform: translate(-2px, 1px) scale(1.04); }
+  50% { transform: translate(2px, -1.5px) scale(1.07); }
+  78% { transform: translate(-1.5px, -1px) scale(1.04); }
 }
 
 @keyframes env24CrackZip {
@@ -1399,20 +1599,40 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24SealSplitTL {
   0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  45% { transform: translate(-24px, -18px) rotate(-14deg); opacity: 1; }
-  100% { transform: translate(-52px, -36px) rotate(-26deg) scale(0.84); opacity: 0; }
+  42% { transform: translate(-28px, -22px) rotate(-16deg); opacity: 1; }
+  100% { transform: translate(-64px, -44px) rotate(-32deg) scale(0.8); opacity: 0; }
 }
 
 @keyframes env24SealSplitBR {
   0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  45% { transform: translate(24px, 18px) rotate(14deg); opacity: 1; }
-  100% { transform: translate(52px, 36px) rotate(26deg) scale(0.84); opacity: 0; }
+  42% { transform: translate(28px, 22px) rotate(16deg); opacity: 1; }
+  100% { transform: translate(64px, 44px) rotate(32deg) scale(0.8); opacity: 0; }
+}
+
+@keyframes env24RibbonSlideL {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(-110%); opacity: 0; }
+}
+
+@keyframes env24RibbonSlideR {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+
+@keyframes env24RibbonSlideT {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-115%); opacity: 0; }
+}
+
+@keyframes env24RibbonSlideB {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(115%); opacity: 0; }
 }
 
 @keyframes env24FlapSwing {
   0% { transform: rotateX(0deg); }
   50% { transform: rotateX(-96deg); }
-  100% { transform: rotateX(-176deg); }
+  100% { transform: rotateX(-178deg); }
 }
 
 @keyframes env24FlapDepthSwap {
@@ -1420,20 +1640,26 @@ body.briefing-fs-active #admin-bar {
 }
 
 @keyframes env24InnerGlowBloom {
-  0% { opacity: 0; transform: scale(0.35); }
-  42% { opacity: 1; transform: scale(1.08); }
-  100% { opacity: 0.72; transform: scale(1.26); }
+  0% { opacity: 0; transform: scale(0.28); }
+  42% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 0.78; transform: scale(1.28); }
+}
+
+@keyframes env24BeamFlash {
+  0% { opacity: 0; transform: scaleX(0.08); }
+  36% { opacity: 1; transform: scaleX(1.08); }
+  100% { opacity: 0; transform: scaleX(1.3); }
 }
 
 @keyframes env24LetterRise {
-  0% { opacity: 0.92; transform: translateY(10px) scale(0.95); }
-  38% { opacity: 1; transform: translateY(-26%) scale(1); }
-  100% { opacity: 1; transform: translateY(-54%) scale(1.04); }
+  0% { opacity: 0.92; transform: translateY(12px) scale(0.94); }
+  36% { opacity: 1; transform: translateY(-34%) scale(1.01); }
+  100% { opacity: 1; transform: translateY(-64%) scale(1.08); }
 }
 
 @keyframes env24FoilSweep {
-  0% { transform: translateX(-130%); }
-  100% { transform: translateX(130%); }
+  0% { transform: translateX(-140%); }
+  100% { transform: translateX(140%); }
 }
 
 @keyframes env24ShardFly {
@@ -1444,13 +1670,8 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24SparkRise {
   0% { opacity: 0; transform: translateY(0) scale(0.4); }
-  25% { opacity: 1; transform: translateY(-22px) scale(1); }
-  100% { opacity: 0; transform: translateY(-96px) scale(0.3); }
-}
-
-@keyframes env24StageLift {
-  0%, 88% { transform: translateY(0) scale(1); opacity: 1; }
-  100% { transform: translateY(-10px) scale(0.98); opacity: 0.12; }
+  24% { opacity: 1; transform: translateY(-28px) scale(1.08); }
+  100% { opacity: 0; transform: translateY(-124px) scale(0.28); }
 }
 
 @keyframes env24CardUnveil {
@@ -1464,7 +1685,8 @@ body.briefing-fs-active #admin-bar {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .env24-stage:not(.is-opening) .env24-envelope,
+  .env24-stage.is-idle .env24-envelope,
+  .env24-idle-sheen::after,
   .env24-seal-halo,
   .gift-voucher::after,
   .gift-reveal-card {

@@ -514,32 +514,37 @@ window.AudioFX = (() => {
   }
 
   function envelopeOpenSymphony() {
-    haptic([16, 28, 22, 36, 48]);
+    haptic([14, 34, 24, 42, 30, 56]);
     emitVisualCue("wax", "Sobre Secreto de Nochebuena abierto");
     const c = ensureCtx(false);
     if (!c) return;
     const play = () => {
-      // 1) Tensión en el lacre + grieta dorada (160ms)
-      scheduleBandNoise(c, 0.16, 0.045, 3500, 2200, 3.0, 0.09);
-      scheduleTone(c, 1760, 28, "triangle", 0.032, 160);
-      // 2) Fractura física nítida del sello de lacre 24 (360ms)
-      scheduleBandNoise(c, 0.36, 0.075, 2950, 1450, 2.0, 0.19);
-      scheduleTone(c, 250, 74, "triangle", 0.09, 360);
-      scheduleTone(c, 138, 96, "sine", 0.065, 372);
-      // 3) Despliegue 3D de la solapa de papel algodón (520ms)
-      scheduleBandNoise(c, 0.52, 0.32, 1050, 2550, 1.35, 0.085);
-      // 4) Deslizamiento de la carta saliendo del bolsillo (820ms)
-      scheduleBandNoise(c, 0.82, 0.44, 1750, 3400, 1.5, 0.075);
-      // 5) Arpegio celesta/arpa de Nochebuena (Dmaj9 brillante ascendente)
-      const arp = [293.66, 369.99, 440.0, 554.37, 659.25, 739.99, 880.0, 1174.66];
+      // Acto 1 (120ms): Calidez inicial de santuario (acorde grave suave)
+      scheduleTone(c, 146.83, 920, "sine", 0.036, 120);
+      scheduleTone(c, 220.0, 860, "sine", 0.026, 160);
+      // Acto 2a (420ms): Tensión y fractura dorada en el lacre
+      scheduleBandNoise(c, 0.42, 0.055, 3600, 2150, 3.1, 0.10);
+      scheduleTone(c, 1840, 34, "triangle", 0.036, 420);
+      // Acto 2b (640ms): Ruptura física del lacre 24 + cinta satinada deslizándose
+      scheduleBandNoise(c, 0.64, 0.085, 2950, 1300, 2.0, 0.21);
+      scheduleTone(c, 245, 82, "triangle", 0.095, 640);
+      scheduleTone(c, 132, 110, "sine", 0.072, 652);
+      scheduleBandNoise(c, 0.69, 0.36, 2150, 3650, 1.8, 0.068);
+      // Acto 3 (980ms): Apertura 3D de la solapa de papel algodón
+      scheduleBandNoise(c, 0.98, 0.42, 950, 2450, 1.3, 0.092);
+      scheduleTone(c, 293.66, 780, "sine", 0.044, 1080);
+      scheduleTone(c, 440.0, 760, "sine", 0.034, 1160);
+      // Acto 4 (1460ms): Carta de pergamino saliendo del bolsillo + sinfonía celesta/arpa Dmaj9
+      scheduleBandNoise(c, 1.46, 0.48, 1700, 3350, 1.45, 0.078);
+      const arp = [293.66, 369.99, 440.0, 554.37, 659.25, 739.99, 880.0, 1108.73, 1174.66];
       arp.forEach((freq, i) => {
-        scheduleTone(c, freq, 520 + i * 70, i % 2 === 0 ? "sine" : "triangle", 0.044 - i * 0.002, 760 + i * 92);
+        scheduleTone(c, freq, 620 + i * 75, i % 2 === 0 ? "sine" : "triangle", 0.046 - i * 0.002, 1360 + i * 94);
       });
-      // 6) Acorde final cálido de revelación del vale (1420ms)
-      scheduleTone(c, 587.33, 1250, "sine", 0.052, 1420);
-      scheduleTone(c, 880.0, 1200, "sine", 0.04, 1465);
-      scheduleTone(c, 1108.73, 1180, "triangle", 0.028, 1510);
-      scheduleTone(c, 1479.98, 1300, "sine", 0.032, 1560);
+      // Acto 5 (2180ms): Acorde final luminoso de revelación del vale
+      scheduleTone(c, 587.33, 1450, "sine", 0.056, 2180);
+      scheduleTone(c, 880.0, 1400, "sine", 0.042, 2230);
+      scheduleTone(c, 1108.73, 1350, "triangle", 0.03, 2280);
+      scheduleTone(c, 1479.98, 1480, "sine", 0.034, 2340);
     };
     if (c.state !== "running") {
       c.resume().then(play).catch(() => {});

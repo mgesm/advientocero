@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.18.0";
-  const CACHE_TAG = "adviento-cero-v2.18.0";
+  const APP_VERSION = "v2.19.0";
+  const CACHE_TAG = "adviento-cero-v2.19.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -924,139 +924,172 @@
       </svg>`;
   }
 
+  function buildEnv24StageMarkup(gift, uid, isOpening = false) {
+    const shards = [
+      { sx: "-62px", sy: "-48px", sr: "-150deg", sz: "7px", sc: "#EF4444", dl: "640ms", br: "2px" },
+      { sx: "66px", sy: "-42px", sr: "135deg", sz: "6px", sc: "#DC2626", dl: "650ms", br: "3px" },
+      { sx: "-74px", sy: "20px", sr: "-120deg", sz: "6px", sc: "#FBBF24", dl: "660ms", br: "50%" },
+      { sx: "72px", sy: "26px", sr: "160deg", sz: "7px", sc: "#B91C1C", dl: "655ms", br: "2px" },
+      { sx: "-38px", sy: "-74px", sr: "-105deg", sz: "5px", sc: "#FEF08A", dl: "670ms", br: "50%" },
+      { sx: "36px", sy: "-70px", sr: "118deg", sz: "5px", sc: "#F59E0B", dl: "665ms", br: "50%" },
+      { sx: "-48px", sy: "62px", sr: "-145deg", sz: "6px", sc: "#DC2626", dl: "675ms", br: "2px" },
+      { sx: "50px", sy: "60px", sr: "152deg", sz: "5px", sc: "#FDE68A", dl: "680ms", br: "50%" },
+      { sx: "-16px", sy: "-82px", sr: "-82deg", sz: "4px", sc: "#FFFBEB", dl: "690ms", br: "50%" },
+      { sx: "20px", sy: "72px", sr: "96deg", sz: "5px", sc: "#EF4444", dl: "685ms", br: "2px" },
+      { sx: "-84px", sy: "-12px", sr: "-165deg", sz: "5px", sc: "#F59E0B", dl: "662ms", br: "50%" },
+      { sx: "82px", sy: "-8px", sr: "170deg", sz: "5px", sc: "#FEF3C7", dl: "668ms", br: "50%" }
+    ];
+    const sparks = [
+      { x: "16%", sz: "5px", dl: "1160ms" }, { x: "26%", sz: "4px", dl: "1260ms" },
+      { x: "35%", sz: "6px", dl: "1200ms" }, { x: "45%", sz: "5px", dl: "1320ms" },
+      { x: "52%", sz: "6px", dl: "1240ms" }, { x: "61%", sz: "4px", dl: "1360ms" },
+      { x: "70%", sz: "6px", dl: "1290ms" }, { x: "79%", sz: "5px", dl: "1410ms" },
+      { x: "86%", sz: "4px", dl: "1470ms" }, { x: "40%", sz: "5px", dl: "1520ms" },
+      { x: "58%", sz: "5px", dl: "1560ms" }, { x: "30%", sz: "4px", dl: "1610ms" }
+    ];
+
+    const sealInner = `
+      <span class="env24-seal-halo" aria-hidden="true"></span>
+      <span class="env24-seal-half env24-seal-tl" aria-hidden="true">${buildEnv24SealHalfSvg("tl", uid)}</span>
+      <span class="env24-seal-half env24-seal-br" aria-hidden="true">${buildEnv24SealHalfSvg("br", uid)}</span>
+      <svg class="env24-crack-svg" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="env24-crack-path" d="M 104 18 L 82 38 L 74 49 L 58 61 L 48 74 L 34 82 L 18 104"/>
+      </svg>`;
+
+    return `
+      <div class="env24-stage ${isOpening ? "is-opening" : "is-idle"}" data-env24-stage>
+        <div class="env24-ambient-aura" aria-hidden="true"></div>
+        <div class="env24-envelope">
+          <div class="env24-back" aria-hidden="true"></div>
+
+          <div class="env24-letter-slip" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#B45309" aria-hidden="true"><polygon points="12 1.5 14.5 9.2 22.5 12 14.5 14.8 12 22.5 9.5 14.8 1.5 12 9.5 9.2"/></svg>
+            <div class="env24-slip-kicker">24 DE DICIEMBRE · SORPRESA</div>
+            <div class="env24-slip-title">${esc(gift.voucherTitle || "Sobre de Nochebuena")}</div>
+            <div class="env24-slip-lines"><span></span><span></span><span></span></div>
+          </div>
+
+          <div class="env24-pocket" aria-hidden="true">
+            <svg viewBox="0 0 320 206" preserveAspectRatio="none">
+              <defs>
+                <filter id="e24Grain_${uid}" x="0%" y="0%" width="100%" height="100%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="2" stitchTiles="stitch" result="n"/>
+                  <feColorMatrix type="saturate" values="0" in="n" result="g"/>
+                  <feComponentTransfer in="g"><feFuncA type="linear" slope="0.14"/></feComponentTransfer>
+                </filter>
+                <linearGradient id="e24SideL_${uid}" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#761624"/>
+                  <stop offset="100%" stop-color="#3E0A12"/>
+                </linearGradient>
+                <linearGradient id="e24SideR_${uid}" x1="1" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#6B1320"/>
+                  <stop offset="100%" stop-color="#360810"/>
+                </linearGradient>
+                <linearGradient id="e24Bot_${uid}" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8A1E2B"/>
+                  <stop offset="46%" stop-color="#5B101A"/>
+                  <stop offset="100%" stop-color="#36070F"/>
+                </linearGradient>
+                <linearGradient id="e24Gold_${uid}" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.78"/>
+                  <stop offset="50%" stop-color="#F59E0B" stop-opacity="0.92"/>
+                  <stop offset="100%" stop-color="#FDE68A" stop-opacity="0.70"/>
+                </linearGradient>
+              </defs>
+              <!-- Alas laterales y pliegue inferior con sombra realista -->
+              <polygon points="0,0 160,114 0,206" fill="url(#e24SideL_${uid})"/>
+              <polygon points="320,0 160,114 320,206" fill="url(#e24SideR_${uid})"/>
+              <polygon points="0,206 160,92 320,206" fill="rgba(0,0,0,0.46)"/>
+              <polygon points="0,206 160,100 320,206" fill="url(#e24Bot_${uid})"/>
+              <!-- Textura sutil de papel de algodón -->
+              <rect x="0" y="0" width="320" height="206" filter="url(#e24Grain_${uid})" opacity="0.55"/>
+              <!-- Ribetes metálicos dorados en pliegues -->
+              <polyline points="0,206 160,100 320,206" fill="none" stroke="url(#e24Gold_${uid})" stroke-width="1.3"/>
+              <line x1="0" y1="0" x2="112" y2="80" stroke="rgba(253,230,138,0.24)" stroke-width="0.9"/>
+              <line x1="320" y1="0" x2="208" y2="80" stroke="rgba(253,230,138,0.24)" stroke-width="0.9"/>
+              <!-- Doble marco ornamental -->
+              <rect x="6" y="6" width="308" height="194" rx="7" fill="none" stroke="rgba(253,230,138,0.34)" stroke-width="0.9"/>
+              <path d="M12 182 L12 194 L24 194 M16 188 L20 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
+              <path d="M308 182 L308 194 L296 194 M304 188 L300 188" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.3"/>
+              <!-- Caligrafía dorada y matasellos alpino -->
+              <text x="160" y="168" text-anchor="middle" fill="#FFFBEB" fill-opacity="0.95" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="13.8" letter-spacing="0.4">Para Patri · Nochebuena</text>
+              <text x="160" y="185" text-anchor="middle" fill="#FDE68A" fill-opacity="0.68" font-family="ui-monospace, Consolas, monospace" font-size="6.8" letter-spacing="2.2">EL MIRADOR DEL VENTISQUERO · 24 DIC</text>
+            </svg>
+          </div>
+
+          <div class="env24-inner-glow" aria-hidden="true"></div>
+          <div class="env24-anamorphic-beam" aria-hidden="true"></div>
+
+          <div class="env24-flap-stage" aria-hidden="true">
+            <div class="env24-flap-3d">
+              <div class="env24-flap-face env24-flap-front">
+                <svg viewBox="0 0 320 128" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="e24FlapF_${uid}" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#9B1F2E"/>
+                      <stop offset="50%" stop-color="#701421"/>
+                      <stop offset="100%" stop-color="#4B0C16"/>
+                    </linearGradient>
+                  </defs>
+                  <polygon points="0,4 320,4 160,127" fill="rgba(0,0,0,0.48)"/>
+                  <polygon points="0,0 320,0 160,121" fill="url(#e24FlapF_${uid})"/>
+                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.78" stroke-width="1.4"/>
+                  <polyline points="14,6 160,111 306,6" fill="none" stroke="#FDE68A" stroke-opacity="0.30" stroke-width="0.9" stroke-dasharray="3 3"/>
+                  <!-- Sello postal alpino 24 DIC en esquina superior derecha -->
+                  <g opacity="0.86">
+                    <rect x="266" y="10" width="38" height="30" rx="2" fill="rgba(5, 11, 18, 0.42)" stroke="#FDE68A" stroke-opacity="0.65" stroke-width="1" stroke-dasharray="2.5 2"/>
+                    <polygon points="285,15 279,26 291,26" fill="none" stroke="#FDE68A" stroke-width="1.1"/>
+                    <text x="285" y="36" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, Consolas, monospace" font-size="6.4" font-weight="700" letter-spacing="0.8">24 DIC</text>
+                    <circle cx="258" cy="28" r="11" fill="none" stroke="#FDE68A" stroke-opacity="0.34" stroke-width="0.85" stroke-dasharray="2 2"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="env24-flap-face env24-flap-back">
+                <svg viewBox="0 0 320 128" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="e24FlapB_${uid}" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#0B2E25"/>
+                      <stop offset="100%" stop-color="#174D3F"/>
+                    </linearGradient>
+                    <pattern id="e24Damask_${uid}" width="16" height="16" patternUnits="userSpaceOnUse">
+                      <path d="M8 0 L16 8 L8 16 L0 8 Z" fill="none" stroke="#FDE68A" stroke-opacity="0.16" stroke-width="0.7"/>
+                    </pattern>
+                  </defs>
+                  <polygon points="0,0 320,0 160,121" fill="url(#e24FlapB_${uid})"/>
+                  <polygon points="0,0 320,0 160,121" fill="url(#e24Damask_${uid})"/>
+                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.82" stroke-width="1.5"/>
+                  <polygon points="160,30 163.5,41 174.5,44.5 163.5,48 160,59 156.5,48 145.5,44.5 156.5,41" fill="#FEF08A" fill-opacity="0.88"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="env24-ribbon-layer" aria-hidden="true">
+            <span class="env24-ribbon-band env24-ribbon-l"></span>
+            <span class="env24-ribbon-band env24-ribbon-r"></span>
+          </div>
+
+          ${!isOpening ? `<div class="env24-idle-sheen" aria-hidden="true"></div>` : ""}
+
+          ${isOpening
+            ? `<div class="env24-seal-btn" aria-hidden="true">${sealInner}</div>`
+            : `<button type="button" class="env24-seal-btn" data-env24-trigger aria-label="Romper el sello de lacre 24 y abrir el Sobre Secreto">${sealInner}</button>`}
+
+          <div class="env24-fx-layer" aria-hidden="true">
+            ${shards.map((s) => `<span class="env24-shard" style="--sx:${s.sx};--sy:${s.sy};--sr:${s.sr};--sz:${s.sz};--sc:${s.sc};--dl:${s.dl};--br:${s.br};"></span>`).join("")}
+            ${sparks.map((p) => `<span class="env24-spark" style="--x:${p.x};--sz:${p.sz};--dl:${p.dl};"></span>`).join("")}
+          </div>
+        </div>
+      </div>`;
+  }
+
   function renderSecretEnvelopeSealedHtml(gift, opts = {}) {
     const uid = opts.uid || "day24";
     const isPreview = Boolean(opts.isPreview);
-    const shards = [
-      { sx: "-54px", sy: "-42px", sr: "-140deg", sz: "7px", sc: "#EF4444", dl: "340ms", br: "2px" },
-      { sx: "58px", sy: "-36px", sr: "125deg", sz: "6px", sc: "#DC2626", dl: "350ms", br: "3px" },
-      { sx: "-66px", sy: "18px", sr: "-115deg", sz: "6px", sc: "#FBBF24", dl: "360ms", br: "50%" },
-      { sx: "64px", sy: "24px", sr: "150deg", sz: "7px", sc: "#B91C1C", dl: "355ms", br: "2px" },
-      { sx: "-34px", sy: "-64px", sr: "-95deg", sz: "5px", sc: "#FEF08A", dl: "370ms", br: "50%" },
-      { sx: "32px", sy: "-60px", sr: "110deg", sz: "5px", sc: "#F59E0B", dl: "365ms", br: "50%" },
-      { sx: "-42px", sy: "54px", sr: "-135deg", sz: "6px", sc: "#DC2626", dl: "375ms", br: "2px" },
-      { sx: "44px", sy: "52px", sr: "145deg", sz: "5px", sc: "#FDE68A", dl: "380ms", br: "50%" },
-      { sx: "-14px", sy: "-70px", sr: "-80deg", sz: "4px", sc: "#FFFBEB", dl: "390ms", br: "50%" },
-      { sx: "18px", sy: "64px", sr: "95deg", sz: "5px", sc: "#EF4444", dl: "385ms", br: "2px" }
-    ];
-    const sparks = [
-      { x: "20%", sz: "5px", dl: "540ms" }, { x: "32%", sz: "4px", dl: "620ms" },
-      { x: "44%", sz: "6px", dl: "570ms" }, { x: "52%", sz: "5px", dl: "680ms" },
-      { x: "62%", sz: "4px", dl: "600ms" }, { x: "74%", sz: "6px", dl: "650ms" },
-      { x: "82%", sz: "4px", dl: "710ms" }, { x: "38%", sz: "5px", dl: "740ms" },
-      { x: "58%", sz: "5px", dl: "790ms" }
-    ];
-
     return `
       <div class="glass-card secret-envelope-sealed" id="${esc(opts.cardId || "secret-envelope-card")}" data-env24-root="${esc(uid)}">
         <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
-        <div class="env24-stage" data-env24-stage>
-          <div class="env24-ambient-aura" aria-hidden="true"></div>
-          <div class="env24-envelope">
-            <div class="env24-back" aria-hidden="true"></div>
-
-            <div class="env24-letter-slip" aria-hidden="true">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="#B45309" aria-hidden="true"><polygon points="12 2 14.4 9.2 22 12 14.4 14.8 12 22 9.6 14.8 2 12 9.6 9.2"/></svg>
-              <div class="env24-slip-kicker">24 DE DICIEMBRE · SORPRESA</div>
-              <div class="env24-slip-title">${esc(gift.voucherTitle || "Sobre de Nochebuena")}</div>
-              <div class="env24-slip-lines"><span></span><span></span><span></span></div>
-            </div>
-
-            <div class="env24-pocket" aria-hidden="true">
-              <svg viewBox="0 0 320 206" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="e24SideL_${uid}" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#6B1420"/>
-                    <stop offset="100%" stop-color="#3E0A12"/>
-                  </linearGradient>
-                  <linearGradient id="e24SideR_${uid}" x1="1" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#63121D"/>
-                    <stop offset="100%" stop-color="#380810"/>
-                  </linearGradient>
-                  <linearGradient id="e24Bot_${uid}" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#7F1D28"/>
-                    <stop offset="45%" stop-color="#58101A"/>
-                    <stop offset="100%" stop-color="#380810"/>
-                  </linearGradient>
-                  <linearGradient id="e24Gold_${uid}" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.72"/>
-                    <stop offset="50%" stop-color="#F59E0B" stop-opacity="0.88"/>
-                    <stop offset="100%" stop-color="#FDE68A" stop-opacity="0.65"/>
-                  </linearGradient>
-                </defs>
-                <!-- Alas laterales -->
-                <polygon points="0,0 160,114 0,206" fill="url(#e24SideL_${uid})"/>
-                <polygon points="320,0 160,114 320,206" fill="url(#e24SideR_${uid})"/>
-                <!-- Sombra suave de pliegue inferior -->
-                <polygon points="0,206 160,94 320,206" fill="rgba(0,0,0,0.42)"/>
-                <!-- Pliegue triangular inferior -->
-                <polygon points="0,206 160,100 320,206" fill="url(#e24Bot_${uid})"/>
-                <!-- Ribete dorado en costuras del papel -->
-                <polyline points="0,206 160,100 320,206" fill="none" stroke="url(#e24Gold_${uid})" stroke-width="1.25"/>
-                <line x1="0" y1="0" x2="112" y2="80" stroke="rgba(253,230,138,0.22)" stroke-width="0.9"/>
-                <line x1="320" y1="0" x2="208" y2="80" stroke="rgba(253,230,138,0.22)" stroke-width="0.9"/>
-                <!-- Marco perimetral dorado interior -->
-                <rect x="6" y="6" width="308" height="194" rx="6" fill="none" stroke="rgba(253,230,138,0.32)" stroke-width="0.9"/>
-                <!-- Filigranas esquinas inferiores -->
-                <path d="M12 184 L12 194 L22 194" fill="none" stroke="#FDE68A" stroke-opacity="0.68" stroke-width="1.3"/>
-                <path d="M308 184 L308 194 L298 194" fill="none" stroke="#FDE68A" stroke-opacity="0.68" stroke-width="1.3"/>
-                <!-- Caligrafía dorada y matasellos alpino -->
-                <text x="160" y="168" text-anchor="middle" fill="#FEF3C7" fill-opacity="0.92" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="13.5" letter-spacing="0.4">Para Patri · Nochebuena</text>
-                <text x="160" y="185" text-anchor="middle" fill="#FDE68A" fill-opacity="0.64" font-family="ui-monospace, Consolas, monospace" font-size="6.8" letter-spacing="2.2">EL MIRADOR DEL VENTISQUERO · 24 DIC</text>
-              </svg>
-            </div>
-
-            <div class="env24-inner-glow" aria-hidden="true"></div>
-
-            <div class="env24-flap-stage" aria-hidden="true">
-              <div class="env24-flap-3d">
-                <div class="env24-flap-face env24-flap-front">
-                  <svg viewBox="0 0 320 128" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="e24FlapF_${uid}" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#8F1D2B"/>
-                        <stop offset="52%" stop-color="#6B1320"/>
-                        <stop offset="100%" stop-color="#4A0C16"/>
-                      </linearGradient>
-                    </defs>
-                    <polygon points="0,4 320,4 160,126" fill="rgba(0,0,0,0.44)"/>
-                    <polygon points="0,0 320,0 160,121" fill="url(#e24FlapF_${uid})"/>
-                    <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.72" stroke-width="1.35"/>
-                    <polyline points="14,6 160,111 306,6" fill="none" stroke="#FDE68A" stroke-opacity="0.28" stroke-width="0.9" stroke-dasharray="3 3"/>
-                  </svg>
-                </div>
-                <div class="env24-flap-face env24-flap-back">
-                  <svg viewBox="0 0 320 128" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="e24FlapB_${uid}" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#0B2E25"/>
-                        <stop offset="100%" stop-color="#144538"/>
-                      </linearGradient>
-                    </defs>
-                    <polygon points="0,0 320,0 160,121" fill="url(#e24FlapB_${uid})"/>
-                    <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.78" stroke-width="1.4"/>
-                    <polygon points="160,34 163,43 172,46 163,49 160,58 157,49 148,46 157,43" fill="#FDE68A" fill-opacity="0.75"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <button type="button" class="env24-seal-btn" data-env24-trigger aria-label="Romper el sello de lacre 24 y abrir el Sobre Secreto">
-              <span class="env24-seal-halo" aria-hidden="true"></span>
-              <span class="env24-seal-half env24-seal-tl" aria-hidden="true">${buildEnv24SealHalfSvg("tl", uid)}</span>
-              <span class="env24-seal-half env24-seal-br" aria-hidden="true">${buildEnv24SealHalfSvg("br", uid)}</span>
-              <svg class="env24-crack-svg" viewBox="0 0 120 120" aria-hidden="true">
-                <path class="env24-crack-path" d="M 104 18 L 82 38 L 74 49 L 58 61 L 48 74 L 34 82 L 18 104"/>
-              </svg>
-            </button>
-
-            <div class="env24-fx-layer" aria-hidden="true">
-              ${shards.map((s) => `<span class="env24-shard" style="--sx:${s.sx};--sy:${s.sy};--sr:${s.sr};--sz:${s.sz};--sc:${s.sc};--dl:${s.dl};--br:${s.br};"></span>`).join("")}
-              ${sparks.map((p) => `<span class="env24-spark" style="--x:${p.x};--sz:${p.sz};--dl:${p.dl};"></span>`).join("")}
-            </div>
-          </div>
-        </div>
-
+        ${buildEnv24StageMarkup(gift, uid, false)}
         <div class="env24-tap-caption">Toca el sello de lacre para abrir</div>
         <h2 ${isPreview ? `id="adv-modal-title"` : ""} class="serif" style="font-size:1.5rem;margin:2px 0 6px;">Tenéis un Sobre Secreto de Nochebuena</h2>
         <p class="day-story" style="margin-bottom:14px;">${isPreview ? "Vista previa interactiva de cómo lo verá Patri el 24 de diciembre (no altera la partida real)." : "Con el expediente oficialmente cerrado, ya podéis romper el último sello de Navidad."}</p>
@@ -1066,7 +1099,7 @@
 
   function renderGiftRevealCardHtml(gift, opts = {}) {
     const isPreview = Boolean(opts.isPreview);
-    const cornerSvg = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><path d="M2 16 V4 Q2 2 4 2 H16"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>`;
+    const cornerSvg = `<svg viewBox="0 0 26 26" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><path d="M2 18 V4 Q2 2 4 2 H18"/><path d="M6 12 V6 H12" stroke-opacity="0.55"/><circle cx="7.5" cy="7.5" r="1.4" fill="currentColor"/></svg>`;
     return `
       <div class="glass-card gift-reveal-card" id="${esc(opts.cardId || "secret-envelope-card")}">
         <span class="gift-corner-ornament tl" aria-hidden="true">${cornerSvg}</span>
@@ -1077,41 +1110,88 @@
           <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
           <span class="gift-keepsake-seal" aria-hidden="true">24</span>
         </div>
-        <h2 ${isPreview ? `id="adv-modal-title"` : ""} class="serif" style="font-size:1.62rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
+        <h2 ${isPreview ? `id="adv-modal-title"` : ""} class="serif" style="font-size:1.65rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
         ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
         <div class="gift-voucher">
           <div class="mono" style="font-size:0.78rem;color:var(--adv-gold-soft);font-weight:700;margin-bottom:6px;">${esc(gift.voucherTitle)}</div>
           <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
         </div>
-        <p class="serif" style="margin-top:14px;font-size:1.1rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
+        <p class="serif" style="margin-top:14px;font-size:1.12rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
         ${!isPreview ? `<button type="button" class="btn btn-sm btn-ghost" id="replay-secret-envelope-btn" style="margin-top:12px;">Volver a ver apertura del sobre</button>` : ""}
       </div>`;
+  }
+
+  function playSecretEnvelopeTheater(gift, onUnveil) {
+    const layer = document.getElementById("cinema-fx-layer");
+    if (typeof window.AudioFX.envelopeOpenSymphony === "function") {
+      window.AudioFX.envelopeOpenSymphony();
+    } else {
+      window.AudioFX.waxSealBreak?.();
+    }
+    if (!layer || isReducedMotionPref()) {
+      if (window.triggerGoldBurst) window.triggerGoldBurst(72);
+      if (typeof onUnveil === "function") onUnveil();
+      return;
+    }
+
+    if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+    let unveiled = false;
+    let finished = false;
+    const timers = [];
+    const unveilOnce = () => {
+      if (unveiled) return;
+      unveiled = true;
+      if (typeof onUnveil === "function") onUnveil();
+    };
+    const cleanup = (skipToUnveil = false) => {
+      if (finished) return;
+      finished = true;
+      timers.forEach(clearTimeout);
+      if (skipToUnveil) unveilOnce();
+      layer.classList.remove("active", "closing");
+      layer.setAttribute("aria-hidden", "true");
+      layer.innerHTML = "";
+      layer.onclick = null;
+      if (cinemaActiveCleanup === cleanup) cinemaActiveCleanup = null;
+    };
+    cinemaActiveCleanup = cleanup;
+
+    layer.innerHTML = `
+      <div class="env24-theater-bokeh" aria-hidden="true"></div>
+      <div class="env24-theater">
+        <div class="env24-theater-kicker">NOCHEBUENA · 24 DE DICIEMBRE</div>
+        <div class="env24-theater-headline">Abriendo el Sobre Secreto</div>
+        ${buildEnv24StageMarkup(gift, "theater", true)}
+        <div class="env24-theater-sub">Toca para continuar</div>
+      </div>`;
+
+    layer.setAttribute("aria-hidden", "false");
+    layer.classList.remove("closing");
+    layer.classList.add("active");
+
+    const openedAt = Date.now();
+    layer.onclick = () => {
+      if (Date.now() - openedAt < 450) return;
+      cleanup(true);
+    };
+
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(96); }, 600));
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(64); }, 1720));
+    timers.push(setTimeout(() => { unveilOnce(); }, 2820));
+    timers.push(setTimeout(() => { layer.classList.add("closing"); }, 2940));
+    timers.push(setTimeout(() => { cleanup(false); }, 3240));
   }
 
   function wireSecretEnvelopeInteractive(rootEl, onOpened) {
     if (!rootEl) return;
     let started = false;
+    const gift = window.GIFT_CONFIG?.finalGiftReveal;
     const triggers = rootEl.querySelectorAll("[data-env24-trigger]");
-    const stage = rootEl.querySelector("[data-env24-stage]");
     const handleOpen = () => {
-      if (started) return;
+      if (started || !gift) return;
       started = true;
       triggers.forEach((b) => { b.disabled = true; });
-      if (typeof window.AudioFX.envelopeOpenSymphony === "function") {
-        window.AudioFX.envelopeOpenSymphony();
-      } else {
-        window.AudioFX.waxSealBreak?.();
-      }
-      if (isReducedMotionPref() || !stage) {
-        if (window.triggerGoldBurst) window.triggerGoldBurst(64);
-        onOpened();
-        return;
-      }
-      rootEl.classList.add("is-opening-card");
-      stage.classList.add("is-opening");
-      setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(92); }, 350);
-      setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(54); }, 1080);
-      setTimeout(() => { onOpened(); }, 1660);
+      playSecretEnvelopeTheater(gift, onOpened);
     };
     triggers.forEach((b) => b.addEventListener("click", handleOpen));
   }
@@ -2090,13 +2170,8 @@
       });
     }
     document.getElementById("replay-secret-envelope-btn")?.addEventListener("click", () => {
-      window.AudioFX.click();
-      try { Store.removeItem(GIFT_ENVELOPE_OPEN_KEY); } catch (_) {}
-      lastDaySignature = "";
-      renderDayView(true);
-      setTimeout(() => {
-        document.getElementById("secret-envelope-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 60);
+      const g = window.GIFT_CONFIG?.finalGiftReveal;
+      if (g) playSecretEnvelopeTheater(g);
     });
 
     document.getElementById("day-quick-jump")?.addEventListener("change", (e) => {
