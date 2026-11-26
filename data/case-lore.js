@@ -41,9 +41,9 @@ window.CASE_LORE = {
     }
   ],
   hotelZones: [
-    { floor: "Planta 3", zone: "Suites Presidenciales (301–305)", note: "Beatriz, Ricardo, Álvaro, Valeria y Sofía." },
-    { floor: "Planta 2", zone: "Habitaciones Sur & Biblioteca (201–208)", note: "Diego, Teresa, Elena, Lucía, Raúl, Inés, Gabriel y Archivo Histórico." },
-    { floor: "Planta 1", zone: "Salón Mirador, Recepción, Spa y Capilla (101–108)", note: "Marcos, Carmen, Paula, Claudia, Adriana, Óscar y Dirección." },
-    { floor: "Sótano / Anexo", zone: "Cocina, Bodega, Calderas y Ala Servicio", note: "Héctor, Nora, Tomás, Julián, Marta, Nicolás y Cabaña Norte de Mateo." }
+    { floor: "Planta 3", zone: "Suites Presidenciales (301–305)", note: "Cinco suites panorámicas de alta privacidad, galería superior, ascensor VIP y acceso a la terraza norte." },
+    { floor: "Planta 2", zone: "Habitaciones Sur & Biblioteca (201–208)", note: "Ala de huéspedes VIP, Sala de Lectura silenciosa, Biblioteca de madera y Archivo Histórico del complejo." },
+    { floor: "Planta 1", zone: "Salón Mirador, Recepción, Spa y Capilla (101–108)", note: "Escena del hallazgo (23:55 h), mostrador de Recepción, zona termal y pasillo técnico del apagón (23:38–23:42 h)." },
+    { floor: "Sótano / Anexo", zone: "Cocina, Bodega, Calderas y Ala Servicio", note: "Fogones y cámara fría, sala de calderas, dormitorios de plantilla (Ala A–E) y Cabaña Norte junto al teleférico." }
   ]
 };

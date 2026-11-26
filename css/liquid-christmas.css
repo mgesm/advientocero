@@ -933,6 +933,312 @@ body.high-contrast-outdoor .adv-modal-sheet {
   min-width: 0;
 }
 
+a.btn {
+  text-decoration: none;
+}
+
+/* --- Mejoras Sospechosos & Expediente (V2.15) --- */
+.suspect-stance-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.stance-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-family: var(--vg-font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 23, 42, 0.72);
+  color: #CBD5E1;
+}
+
+.stance-pill.is-sospecha {
+  border-color: rgba(248, 113, 113, 0.48);
+  background: rgba(127, 29, 29, 0.36);
+  color: #FECACA;
+}
+
+.stance-pill.is-duda {
+  border-color: rgba(251, 191, 36, 0.44);
+  background: rgba(120, 53, 15, 0.32);
+  color: #FDE68A;
+}
+
+.stance-pill.is-inocente {
+  border-color: rgba(52, 211, 153, 0.44);
+  background: rgba(6, 78, 59, 0.34);
+  color: #A7F3D0;
+}
+
+.stance-pill.is-pinned {
+  border-color: rgba(251, 191, 36, 0.55);
+  background: rgba(251, 191, 36, 0.16);
+  color: #FEF3C7;
+}
+
+.suspect-extra-selects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.suspect-extra-selects .adv-select {
+  min-height: 42px;
+  font-size: 0.82rem;
+  padding: 8px 10px;
+}
+
+.portrait-zoom-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 14px;
+  cursor: zoom-in;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: block;
+}
+
+.portrait-zoom-btn::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(5, 11, 18, 0.84);
+  border: 1px solid rgba(253, 230, 138, 0.58);
+  color: #FEF3C7;
+  font-family: var(--vg-font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.exp-progress-wrap {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+}
+
+.exp-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  color: var(--vg-text-secondary);
+  margin-bottom: 6px;
+}
+
+.exp-progress-track {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.exp-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #34D399, #FBBF24);
+  transition: width 320ms ease;
+}
+
+.search-result-btn {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 11, 18, 0.74);
+  color: #E2E8F0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.search-result-btn:hover,
+.search-result-btn:focus-visible {
+  border-color: var(--adv-gold-soft);
+  background: rgba(17, 34, 44, 0.9);
+}
+
+.search-result-arrow {
+  font-family: var(--vg-font-mono);
+  font-size: 0.72rem;
+  color: var(--adv-gold-soft);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.timeline-node-btn {
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.timeline-node-btn:hover,
+.timeline-node-btn:focus-visible {
+  border-color: var(--adv-gold-soft);
+  background: rgba(18, 36, 44, 0.86);
+}
+
+.pin-chip-group {
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(251, 191, 36, 0.38);
+  background: rgba(12, 24, 34, 0.86);
+}
+
+.pin-chip-jump {
+  min-height: 40px;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: #FEF3C7;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pin-chip-del {
+  min-width: 36px;
+  min-height: 40px;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(127, 29, 29, 0.30);
+  color: #FECACA;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.floor-blueprint-wrap {
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(4, 10, 17, 0.84);
+  border: 1px solid rgba(120, 215, 242, 0.24);
+}
+
+.floor-blueprint-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.floor-suspect-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(164px, 1fr));
+  gap: 8px;
+}
+
+.floor-suspect-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 9px;
+  border-radius: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(6, 14, 22, 0.82);
+  color: #F8FAFC;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease;
+}
+
+.floor-suspect-chip.is-out {
+  opacity: 0.65;
+  border-color: rgba(239, 68, 68, 0.34);
+}
+
+.floor-suspect-chip:hover,
+.floor-suspect-chip:focus-visible {
+  border-color: var(--adv-gold-soft);
+}
+
+.floor-suspect-chip img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.settings-group-title {
+  font-family: var(--vg-font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--adv-gold-soft);
+  margin: 0 0 8px;
+}
+
+.notes-summary-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.notes-summary-item {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 11, 18, 0.74);
+  color: #E2E8F0;
+  cursor: pointer;
+}
+
+.notes-summary-item:hover,
+.notes-summary-item:focus-visible {
+  border-color: var(--adv-gold-soft);
+}
+
+.notes-summary-item img {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 /* =====================================================================
    CINEMA FX LAYER · RITUALES DE APERTURA DE LACRE Y DOBLE CANDADO (V2.13)
    ===================================================================== */

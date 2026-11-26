@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.14.1";
-  const CACHE_TAG = "adviento-cero-v2.14.1";
+  const APP_VERSION = "v2.15.0";
+  const CACHE_TAG = "adviento-cero-v2.15.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -29,10 +29,14 @@
   let activeTab = "calendar";
   let selectedDayNum = 1;
   let userPickedDay = false;
+  let suspectsTab = "cards";
+  let suspectSort = "recent";
   let suspectFilter = "all";
   let suspectGroupFilter = "all";
   let suspectFloorFilter = "all";
   let suspectWithNotesOnly = false;
+  let suspectPinnedOnly = false;
+  let suspectStanceFilter = "all";
   let suspectFiltersExtraOpen = false;
   let suspectSearch = "";
   let compareIds = [];
@@ -989,6 +993,12 @@
           } catch (_) {}
           celebratedLockDays.clear();
           expedienteTab = "case";
+          suspectsTab = "cards";
+          suspectSort = "recent";
+          suspectWithNotesOnly = false;
+          suspectPinnedOnly = false;
+          suspectStanceFilter = "all";
+          suspectFiltersExtraOpen = false;
           currentRole = "";
           draftsStore = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
           const ta = document.getElementById("shared-notes-area");
@@ -2024,16 +2034,49 @@
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
   }
 
+  function countExtraSuspectFilters() {
+    let n = 0;
+    if (suspectGroupFilter !== "all") n += 1;
+    if (suspectFloorFilter !== "all") n += 1;
+    if (suspectWithNotesOnly) n += 1;
+    if (suspectPinnedOnly) n += 1;
+    if (suspectStanceFilter !== "all") n += 1;
+    return n;
+  }
+
   function applySuspectFilterOnly() {
     const container = document.getElementById("view-suspects");
     if (!container) return;
     container.querySelectorAll("[data-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.filter === suspectFilter));
-    container.querySelectorAll("[data-group-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.groupFilter === suspectGroupFilter));
-    container.querySelectorAll("[data-floor-filter]").forEach((btn) => btn.classList.toggle("active", btn.dataset.floorFilter === suspectFloorFilter));
+
+    const extraBtn = document.getElementById("toggle-extra-filters-btn");
+    const extraCount = countExtraSuspectFilters();
+    if (extraBtn) {
+      extraBtn.textContent = extraCount > 0 ? `Filtros (${extraCount})` : "Más filtros";
+      extraBtn.classList.toggle("active", suspectFiltersExtraOpen || extraCount > 0);
+      extraBtn.setAttribute("aria-expanded", suspectFiltersExtraOpen ? "true" : "false");
+    }
+
+    const grpSel = document.getElementById("suspect-group-select");
+    if (grpSel && grpSel.value !== suspectGroupFilter) grpSel.value = suspectGroupFilter;
+    const flrSel = document.getElementById("suspect-floor-select");
+    if (flrSel && flrSel.value !== suspectFloorFilter) flrSel.value = suspectFloorFilter;
+
     const notesChip = document.getElementById("suspect-notes-filter-chip");
     if (notesChip) {
       notesChip.classList.toggle("active", suspectWithNotesOnly);
       notesChip.setAttribute("aria-pressed", suspectWithNotesOnly ? "true" : "false");
+    }
+    const pinnedChip = document.getElementById("suspect-pinned-filter-chip");
+    if (pinnedChip) {
+      pinnedChip.classList.toggle("active", suspectPinnedOnly);
+      pinnedChip.setAttribute("aria-pressed", suspectPinnedOnly ? "true" : "false");
+    }
+    const stanceChip = document.getElementById("suspect-stance-filter-chip");
+    if (stanceChip) {
+      const on = suspectStanceFilter === "sospecha";
+      stanceChip.classList.toggle("active", on);
+      stanceChip.setAttribute("aria-pressed", on ? "true" : "false");
     }
 
     const clearBtn = document.getElementById("suspect-search-clear");
@@ -2046,13 +2089,17 @@
       const grp = card.dataset.group || "";
       const flr = card.dataset.floor || "";
       const hasNote = card.dataset.hasNote === "1";
+      const isPinned = card.dataset.pinned === "1";
+      const isSuspected = card.dataset.suspected === "1";
       const hay = (card.dataset.search || "").toLowerCase();
       const hideStatus = (suspectFilter === "pending" && isOut) || (suspectFilter === "discarded" && !isOut);
       const hideGroup = suspectGroupFilter !== "all" && grp !== suspectGroupFilter;
       const hideFloor = suspectFloorFilter !== "all" && flr !== suspectFloorFilter;
       const hideNotes = suspectWithNotesOnly && !hasNote;
+      const hidePinned = suspectPinnedOnly && !isPinned;
+      const hideStance = suspectStanceFilter === "sospecha" && !isSuspected;
       const hideQuery = q && !hay.includes(q);
-      const hidden = Boolean(hideStatus || hideGroup || hideFloor || hideNotes || hideQuery);
+      const hidden = Boolean(hideStatus || hideGroup || hideFloor || hideNotes || hidePinned || hideStance || hideQuery);
       card.classList.toggle("is-hidden-by-filter", hidden);
       if (!hidden) visibleCount += 1;
     });
@@ -2065,6 +2112,8 @@
     const solvedDays = Object.keys(syncState.days || {}).filter((k) => syncState.days[k]?.solved).map(Number);
     const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDays.length ? solvedDays : [0]), 0);
     return JSON.stringify({
+      tab: suspectsTab,
+      sort: suspectSort,
       discoveryLimit,
       discarded,
       fv: syncState.finalVerdictSolved,
@@ -2082,13 +2131,15 @@
     const sig = computeSuspectsSignature();
     const existingTa = document.getElementById("shared-notes-area");
 
-    if (!force && sig === lastSuspectsSignature && existingTa) {
-      const remoteNotes = syncState.sharedNotes || "";
-      if (document.activeElement !== existingTa) {
-        if (existingTa.value !== remoteNotes) existingTa.value = remoteNotes;
-      } else if (remoteNotes !== existingTa.value && remoteNotes.length > 0) {
-        const conflictBox = document.getElementById("notes-remote-conflict");
-        if (conflictBox) conflictBox.style.display = "flex";
+    if (!force && sig === lastSuspectsSignature && container.innerHTML.trim() !== "") {
+      if (existingTa) {
+        const remoteNotes = syncState.sharedNotes || "";
+        if (document.activeElement !== existingTa) {
+          if (existingTa.value !== remoteNotes) existingTa.value = remoteNotes;
+        } else if (remoteNotes !== existingTa.value && remoteNotes.length > 0) {
+          const conflictBox = document.getElementById("notes-remote-conflict");
+          if (conflictBox) conflictBox.style.display = "flex";
+        }
       }
       updateSyncBadgesOnly();
       return;
@@ -2103,66 +2154,125 @@
     const taSel = wasFocused ? { start: existingTa.selectionStart, end: existingTa.selectionEnd } : null;
 
     const discarded = syncState.discardedIds || [];
+    const pinnedClues = syncState.pinnedClues || [];
     const solvedDays = Object.keys(syncState.days || {}).filter((k) => syncState.days[k]?.solved).map(Number);
     const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDays.length ? solvedDays : [0]), 0);
-    const discovered = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit);
+    const discoveredRaw = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit);
     const culpritId = syncState.finalEpilogue?.culpritId;
-    const discardedInView = discovered.filter((s) => discarded.includes(s.id) || (syncState.finalVerdictSolved && culpritId && s.id !== culpritId)).length;
+    const isSuspectOut = (s) => discarded.includes(s.id) || Boolean(syncState.finalVerdictSolved && culpritId && s.id !== culpritId);
+
+    const discovered = [...discoveredRaw].sort((a, b) => {
+      const aOut = isSuspectOut(a) ? 1 : 0;
+      const bOut = isSuspectOut(b) ? 1 : 0;
+      if (aOut !== bOut) return aOut - bOut;
+      if (suspectSort === "recent") {
+        const dayDiff = (b.discoveredDay || 1) - (a.discoveredDay || 1);
+        if (dayDiff !== 0) return dayDiff;
+      }
+      return Number(a.num || 0) - Number(b.num || 0);
+    });
+
+    const discardedInView = discovered.filter(isSuspectOut).length;
     const activeInView = discovered.length - discardedInView;
+    const extraCount = countExtraSuspectFilters();
+    const hasSharedNoteTxt = Boolean((preservedNotes || "").trim().length);
+    const ratedSuspects = discovered.filter((s) => {
+      const sn = syncState.suspectNotes?.[s.id] || {};
+      return Boolean(sn.miguel?.note || sn.patri?.note || (sn.miguel?.stance && sn.miguel.stance !== "duda") || (sn.patri?.stance && sn.patri.stance !== "duda"));
+    });
 
-    container.innerHTML = `
-      <div class="section-head">
-        <h2 class="section-title">Sospechosos descubiertos (${discovered.length}/25)</h2>
-        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-          <span class="badge badge-crimson">${discardedInView} descartados · ${activeInView} activos</span>
-          <button type="button" id="jump-to-notes-btn" class="btn btn-sm btn-ghost">Ir a Libreta</button>
-        </div>
-      </div>
+    const subtabsHtml = `
+      <div class="exp-subtabs" role="tablist" aria-label="Secciones de sospechosos" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:12px;">
+        <button type="button" role="tab" aria-selected="${suspectsTab === "cards"}" class="exp-subtab ${suspectsTab === "cards" ? "active" : ""}" data-suspects-tab="cards">Fichas (${discovered.length}/25)</button>
+        <button type="button" role="tab" aria-selected="${suspectsTab === "notes"}" class="exp-subtab ${suspectsTab === "notes" ? "active" : ""}" data-suspects-tab="notes">Libreta${hasSharedNoteTxt || ratedSuspects.length ? ` (${ratedSuspects.length + (hasSharedNoteTxt ? 1 : 0)})` : ""}</button>
+      </div>`;
 
+    const stanceLabelMap = { sospecha: "Sospecha", duda: "Duda", inocente: "Inocente" };
+    const buildStancePills = (s) => {
+      const sn = syncState.suspectNotes?.[s.id] || {};
+      const pills = [];
+      const isPinned = pinnedClues.includes(`suspect-${s.id}`);
+      if (isPinned) pills.push(`<span class="stance-pill is-pinned">Fijado en Careo</span>`);
+      [["miguel", "MIG"], ["patri", "PAT"]].forEach(([rk, tag]) => {
+        const entry = sn[rk];
+        if (!entry) return;
+        const st = entry.stance || "duda";
+        const hasTxt = Boolean((entry.note || "").trim());
+        if (st !== "duda" || hasTxt) {
+          pills.push(`<span class="stance-pill is-${esc(st)}">${tag}: ${esc(stanceLabelMap[st] || st)}${hasTxt ? " · nota" : ""}</span>`);
+        }
+      });
+      return pills.length ? `<div class="suspect-stance-row">${pills.join("")}</div>` : "";
+    };
+
+    const cardsPanelHtml = `
       ${discovered.length > 0 ? `
+        <div class="section-head" style="margin-bottom:10px;">
+          <h2 class="section-title">Sospechosos (${discovered.length}/25)</h2>
+          <span class="badge ${discardedInView > 0 ? "badge-crimson" : "badge-frost"}">${activeInView} activos · ${discardedInView} descartados</span>
+        </div>
+
         <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px;">
           <input type="search" id="suspect-search-input" class="adv-input" aria-label="Buscar sospechosos por nombre, rol o habitación" value="${esc(suspectSearch)}" placeholder="Buscar nombre, rol o hab..." style="min-height:44px;flex:1;min-width:0;">
           <button type="button" id="suspect-search-clear" class="btn btn-sm btn-ghost" aria-label="Limpiar búsqueda" style="display:${suspectSearch.trim() ? "inline-flex" : "none"};flex-shrink:0;">Limpiar</button>
         </div>
+
         <div class="suspect-filters" role="group" aria-label="Filtrar por estado">
           <button type="button" class="filter-chip ${suspectFilter === "all" ? "active" : ""}" data-filter="all">Todos (${discovered.length})</button>
-          <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Sospechosos (${activeInView})</button>
+          <button type="button" class="filter-chip ${suspectFilter === "pending" ? "active" : ""}" data-filter="pending">Activos (${activeInView})</button>
           <button type="button" class="filter-chip ${suspectFilter === "discarded" ? "active" : ""}" data-filter="discarded">Descartados (${discardedInView})</button>
-          <button type="button" class="filter-chip ${suspectFiltersExtraOpen ? "active" : ""}" id="toggle-extra-filters-btn" aria-expanded="${suspectFiltersExtraOpen ? "true" : "false"}">Más filtros</button>
+          <button type="button" class="filter-chip ${suspectFiltersExtraOpen || extraCount > 0 ? "active" : ""}" id="toggle-extra-filters-btn" aria-expanded="${suspectFiltersExtraOpen ? "true" : "false"}">${extraCount > 0 ? `Filtros (${extraCount})` : "Más filtros"}</button>
         </div>
-        <div id="suspect-extra-filters" style="display:${suspectFiltersExtraOpen ? "block" : "none"};margin-bottom:8px;">
-          <div class="suspect-filters" role="group" aria-label="Filtrar por grupo y notas" style="margin-top:0;">
-            <button type="button" class="filter-chip ${suspectGroupFilter === "all" ? "active" : ""}" data-group-filter="all">Huéspedes y Personal</button>
-            <button type="button" class="filter-chip ${suspectGroupFilter === "Huésped" ? "active" : ""}" data-group-filter="Huésped">Huéspedes</button>
-            <button type="button" class="filter-chip ${suspectGroupFilter === "Personal" ? "active" : ""}" data-group-filter="Personal">Personal</button>
+
+        <div id="suspect-extra-filters" class="glass-card" style="display:${suspectFiltersExtraOpen ? "block" : "none"};padding:10px 12px;margin-bottom:10px;">
+          <div class="suspect-extra-selects">
+            <select id="suspect-group-select" class="adv-select" aria-label="Filtrar por grupo">
+              <option value="all" ${suspectGroupFilter === "all" ? "selected" : ""}>Grupo: Todos</option>
+              <option value="Huésped" ${suspectGroupFilter === "Huésped" ? "selected" : ""}>Solo Huéspedes</option>
+              <option value="Personal" ${suspectGroupFilter === "Personal" ? "selected" : ""}>Solo Personal</option>
+            </select>
+            <select id="suspect-floor-select" class="adv-select" aria-label="Filtrar por planta">
+              <option value="all" ${suspectFloorFilter === "all" ? "selected" : ""}>Planta: Todas</option>
+              <option value="Planta 3" ${suspectFloorFilter === "Planta 3" ? "selected" : ""}>Planta 3</option>
+              <option value="Planta 2" ${suspectFloorFilter === "Planta 2" ? "selected" : ""}>Planta 2</option>
+              <option value="Planta 1" ${suspectFloorFilter === "Planta 1" ? "selected" : ""}>Planta 1</option>
+              <option value="Sótano / Anexo" ${suspectFloorFilter === "Sótano / Anexo" ? "selected" : ""}>Sótano / Anexo</option>
+            </select>
+          </div>
+          <div class="suspect-filters" style="margin:0;">
+            <button type="button" class="filter-chip ${suspectStanceFilter === "sospecha" ? "active" : ""}" id="suspect-stance-filter-chip" aria-pressed="${suspectStanceFilter === "sospecha" ? "true" : "false"}">Sospecha</button>
+            <button type="button" class="filter-chip ${suspectPinnedOnly ? "active" : ""}" id="suspect-pinned-filter-chip" aria-pressed="${suspectPinnedOnly ? "true" : "false"}">Fijados</button>
             <button type="button" class="filter-chip ${suspectWithNotesOnly ? "active" : ""}" id="suspect-notes-filter-chip" aria-pressed="${suspectWithNotesOnly ? "true" : "false"}">Con notas</button>
-          </div>
-          <div class="suspect-filters" role="group" aria-label="Filtrar por planta" style="margin-top:-4px;">
-            ${["all", "Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
-              <button type="button" class="filter-chip ${suspectFloorFilter === fl ? "active" : ""}" data-floor-filter="${fl}">${fl === "all" ? "Todas las plantas" : fl}</button>
-            `).join("")}
+            <button type="button" class="filter-chip active" id="suspect-sort-toggle-btn">Orden: ${suspectSort === "recent" ? "Recientes" : "Por #"}</button>
           </div>
         </div>
+
         ${compareIds.length > 0 ? `
           <div class="glass-card" style="padding:12px;margin-bottom:12px;border:var(--vg-border-frost);">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
               <span class="badge badge-frost">COMPARADOR LADO A LADO (${compareIds.length}/3)</span>
-              <button type="button" class="btn btn-sm btn-ghost" id="clear-compare-btn">Limpiar comparación</button>
+              <button type="button" class="btn btn-sm btn-ghost" id="clear-compare-btn">Limpiar</button>
             </div>
             <div class="compare-strip">
               ${compareIds.map((cid) => {
                 const cs = discovered.find((x) => x.id === cid) || (window.SUSPECTS_DATA || []).find((x) => x.id === cid);
                 if (!cs) return "";
+                const cOut = isSuspectOut(cs);
                 const sn = syncState.suspectNotes?.[cs.id] || {};
-                const mNote = sn.miguel?.note ? `M (${sn.miguel.stance}): ${sn.miguel.note}` : "Sin apunte de Miguel";
-                const pNote = sn.patri?.note ? `P (${sn.patri.stance}): ${sn.patri.note}` : "Sin apunte de Patri";
+                const mNote = sn.miguel?.note ? `M (${sn.miguel.stance}): ${sn.miguel.note}` : (sn.miguel?.stance && sn.miguel.stance !== "duda" ? `M: ${sn.miguel.stance}` : "Sin apunte de Miguel");
+                const pNote = sn.patri?.note ? `P (${sn.patri.stance}): ${sn.patri.note}` : (sn.patri?.stance && sn.patri.stance !== "duda" ? `P: ${sn.patri.stance}` : "Sin apunte de Patri");
                 return `
                   <div class="compare-card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;">
-                      <strong style="font-size:0.86rem;color:#FFFBEB;">#${esc(cs.num)} ${esc(cs.name)}</strong>
-                      <button type="button" class="btn btn-sm btn-ghost" style="min-height:30px;padding:2px 8px;" data-remove-compare="${esc(cs.id)}" aria-label="Quitar ${esc(cs.name)}">×</button>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+                      <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                        <img src="${esc(cs.portrait)}" alt="${esc(cs.name)}" width="36" height="36" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0;">
+                        <div style="min-width:0;">
+                          <strong style="font-size:0.84rem;color:#FFFBEB;display:block;">#${esc(cs.num)} ${esc(cs.name)}</strong>
+                          <span class="mono" style="font-size:0.65rem;color:${cOut ? "#FCA5A5" : "var(--adv-gold-soft)"};">${cOut ? "DESCARTADO · " : ""}${esc(cs.room)}</span>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-sm btn-ghost" style="min-width:40px;min-height:40px;padding:0;flex-shrink:0;" data-remove-compare="${esc(cs.id)}" aria-label="Quitar ${esc(cs.name)}">×</button>
                     </div>
-                    <div class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);margin-bottom:4px;">${esc(cs.role)} · ${esc(cs.room)}</div>
                     <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-bottom:4px;"><strong>Motivo:</strong> ${esc(cs.motiveHint)}</div>
                     <div style="font-size:0.75rem;color:var(--vg-text-secondary);margin-bottom:6px;"><strong>Coartada:</strong> ${esc(cs.alibiClaim)}</div>
                     <div class="mono" style="font-size:0.68rem;color:#BAE6FD;border-top:1px dashed rgba(255,255,255,0.12);padding-top:4px;">${esc(mNote)}<br>${esc(pNote)}</div>
@@ -2171,13 +2281,7 @@
             </div>
           </div>
         ` : ""}
-      ` : ""}
 
-      ${discovered.length === 0 ? `
-        <div class="glass-card" style="padding:22px;text-align:center;">
-          <p class="day-story">Los implicados irán apareciendo progresivamente conforme se abran las puertas del calendario a partir del <strong>1 de diciembre</strong>.</p>
-        </div>
-      ` : `
         <div class="suspects-grid">
           ${discovered.map((s) => {
             const isOut = discarded.includes(s.id);
@@ -2186,13 +2290,15 @@
             const floor = getRoomFloor(s.room);
             const sNotesObj = syncState.suspectNotes?.[s.id] || {};
             const hasAnyNote = Boolean((sNotesObj.miguel?.note || "").trim() || (sNotesObj.patri?.note || "").trim());
+            const isPinned = pinnedClues.includes(`suspect-${s.id}`);
+            const isSuspected = sNotesObj.miguel?.stance === "sospecha" || sNotesObj.patri?.stance === "sospecha";
             const statusPill = isCulprit
               ? `<span class="badge badge-gold" style="padding:2px 7px;font-size:0.65rem;">CULPABLE</span>`
               : (isOut || isExonerated)
                 ? `<span class="badge badge-crimson" style="padding:2px 7px;font-size:0.65rem;">${isExonerated && !isOut ? "EXONERADO" : "DESCARTADO"}</span>`
                 : `<span class="badge badge-frost" style="padding:2px 7px;font-size:0.65rem;">SOSPECHOSO</span>`;
             return `
-              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-has-note="${hasAnyNote ? "1" : "0"}" data-search="${esc(`${s.name} ${s.role} ${s.room}`)}">
+              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-has-note="${hasAnyNote ? "1" : "0"}" data-pinned="${isPinned ? "1" : "0"}" data-suspected="${isSuspected ? "1" : "0"}" data-search="${esc(`${s.name} ${s.role} ${s.room} ${s.alibiClaim} ${s.motiveHint}`)}">
                 <div class="suspect-avatar-wrap">
                   <img src="${esc(s.portrait)}" alt="${esc(s.name)}" class="suspect-avatar" width="78" height="78" loading="lazy" decoding="async">
                   ${(isOut || isExonerated) ? `<div class="suspect-stamp">${isExonerated && !isOut ? "Exonerado" : "Descartado"}</div>` : ""}
@@ -2205,6 +2311,7 @@
                   <div class="suspect-name">${esc(s.name)}</div>
                   <div class="suspect-role">${esc(s.role)} · <span class="mono" style="font-size:0.68rem;">${esc(s.room)}</span></div>
                   <p class="suspect-alibi">${esc(s.alibiClaim)}</p>
+                  ${buildStancePills(s)}
                 </div>
               </button>`;
           }).join("")}
@@ -2213,9 +2320,20 @@
           <p class="day-story" style="margin-bottom:10px;">Ningún sospechoso coincide con los filtros o la búsqueda actual.</p>
           <button type="button" id="suspects-reset-filters-btn" class="btn btn-sm btn-frost">Mostrar todos</button>
         </div>
-      `}
+      ` : `
+        <div class="glass-card" style="padding:22px;text-align:center;">
+          <span class="badge badge-gold" style="margin-bottom:10px;">REGISTRO DE HUÉSPEDES Y PLANTILLA</span>
+          <h2 class="serif" style="font-size:1.45rem;margin-bottom:8px;">25 personas aisladas en el hotel</h2>
+          <p class="day-story" style="margin-bottom:12px;">Las fichas con retrato, coartada y motivo irán apareciendo progresivamente conforme desprecintéis las puertas a partir del <strong>1 de diciembre</strong>.</p>
+          <div class="exp-progress-wrap" style="text-align:left;">
+            <div class="exp-progress-meta"><span>Fichas descubiertas</span><span>0 / 25</span></div>
+            <div class="exp-progress-track"><div class="exp-progress-fill" style="width:0%;"></div></div>
+          </div>
+        </div>
+      `}`;
 
-      <div id="notes-card-anchor" class="glass-card" style="padding:18px;margin-top:20px;">
+    const notesPanelHtml = `
+      <div id="notes-card-anchor" class="glass-card" style="padding:18px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:8px;flex-wrap:wrap;">
           <strong>Libreta Compartida (Miguel y Patri)</strong>
           <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);" id="notes-status">${syncMode === "firebase" ? "Sincronizada en nube" : "Guardado local"}</span>
@@ -2225,16 +2343,50 @@
           <button type="button" class="btn btn-sm btn-gold" id="notes-merge-btn">Fusionar cambios</button>
         </div>
         <label class="sr-only" for="shared-notes-area">Libreta compartida de Miguel y Patri</label>
-        <textarea id="shared-notes-area" class="adv-textarea" placeholder="Anotad aquí sospechas, teorías o pistas compartidas...">${esc(preservedNotes)}</textarea>
+        <textarea id="shared-notes-area" class="adv-textarea" style="min-height:170px;" placeholder="Anotad aquí sospechas, teorías, horas clave o contradicciones compartidas...">${esc(preservedNotes)}</textarea>
       </div>
+
+      <div class="glass-card" style="padding:16px 18px;margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">
+          <h3 style="font-size:0.96rem;">Fichas valoradas o anotadas (${ratedSuspects.length})</h3>
+        </div>
+        ${ratedSuspects.length ? `
+          <div class="notes-summary-list">
+            ${ratedSuspects.map((s) => {
+              const sn = syncState.suspectNotes?.[s.id] || {};
+              const notesPreview = [sn.miguel?.note ? `M: ${sn.miguel.note}` : "", sn.patri?.note ? `P: ${sn.patri.note}` : ""].filter(Boolean).join(" · ");
+              return `
+                <button type="button" class="notes-summary-item" data-open-rated-suspect="${esc(s.id)}">
+                  <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="38" height="38" loading="lazy" decoding="async">
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-weight:700;font-size:0.84rem;color:#FFFBEB;">#${esc(s.num)} · ${esc(s.name)}</div>
+                    ${notesPreview ? `<div style="font-size:0.74rem;color:var(--vg-text-secondary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(notesPreview)}</div>` : ""}
+                    ${buildStancePills(s)}
+                  </div>
+                </button>`;
+            }).join("")}
+          </div>
+        ` : `<p class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:4px;">Aún no habéis marcado posturas ni apuntes dentro de las fichas de sospechosos.</p>`}
+      </div>`;
+
+    container.innerHTML = `
+      ${subtabsHtml}
+      ${suspectsTab === "notes" ? notesPanelHtml : cardsPanelHtml}
     `;
+
+    container.querySelectorAll("[data-suspects-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const next = btn.dataset.suspectsTab || "cards";
+        if (next === suspectsTab) return;
+        flushPendingNotes();
+        suspectsTab = next;
+        window.AudioFX.click();
+        renderSuspectsView(true);
+      });
+    });
 
     applySuspectFilterOnly();
     updateSyncBadgesOnly();
-
-    document.getElementById("jump-to-notes-btn")?.addEventListener("click", () => {
-      document.getElementById("notes-card-anchor")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
 
     document.getElementById("suspect-search-input")?.addEventListener("input", (e) => {
       suspectSearch = e.target.value;
@@ -2251,21 +2403,43 @@
       suspectGroupFilter = "all";
       suspectFloorFilter = "all";
       suspectWithNotesOnly = false;
+      suspectPinnedOnly = false;
+      suspectStanceFilter = "all";
       suspectSearch = "";
       const inp = document.getElementById("suspect-search-input");
       if (inp) inp.value = "";
       applySuspectFilterOnly();
     });
-    document.getElementById("toggle-extra-filters-btn")?.addEventListener("click", (e) => {
+    document.getElementById("toggle-extra-filters-btn")?.addEventListener("click", () => {
       suspectFiltersExtraOpen = !suspectFiltersExtraOpen;
       const box = document.getElementById("suspect-extra-filters");
       if (box) box.style.display = suspectFiltersExtraOpen ? "block" : "none";
-      e.currentTarget.classList.toggle("active", suspectFiltersExtraOpen);
-      e.currentTarget.setAttribute("aria-expanded", suspectFiltersExtraOpen ? "true" : "false");
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-group-select")?.addEventListener("change", (e) => {
+      suspectGroupFilter = e.target.value || "all";
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-floor-select")?.addEventListener("change", (e) => {
+      suspectFloorFilter = e.target.value || "all";
+      applySuspectFilterOnly();
     });
     document.getElementById("suspect-notes-filter-chip")?.addEventListener("click", () => {
       suspectWithNotesOnly = !suspectWithNotesOnly;
       applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-pinned-filter-chip")?.addEventListener("click", () => {
+      suspectPinnedOnly = !suspectPinnedOnly;
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-stance-filter-chip")?.addEventListener("click", () => {
+      suspectStanceFilter = suspectStanceFilter === "sospecha" ? "all" : "sospecha";
+      applySuspectFilterOnly();
+    });
+    document.getElementById("suspect-sort-toggle-btn")?.addEventListener("click", () => {
+      suspectSort = suspectSort === "recent" ? "num" : "recent";
+      window.AudioFX.click();
+      renderSuspectsView(true);
     });
     document.getElementById("clear-compare-btn")?.addEventListener("click", () => {
       compareIds = [];
@@ -2280,15 +2454,12 @@
     container.querySelectorAll("[data-filter]").forEach((btn) => {
       btn.addEventListener("click", () => { suspectFilter = btn.dataset.filter; applySuspectFilterOnly(); });
     });
-    container.querySelectorAll("[data-group-filter]").forEach((btn) => {
-      btn.addEventListener("click", () => { suspectGroupFilter = btn.dataset.groupFilter; applySuspectFilterOnly(); });
-    });
-    container.querySelectorAll("[data-floor-filter]").forEach((btn) => {
-      btn.addEventListener("click", () => { suspectFloorFilter = btn.dataset.floorFilter; applySuspectFilterOnly(); });
-    });
 
     container.querySelectorAll("[data-suspect-id]").forEach((card) => {
       card.addEventListener("click", () => openSuspectModal(card.dataset.suspectId, card));
+    });
+    container.querySelectorAll("[data-open-rated-suspect]").forEach((btn) => {
+      btn.addEventListener("click", () => openSuspectModal(btn.dataset.openRatedSuspect, btn));
     });
 
     const ta = document.getElementById("shared-notes-area");
@@ -2336,6 +2507,78 @@
     });
   }
 
+  function renderFloorBlueprintSvg(floor) {
+    if (floor === "Planta 3") {
+      return `
+        <svg class="floor-blueprint-svg" viewBox="0 0 340 124" aria-label="Croquis Planta 3">
+          <rect x="6" y="6" width="328" height="112" rx="10" fill="#07111B" stroke="rgba(120,215,242,0.34)" stroke-width="1.2"/>
+          <rect x="16" y="16" width="58" height="44" rx="5" fill="rgba(14,116,144,0.18)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="45" y="42" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="9" font-weight="700">301</text>
+          <rect x="80" y="16" width="58" height="44" rx="5" fill="rgba(14,116,144,0.18)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="109" y="42" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="9" font-weight="700">302</text>
+          <rect x="144" y="16" width="52" height="44" rx="5" fill="rgba(251,191,36,0.14)" stroke="#FDE68A" stroke-width="1"/>
+          <text x="170" y="42" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, monospace" font-size="9" font-weight="700">303</text>
+          <rect x="202" y="16" width="58" height="44" rx="5" fill="rgba(14,116,144,0.18)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="231" y="42" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="9" font-weight="700">304</text>
+          <rect x="266" y="16" width="58" height="44" rx="5" fill="rgba(14,116,144,0.18)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="295" y="42" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="9" font-weight="700">305</text>
+          <rect x="16" y="68" width="214" height="20" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(148,163,184,0.28)" stroke-dasharray="3 3"/>
+          <text x="123" y="81" text-anchor="middle" fill="#94A3B8" font-family="ui-monospace, monospace" font-size="8">GALERÍA SUPERIOR · ASCENSOR VIP</text>
+          <rect x="238" y="68" width="86" height="38" rx="5" fill="rgba(56,189,248,0.12)" stroke="#38BDF8" stroke-dasharray="4 3"/>
+          <text x="281" y="90" text-anchor="middle" fill="#BAE6FD" font-family="ui-monospace, monospace" font-size="8">TERRAZA N.</text>
+          <text x="16" y="106" fill="#64748B" font-family="ui-monospace, monospace" font-size="7.5">PLANTA 3 · SUITES PRESIDENCIALES</text>
+        </svg>`;
+    }
+    if (floor === "Planta 2") {
+      return `
+        <svg class="floor-blueprint-svg" viewBox="0 0 340 124" aria-label="Croquis Planta 2">
+          <rect x="6" y="6" width="328" height="112" rx="10" fill="#07111B" stroke="rgba(120,215,242,0.34)" stroke-width="1.2"/>
+          <rect x="16" y="16" width="136" height="38" rx="5" fill="rgba(14,116,144,0.16)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="84" y="38" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="8.6" font-weight="700">HAB. 201 – 204</text>
+          <rect x="160" y="16" width="164" height="38" rx="5" fill="rgba(14,116,144,0.16)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="242" y="38" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="8.6" font-weight="700">HAB. 205 – 208</text>
+          <rect x="16" y="64" width="104" height="42" rx="5" fill="rgba(251,191,36,0.14)" stroke="#FDE68A" stroke-width="1"/>
+          <text x="68" y="88" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, monospace" font-size="8.4" font-weight="700">SALA LECTURA</text>
+          <rect x="128" y="64" width="96" height="42" rx="5" fill="rgba(251,191,36,0.12)" stroke="#F59E0B" stroke-width="1"/>
+          <text x="176" y="88" text-anchor="middle" fill="#FDE68A" font-family="ui-monospace, monospace" font-size="8.4" font-weight="700">BIBLIOTECA</text>
+          <rect x="232" y="64" width="92" height="42" rx="5" fill="rgba(52,211,153,0.14)" stroke="#34D399" stroke-width="1"/>
+          <text x="278" y="88" text-anchor="middle" fill="#A7F3D0" font-family="ui-monospace, monospace" font-size="8.4" font-weight="700">ARCHIVO</text>
+        </svg>`;
+    }
+    if (floor === "Sótano / Anexo") {
+      return `
+        <svg class="floor-blueprint-svg" viewBox="0 0 340 124" aria-label="Croquis Sótano y Anexo">
+          <rect x="6" y="6" width="328" height="112" rx="10" fill="#07111B" stroke="rgba(120,215,242,0.34)" stroke-width="1.2"/>
+          <rect x="16" y="16" width="84" height="44" rx="5" fill="rgba(251,191,36,0.14)" stroke="#FDE68A" stroke-width="1"/>
+          <text x="58" y="41" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, monospace" font-size="8.6" font-weight="700">COCINA</text>
+          <rect x="108" y="16" width="76" height="44" rx="5" fill="rgba(14,116,144,0.16)" stroke="#78D7F2" stroke-width="1"/>
+          <text x="146" y="41" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="8.6" font-weight="700">BODEGA</text>
+          <rect x="192" y="16" width="132" height="44" rx="5" fill="rgba(239,68,68,0.16)" stroke="#F87171" stroke-width="1"/>
+          <text x="258" y="41" text-anchor="middle" fill="#FECACA" font-family="ui-monospace, monospace" font-size="8.6" font-weight="700">CALDERAS · SERVICIO</text>
+          <rect x="16" y="68" width="196" height="38" rx="5" fill="rgba(255,255,255,0.05)" stroke="rgba(148,163,184,0.38)"/>
+          <text x="114" y="90" text-anchor="middle" fill="#CBD5E1" font-family="ui-monospace, monospace" font-size="8.4">ALA DE SERVICIO (A – E)</text>
+          <rect x="222" y="68" width="102" height="38" rx="5" fill="rgba(56,189,248,0.14)" stroke="#38BDF8" stroke-dasharray="4 3"/>
+          <text x="273" y="90" text-anchor="middle" fill="#BAE6FD" font-family="ui-monospace, monospace" font-size="8.2" font-weight="700">CABAÑA NORTE</text>
+        </svg>`;
+    }
+    return `
+      <svg class="floor-blueprint-svg" viewBox="0 0 340 124" aria-label="Croquis Planta 1">
+        <rect x="6" y="6" width="328" height="112" rx="10" fill="#07111B" stroke="rgba(120,215,242,0.34)" stroke-width="1.2"/>
+        <rect x="16" y="16" width="128" height="62" rx="6" fill="rgba(220,38,38,0.16)" stroke="#F87171" stroke-width="1.3"/>
+        <text x="80" y="38" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, monospace" font-size="8.8" font-weight="700">SALÓN MIRADOR</text>
+        <circle cx="80" cy="57" r="5" fill="#EF4444" stroke="#FECACA" stroke-width="1.4"/>
+        <text x="80" y="72" text-anchor="middle" fill="#FCA5A5" font-family="ui-monospace, monospace" font-size="7.2" font-weight="700">HALLAZGO · 23:55</text>
+        <rect x="152" y="16" width="84" height="38" rx="5" fill="rgba(251,191,36,0.14)" stroke="#FDE68A" stroke-width="1"/>
+        <text x="194" y="38" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, monospace" font-size="8.4" font-weight="700">RECEPCIÓN</text>
+        <rect x="244" y="16" width="80" height="38" rx="5" fill="rgba(14,116,144,0.16)" stroke="#78D7F2" stroke-width="1"/>
+        <text x="284" y="38" text-anchor="middle" fill="#E0F2FE" font-family="ui-monospace, monospace" font-size="8.4" font-weight="700">SPA / CAPILLA</text>
+        <rect x="152" y="60" width="172" height="18" rx="4" fill="rgba(251,191,36,0.12)" stroke="#F59E0B" stroke-dasharray="3 3"/>
+        <text x="238" y="72" text-anchor="middle" fill="#FDE68A" font-family="ui-monospace, monospace" font-size="7.4" font-weight="700">PASILLO TÉCNICO · APAGÓN 23:38</text>
+        <rect x="16" y="86" width="308" height="22" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(148,163,184,0.3)"/>
+        <text x="170" y="100" text-anchor="middle" fill="#CBD5E1" font-family="ui-monospace, monospace" font-size="8.2">HABITACIONES 101 – 108 · DIRECCIÓN Y PORCHE ESTE</text>
+      </svg>`;
+  }
+
   function renderExpedienteView(force = false) {
     const container = document.getElementById("view-expediente");
     if (!container || !currentRole) return;
@@ -2348,11 +2591,13 @@
       hints: syncState.hintsUnlocked,
       dispatch: syncState.fieldDispatch,
       sNotes: syncState.suspectNotes,
+      sharedNotesLen: (syncState.sharedNotes || "").length,
       pinned: syncState.pinnedClues,
       floor: expedienteFloor,
       timelineFloor: timelineFloorFilter,
       offlinePackStatus,
       fv: syncState.finalVerdictSolved,
+      muted: window.AudioFX.isMuted(),
       prefs: userPrefs
     });
     if (!force && expSig === lastExpedienteSignature && container.innerHTML.trim() !== "") {
@@ -2361,21 +2606,25 @@
     lastExpedienteSignature = expSig;
 
     const lore = window.CASE_LORE;
+    const discarded = syncState.discardedIds || [];
+    const pinnedList = syncState.pinnedClues || [];
     const solvedDaysArr = Object.entries(syncState.days || {})
       .filter(([, d]) => d && d.solved)
       .map(([k, d]) => ({ day: Number(k), ...d }))
       .sort((a, b) => a.day - b.day);
     const openInquiries = solvedDaysArr.filter((d) => !d.discardId);
     const totalHintsUsed = Object.values(syncState.hintsUnlocked || {}).reduce((acc, v) => acc + (Number(v) || 0), 0);
+    const progressPct = Math.round((solvedDaysArr.length / 24) * 100);
 
     const solvedDaysNums = solvedDaysArr.map((d) => d.day);
     const discoveryLimit = Math.max(window.DateGate.getMaxOpenDay(), ...(solvedDaysNums.length ? solvedDaysNums : [0]), 0);
-    const floorSuspects = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit && getRoomFloor(s.room) === expedienteFloor);
+    const discoveredSuspects = (window.SUSPECTS_DATA || []).filter((s) => (s.discoveredDay || 1) <= discoveryLimit);
+    const floorSuspects = discoveredSuspects.filter((s) => getRoomFloor(s.room) === expedienteFloor);
 
     const subtabsHtml = `
       <div class="exp-subtabs" role="tablist" aria-label="Secciones del expediente">
         <button type="button" role="tab" aria-selected="${expedienteTab === "case"}" class="exp-subtab ${expedienteTab === "case" ? "active" : ""}" data-exp-tab="case">Atestado</button>
-        <button type="button" role="tab" aria-selected="${expedienteTab === "clues"}" class="exp-subtab ${expedienteTab === "clues" ? "active" : ""}" data-exp-tab="clues">Pistas</button>
+        <button type="button" role="tab" aria-selected="${expedienteTab === "clues"}" class="exp-subtab ${expedienteTab === "clues" ? "active" : ""}" data-exp-tab="clues">Pistas${pinnedList.length ? ` (${pinnedList.length})` : ""}</button>
         <button type="button" role="tab" aria-selected="${expedienteTab === "hotel"}" class="exp-subtab ${expedienteTab === "hotel" ? "active" : ""}" data-exp-tab="hotel">Hotel</button>
         <button type="button" role="tab" aria-selected="${expedienteTab === "settings"}" class="exp-subtab ${expedienteTab === "settings" ? "active" : ""}" data-exp-tab="settings">Ajustes</button>
       </div>`;
@@ -2396,8 +2645,14 @@
         <ul class="clue-list" style="margin-top:12px;">
           ${lore.incidentSummary.map((line) => `<li>${esc(line)}</li>`).join("")}
         </ul>
-        <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);margin-top:10px;">
-          Pistas utilizadas en el caso: ${totalHintsUsed} / 72 · Puertas resueltas: ${solvedDaysArr.length} / 24
+        <div class="exp-progress-wrap">
+          <div class="exp-progress-meta">
+            <span>Progreso del caso: <strong style="color:#FEF3C7;">${solvedDaysArr.length}/24</strong> puertas (${progressPct}%)</span>
+            <span>Pistas usadas: ${totalHintsUsed}/72</span>
+          </div>
+          <div class="exp-progress-track">
+            <div class="exp-progress-fill" style="width:${progressPct}%;"></div>
+          </div>
         </div>
       </div>
 
@@ -2405,36 +2660,36 @@
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
           <div>
             <h3 style="font-size:0.98rem;margin-bottom:2px;">Material Oficial del Caso</h3>
-            <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);">Vídeo briefing cinematográfico en portada y dossier imprimible</div>
+            <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);">Vídeo briefing en portada y guía imprimible en PDF</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn btn-sm btn-primary" id="exp-go-briefing-btn">Ver Vídeo Briefing</button>
-            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
+            <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf?v=2.15.0" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
         </div>
       </div>`;
 
     const cluesTabHtml = `
       <div class="glass-card" style="padding:18px;">
-        <h3 style="font-size:1rem;margin-bottom:8px;">Buscador Global y Chinchetas para el Careo</h3>
+        <h3 style="font-size:1rem;margin-bottom:8px;">Buscador Global y Chinchetas</h3>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <input type="search" id="exp-search-input" class="adv-input" value="${esc(expSearchQuery)}" placeholder="Buscar en resoluciones, partes y notas..." aria-label="Buscar en pistas y notas" style="min-height:44px;flex:1;min-width:0;">
+          <input type="search" id="exp-search-input" class="adv-input" value="${esc(expSearchQuery)}" placeholder="Buscar en días, coartadas, partes y libreta..." aria-label="Buscar en pistas, coartadas y notas" style="min-height:44px;flex:1;min-width:0;">
           <button type="button" id="exp-search-clear" class="btn btn-sm btn-ghost" style="display:${expSearchQuery.trim() ? "inline-flex" : "none"};">Limpiar</button>
         </div>
         <div id="search-results-list" class="search-results-list"></div>
-        ${(syncState.pinnedClues || []).length ? `
+        ${pinnedList.length ? `
           <div style="margin-top:10px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:8px;">
-            <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-bottom:6px;">PISTAS FIJADAS CON CHINCHETA (${syncState.pinnedClues.length}):</div>
+            <div class="mono" style="font-size:0.7rem;color:var(--adv-gold-soft);margin-bottom:6px;">PISTAS FIJADAS CON CHINCHETA (${pinnedList.length}):</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              ${syncState.pinnedClues.map((pid) => {
+              ${pinnedList.map((pid) => {
                 if (pid.startsWith("day-")) {
                   const dNum = Number(pid.replace("day-", ""));
-                  return `<button type="button" class="btn btn-sm btn-gold" data-jump-pinned-day="${dNum}">Día ${String(dNum).padStart(2, "0")}</button>`;
+                  return `<span class="pin-chip-group"><button type="button" class="pin-chip-jump" data-jump-pinned-day="${dNum}">Día ${String(dNum).padStart(2, "0")}</button><button type="button" class="pin-chip-del" data-unpin-clue="${esc(pid)}" aria-label="Quitar Día ${dNum}">×</button></span>`;
                 }
                 if (pid.startsWith("suspect-")) {
                   const sid = pid.replace("suspect-", "");
                   const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
-                  return `<button type="button" class="btn btn-sm btn-frost" data-jump-pinned-suspect="${esc(sid)}">#${esc(sp?.num || "?")} ${esc(sp?.name || sid)}</button>`;
+                  return `<span class="pin-chip-group"><button type="button" class="pin-chip-jump" data-jump-pinned-suspect="${esc(sid)}">#${esc(sp?.num || "?")} ${esc(sp?.name || sid)}</button><button type="button" class="pin-chip-del" data-unpin-clue="${esc(pid)}" aria-label="Quitar ${esc(sp?.name || sid)}">×</button></span>`;
                 }
                 return "";
               }).join("")}
@@ -2452,18 +2707,20 @@
         </div>
         <div class="timeline-list">
           ${[
-            { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m." },
-            { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador." },
-            { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador." },
-            { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño." },
+            { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m.", day: null },
+            { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador.", day: null },
+            { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador.", day: null },
+            { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño.", day: null },
             ...solvedDaysArr.map((d) => {
               const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
-              const flr = susp ? getRoomFloor(susp.room) : "Planta 1";
-              return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}` };
+              const flr = susp ? getRoomFloor(susp.room) : "Diligencia";
+              return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}`, day: d.day };
             })
           ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter)
-           .map((ev) => `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`)
-           .join("")}
+           .map((ev) => ev.day
+             ? `<button type="button" class="timeline-node timeline-node-btn" data-jump-timeline-day="${ev.day}"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</button>`
+             : `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`
+           ).join("")}
         </div>
         ${openInquiries.length ? `
           <div class="feedback-banner success" style="margin-top:10px;border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
@@ -2473,6 +2730,34 @@
       </div>`;
 
     const hotelTabHtml = `
+      <div class="glass-card" style="padding:18px;">
+        <h3 style="font-size:1rem;margin-bottom:10px;">Plano Interactivo por Plantas</h3>
+        <div class="suspect-filters" style="margin-bottom:10px;">
+          ${["Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
+            <button type="button" class="filter-chip ${expedienteFloor === fl ? "active" : ""}" data-exp-floor="${fl}">${fl}</button>
+          `).join("")}
+        </div>
+        <div class="floor-blueprint-wrap">${renderFloorBlueprintSvg(expedienteFloor)}</div>
+        <ul class="clue-list" style="margin-bottom:12px;">
+          ${lore.hotelZones.filter((z) => z.floor === expedienteFloor).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
+        </ul>
+        ${floorSuspects.length ? `
+          <div class="floor-suspect-grid">
+            ${floorSuspects.map((s) => {
+              const out = discarded.includes(s.id);
+              return `
+                <button type="button" class="floor-suspect-chip ${out ? "is-out" : ""}" data-exp-suspect="${esc(s.id)}">
+                  <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="32" height="32" loading="lazy" decoding="async">
+                  <div style="min-width:0;flex:1;">
+                    <div style="font-size:0.78rem;font-weight:700;color:#FFFBEB;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(s.name)}</div>
+                    <div class="mono" style="font-size:0.65rem;color:${out ? "#FCA5A5" : "var(--adv-gold-soft)"};">${esc(s.room)}${out ? " · Out" : ""}</div>
+                  </div>
+                </button>`;
+            }).join("")}
+          </div>
+        ` : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin sospechosos descubiertos en esta planta todavía.</div>`}
+      </div>
+
       <div class="glass-card" style="padding:18px;">
         <h3 style="font-size:1rem;margin-bottom:12px;">Escenas del Complejo (toca para ampliar)</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;">
@@ -2485,34 +2770,23 @@
               </div>
             </button>`).join("")}
         </div>
-      </div>
-
-      <div class="glass-card" style="padding:18px;">
-        <h3 style="font-size:1rem;margin-bottom:10px;">Plano Interactivo por Plantas</h3>
-        <div class="suspect-filters" style="margin-bottom:10px;">
-          ${["Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
-            <button type="button" class="filter-chip ${expedienteFloor === fl ? "active" : ""}" data-exp-floor="${fl}">${fl}</button>
-          `).join("")}
-        </div>
-        <ul class="clue-list" style="margin-bottom:10px;">
-          ${lore.hotelZones.filter((z) => z.floor === expedienteFloor).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
-        </ul>
-        ${floorSuspects.length ? `
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            ${floorSuspects.map((s) => `<button type="button" class="btn btn-sm btn-ghost" data-exp-suspect="${esc(s.id)}">${esc(s.room)} · ${esc(s.name)}</button>`).join("")}
-          </div>
-        ` : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin sospechosos descubiertos en esta planta todavía.</div>`}
       </div>`;
 
     const settingsTabHtml = `
       <div class="glass-card" style="padding:18px;">
-        <h3 style="font-size:1rem;margin-bottom:10px;">Confort Visual, Offline y Copia de Seguridad</h3>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <div class="settings-group-title">Confort Visual, Audio y Nube</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn btn-sm ${window.AudioFX.isMuted() ? "btn-ghost" : "btn-gold"}" id="pref-audio-btn">${window.AudioFX.isMuted() ? "Audio: OFF" : "Audio: ON"}</button>
+          <button type="button" class="btn btn-sm btn-frost" id="pref-sync-diag-btn">Estado de Nube</button>
           <button type="button" class="btn btn-sm ${userPrefs.fontBoost ? "btn-gold" : "btn-ghost"}" id="pref-font-btn">Texto +15%: ${userPrefs.fontBoost ? "ON" : "OFF"}</button>
           <button type="button" class="btn btn-sm ${userPrefs.nightSoft ? "btn-gold" : "btn-ghost"}" id="pref-night-btn">Lectura Nocturna: ${userPrefs.nightSoft ? "ON" : "OFF"}</button>
           <button type="button" class="btn btn-sm ${userPrefs.reducedMotion ? "btn-gold" : "btn-ghost"}" id="pref-motion-btn">Animación reducida: ${userPrefs.reducedMotion ? "ON" : "OFF"}</button>
           <button type="button" class="btn btn-sm ${userPrefs.highContrastOutdoor ? "btn-gold" : "btn-ghost"}" id="pref-outdoor-btn">Contraste Solar: ${userPrefs.highContrastOutdoor ? "ON" : "OFF"}</button>
         </div>
+      </div>
+
+      <div class="glass-card" style="padding:18px;">
+        <div class="settings-group-title">Archivo, Copia de Seguridad y Offline</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
           <button type="button" class="btn btn-sm btn-frost" id="export-diary-btn">Exportar Diario (.md)</button>
           <button type="button" class="btn btn-sm btn-ghost" id="export-json-btn">Backup JSON</button>
@@ -2581,13 +2855,19 @@
       const hits = [];
       solvedDaysArr.forEach((d) => {
         const txt = `Puerta ${String(d.day).padStart(2, "0")} [${d.forensicTag || ""}]: ${d.conclusion || ""}`;
-        if (txt.toLowerCase().includes(q)) hits.push({ label: `Día ${String(d.day).padStart(2, "0")}`, text: txt, day: d.day });
+        if (txt.toLowerCase().includes(q)) hits.push({ kind: "day", label: `Día ${String(d.day).padStart(2, "0")}`, text: txt, day: d.day });
+      });
+      discoveredSuspects.forEach((sp) => {
+        const hay = `${sp.name} ${sp.role} ${sp.room} ${sp.motiveHint} ${sp.alibiClaim}`.toLowerCase();
+        if (hay.includes(q)) {
+          hits.push({ kind: "suspect", label: `Ficha #${sp.num} ${sp.name}`, text: `${sp.room} — ${sp.alibiClaim}`, sid: sp.id });
+        }
       });
       Object.entries(syncState.fieldDispatch || {}).forEach(([dKey, entry]) => {
         ["miguel", "patri"].forEach((rk) => {
           const msg = entry?.[rk]?.text;
           if (msg && msg.toLowerCase().includes(q)) {
-            hits.push({ label: `Parte Día ${String(dKey).padStart(2, "0")} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: msg, day: Number(dKey) });
+            hits.push({ kind: "day", label: `Parte Día ${String(dKey).padStart(2, "0")} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: msg, day: Number(dKey) });
           }
         });
       });
@@ -2596,13 +2876,40 @@
         ["miguel", "patri"].forEach((rk) => {
           const n = entry?.[rk]?.note;
           if (n && n.toLowerCase().includes(q)) {
-            hits.push({ label: `Ficha ${sp ? sp.name : sid} (${rk})`, text: n, sid });
+            hits.push({ kind: "suspect", label: `Apunte ${sp ? sp.name : sid} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: n, sid });
           }
         });
       });
+      if ((syncState.sharedNotes || "").toLowerCase().includes(q)) {
+        hits.push({ kind: "notes", label: "Libreta Compartida", text: (syncState.sharedNotes || "").slice(0, 140) });
+      }
       box.innerHTML = hits.length
-        ? hits.slice(0, 12).map((h) => `<div class="search-result-card"><strong>${esc(h.label)}:</strong> ${esc(h.text)}</div>`).join("")
+        ? hits.slice(0, 12).map((h, i) => `
+            <button type="button" class="search-result-btn" data-hit-idx="${i}">
+              <div><strong>${esc(h.label)}:</strong> ${esc(h.text)}</div>
+              <span class="search-result-arrow">Abrir</span>
+            </button>`).join("")
         : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin coincidencias para "${esc(expSearchQuery)}".</div>`;
+
+      box.querySelectorAll("[data-hit-idx]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const hit = hits[Number(btn.dataset.hitIdx)];
+          if (!hit) return;
+          window.AudioFX.click();
+          if (hit.kind === "day" && hit.day) {
+            selectedDayNum = hit.day;
+            userPickedDay = true;
+            lastDaySignature = "";
+            switchTab("day", { scrollToTop: true });
+          } else if (hit.kind === "suspect" && hit.sid) {
+            openSuspectModal(hit.sid, btn);
+          } else if (hit.kind === "notes") {
+            suspectsTab = "notes";
+            lastSuspectsSignature = "";
+            switchTab("suspects", { scrollToTop: true });
+          }
+        });
+      });
     };
     renderExpSearchResults();
 
@@ -2616,9 +2923,9 @@
       if (inp) inp.value = "";
       renderExpSearchResults();
     });
-    container.querySelectorAll("[data-jump-pinned-day]").forEach((btn) => {
+    container.querySelectorAll("[data-jump-pinned-day], [data-jump-timeline-day]").forEach((btn) => {
       btn.addEventListener("click", () => {
-        selectedDayNum = Number(btn.dataset.jumpPinnedDay || 1);
+        selectedDayNum = Number(btn.dataset.jumpPinnedDay || btn.dataset.jumpTimelineDay || 1);
         userPickedDay = true;
         lastDaySignature = "";
         switchTab("day", { scrollToTop: true });
@@ -2626,6 +2933,14 @@
     });
     container.querySelectorAll("[data-jump-pinned-suspect]").forEach((btn) => {
       btn.addEventListener("click", () => openSuspectModal(btn.dataset.jumpPinnedSuspect, btn));
+    });
+    container.querySelectorAll("[data-unpin-clue]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        window.AudioFX.click();
+        window.SyncEngine.togglePinnedClue(btn.dataset.unpinClue);
+        showToast("Chincheta retirada.");
+        renderExpedienteView(true);
+      });
     });
     container.querySelectorAll("[data-timeline-floor]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -2646,6 +2961,13 @@
     container.querySelectorAll("[data-exp-suspect]").forEach((btn) => {
       btn.addEventListener("click", () => openSuspectModal(btn.dataset.expSuspect, btn));
     });
+
+    document.getElementById("pref-audio-btn")?.addEventListener("click", () => {
+      const muted = window.AudioFX.toggleMute();
+      syncBriefingVideoMute(muted);
+      renderExpedienteView(true);
+    });
+    document.getElementById("pref-sync-diag-btn")?.addEventListener("click", () => openSyncDiagModal());
 
     document.getElementById("pref-font-btn")?.addEventListener("click", () => {
       userPrefs.fontBoost = !userPrefs.fontBoost;
@@ -2961,7 +3283,11 @@
     const culpritId = syncState.finalEpilogue?.culpritId;
     const isCulprit = Boolean(syncState.finalVerdictSolved && culpritId && s.id === culpritId);
     const isExonerated = Boolean(syncState.finalVerdictSolved && !isCulprit);
-    const solvedEntry = Object.values(syncState.days || {}).find((d) => d && d.discardId === s.id && d.solved);
+    const solvedPair = Object.entries(syncState.days || {}).find(([, d]) => d && d.discardId === s.id && d.solved);
+    const solvedDayNum = solvedPair ? Number(solvedPair[0]) : null;
+    const solvedEntry = solvedPair ? solvedPair[1] : null;
+    const linkedDayNum = solvedDayNum || Number(s.discoveredDay || 1);
+    const canJumpDay = window.DateGate.isDayOpen(linkedDayNum);
 
     const sNotes = syncState.suspectNotes?.[s.id] || {};
     const mySNote = sNotes[currentRole] || { stance: "duda", note: "" };
@@ -2969,8 +3295,8 @@
     const partnerSNote = sNotes[partnerRole];
     const badgeClass = isCulprit ? "badge-crimson" : isExonerated && !isOut ? "badge-pine" : isOut ? "badge-crimson" : "badge-gold";
     const badgeText = isCulprit ? "CULPABLE" : isExonerated && !isOut ? "EXONERADO" : isOut ? "DESCARTADO" : `FICHA #${s.num}`;
-    const partnerNoteHtml = partnerSNote?.note
-      ? `<div class="clue-box" style="margin-top:10px;font-size:0.8rem;"><strong>Anotación de ${partnerRole === "miguel" ? "Miguel" : "Patri"} (${esc(partnerSNote.stance)}):</strong> ${esc(partnerSNote.note)}</div>`
+    const partnerNoteHtml = partnerSNote && (partnerSNote.note || (partnerSNote.stance && partnerSNote.stance !== "duda"))
+      ? `<div class="clue-box" style="margin-top:10px;font-size:0.8rem;"><strong>${partnerRole === "miguel" ? "Miguel" : "Patri"} (${esc(partnerSNote.stance || "duda")}):</strong> ${esc(partnerSNote.note || "Sin apunte adicional.")}</div>`
       : "";
 
     const existingPartnerSlot = document.getElementById("suspect-partner-note-slot");
@@ -2985,7 +3311,9 @@
     openModalSuspectId = suspectId;
     showModal(`
       <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
-        <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="82" height="82" style="width:82px;height:82px;border-radius:14px;object-fit:cover;border:var(--vg-border-specular-strong);">
+        <button type="button" class="portrait-zoom-btn" id="modal-portrait-zoom-btn" aria-label="Ampliar retrato de ${esc(s.name)}">
+          <img src="${esc(s.portrait)}" alt="${esc(s.name)}" width="82" height="82" style="width:82px;height:82px;border-radius:14px;object-fit:cover;border:var(--vg-border-specular-strong);display:block;">
+        </button>
         <div>
           <span id="suspect-modal-badge" class="badge ${badgeClass}">${esc(badgeText)}</span>
           <h3 id="adv-modal-title" style="font-size:1.25rem;margin-top:6px;">${esc(s.name)}</h3>
@@ -3001,34 +3329,55 @@
         ${partnerNoteHtml}
       </div>
       <form id="suspect-note-form" style="margin-top:12px;">
-        <div class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);margin-bottom:6px;">Tu valoración sobre ${esc(s.name)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+          <span class="mono" style="font-size:0.72rem;color:var(--adv-gold-soft);">Tu valoración sobre ${esc(s.name)}</span>
+          <span class="mono" id="suspect-save-state" style="font-size:0.66rem;color:var(--adv-pine);"></span>
+        </div>
         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;" role="group" aria-label="Valoración de sospecha">
           ${["sospecha", "duda", "inocente"].map((st) => `
             <button type="button" class="filter-chip ${mySNote.stance === st ? "active" : ""}" data-stance="${st}" aria-pressed="${mySNote.stance === st ? "true" : "false"}">${st.toUpperCase()}</button>
           `).join("")}
         </div>
         <div style="display:flex;gap:8px;">
-          <input type="text" id="suspect-note-inp" class="adv-input" aria-label="Apunte rápido de coartada" value="${esc(mySNote.note || "")}" placeholder="Apunte rápido de coartada..." style="min-height:44px;min-width:0;">
+          <input type="text" id="suspect-note-inp" class="adv-input" aria-label="Apunte rápido de coartada" value="${esc(mySNote.note || "")}" placeholder="Apunte rápido..." style="min-height:44px;min-width:0;">
           <button type="submit" class="btn btn-sm btn-frost" style="flex-shrink:0;">Guardar</button>
         </div>
       </form>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
         <button type="button" class="btn btn-sm btn-ghost pin-clue-btn" style="flex:1;" id="modal-pin-suspect-btn" aria-pressed="${(syncState.pinnedClues || []).includes(`suspect-${s.id}`) ? "true" : "false"}">${(syncState.pinnedClues || []).includes(`suspect-${s.id}`) ? "Fijada en Careo" : "Fijar en Careo"}</button>
         <button type="button" class="btn btn-sm ${compareIds.includes(s.id) ? "btn-gold" : "btn-frost"}" style="flex:1;" id="modal-compare-suspect-btn">${compareIds.includes(s.id) ? "En comparador (quitar)" : `Comparar (${compareIds.length}/3)`}</button>
+        ${canJumpDay ? `<button type="button" class="btn btn-sm btn-ghost" style="width:100%;" id="modal-jump-day-btn">${solvedDayNum ? `Ver resolución (Día ${String(solvedDayNum).padStart(2, "0")})` : `Ir al Día ${String(linkedDayNum).padStart(2, "0")}`}</button>` : ""}
       </div>
       <button type="button" class="btn btn-ghost" style="width:100%;margin-top:10px;" id="close-modal-btn">Cerrar ficha</button>
     `, triggerEl, { preserveFocus, fromHistory: preserveFocus });
 
     let chosenStance = mySNote.stance || "duda";
+    const saveStateEl = document.getElementById("suspect-save-state");
     document.querySelectorAll("[data-stance]").forEach((b) => {
       b.addEventListener("click", () => {
         chosenStance = b.dataset.stance;
+        window.AudioFX.click();
         document.querySelectorAll("[data-stance]").forEach((x) => {
           const on = x === b;
           x.classList.toggle("active", on);
           x.setAttribute("aria-pressed", on ? "true" : "false");
         });
+        const inp = document.getElementById("suspect-note-inp");
+        window.SyncEngine.saveSuspectNote(s.id, currentRole, chosenStance, inp ? inp.value : "");
+        if (saveStateEl) saveStateEl.textContent = "Guardado";
       });
+    });
+    document.getElementById("modal-portrait-zoom-btn")?.addEventListener("click", (e) => {
+      window.AudioFX.click();
+      openImageLightbox(s.portrait, `#${s.num} · ${s.name} (${s.role})`, e.currentTarget);
+    });
+    document.getElementById("modal-jump-day-btn")?.addEventListener("click", () => {
+      window.AudioFX.click();
+      closeModal();
+      selectedDayNum = linkedDayNum;
+      userPickedDay = true;
+      lastDaySignature = "";
+      switchTab("day", { scrollToTop: true });
     });
     document.getElementById("modal-pin-suspect-btn")?.addEventListener("click", (e) => {
       window.AudioFX.click();
@@ -3057,6 +3406,7 @@
       e.preventDefault();
       const inp = document.getElementById("suspect-note-inp");
       window.SyncEngine.saveSuspectNote(s.id, currentRole, chosenStance, inp ? inp.value : "");
+      if (saveStateEl) saveStateEl.textContent = "Guardado";
       showToast(`Valoración guardada en ficha #${s.num}.`);
     });
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);

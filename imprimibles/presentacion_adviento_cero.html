@@ -19,13 +19,23 @@
     .page {
       width: 100%;
       max-width: 190mm;
+      min-height: 274mm;
+      display: flex;
+      flex-direction: column;
       margin: 0 auto 14px;
-      padding: 9.5mm 10.5mm;
+      padding: 11mm 11.5mm;
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
       page-break-after: always;
     }
     .page:last-child { page-break-after: auto; }
+    .page-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
     .masthead {
       display: flex;
       justify-content: space-between;
@@ -285,77 +295,84 @@
       <span class="issue-tag">1 AL 24 DE DICIEMBRE</span>
     </header>
 
-    <div class="lead">
-      En lugar de las chocolatinas de un calendario de Adviento clásico, este diciembre abriremos juntos cada noche una puerta digital de misterio (5–10 minutos al día). Cada puerta es un pequeño reto cooperativo en pareja: ninguno tiene toda la información, así que la única forma de avanzar es hablando y uniendo vuestras dos pantallas.
-    </div>
+    <div class="page-body">
+      <div class="lead">
+        En lugar de las chocolatinas de un calendario de Adviento clásico, este diciembre abriremos juntos cada noche una puerta digital de misterio (5–10 minutos al día). Cada puerta es un pequeño reto cooperativo en pareja: ninguno tiene toda la información, así que la única forma de avanzar es hablando y uniendo vuestras dos pantallas.
+      </div>
 
-    <div class="callout-video">
-      <h2 style="margin-bottom:3px;">¿Y de qué va la historia? Descúbrelo al entrar en el Día 1</h2>
-      <p>
-        Este papel no te cuenta la trama para no estropear la sorpresa: en cuanto abras la aplicación web y entres en la <strong>Puerta 01</strong> (o en la pestaña <strong>Expediente</strong>), encontrarás un <strong>Vídeo Briefing cinematográfico narrado</strong> que os sumergirá en el misterio antes de resolver la primera pista.
-      </p>
-    </div>
-
-    <h2 style="margin-top:2px;">1. Vuestros Dos Terminales: Investigación vs. Apoyo</h2>
-    <div class="cols-2">
-      <div class="role-card patri">
-        <div class="role-badge">Móvil de Patri · Protagonista / Campo y Testigos</div>
-        <h3>Tú llevas el peso de la investigación</h3>
+      <div class="callout-video">
+        <h2 style="margin-bottom:3px;">¿Y de qué va la historia? Descúbrelo en la portada al entrar</h2>
         <p>
-          Al tratarse de tu calendario de regalo, tú operas los artefactos interactivos más elaborados (diales, linterna UV, cuadrantes, calibres, nonogramas, tarjetas de testigos) e introduces o validas la resolución principal de cada jornada.
+          Este papel no te cuenta la trama para no estropear la sorpresa: nada más abrir la aplicación web y elegir tu perfil, en la <strong>portada principal (Calendario)</strong> te espera el <strong>Vídeo Briefing cinematográfico narrado</strong> que os sumergirá en el misterio antes de abrir la primera puerta (y siempre accesible desde <em>Expediente</em>).
         </p>
       </div>
-      <div class="role-card miguel">
-        <div class="role-badge">Móvil de Miguel · Apoyo / Análisis y Archivo</div>
-        <h3>Yo soy tu apoyo técnico en la sombra</h3>
+
+      <div>
+        <h2 style="margin-top:0;">1. Vuestros Dos Terminales: Investigación vs. Apoyo</h2>
+        <div class="cols-2" style="margin-bottom:0;">
+          <div class="role-card patri">
+            <div class="role-badge">Móvil de Patri · Protagonista / Campo y Testigos</div>
+            <h3>Tú llevas el peso de la investigación</h3>
+            <p>
+              Al tratarse de tu calendario de regalo, tú operas los artefactos interactivos más elaborados (linterna UV, Morse, diales, cuadrantes, calibres, nonogramas, tarjetas de testigos) e introduces o validas la resolución principal de cada jornada.
+            </p>
+          </div>
+          <div class="role-card miguel">
+            <div class="role-badge">Móvil de Miguel · Apoyo / Análisis y Archivo</div>
+            <h3>Yo soy tu apoyo técnico en la sombra</h3>
+            <p>
+              Mi terminal muestra planos, tablas de registro, partes de servicio, claves de archivo y reglas de lectura. No puedo resolver las pruebas por mi cuenta: te canto los datos exactos que necesitas para que tú encajes las piezas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2>2. Dinámica Diaria en 3 Pasos</h2>
+        <div class="steps" style="margin-bottom:0;">
+          <div class="step">
+            <div class="step-label">01 · ABRIR LA PUERTA</div>
+            <p>Cada día del 1 al 24 de diciembre se desbloquea su puerta con una <strong>animación y sonido únicos</strong>. Si una noche no podéis jugar, las puertas pasadas quedan abiertas para poneros al día sin perder nada.</p>
+          </div>
+          <div class="step">
+            <div class="step-label">02 · CRUZAR SIN MIRAR</div>
+            <p>Cada móvil recibe solo la mitad del enigma. Tenéis que contaros de palabra lo que veis, leer datos en voz alta y combinar la información de archivo con las herramientas interactivas.</p>
+          </div>
+          <div class="step">
+            <div class="step-label">03 · SINCRONIZAR EN VIVO</div>
+            <p>Al validar el indicio o abrir juntos el <strong>Doble Candado</strong> del día, ambos móviles se sincronizan en la nube al instante y actualizan el tablero hasta el 24 de diciembre.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cols-2" style="margin-bottom:0;">
+        <div class="clean-block" style="margin-bottom:0;">
+          <h2>3. Las 4 Pestañas de la App</h2>
+          <ul class="kv-list">
+            <li><strong>Calendario (1–24):</strong> Portada con el <strong>Vídeo Briefing</strong>, las 24 puertas con ritual de apertura propio y el estado en vivo de ambos móviles.</li>
+            <li><strong>Día Activo:</strong> Tu prueba de la jornada, sus herramientas táctiles y un botón de <strong>3 pistas progresivas</strong> por si alguna noche os atascáis.</li>
+            <li><strong>Sospechosos:</strong> Fichas con retrato, valoraciones de pareja, comparador lado a lado y vuestra <strong>libreta compartida</strong>.</li>
+            <li><strong>Expediente:</strong> Cuatro apartados con el <em>Atestado</em>, <em>Pistas</em> (buscador, chinchetas y cronología), <em>Hotel</em> (plano y escenas) y <em>Ajustes</em>.</li>
+          </ul>
+        </div>
+
+        <div class="clean-block" style="margin-bottom:0;">
+          <h2>4. Normas de Juego y Juego Limpio</h2>
+          <ul class="kv-list">
+            <li><strong>Prohibido mirar la otra pantalla:</strong> La magia está en describir símbolos, mapas, horas o cifras en voz alta en el sofá o por llamada.</li>
+            <li><strong>Sin trampas ni spoilers:</strong> Miguel tampoco conoce la solución de los enigmas ni quién está detrás del misterio; jugáis los dos a ciegas desde el primer día.</li>
+            <li><strong>Con volumen activado:</strong> Sube el sonido del iPhone para disfrutar el Vídeo Briefing, el código Morse real y la firma sonora de cada puerta.</li>
+            <li><strong>A vuestro ritmo y sin cobertura:</strong> Pensado para pocos minutos cada noche; el progreso se sincroniza en la nube y funciona también offline.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout-crimson" style="margin-bottom:0;">
+        <h2 style="color:#991B1B;margin-bottom:3px;">El Gran Final de Nochebuena (24 de diciembre)</h2>
         <p>
-          Mi terminal muestra planos, tablas de registro, partes de servicio, claves de archivo y reglas de lectura. No puedo resolver las pruebas por mi cuenta: te canto los datos exactos que necesitas para que tú encajes las piezas.
+          A lo largo del calendario iréis descartando inocentes hasta llegar al <strong>24 de diciembre con los 3 sospechosos finalistas</strong>. En el Careo Final de Nochebuena cerraréis juntos la acusación justificada para desprecintar el epílogo completo con la confesión final y vuestro cierre especial de Navidad.
         </p>
       </div>
-    </div>
-
-    <h2>2. Dinámica Diaria en 3 Pasos</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-label">01 · ABRIR LA PUERTA</div>
-        <p>Cada día del 1 al 24 de diciembre se desbloquea su puerta correspondiente por fecha real. Si una noche no podéis jugar, las puertas pasadas quedan abiertas para poneros al día sin perder nada.</p>
-      </div>
-      <div class="step">
-        <div class="step-label">02 · CRUZAR SIN MIRAR</div>
-        <p>Cada móvil recibe solo la mitad del enigma. Tenéis que contaros de palabra lo que veis, leer datos en voz alta y combinar la información de archivo con las herramientas interactivas.</p>
-      </div>
-      <div class="step">
-        <div class="step-label">03 · AVANZAR EN EL TABLERO</div>
-        <p>Al validar el indicio o superar el doble candado del día, el progreso se sincroniza en la nube al instante y el tablero se actualiza con una nueva pieza del puzle hasta el 24 de diciembre.</p>
-      </div>
-    </div>
-
-    <div class="cols-2">
-      <div class="clean-block">
-        <h2>3. Las 4 Pestañas de la App</h2>
-        <ul class="kv-list">
-          <li><strong>Calendario (1–24):</strong> Tablero principal con las 24 puertas selladas y el estado diario de ambos móviles en tiempo real.</li>
-          <li><strong>Día Activo:</strong> Tu prueba de la jornada, sus herramientas táctiles y un botón de <strong>3 pistas progresivas</strong> por si alguna noche os atascáis.</li>
-          <li><strong>Sospechosos:</strong> Galería dinámica que va destapando fichas conforme avanzan los días, con etiquetas de estado y una <strong>libreta compartida</strong>.</li>
-          <li><strong>Expediente:</strong> Acceso permanente al Vídeo Briefing oficial del caso, las escenas principales y el plano general.</li>
-        </ul>
-      </div>
-
-      <div class="clean-block">
-        <h2>4. Normas de Juego y Juego Limpio</h2>
-        <ul class="kv-list">
-          <li><strong>Prohibido mirar la otra pantalla:</strong> La magia está en describir símbolos, mapas, horas o cifras en voz alta en el sofá o por llamada.</li>
-          <li><strong>Sin trampas ni spoilers:</strong> Miguel tampoco conoce la solución de los enigmas ni quién está detrás del misterio; jugáis los dos a ciegas desde el primer día.</li>
-          <li><strong>A vuestro ritmo:</strong> Pensado para disfrutarse en pocos minutos cada tarde o noche, con pistas graduales si hace falta ayuda extra.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="callout-crimson" style="margin-bottom:0;">
-      <h2 style="color:#991B1B;margin-bottom:3px;">El Gran Final de Nochebuena (24 de diciembre)</h2>
-      <p>
-        Al completar todo el calendario, el <strong>24 de diciembre</strong> llegaréis por fin frente al culpable y podréis cerrar juntos la investigación en el Careo Final. Al emitir la orden correcta, la aplicación cerrará oficialmente el expediente y desprecintará el epílogo completo con la confesión final.
-      </p>
     </div>
 
     <div class="page-foot">
@@ -374,87 +391,98 @@
       <span class="issue-tag" style="color:#064E3B;border-color:#064E3B;">SIMULACRO · CERO SPOILERS</span>
     </header>
 
-    <p style="margin-bottom:6px;">
-      Para que sepáis qué esperar antes de abrir el Día 1, aquí tenéis un <strong>ejemplo inventado</strong> (con un caso ficticio llamado <em>«La Consigna del Relojero»</em> cuyos datos no tienen relación alguna con el juego real):
-    </p>
-
-    <div class="mock-grid">
-      <div class="phone-mock">
-        <div class="phone-head miguel-h">
-          <span>MÓVIL DE MIGUEL · APOYO</span>
-          <span>ARCHIVO Y DATOS</span>
-        </div>
-        <div class="phone-body">
-          <p style="margin-bottom:4px;"><strong>Parte de Consigna Ferroviaria (Regla):</strong></p>
-          <p style="margin-bottom:5px;color:#475569;">
-            «Solo el tren posterior a las <strong>21:30</strong> en el <strong>Andén C</strong> dejó bulto en consigna. Para sintonizar la baliza, suma <strong>+15 kHz</strong> a su número de reloj.»
-          </p>
-          <table class="mock-table">
-            <tr><th>Tren</th><th>Andén</th><th>Salida</th><th>Reloj</th></tr>
-            <tr><td>Expreso 04</td><td>Andén B</td><td>20:45</td><td>120</td></tr>
-            <tr><td>Nocturno 07</td><td>Andén C</td><td>22:10</td><td>340</td></tr>
-            <tr><td>Correo 09</td><td>Andén C</td><td>21:05</td><td>280</td></tr>
-          </table>
-          <p style="font-size:8.4px;color:#064E3B;"><strong>Su papel:</strong> Sin ver el billete de Patri, busca las coincidencias en archivo y le canta la frecuencia y la fila válida.</p>
-        </div>
-      </div>
-
-      <div class="phone-mock">
-        <div class="phone-head patri-h">
-          <span>MÓVIL DE PATRI · PRINCIPAL</span>
-          <span>ACCIÓN Y CÓDIGO</span>
-        </div>
-        <div class="phone-body">
-          <p style="margin-bottom:4px;"><strong>Billete Rasgado Recogido en Escena:</strong></p>
-          <div class="mock-widget">
-            BILLETE N.º 88-Z · TRAYECTO: <strong>NOCTURNO 07</strong><br>
-            NOTA: «Clave final = número del tren + código revelado en el dial»
-          </div>
-          <p style="margin-bottom:3px;"><strong>Dial de Frecuencia Interactivo:</strong></p>
-          <div class="mock-widget">
-            [ 100 kHz ] &lt;=====[ <strong>??? kHz</strong> ]=====&gt; [ 500 kHz ]<br>
-            Al sintonizar 355 kHz aparece el código oculto: <strong>NORTE</strong>
-          </div>
-          <p style="font-size:8.4px;color:#92400E;"><strong>Tu papel:</strong> Ajustas el dial en tu pantalla, descifras el código oculto y validas la clave completa (<code>07NORTE</code>).</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="flow-box">
-      <h3 style="color:#92400E;">Cómo lo resolveríais hablando en 2 minutos:</h3>
-      <p>
-        <strong>1.</strong> Patri le dice a Miguel que su billete corresponde al tren <strong>Nocturno 07</strong>. &nbsp;
-        <strong>2.</strong> Miguel consulta la tabla: el Nocturno 07 cumple la regla (Andén C, 22:10 h, Reloj <code>340</code>), calcula <code>340 + 15 = 355 kHz</code> y le canta el dato. &nbsp;
-        <strong>3.</strong> Patri mueve el dial hasta <strong>355 kHz</strong>, lee la palabra revelada (<code>NORTE</code>) e introduce la clave conjunta <code>07NORTE</code> para superar el día (en puertas de <em>Doble Candado</em>, cada uno valida además su propia mitad).
+    <div class="page-body">
+      <p style="margin-bottom:0;">
+        Para que sepáis qué esperar antes de abrir el Día 1, aquí tenéis un <strong>ejemplo inventado</strong> (con un caso ficticio llamado <em>«La Consigna del Relojero»</em> cuyos datos no tienen relación alguna con el juego real):
       </p>
-    </div>
 
-    <h2>Otros tipos de mecánicas interactivas que irán apareciendo</h2>
-    <div class="mech-strip">
-      <div class="mech-card">
-        <div class="mech-tag">Inspección Táctil</div>
-        <p><strong>Linterna UV y Calibres:</strong> deslizar el dedo sobre documentos para revelar tinta invisible o medir marcas con precisión.</p>
-      </div>
-      <div class="mech-card">
-        <div class="mech-tag">Audio y Señales</div>
-        <p><strong>Morse y Frecuencias:</strong> escuchar pitidos reales, ajustar sintonizadores por porcentaje de señal y descifrar transmisiones.</p>
-      </div>
-      <div class="mech-card">
-        <div class="mech-tag">Lógica y Deducción</div>
-        <p><strong>Cifrados y Tableros:</strong> cuadrantes 4x4, ruedas de giro, nonogramas, interruptores secuenciales y cruce de testimonios.</p>
-      </div>
-    </div>
+      <div class="mock-grid" style="margin:0;">
+        <div class="phone-mock">
+          <div class="phone-head miguel-h">
+            <span>MÓVIL DE MIGUEL · APOYO</span>
+            <span>ARCHIVO Y DATOS</span>
+          </div>
+          <div class="phone-body">
+            <p style="margin-bottom:4px;"><strong>Parte de Consigna Ferroviaria (Regla):</strong></p>
+            <p style="margin-bottom:5px;color:#475569;">
+              «Solo el tren posterior a las <strong>21:30</strong> en el <strong>Andén C</strong> dejó bulto en consigna. Para sintonizar la baliza, suma <strong>+15 kHz</strong> a su número de reloj.»
+            </p>
+            <table class="mock-table">
+              <tr><th>Tren</th><th>Andén</th><th>Salida</th><th>Reloj</th></tr>
+              <tr><td>Expreso 04</td><td>Andén B</td><td>20:45</td><td>120</td></tr>
+              <tr><td>Nocturno 07</td><td>Andén C</td><td>22:10</td><td>340</td></tr>
+              <tr><td>Correo 09</td><td>Andén C</td><td>21:05</td><td>280</td></tr>
+            </table>
+            <p style="font-size:8.4px;color:#064E3B;"><strong>Su papel:</strong> Sin ver el billete de Patri, busca las coincidencias en archivo y le canta la frecuencia y la fila válida.</p>
+          </div>
+        </div>
 
-    <div class="qr-footer">
+        <div class="phone-mock">
+          <div class="phone-head patri-h">
+            <span>MÓVIL DE PATRI · PRINCIPAL</span>
+            <span>ACCIÓN Y CÓDIGO</span>
+          </div>
+          <div class="phone-body">
+            <p style="margin-bottom:4px;"><strong>Billete Rasgado Recogido en Escena:</strong></p>
+            <div class="mock-widget">
+              BILLETE N.º 88-Z · TRAYECTO: <strong>NOCTURNO 07</strong><br>
+              NOTA: «Clave final = número del tren + código revelado en el dial»
+            </div>
+            <p style="margin-bottom:3px;"><strong>Dial de Frecuencia Interactivo:</strong></p>
+            <div class="mock-widget">
+              [ 100 kHz ] &lt;=====[ <strong>??? kHz</strong> ]=====&gt; [ 500 kHz ]<br>
+              Al sintonizar 355 kHz aparece el código oculto: <strong>NORTE</strong>
+            </div>
+            <p style="font-size:8.4px;color:#92400E;"><strong>Tu papel:</strong> Ajustas el dial en tu pantalla, descifras el código oculto y validas la clave completa (<code>07NORTE</code>).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-box" style="margin-bottom:0;">
+        <h3 style="color:#92400E;">Cómo lo resolveríais hablando en 2 minutos:</h3>
+        <p>
+          <strong>1.</strong> Patri le dice a Miguel que su billete corresponde al tren <strong>Nocturno 07</strong>. &nbsp;
+          <strong>2.</strong> Miguel consulta la tabla: el Nocturno 07 cumple la regla (Andén C, 22:10 h, Reloj <code>340</code>), calcula <code>340 + 15 = 355 kHz</code> y le canta el dato. &nbsp;
+          <strong>3.</strong> Patri mueve el dial hasta <strong>355 kHz</strong>, lee la palabra revelada (<code>NORTE</code>) e introduce la clave conjunta <code>07NORTE</code> para superar el día (en puertas de <em>Doble Candado</em>, cada uno valida además su propia mitad).
+        </p>
+      </div>
+
       <div>
-        <div class="eyebrow">Acceso Directo a la Aplicación Web</div>
-        <h2 style="margin:2px 0 4px;">Escanea este código QR con tu móvil para empezar</h2>
-        <p style="margin-bottom:4px;">Enlace directo: <strong style="font-family:'Courier Prime',monospace;">https://mgesm.github.io/advientocero/</strong></p>
-        <p style="font-size:8.6px;color:#6B7280;margin-bottom:3px;"><strong>Instalación recomendada (como app nativa):</strong> Ábrela en Safari (iPhone) o Chrome (Android) y pulsa <em>Compartir → Añadir a pantalla de inicio</em>.</p>
-        <p style="font-size:8.6px;color:#6B7280;"><strong>Importante el primer día:</strong> Elige tu perfil como <strong>Patri</strong> y yo entraré como <strong>Miguel</strong> desde mi móvil.</p>
+        <h2>Otros tipos de mecánicas interactivas que irán apareciendo</h2>
+        <div class="mech-strip" style="margin-bottom:0;">
+          <div class="mech-card">
+            <div class="mech-tag">Inspección Táctil</div>
+            <p><strong>Linterna UV y Calibres:</strong> deslizar el dedo sobre documentos para revelar tinta invisible o medir marcas con precisión.</p>
+          </div>
+          <div class="mech-card">
+            <div class="mech-tag">Audio y Señales</div>
+            <p><strong>Morse y Frecuencias:</strong> escuchar pitidos reales, ajustar sintonizadores por porcentaje de señal y descifrar transmisiones.</p>
+          </div>
+          <div class="mech-card">
+            <div class="mech-tag">Lógica y Deducción</div>
+            <p><strong>Cifrados y Tableros:</strong> cuadrantes 4x4, ruedas de giro, nonogramas, interruptores secuenciales y cruce de testimonios.</p>
+          </div>
+        </div>
       </div>
-      <div class="qr-wrap">
-        <img src="qr_advientocero.svg" alt="QR Adviento Cero" style="width:104px;height:104px;display:block;">
+
+      <div class="callout-video" style="margin-bottom:0;">
+        <h3 style="color:#064E3B;margin-bottom:2px;">Consejo para disfrutarlo al máximo</h3>
+        <p>
+          Durante el mes podéis marcar vuestra postura (<em>Sospecha, Duda o Inocente</em>) en cada ficha, fijar pistas con <strong>chincheta</strong> y comparar hasta 3 sospechosos lado a lado. Todo lo que anotéis se guarda al instante para ambos móviles.
+        </p>
+      </div>
+
+      <div class="qr-footer" style="margin-top:0;">
+        <div>
+          <div class="eyebrow">Acceso Directo a la Aplicación Web</div>
+          <h2 style="margin:2px 0 4px;">Escanea este código QR con tu iPhone para empezar</h2>
+          <p style="margin-bottom:4px;">Enlace directo: <strong style="font-family:'Courier Prime',monospace;">https://mgesm.github.io/advientocero/</strong></p>
+          <p style="font-size:8.6px;color:#6B7280;margin-bottom:3px;"><strong>Instalación recomendada en iPhone:</strong> Ábrela en Safari y pulsa <em>Compartir → Añadir a pantalla de inicio</em> para disfrutarla a pantalla completa como app nativa.</p>
+          <p style="font-size:8.6px;color:#6B7280;"><strong>Importante el primer día:</strong> Elige tu perfil como <strong>Patri</strong> y yo entraré como <strong>Miguel</strong> desde mi móvil.</p>
+        </div>
+        <div class="qr-wrap">
+          <img src="qr_advientocero.svg" alt="QR Adviento Cero" style="width:106px;height:106px;display:block;">
+        </div>
       </div>
     </div>
 
