@@ -992,8 +992,8 @@ a.btn {
 }
 
 .suspect-extra-selects .adv-select {
-  min-height: 42px;
-  font-size: 0.82rem;
+  min-height: 44px;
+  font-size: 16px;
   padding: 8px 10px;
 }
 
@@ -1579,10 +1579,135 @@ body.pref-reduced-motion * {
   transition-duration: 0.01ms !important;
 }
 
+.print-closing-header {
+  display: none;
+}
+
 @media print {
-  body { background: #FFFFFF !important; color: #111827 !important; }
-  body::before, body::after, #snow-canvas, .mobile-dock, .adv-toast-host, #admin-bar, #cinema-fx-layer { display: none !important; }
-  .glass-card { background: #FFFFFF !important; color: #111827 !important; border: 1px solid #CBD5E1 !important; box-shadow: none !important; }
+  @page {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+  html, body {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  body::before,
+  body::after,
+  #snow-canvas,
+  .mobile-dock,
+  .adv-toast-host,
+  #admin-bar,
+  #cinema-fx-layer,
+  .day-header-card,
+  .cross-peek-bar,
+  .terminal-card,
+  .day-hints-card,
+  .day-footer-nav,
+  .print-hide-on-closing,
+  #final-archive-box,
+  .hero-briefing-mount,
+  .pwa-tip-bar,
+  .partner-waiting-banner,
+  .suspect-filters,
+  .exp-subtabs,
+  button,
+  a.btn {
+    display: none !important;
+  }
+  .app-shell {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .print-closing-header {
+    display: block !important;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid #0F172A;
+    color: #0F172A !important;
+  }
+  .print-closing-kicker {
+    font-family: var(--vg-font-mono);
+    font-size: 9pt;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #7C2D12 !important;
+    font-weight: 700;
+  }
+  .print-closing-title {
+    font-family: var(--vg-font-serif);
+    font-size: 20pt;
+    margin: 4px 0 2px;
+    color: #0F172A !important;
+  }
+  .print-closing-sub {
+    font-size: 9.5pt;
+    color: #475569 !important;
+  }
+  .glass-card,
+  .answer-card,
+  .adv-diploma-card,
+  .gift-reveal-card,
+  .secret-envelope-sealed {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1.2px solid #CBD5E1 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 12px !important;
+  }
+  .adv-diploma-card,
+  .gift-reveal-card {
+    border-color: #B45309 !important;
+  }
+  .day-story,
+  .glass-card p,
+  .glass-card h1,
+  .glass-card h2,
+  .glass-card h3,
+  .glass-card strong,
+  .glass-card span,
+  .gift-voucher p {
+    color: #0F172A !important;
+    text-shadow: none !important;
+  }
+  .badge,
+  .badge-gold,
+  .badge-pine,
+  .badge-frost,
+  .badge-crimson {
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    border: 1px solid #64748B !important;
+  }
+  .adv-diploma-stat {
+    background: #F8FAFC !important;
+    border: 1px solid #CBD5E1 !important;
+  }
+  .adv-diploma-val {
+    color: #0F172A !important;
+  }
+  .adv-diploma-lbl {
+    color: #475569 !important;
+  }
+  .gift-voucher {
+    background: #FFFBEB !important;
+    border: 1.5px dashed #B45309 !important;
+  }
+  .gift-voucher .mono {
+    color: #92400E !important;
+  }
+  .secret-envelope-seal {
+    background: #991B1B !important;
+    color: #FFFFFF !important;
+    border-color: #B45309 !important;
+    box-shadow: none !important;
+  }
 }
 
 .mono {

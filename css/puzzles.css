@@ -553,6 +553,14 @@ details.context-brief-box[open] > summary {
 
 .widget-scratchpad summary::-webkit-details-marker { display: none; }
 
+#day-dispatch-details > summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  touch-action: manipulation;
+}
+
 html:has(body.briefing-fs-active),
 body.briefing-fs-active {
   overflow: hidden !important;

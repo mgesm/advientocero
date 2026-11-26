@@ -87,6 +87,26 @@ window.DateGate = (() => {
     return `Apertura de la Puerta 01 en ${days}d ${hours}h`;
   }
 
+  function getNextDoorCountdownText() {
+    const maxOpen = getMaxOpenDay();
+    if (maxOpen <= 0 || maxOpen >= 24) return "";
+    const nextDay = maxOpen + 1;
+    const now = new Date();
+    const sim = getSimulatedDay();
+    const target = sim !== null
+      ? new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0)
+      : new Date(TARGET_YEAR, 11, nextDay, 0, 0, 0);
+    const diff = target.getTime() - now.getTime();
+    if (diff <= 0) return "";
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / (1000 * 60)) % 60);
+    const numStr = String(nextDay).padStart(2, "0");
+    if (days > 0) return `Próxima puerta (Día ${numStr}) en ${days}d ${hours}h`;
+    if (hours === 0) return `Próxima puerta (Día ${numStr}) en ${Math.max(1, mins)}m`;
+    return `Próxima puerta (Día ${numStr}) en ${hours}h ${String(mins).padStart(2, "0")}m`;
+  }
+
   checkUrlActivation();
 
   return {
@@ -97,6 +117,7 @@ window.DateGate = (() => {
     getSimulatedDay,
     getMaxOpenDay,
     isDayOpen,
-    getCountdownText
+    getCountdownText,
+    getNextDoorCountdownText
   };
 })();

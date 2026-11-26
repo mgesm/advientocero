@@ -21,6 +21,7 @@ window.SyncEngine = (() => {
   let syncError = null;
   let initialSynced = false;
   let activeRole = "";
+  let activeViewingDay = null;
   let activeRoomId = "";
   let connId = `c_${Math.random().toString(36).slice(2, 10)}`;
   let writeSeq = 0;
@@ -282,6 +283,8 @@ window.SyncEngine = (() => {
       syncError = null;
     }).catch(handleWriteError);
     myConnRef.onDisconnect().remove().catch(() => {});
+    roleRef.child("viewingDay").set(activeViewingDay || null).catch(() => {});
+    roleRef.child("viewingDay").onDisconnect().remove().catch(() => {});
     roleRef.child("lastSeen").set(ts).catch(() => {});
     roleRef.child("lastSeen").onDisconnect().set(ts).catch(() => {});
   }
@@ -331,8 +334,10 @@ window.SyncEngine = (() => {
       try {
         const roleRef = roomRef.child(`presence/${activeRole}`);
         roleRef.child(`connections/${connId}`).onDisconnect().cancel().catch(() => {});
+        roleRef.child("viewingDay").onDisconnect().cancel().catch(() => {});
         roleRef.child("lastSeen").onDisconnect().cancel().catch(() => {});
         roleRef.child(`connections/${connId}`).remove().catch(() => {});
+        roleRef.child("viewingDay").remove().catch(() => {});
       } catch (_) {}
     }
     try { roomRef?.off(); } catch (_) {}
@@ -644,8 +649,9 @@ window.SyncEngine = (() => {
   }
 
   function setViewingDay(dayNum) {
+    activeViewingDay = dayNum || null;
     if (mode !== "firebase" || !roomRef || !activeRole || !connected) return;
-    roomRef.child(`presence/${activeRole}/viewingDay`).set(dayNum || null).catch(() => {});
+    roomRef.child(`presence/${activeRole}/viewingDay`).set(activeViewingDay).catch(() => {});
   }
 
   function isRoleOnline(role) {

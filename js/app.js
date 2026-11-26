@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.16.0";
-  const CACHE_TAG = "adviento-cero-v2.16.0";
+  const APP_VERSION = "v2.17.0";
+  const CACHE_TAG = "adviento-cero-v2.17.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -465,7 +465,7 @@
   function renderBriefingVideoHtml(videoId) {
     const mutedAttr = window.AudioFX?.isMuted?.() ? " muted" : "";
     return `
-      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.14.0" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
+      <video id="${esc(videoId)}" class="briefing-native-video" controls playsinline preload="metadata" poster="video-briefing/poster.jpg?v=2.15.0" aria-label="Vídeo Briefing Oficial del Caso"${mutedAttr}>
         <source src="video-briefing/briefing.mp4?v=2.14.0" type="video/mp4">
       </video>`;
   }
@@ -858,6 +858,83 @@
     updateDockIndicator();
   }
 
+  function toggleGlobalAudio() {
+    const muted = window.AudioFX.toggleMute();
+    syncBriefingVideoMute(muted);
+    const heroBtn = document.getElementById("hero-mute-btn");
+    if (heroBtn) heroBtn.textContent = muted ? "Audio OFF" : "Audio ON";
+    const dayBtn = document.getElementById("day-mute-btn");
+    if (dayBtn) dayBtn.textContent = muted ? "Audio OFF" : "Audio ON";
+    const prefBtn = document.getElementById("pref-audio-btn");
+    if (prefBtn) {
+      prefBtn.textContent = `Audio: ${muted ? "OFF" : "ON"}`;
+      prefBtn.classList.toggle("btn-gold", !muted);
+      prefBtn.classList.toggle("btn-ghost", muted);
+    }
+    const mNote = document.getElementById(`morse-mute-note-${selectedDayNum}`);
+    if (mNote) mNote.style.display = muted ? "block" : "none";
+    lastCalendarSignature = "";
+    lastDaySignature = "";
+    lastExpedienteSignature = "";
+    return muted;
+  }
+
+  function updateLiveCountdownOnly() {
+    document.querySelectorAll("[data-live-countdown]").forEach((el) => {
+      const kind = el.dataset.liveCountdown;
+      const txt = kind === "next-door"
+        ? (window.DateGate.getNextDoorCountdownText?.() || "")
+        : window.DateGate.getCountdownText();
+      if (txt) el.textContent = kind === "predec-dot" ? `${txt}.` : txt;
+    });
+  }
+
+  function openSecretEnvelopePreviewModal(triggerEl) {
+    const gift = window.GIFT_CONFIG?.finalGiftReveal;
+    if (!gift) return;
+    const renderSealed = () => {
+      showModal(`
+        <span class="badge badge-gold">MODO TEST · VISTA PREVIA DEL SOBRE</span>
+        <div class="secret-envelope-sealed" style="margin-top:12px;border-radius:16px;">
+          <div class="secret-envelope-seal" aria-hidden="true">24</div>
+          <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
+          <h2 id="adv-modal-title" class="serif" style="font-size:1.5rem;margin:10px 0 6px;">Tenéis un Sobre Secreto de Nochebuena</h2>
+          <p class="day-story" style="margin-bottom:14px;">Vista previa interactiva de cómo lo verá Patri el 24 de diciembre (no altera la partida real).</p>
+          <button type="button" class="btn btn-primary" id="preview-open-env-now" style="width:100%;">Romper sello y abrir sobre</button>
+        </div>
+        <button type="button" class="btn btn-ghost" style="width:100%;margin-top:12px;" id="close-modal-btn">Cerrar vista previa</button>
+      `, triggerEl);
+      document.getElementById("preview-open-env-now")?.addEventListener("click", () => {
+        window.AudioFX.waxSealBreak?.();
+        if (window.triggerGoldBurst) window.triggerGoldBurst(84);
+        renderOpened();
+      });
+      document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+    };
+    const renderOpened = () => {
+      showModal(`
+        <span class="badge badge-gold">MODO TEST · VISTA PREVIA ABIERTA</span>
+        <div class="gift-reveal-card" style="margin-top:12px;border-radius:16px;">
+          <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
+          <h2 id="adv-modal-title" class="serif" style="font-size:1.55rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
+          ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
+          <div class="gift-voucher">
+            <div class="mono" style="font-size:0.78rem;color:var(--adv-gold-soft);font-weight:700;margin-bottom:6px;">${esc(gift.voucherTitle)}</div>
+            <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
+          </div>
+          <p class="serif" style="margin-top:14px;font-size:1.08rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="button" class="btn btn-sm btn-frost" style="flex:1;" id="preview-reseal-env-btn">Ver sellado otra vez</button>
+          <button type="button" class="btn btn-sm btn-ghost" style="flex:1;" id="close-modal-btn">Cerrar</button>
+        </div>
+      `, triggerEl, { fromHistory: true });
+      document.getElementById("preview-reseal-env-btn")?.addEventListener("click", renderSealed);
+      document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+    };
+    renderSealed();
+  }
+
   function updateDockIndicator() {
     const dot = document.getElementById("day-dock-dot");
     if (!dot) return;
@@ -889,6 +966,7 @@
       </p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
         <button type="button" class="btn btn-sm btn-primary" id="preview-dlock-btn">Probar Doble Candado</button>
+        ${window.GIFT_CONFIG?.finalGiftReveal?.enabled ? `<button type="button" class="btn btn-sm btn-gold" id="preview-secret-envelope-btn">Probar Sobre Secreto</button>` : ""}
       </div>
       <div class="ritual-preview-grid">${cardsHtml}</div>
     `, triggerEl);
@@ -900,6 +978,10 @@
         headline: "DOBLE CANDADO ABIERTO",
         subline: "MIGUEL Y PATRI SINCRONIZADOS"
       });
+    });
+
+    document.getElementById("preview-secret-envelope-btn")?.addEventListener("click", (e) => {
+      openSecretEnvelopePreviewModal(e.currentTarget);
     });
 
     document.querySelectorAll("[data-preview-ritual-day]").forEach((btn) => {
@@ -1151,7 +1233,11 @@
           </div>
           <p class="hero-status-line">
             <span class="mono" style="color:var(--adv-gold-soft);margin-right:6px;">${esc(window.CASE_LORE.caseCode)}</span>
-            ${maxOpen === 0 ? `<strong style="color:var(--adv-gold-soft);">${esc(window.DateGate.getCountdownText())}.</strong>` : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
+            ${maxOpen === 0
+              ? `<strong style="color:var(--adv-gold-soft);" data-live-countdown="predec-dot">${esc(window.DateGate.getCountdownText())}.</strong>`
+              : (maxOpen < 24 && solvedCount >= maxOpen && window.DateGate.getNextDoorCountdownText?.())
+                ? `Al día hasta el <strong>${maxOpen} de diciembre</strong> · <strong style="color:var(--adv-gold-soft);" data-live-countdown="next-door">${esc(window.DateGate.getNextDoorCountdownText())}</strong>`
+                : `Puertas abiertas hasta el <strong>${maxOpen} de diciembre</strong>.`}
           </p>
           <div class="stats-strip">
             <div class="stat-pill">
@@ -1218,12 +1304,8 @@
 
     document.getElementById("hero-role-btn")?.addEventListener("click", () => openIdentityOverlay());
 
-    document.getElementById("hero-mute-btn")?.addEventListener("click", (e) => {
-      const muted = window.AudioFX.toggleMute();
-      e.currentTarget.textContent = muted ? "Audio OFF" : "Audio ON";
-      syncBriefingVideoMute(muted);
-      const mNote = document.getElementById(`morse-mute-note-${selectedDayNum}`);
-      if (mNote) mNote.style.display = muted ? "block" : "none";
+    document.getElementById("hero-mute-btn")?.addEventListener("click", () => {
+      toggleGlobalAudio();
     });
 
     document.getElementById("hero-cta-day")?.addEventListener("click", (e) => {
@@ -1316,7 +1398,7 @@
       const countdown = window.DateGate.getCountdownText();
       container.innerHTML = `
         <div class="glass-card" style="padding:26px 20px;text-align:center;">
-          <span class="badge badge-gold" style="margin-bottom:10px;">${esc(countdown)}</span>
+          <span class="badge badge-gold" data-live-countdown="predec" style="margin-bottom:10px;">${esc(countdown)}</span>
           <div style="color:var(--adv-gold-soft);margin:6px 0 8px;">${getSvg("lock")}</div>
           <h2 class="day-title">Puerta ${String(dayObj.day).padStart(2, "0")} precintada</h2>
           <p class="day-story">Esta prueba se desbloqueará automáticamente el <strong>${dayObj.day} de diciembre</strong>. Mientras tanto podéis ver el Vídeo Briefing en portada o repasar el Manual de Campo.</p>
@@ -1406,8 +1488,9 @@
       }
     } else {
       const suspect = dState.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === dState.discardId) : null;
+      const hideOnClosingPrint = dayObj.day === 24 && syncState.finalVerdictSolved ? " print-hide-on-closing" : "";
       validationHtml = `
-        <div class="glass-card answer-card" style="border:${suspect ? "var(--vg-border-pine)" : "var(--vg-border-gold)"};">
+        <div class="glass-card answer-card${hideOnClosingPrint}" style="border:${suspect ? "var(--vg-border-pine)" : "var(--vg-border-gold)"};">
           <span class="badge ${suspect ? "badge-pine" : "badge-gold"}">${esc(dState.forensicTag || "DÍA RESUELTO")}</span>
           <h3 style="margin:10px 0 6px;font-size:1.1rem;">${suspect ? `Sospechoso descartado: ${esc(suspect.name)}` : "Diligencia retenida en expediente (sin descarte hoy)"}</h3>
           <p class="day-story">${esc(dState.conclusion)}</p>
@@ -1569,6 +1652,11 @@
           return (window.SUSPECTS_DATA || []).filter((s) => !dayDiscards.has(s.id));
         })();
         finalTrialHtml = `
+          <div class="print-closing-header">
+            <div class="print-closing-kicker">UOPJ · ${esc(window.CASE_LORE.caseCode)} · ACTA OFICIAL DE CIERRE</div>
+            <div class="print-closing-title">ADVIENTO CERO — El Misterio del Ventisquero</div>
+            <div class="print-closing-sub">Equipo investigador: Miguel y Patri · Expediente cerrado el 24 de diciembre</div>
+          </div>
           <div class="glass-card answer-card" style="border:var(--vg-border-pine);">
             <span class="badge badge-pine">${esc(ep.title || "CASO CERRADO")}</span>
             <h3 style="margin:10px 0 8px;font-size:1.2rem;">Culpable arrestado/a: ${esc(ep.culpritName || "")}</h3>
@@ -1698,7 +1786,7 @@
         ${validationHtml}
         ${finalTrialHtml}
 
-        <div class="glass-card" style="padding:16px;">
+        <div class="glass-card day-hints-card" style="padding:16px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
             <span style="font-size:0.84rem;font-weight:600;">¿Atascados? Pistas graduadas (${hintsCount}/3)</span>
             <button type="button" class="btn btn-sm btn-ghost" id="reveal-hint-btn" ${hintsCount >= 3 ? "disabled" : ""}>
@@ -1716,12 +1804,8 @@
       </div>
     `;
 
-    document.getElementById("day-mute-btn")?.addEventListener("click", (e) => {
-      const muted = window.AudioFX.toggleMute();
-      e.currentTarget.textContent = muted ? "Audio OFF" : "Audio ON";
-      syncBriefingVideoMute(muted);
-      const mNote = document.getElementById(`morse-mute-note-${dayObj.day}`);
-      if (mNote) mNote.style.display = muted ? "block" : "none";
+    document.getElementById("day-mute-btn")?.addEventListener("click", () => {
+      toggleGlobalAudio();
     });
 
     container.querySelectorAll("[data-peek-sheet]").forEach((btn) => {
@@ -3084,8 +3168,7 @@
     });
 
     document.getElementById("pref-audio-btn")?.addEventListener("click", () => {
-      const muted = window.AudioFX.toggleMute();
-      syncBriefingVideoMute(muted);
+      toggleGlobalAudio();
       renderExpedienteView(true);
     });
     document.getElementById("pref-sync-diag-btn")?.addEventListener("click", () => openSyncDiagModal());
@@ -3114,17 +3197,57 @@
     });
 
     document.getElementById("export-diary-btn")?.addEventListener("click", () => {
+      const totalHintsExp = Object.values(syncState.hintsUnlocked || {}).reduce((acc, v) => acc + (Number(v) || 0), 0);
+      const suspectEntries = (window.SUSPECTS_DATA || []).map((s) => {
+        const sn = syncState.suspectNotes?.[s.id];
+        if (!sn) return null;
+        const parts = [];
+        ["miguel", "patri"].forEach((rk) => {
+          const entry = sn[rk];
+          if (!entry) return;
+          const lbl = rk === "miguel" ? "Miguel" : "Patri";
+          const noteTxt = String(entry.note || "").trim();
+          const stTxt = entry.stance && entry.stance !== "duda" ? entry.stance.toUpperCase() : "";
+          if (noteTxt || stTxt) {
+            parts.push(`${lbl}${stTxt ? ` [${stTxt}]` : ""}: ${noteTxt || "Sin apunte adicional"}`);
+          }
+        });
+        return parts.length ? `- #${s.num} ${s.name} (${s.room}): ${parts.join(" | ")}` : null;
+      }).filter(Boolean);
+
       const lines = [
         `# DIARIO DE INVESTIGACIÓN — ADVIENTO CERO`,
         `Fecha exportación: ${new Date().toLocaleString("es-ES")}`,
-        `Puertas resueltas: ${solvedDaysArr.length}/24`,
+        `Puertas resueltas: ${solvedDaysArr.length}/24 · Pistas usadas: ${totalHintsExp}/72`,
         ``,
         `## Resoluciones`,
-        ...solvedDaysArr.map((d) => `- Día ${String(d.day).padStart(2, "0")} [${d.forensicTag || "Resuelta"}]: ${d.conclusion}`),
+        ...(solvedDaysArr.length
+          ? solvedDaysArr.map((d) => `- Día ${String(d.day).padStart(2, "0")} [${d.forensicTag || "Resuelta"}]: ${d.conclusion}`)
+          : [`(Sin puertas resueltas todavía)`]),
+        ``,
+        `## Valoraciones de Sospechosos`,
+        ...(suspectEntries.length ? suspectEntries : [`(Sin valoraciones registradas)`]),
         ``,
         `## Libreta Compartida`,
         syncState.sharedNotes || "(Sin anotaciones)"
       ];
+
+      if (syncState.finalVerdictSolved && syncState.finalEpilogue) {
+        const ep = syncState.finalEpilogue;
+        const rankLabel = totalHintsExp <= 12
+          ? "Inspectora Jefe · Rango Oro"
+          : totalHintsExp <= 30
+            ? "Equipo Forense · Rango Plata"
+            : "Detectives del Ventisquero · Rango Bronce";
+        lines.push(
+          ``,
+          `## Cierre Oficial del Caso`,
+          `- Veredicto: ${ep.title || "CASO CERRADO"}`,
+          `- Culpable arrestado/a: ${ep.culpritName || ""}`,
+          `- Rango del equipo: ${rankLabel}`,
+          `- Relato final: ${ep.confession || ""}`
+        );
+      }
       downloadBlob(lines.join("\n"), "adviento-cero-diario.md", "text/markdown;charset=utf-8");
     });
 
@@ -3636,6 +3759,8 @@
       renderAdminBar();
       renderActiveTab();
       updateDockIndicator();
+    } else {
+      updateLiveCountdownOnly();
     }
   }
 
