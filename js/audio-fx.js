@@ -513,11 +513,47 @@ window.AudioFX = (() => {
     }
   }
 
+  function envelopeOpenSymphony() {
+    haptic([16, 28, 22, 36, 48]);
+    emitVisualCue("wax", "Sobre Secreto de Nochebuena abierto");
+    const c = ensureCtx(false);
+    if (!c) return;
+    const play = () => {
+      // 1) Tensión en el lacre + grieta dorada (160ms)
+      scheduleBandNoise(c, 0.16, 0.045, 3500, 2200, 3.0, 0.09);
+      scheduleTone(c, 1760, 28, "triangle", 0.032, 160);
+      // 2) Fractura física nítida del sello de lacre 24 (360ms)
+      scheduleBandNoise(c, 0.36, 0.075, 2950, 1450, 2.0, 0.19);
+      scheduleTone(c, 250, 74, "triangle", 0.09, 360);
+      scheduleTone(c, 138, 96, "sine", 0.065, 372);
+      // 3) Despliegue 3D de la solapa de papel algodón (520ms)
+      scheduleBandNoise(c, 0.52, 0.32, 1050, 2550, 1.35, 0.085);
+      // 4) Deslizamiento de la carta saliendo del bolsillo (820ms)
+      scheduleBandNoise(c, 0.82, 0.44, 1750, 3400, 1.5, 0.075);
+      // 5) Arpegio celesta/arpa de Nochebuena (Dmaj9 brillante ascendente)
+      const arp = [293.66, 369.99, 440.0, 554.37, 659.25, 739.99, 880.0, 1174.66];
+      arp.forEach((freq, i) => {
+        scheduleTone(c, freq, 520 + i * 70, i % 2 === 0 ? "sine" : "triangle", 0.044 - i * 0.002, 760 + i * 92);
+      });
+      // 6) Acorde final cálido de revelación del vale (1420ms)
+      scheduleTone(c, 587.33, 1250, "sine", 0.052, 1420);
+      scheduleTone(c, 880.0, 1200, "sine", 0.04, 1465);
+      scheduleTone(c, 1108.73, 1180, "triangle", 0.028, 1510);
+      scheduleTone(c, 1479.98, 1300, "sine", 0.032, 1560);
+    };
+    if (c.state !== "running") {
+      c.resume().then(play).catch(() => {});
+    } else {
+      play();
+    }
+  }
+
   return {
     click,
     mechanicalTick,
     sealBreak,
     waxSealBreak,
+    envelopeOpenSymphony,
     playDoorRitual,
     doubleLockOpen,
     radioSweep,

@@ -1702,6 +1702,11 @@ body.pref-reduced-motion * {
   .gift-voucher .mono {
     color: #92400E !important;
   }
+  .gift-voucher::after,
+  .gift-corner-ornament {
+    display: none !important;
+  }
+  .gift-keepsake-seal,
   .secret-envelope-seal {
     background: #991B1B !important;
     color: #FFFFFF !important;
