@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.20.0";
-  const CACHE_TAG = "adviento-cero-v2.20.0";
+  const APP_VERSION = "v2.21.0";
+  const CACHE_TAG = "adviento-cero-v2.21.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -20,6 +20,7 @@
   let overlayHistoryPushed = false;
   let modalHistoryPushed = false;
   let ignorePopstateCount = 0;
+  let onModalCloseCleanup = null;
 
   const DAY_SUSPECT_FOCUS = {
     1: { id: "s16", hideBeforeSolve: true }, 2: { id: "s20" }, 3: { id: "s08" }, 4: { id: "s15" },
@@ -777,11 +778,101 @@
 
   function formatRelTime(ts) {
     if (!ts) return "";
-    const mins = Math.max(1, Math.round((Date.now() - Number(ts)) / 60000));
+    const diffMs = Math.max(0, Date.now() - Number(ts));
+    if (diffMs < 60000) return "hace un momento";
+    const mins = Math.max(1, Math.round(diffMs / 60000));
     if (mins < 60) return `hace ${mins} min`;
     const hrs = Math.round(mins / 60);
     if (hrs < 24) return `hace ${hrs} h`;
     return `hace ${Math.round(hrs / 24)} d`;
+  }
+
+  function isMyDayPartPending(dayObj, role) {
+    if (!dayObj || !window.DateGate.isDayOpen(dayObj.day)) return false;
+    const ds = syncState.days?.[String(dayObj.day)] || {};
+    if (dayObj.day === 24 && syncState.finalVerdictSolved) return false;
+    if (ds.solved) return false;
+    const myDone = role === "miguel" ? Boolean(ds.miguelSolved) : Boolean(ds.patriSolved);
+    if (dayObj.mode === "dual-lock" || myDone) {
+      return !myDone;
+    }
+    return true;
+  }
+
+  function getPartnerLatestActivity(partnerRole) {
+    if (partnerRole !== "miguel" && partnerRole !== "patri") return null;
+    const candidates = [];
+    const direct = syncState.lastActivity?.[partnerRole];
+    if (direct && direct.label && direct.at) {
+      candidates.push({
+        kind: direct.kind || "general",
+        label: direct.label,
+        day: direct.day || null,
+        suspectId: direct.suspectId || null,
+        at: Number(direct.at) || 0
+      });
+    }
+    if (syncState.notesMeta?.updatedBy === partnerRole && syncState.notesMeta?.updatedAt) {
+      candidates.push({
+        kind: "notes",
+        label: "Actualizó la Libreta Compartida",
+        day: null,
+        suspectId: null,
+        at: Number(syncState.notesMeta.updatedAt) || 0
+      });
+    }
+    Object.entries(syncState.fieldDispatch || {}).forEach(([dKey, entry]) => {
+      const e = entry?.[partnerRole];
+      if (e && e.text && e.at) {
+        candidates.push({
+          kind: "day",
+          label: `Envió un dato en el Día ${String(dKey).padStart(2, "0")}`,
+          day: Number(dKey),
+          suspectId: null,
+          at: Number(e.at) || 0
+        });
+      }
+    });
+    Object.entries(syncState.suspectNotes || {}).forEach(([sid, entry]) => {
+      const e = entry?.[partnerRole];
+      if (e && e.at && (e.note || (e.stance && e.stance !== "duda"))) {
+        const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
+        const tag = sp ? `Ficha #${sp.num}` : "una ficha";
+        const stTxt = e.stance === "sospecha" ? "Sospecha" : e.stance === "inocente" ? "Inocente" : "Duda";
+        candidates.push({
+          kind: "suspect",
+          label: e.note ? `Anotó en ${tag}` : `Valoró ${tag} (${stTxt})`,
+          day: null,
+          suspectId: sid,
+          at: Number(e.at) || 0
+        });
+      }
+    });
+    if (syncState.finalProposal?.byRole === partnerRole && syncState.finalProposal?.proposedAt) {
+      candidates.push({
+        kind: "day",
+        label: "Envió propuesta de acusación del Careo",
+        day: 24,
+        suspectId: null,
+        at: Number(syncState.finalProposal.proposedAt) || 0
+      });
+    }
+    candidates.sort((a, b) => b.at - a.at);
+    if (candidates.length > 0) return candidates[0];
+
+    const partnerOnline = window.SyncEngine.isRoleOnline(partnerRole);
+    const viewingDay = syncState.presence?.[partnerRole]?.viewingDay;
+    if (partnerOnline && viewingDay) {
+      return {
+        kind: "day",
+        label: `Investigando ahora el Día ${String(viewingDay).padStart(2, "0")}`,
+        day: Number(viewingDay),
+        suspectId: null,
+        at: 0,
+        liveOnly: true
+      };
+    }
+    return null;
   }
 
   function getSyncBadgeHtml() {
@@ -1312,6 +1403,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
         <button type="button" class="btn btn-sm btn-primary" id="preview-dlock-btn">Probar Doble Candado</button>
         ${window.GIFT_CONFIG?.finalGiftReveal?.enabled ? `<button type="button" class="btn btn-sm btn-gold" id="preview-secret-envelope-btn">Probar Sobre Secreto</button>` : ""}
+        <button type="button" class="btn btn-sm btn-frost" id="preview-memories-album-btn">Probar Álbum de Recuerdos</button>
       </div>
       <div class="ritual-preview-grid">${cardsHtml}</div>
     `, triggerEl);
@@ -1327,6 +1419,10 @@
 
     document.getElementById("preview-secret-envelope-btn")?.addEventListener("click", (e) => {
       openSecretEnvelopePreviewModal(e.currentTarget);
+    });
+
+    document.getElementById("preview-memories-album-btn")?.addEventListener("click", (e) => {
+      openMemoriesAlbumModal(e.currentTarget, { isPreview: true });
     });
 
     document.querySelectorAll("[data-preview-ritual-day]").forEach((btn) => {
@@ -1463,6 +1559,10 @@
     if (!container) return;
 
     const maxOpen = window.DateGate.getMaxOpenDay();
+    const role = currentRole === "patri" ? "patri" : "miguel";
+    const partnerRole = role === "miguel" ? "patri" : "miguel";
+    const partnerName = partnerRole === "miguel" ? "Miguel" : "Patri";
+    const partnerAct = getPartnerLatestActivity(partnerRole);
     const calSig = JSON.stringify({
       role: currentRole,
       maxOpen,
@@ -1470,7 +1570,8 @@
       discardedCount: (syncState.discardedIds || []).length,
       fv: syncState.finalVerdictSolved,
       calendarFilter,
-      muted: window.AudioFX.isMuted()
+      muted: window.AudioFX.isMuted(),
+      partnerAct: partnerAct ? `${partnerAct.label}:${partnerAct.at}:${partnerAct.liveOnly ? 1 : 0}` : ""
     });
 
     if (!force && calSig === lastCalendarSignature && container.innerHTML.trim() !== "") {
@@ -1485,18 +1586,35 @@
     lastCalendarSignature = calSig;
 
     const solvedCount = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
+    const effectiveSolved = syncState.finalVerdictSolved ? 24 : solvedCount;
     const activeSuspects = syncState.finalVerdictSolved ? 1 : 25 - (syncState.discardedIds?.length || 0);
     const gift = window.GIFT_CONFIG;
-    const role = currentRole === "patri" ? "patri" : "miguel";
-    const partnerName = role === "miguel" ? "Patri" : "Miguel";
 
     let ctaTargetDay = maxOpen;
     for (let d = 1; d <= maxOpen; d++) {
       if (!syncState.days?.[String(d)]?.solved) { ctaTargetDay = d; break; }
     }
 
-    const filteredDays = (window.ADVENT_DAYS || []).filter((d) => {
+    const myFlag = role === "miguel" ? "miguelSolved" : "patriSolved";
+    const partnerFlag = role === "miguel" ? "patriSolved" : "miguelSolved";
+    const allAdventDays = window.ADVENT_DAYS || [];
+    const myPendingDays = allAdventDays.filter((d) => isMyDayPartPending(d, role));
+    const waitingPartnerDays = allAdventDays.filter((d) => {
+      if (!window.DateGate.isDayOpen(d.day)) return false;
+      const ds = syncState.days?.[String(d.day)] || {};
+      return !ds.solved && Boolean(ds[myFlag]) && !ds[partnerFlag];
+    });
+    if (calendarFilter === "waiting_partner" && waitingPartnerDays.length === 0) {
+      calendarFilter = "all";
+    }
+
+    const filteredDays = allAdventDays.filter((d) => {
       const st = getDayStatus(d.day);
+      if (calendarFilter === "mine") return isMyDayPartPending(d, role);
+      if (calendarFilter === "waiting_partner") {
+        const ds = syncState.days?.[String(d.day)] || {};
+        return window.DateGate.isDayOpen(d.day) && !ds.solved && Boolean(ds[myFlag]) && !ds[partnerFlag];
+      }
       if (calendarFilter === "pending") return st === "available" || st === "waiting";
       if (calendarFilter === "solved") return st === "solved";
       return true;
@@ -1531,8 +1649,6 @@
     const isStandalone = Boolean(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches));
     const showPwaTip = !isStandalone && !userPrefs.pwaBannerDismissed;
 
-    const myFlag = role === "miguel" ? "miguelSolved" : "patriSolved";
-    const partnerFlag = role === "miguel" ? "patriSolved" : "miguelSolved";
     const partnerWaitingDays = [];
     const meWaitingDays = [];
     for (let dNum = 1; dNum <= maxOpen; dNum++) {
@@ -1558,6 +1674,78 @@
             <button type="button" class="btn btn-sm btn-frost" data-open-day="${meWaitingDays[0]}">Ver Día ${String(meWaitingDays[0]).padStart(2, "0")}</button>
           </div>`
         : "";
+
+    const milestonePct = Math.round((effectiveSolved / 24) * 100);
+    const milestones = [
+      { target: 6, pos: 25, short: "D6", label: "Semana 1" },
+      { target: 12, pos: 50, short: "D12", label: "Ecuador" },
+      { target: 18, pos: 75, short: "D18", label: "Recta final" },
+      { target: 24, pos: 100, short: "D24", label: syncState.finalVerdictSolved ? "Cerrado" : "Careo" }
+    ];
+    let nextMilestoneText = "Expediente cerrado · 24/24";
+    if (!syncState.finalVerdictSolved) {
+      if (effectiveSolved >= 23) nextMilestoneText = "¡Listos para el Careo del 24!";
+      else if (effectiveSolved >= 18) nextMilestoneText = `Careo final · faltan ${23 - effectiveSolved}`;
+      else if (effectiveSolved >= 12) nextMilestoneText = `Recta final 18/24 · faltan ${18 - effectiveSolved}`;
+      else if (effectiveSolved >= 6) nextMilestoneText = `Ecuador 12/24 · faltan ${12 - effectiveSolved}`;
+      else nextMilestoneText = `Semana 1 · faltan ${6 - effectiveSolved}`;
+    }
+
+    const milestonesHtml = `
+      <div class="cal-milestones-wrap" aria-label="Progreso e hitos de la investigación">
+        <div class="cal-milestones-head">
+          <span class="cal-milestones-title">HITOS DE LA INVESTIGACIÓN</span>
+          <span class="cal-milestones-next">${esc(nextMilestoneText)}</span>
+        </div>
+        <div class="cal-milestones-track" role="progressbar" aria-valuenow="${effectiveSolved}" aria-valuemin="0" aria-valuemax="24">
+          <div class="cal-milestones-fill" style="width:${milestonePct}%;"></div>
+          ${milestones.map((m) => {
+            const reached = m.target === 24 ? Boolean(syncState.finalVerdictSolved) : effectiveSolved >= m.target;
+            const readyCareo = m.target === 24 && !syncState.finalVerdictSolved && effectiveSolved >= 23;
+            return `<span class="cal-milestone-dot ${reached ? "is-reached" : ""} ${readyCareo ? "is-ready" : ""}" style="left:${m.pos}%;" title="${esc(m.label)} (${m.target}/24)"></span>`;
+          }).join("")}
+        </div>
+        <div class="cal-milestones-labels">
+          ${milestones.map((m) => {
+            const reached = m.target === 24 ? Boolean(syncState.finalVerdictSolved) : effectiveSolved >= m.target;
+            const readyCareo = m.target === 24 && !syncState.finalVerdictSolved && effectiveSolved >= 23;
+            return `<span class="cal-milestone-lbl ${reached ? "is-reached" : ""} ${readyCareo ? "is-ready" : ""}"><strong>${m.short}</strong> ${esc(m.label)}</span>`;
+          }).join("")}
+        </div>
+      </div>`;
+
+    const partnerOnlineNow = window.SyncEngine.isRoleOnline(partnerRole);
+    const canJumpPartnerAct = partnerAct && (
+      (partnerAct.kind === "day" && partnerAct.day && window.DateGate.isDayOpen(partnerAct.day)) ||
+      (partnerAct.kind === "suspect" && partnerAct.suspectId) ||
+      partnerAct.kind === "notes"
+    );
+    const partnerActivityHtml = partnerAct
+      ? `
+        <button type="button" id="partner-activity-btn" class="partner-activity-bar ${partnerOnlineNow ? "is-online" : ""}" ${canJumpPartnerAct ? "" : "disabled"}>
+          <span class="partner-act-dot" aria-hidden="true"></span>
+          <span class="partner-act-body">
+            <strong>${esc(partnerName)}</strong> · ${esc(partnerAct.label)}${partnerAct.at ? ` <span class="partner-act-time">· ${esc(formatRelTime(partnerAct.at))}</span>` : ""}
+          </span>
+          ${canJumpPartnerAct ? `<span class="partner-act-go">Ir</span>` : ""}
+        </button>`
+      : "";
+
+    const emptyFilterHtml = filteredDays.length === 0
+      ? `
+        <div class="glass-card cal-empty-filter">
+          <p class="day-story" style="margin-bottom:10px;">
+            ${calendarFilter === "mine"
+              ? (waitingPartnerDays.length > 0
+                ? `Vas al día con tu terminal. Solo falta la parte de ${esc(partnerName)} en ${waitingPartnerDays.length === 1 ? `el Día ${String(waitingPartnerDays[0]).padStart(2, "0")}` : `${waitingPartnerDays.length} puertas`}.`
+                : `Vas completamente al día con tus enigmas abiertos.`)
+              : calendarFilter === "solved"
+                ? `Aún no habéis completado ninguna puerta. Toca el Día 01 para empezar la investigación.`
+                : `No hay puertas en este filtro ahora mismo.`}
+          </p>
+          <button type="button" class="btn btn-sm btn-frost" id="cal-reset-filter-btn">Ver todas las puertas</button>
+        </div>`
+      : "";
 
     container.innerHTML = `
       <div class="glass-card hero-dossier">
@@ -1585,7 +1773,7 @@
           </p>
           <div class="stats-strip">
             <div class="stat-pill">
-              <span class="stat-val" style="color:var(--adv-pine);">${solvedCount}/24</span>
+              <span class="stat-val" style="color:var(--adv-pine);">${effectiveSolved}/24</span>
               <span class="stat-lbl">Puertas resueltas</span>
             </div>
             <div class="stat-pill">
@@ -1597,11 +1785,13 @@
               <span class="stat-lbl">Cambiar perfil</span>
             </button>
           </div>
+          ${milestonesHtml}
           ${maxOpen >= 1 ? `
             <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
               <button type="button" class="btn btn-sm btn-primary" id="hero-cta-day" data-day="${ctaTargetDay}">
                 ${syncState.finalVerdictSolved ? (window.GIFT_CONFIG?.finalGiftReveal?.enabled ? "Ver Sobre Secreto (Día 24)" : "Ver Cierre del Caso (Día 24)") : `Ir a Puerta ${String(ctaTargetDay).padStart(2, "0")}`}
               </button>
+              ${syncState.finalVerdictSolved ? `<button type="button" class="btn btn-sm btn-gold" id="hero-memories-btn">Recuerdos del Mes</button>` : ""}
             </div>
           ` : `
             <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
@@ -1609,6 +1799,7 @@
               <button type="button" class="btn btn-sm btn-frost" id="hero-open-rules-btn">Manual de Campo</button>
             </div>
           `}
+          ${partnerActivityHtml}
         </div>
       </div>
 
@@ -1630,15 +1821,16 @@
         </div>
       </div>
 
-      ${maxOpen >= 4 ? `
-        <div class="suspect-filters" style="margin-bottom:12px;">
+      ${maxOpen >= 1 ? `
+        <div class="suspect-filters" role="group" aria-label="Filtrar puertas del calendario" style="margin-bottom:12px;">
           <button type="button" class="filter-chip ${calendarFilter === "all" ? "active" : ""}" data-cal-filter="all">Todas (24)</button>
-          <button type="button" class="filter-chip ${calendarFilter === "pending" ? "active" : ""}" data-cal-filter="pending">Por resolver</button>
+          <button type="button" class="filter-chip ${calendarFilter === "mine" ? "active" : ""}" data-cal-filter="mine">Mis pendientes (${myPendingDays.length})</button>
+          ${waitingPartnerDays.length > 0 ? `<button type="button" class="filter-chip ${calendarFilter === "waiting_partner" ? "active" : ""}" data-cal-filter="waiting_partner">Falta ${esc(partnerName)} (${waitingPartnerDays.length})</button>` : ""}
           <button type="button" class="filter-chip ${calendarFilter === "solved" ? "active" : ""}" data-cal-filter="solved">Resueltas (${solvedCount})</button>
         </div>
       ` : ""}
 
-      <div class="advent-grid">${doorsHtml}</div>
+      ${emptyFilterHtml || `<div class="advent-grid">${doorsHtml}</div>`}
     `;
 
     if (preservedHeroVideo) {
@@ -1655,6 +1847,30 @@
     document.getElementById("hero-cta-day")?.addEventListener("click", (e) => {
       const target = Number(e.currentTarget.dataset.day || 1);
       openAdventDay(target);
+    });
+
+    document.getElementById("hero-memories-btn")?.addEventListener("click", (e) => {
+      openMemoriesAlbumModal(e.currentTarget);
+    });
+
+    document.getElementById("partner-activity-btn")?.addEventListener("click", (e) => {
+      if (!partnerAct) return;
+      window.AudioFX.click();
+      if (partnerAct.kind === "day" && partnerAct.day && window.DateGate.isDayOpen(partnerAct.day)) {
+        openAdventDay(partnerAct.day);
+      } else if (partnerAct.kind === "suspect" && partnerAct.suspectId) {
+        openSuspectModal(partnerAct.suspectId, e.currentTarget);
+      } else if (partnerAct.kind === "notes") {
+        suspectsTab = "notes";
+        lastSuspectsSignature = "";
+        switchTab("suspects", { scrollToTop: true });
+      }
+    });
+
+    document.getElementById("cal-reset-filter-btn")?.addEventListener("click", () => {
+      window.AudioFX.click();
+      calendarFilter = "all";
+      renderCalendarView(true);
     });
 
     document.getElementById("hero-open-briefing-btn")?.addEventListener("click", () => {
@@ -1994,6 +2210,7 @@
             <h3 style="margin:10px 0 8px;font-size:1.2rem;">Culpable arrestado/a: ${esc(ep.culpritName || "")}</h3>
             <p class="day-story">${esc(ep.confession || "")}</p>
             <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-primary" id="open-memories-album-btn">Álbum: Recuerdos del Mes</button>
               <button type="button" class="btn btn-sm btn-gold" id="print-closing-btn">Acta Oficial de Cierre</button>
               <button type="button" class="btn btn-sm btn-ghost" id="show-final-archive-btn">Ver evidencias finales</button>
             </div>
@@ -2147,7 +2364,7 @@
     container.querySelectorAll("[data-pin-clue]").forEach((btn) => {
       btn.addEventListener("click", () => {
         window.AudioFX.click();
-        const pinned = window.SyncEngine.togglePinnedClue(btn.dataset.pinClue);
+        const pinned = window.SyncEngine.togglePinnedClue(btn.dataset.pinClue, role);
         const on = pinned.includes(btn.dataset.pinClue);
         showToast(on ? "Conclusión fijada para el Careo Final." : "Chincheta retirada.");
       });
@@ -2282,7 +2499,7 @@
         return;
       }
       clearTimeout(hintArmTimer);
-      window.SyncEngine.unlockHint(dayObj.day);
+      window.SyncEngine.unlockHint(dayObj.day, role);
     });
 
     const dayAnsInp = document.getElementById("day-answer-input");
@@ -2434,7 +2651,7 @@
             const remainingNow = (window.SUSPECTS_DATA || []).filter((s) => !(syncState.discardedIds || []).includes(s.id));
             const culpritId = decoded?.finalEpilogue?.culpritId;
             const innocentIds = remainingNow.map((s) => s.id).filter((id) => id !== culpritId);
-            window.SyncEngine.solveFinalVerdict(decoded?.finalEpilogue || null, innocentIds);
+            window.SyncEngine.solveFinalVerdict(decoded?.finalEpilogue || null, innocentIds, role);
           } finally {
             isSubmitting = false;
             if (submitBtn && submitBtn.isConnected) submitBtn.disabled = false;
@@ -2466,6 +2683,10 @@
         proposedAt: Date.now()
       });
       showToast(`Propuesta enviada a ${partnerName} para su segunda firma.`);
+    });
+
+    document.getElementById("open-memories-album-btn")?.addEventListener("click", (e) => {
+      openMemoriesAlbumModal(e.currentTarget);
     });
 
     document.getElementById("print-closing-btn")?.addEventListener("click", () => {
@@ -3208,6 +3429,7 @@
             <div class="mono" style="font-size:0.72rem;color:var(--vg-text-muted);">Vídeo briefing en portada y guía imprimible en PDF</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            ${syncState.finalVerdictSolved ? `<button type="button" class="btn btn-sm btn-gold" id="exp-memories-btn">Álbum: Recuerdos del Mes</button>` : ""}
             <button type="button" class="btn btn-sm btn-primary" id="exp-go-briefing-btn">Ver Vídeo Briefing</button>
             <a href="imprimibles/PRESENTACION_ADVIENTO_CERO.pdf?v=2.15.0" target="_blank" rel="noopener noreferrer" download="PRESENTACION_ADVIENTO_CERO.pdf" class="btn btn-sm btn-gold">Dossier PDF (0,4 MB)</a>
           </div>
@@ -3373,6 +3595,10 @@
         window.AudioFX.click();
         renderExpedienteView(true);
       });
+    });
+
+    document.getElementById("exp-memories-btn")?.addEventListener("click", (e) => {
+      openMemoriesAlbumModal(e.currentTarget);
     });
 
     document.getElementById("exp-go-briefing-btn")?.addEventListener("click", () => {
@@ -3724,6 +3950,10 @@
     const modal = document.getElementById("adv-modal");
     const body = document.getElementById("adv-modal-body");
     if (!modal || !body) return;
+    if (typeof onModalCloseCleanup === "function") {
+      try { onModalCloseCleanup(); } catch (_) {}
+      onModalCloseCleanup = null;
+    }
     if (!opts.preserveFocus) {
       lastFocusedEl = triggerEl || document.activeElement;
     }
@@ -3770,6 +4000,10 @@
   function closeModal(fromHistory = false) {
     const modal = document.getElementById("adv-modal");
     if (!modal) return;
+    if (typeof onModalCloseCleanup === "function") {
+      try { onModalCloseCleanup(); } catch (_) {}
+      onModalCloseCleanup = null;
+    }
     modal.classList.remove("open");
     openModalSuspectId = null;
     if (!document.getElementById("identity-overlay")?.classList.contains("open")) {
@@ -3787,6 +4021,328 @@
         window.history.back();
       }
     }
+  }
+
+  function openMemoriesAlbumModal(triggerEl, opts = {}) {
+    const isPreview = Boolean(opts.isPreview && !syncState.finalVerdictSolved);
+    const daysList = (window.ADVENT_DAYS || []).slice().sort((a, b) => a.day - b.day);
+    const suspectsById = new Map((window.SUSPECTS_DATA || []).map((s) => [s.id, s]));
+    const totalSlides = daysList.length + 1; // 24 días + postal final #25
+    let curIdx = 0;
+    let autoplayTimer = null;
+    const AUTOPLAY_MS = 4500;
+
+    const solvedCount = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
+    const effectiveSolved = syncState.finalVerdictSolved ? 24 : solvedCount;
+    const totalHints = Object.values(syncState.hintsUnlocked || {}).reduce((acc, v) => acc + (Number(v) || 0), 0);
+    const discardedTotal = (syncState.discardedIds || []).length;
+    const ratedTotal = Object.keys(syncState.suspectNotes || {}).filter((sid) => {
+      const sn = syncState.suspectNotes[sid];
+      return Boolean(sn?.miguel?.note || sn?.patri?.note || (sn?.miguel?.stance && sn.miguel.stance !== "duda") || (sn?.patri?.stance && sn.patri.stance !== "duda"));
+    }).length;
+    const rankLabel = totalHints <= 12
+      ? "Inspectora Jefe · Rango Oro"
+      : totalHints <= 30
+        ? "Equipo Forense · Rango Plata"
+        : "Detectives del Ventisquero · Rango Bronce";
+
+    const getActLabel = (dNum) => {
+      if (dNum <= 6) return "ACTO I · EL AISLAMIENTO";
+      if (dNum <= 12) return "ACTO II · COARTADAS ROTAS";
+      if (dNum <= 18) return "ACTO III · RED DE SECRETOS";
+      return "ACTO IV · CAREO DE NOCHEBUENA";
+    };
+
+    const formatSolvedStamp = (ts) => {
+      if (!ts) return "";
+      try {
+        return new Date(Number(ts)).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+      } catch (_) {
+        return "";
+      }
+    };
+
+    const renderSlideHtml = (idx) => {
+      if (idx >= daysList.length) {
+        const giftReady = Boolean(window.GIFT_CONFIG?.finalGiftReveal?.enabled);
+        return `
+          <div class="album-slide is-keepsake" key="final">
+            <div class="album-slide-top">
+              <span class="badge badge-gold">POSTAL CONMEMORATIVA · 25 / 25</span>
+              <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">DICIEMBRE 2026</span>
+            </div>
+            <div class="album-keepsake-crest" aria-hidden="true">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="#FDE68A"><polygon points="12 1.5 14.5 9.2 22.5 12 14.5 14.8 12 22.5 9.5 14.8 1.5 12 9.5 9.2"/></svg>
+            </div>
+            <h3 class="serif album-keepsake-title">Miguel y Patri en El Mirador del Ventisquero</h3>
+            <p class="album-keepsake-sub">
+              ${syncState.finalVerdictSolved
+                ? `Veinticuatro puertas de invierno compartidas hasta desvelar la verdad de Nochebuena. ${esc(rankLabel)}.`
+                : `Vista previa sin spoilers de vuestro álbum de recuerdos. Conforme resolváis cada día de diciembre, aquí quedarán guardados todos los retratos, fechas y apuntes de vuestra partida.`}
+            </p>
+            <div class="album-stats-grid">
+              <div class="album-stat-box"><strong>${effectiveSolved}/24</strong><span>Puertas resueltas</span></div>
+              <div class="album-stat-box"><strong>${discardedTotal}</strong><span>Descartes</span></div>
+              <div class="album-stat-box"><strong>${totalHints}/72</strong><span>Pistas usadas</span></div>
+              <div class="album-stat-box"><strong>${ratedTotal}</strong><span>Fichas anotadas</span></div>
+            </div>
+            ${giftReady ? `
+              <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+                <button type="button" class="btn btn-sm btn-gold" id="album-open-gift-btn">Abrir Sobre Secreto del 24</button>
+              </div>
+            ` : ""}
+          </div>`;
+      }
+
+      const dayObj = daysList[idx];
+      const dNum = dayObj.day;
+      const numStr = String(dNum).padStart(2, "0");
+      const ds = syncState.days?.[String(dNum)] || {};
+      const isDay24Solved = dNum === 24 && Boolean(syncState.finalVerdictSolved);
+      const isResolved = Boolean(ds.solved || isDay24Solved);
+      const ep = isDay24Solved ? (syncState.finalEpilogue || {}) : null;
+      const targetSuspectId = isDay24Solved ? ep?.culpritId : (isResolved ? ds.discardId : null);
+      const suspect = targetSuspectId ? suspectsById.get(targetSuspectId) : null;
+      const stampStr = formatSolvedStamp(ds.solvedAt);
+
+      let noteMemories = [];
+      if (suspect && syncState.suspectNotes?.[suspect.id]) {
+        const sn = syncState.suspectNotes[suspect.id];
+        if (sn.miguel?.note) noteMemories.push(`Miguel: «${sn.miguel.note}»`);
+        if (sn.patri?.note) noteMemories.push(`Patri: «${sn.patri.note}»`);
+      }
+
+      const statusBadge = isDay24Solved
+        ? `<span class="badge badge-gold">CAREO FINAL RESUELTO</span>`
+        : isResolved
+          ? (suspect ? `<span class="badge badge-pine">DESCARTADO · DÍA ${numStr}</span>` : `<span class="badge badge-gold">DILIGENCIA ABIERTA</span>`)
+          : `<span class="badge badge-frost">PENDIENTE DE RESOLVER</span>`;
+
+      const portraitBlock = isResolved
+        ? (suspect
+          ? `
+            <div class="album-polaroid ${isDay24Solved ? "is-culprit" : "is-cleared"}">
+              <img src="${esc(suspect.portrait)}" alt="${esc(suspect.name)}" width="92" height="92" decoding="async">
+              <span class="album-polaroid-stamp">${isDay24Solved ? "ARRESTADO" : "DESCARTADO"}</span>
+            </div>
+            <div class="album-subject-meta">
+              <div class="mono" style="font-size:0.66rem;color:var(--adv-gold-soft);">FICHA #${esc(suspect.num)} · ${esc(suspect.room)}</div>
+              <div class="album-subject-name">${esc(suspect.name)}</div>
+              <div class="album-subject-role">${esc(suspect.role)}</div>
+              ${stampStr ? `<div class="mono" style="font-size:0.65rem;color:var(--adv-pine);margin-top:4px;">Resuelto: ${esc(stampStr)}</div>` : ""}
+            </div>`
+          : `
+            <div class="album-polaroid is-seal">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FDE68A" stroke-width="1.6" aria-hidden="true"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5"/></svg>
+              <span class="album-polaroid-stamp">EXPEDIENTE</span>
+            </div>
+            <div class="album-subject-meta">
+              <div class="mono" style="font-size:0.66rem;color:var(--adv-gold-soft);">${esc(ds.forensicTag || "DILIGENCIA CLAVE")}</div>
+              <div class="album-subject-name">Pista reservada para el Careo</div>
+              <div class="album-subject-role">Sin descarte en esta jornada</div>
+              ${stampStr ? `<div class="mono" style="font-size:0.65rem;color:var(--adv-pine);margin-top:4px;">Resuelto: ${esc(stampStr)}</div>` : ""}
+            </div>`)
+        : `
+          <div class="album-polaroid is-locked">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.7" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span class="album-polaroid-stamp">SELLADO</span>
+          </div>
+          <div class="album-subject-meta">
+            <div class="mono" style="font-size:0.66rem;color:var(--vg-text-muted);">MODO CERO SPOILERS</div>
+            <div class="album-subject-name">Recuerdo pendiente</div>
+            <div class="album-subject-role">La resolución y el retrato aparecerán cuando completéis el Día ${numStr}.</div>
+          </div>`;
+
+      const conclusionText = isDay24Solved
+        ? (ep?.confession || "Veredicto definitivo emitido entre Miguel y Patri.")
+        : isResolved
+          ? (ds.conclusion || "Diligencia completada.")
+          : `Puerta ${numStr} de diciembre aún por resolver en esta partida. Sin spoilers hasta abrir el Doble Candado.`;
+
+      return `
+        <div class="album-slide ${isResolved ? "is-resolved" : "is-pending"}">
+          <div class="album-slide-top">
+            <span class="mono" style="font-size:0.66rem;letter-spacing:0.12em;color:var(--adv-gold-soft);">${esc(getActLabel(dNum))}</span>
+            ${statusBadge}
+          </div>
+          <div class="album-day-head">
+            <span class="album-day-num">${numStr}</span>
+            <div style="min-width:0;flex:1;">
+              <div class="mono" style="font-size:0.66rem;color:var(--vg-text-muted);">${numStr} DE DICIEMBRE</div>
+              <h3 class="serif album-day-title">${esc(dayObj.title)}</h3>
+            </div>
+          </div>
+          <div class="album-subject-row">${portraitBlock}</div>
+          <div class="album-conclusion-box">
+            <div class="mono" style="font-size:0.64rem;letter-spacing:0.1em;color:var(--adv-gold-soft);margin-bottom:4px;">${isResolved ? (esc(ds.forensicTag || (isDay24Solved ? "CONFESIÓN FINAL" : "RESOLUCIÓN DEL DÍA"))) : "ESTADO DEL ARCHIVO"}</div>
+            <p>${esc(conclusionText)}</p>
+          </div>
+          ${noteMemories.length ? `
+            <div class="album-notes-quote">
+              <strong>Vuestro apunte del mes:</strong> ${esc(noteMemories.join(" · "))}
+            </div>` : ""}
+          ${!isResolved && window.DateGate.isDayOpen(dNum) ? `
+            <div style="margin-top:10px;text-align:right;">
+              <button type="button" class="btn btn-sm btn-frost" data-album-jump-day="${dNum}">Ir al Día ${numStr}</button>
+            </div>` : ""}
+        </div>`;
+    };
+
+    const dotsHtml = Array.from({ length: totalSlides }, (_, i) => {
+      const isLast = i === totalSlides - 1;
+      const dObj = daysList[i];
+      const solved = isLast
+        ? Boolean(syncState.finalVerdictSolved)
+        : Boolean(syncState.days?.[String(dObj?.day)]?.solved || (dObj?.day === 24 && syncState.finalVerdictSolved));
+      return `<button type="button" class="album-dot ${solved ? "is-solved" : ""} ${isLast ? "is-final" : ""} ${i === curIdx ? "active" : ""}" data-album-dot="${i}" aria-label="${isLast ? "Postal final" : `Día ${i + 1}`}"></button>`;
+    }).join("");
+
+    showModal(`
+      <div class="album-modal-head">
+        <div>
+          <span class="badge ${isPreview ? "badge-frost" : "badge-gold"}">${isPreview ? "VISTA PREVIA · SIN SPOILERS" : "ÁLBUM CONMEMORATIVO · DICIEMBRE"}</span>
+          <h2 id="adv-modal-title" class="serif" style="font-size:1.42rem;margin:6px 0 2px;">Recuerdos del Mes</h2>
+        </div>
+        <span class="mono album-counter" id="album-counter">01 / ${totalSlides}</span>
+      </div>
+
+      <div class="album-autoplay-bar" id="album-autoplay-bar" aria-hidden="true"><span></span></div>
+      <div class="album-stage" id="album-stage">${renderSlideHtml(curIdx)}</div>
+
+      <div class="album-dots-strip" role="tablist" aria-label="Seleccionar día del álbum">${dotsHtml}</div>
+
+      <div class="album-controls-row">
+        <button type="button" class="btn btn-sm btn-ghost" id="album-prev-btn">Anterior</button>
+        <button type="button" class="btn btn-sm btn-gold" id="album-play-btn" aria-pressed="false">Pase automático</button>
+        <button type="button" class="btn btn-sm btn-primary" id="album-next-btn">Siguiente</button>
+      </div>
+    `, triggerEl);
+
+    const stageEl = document.getElementById("album-stage");
+    const counterEl = document.getElementById("album-counter");
+    const prevBtn = document.getElementById("album-prev-btn");
+    const nextBtn = document.getElementById("album-next-btn");
+    const playBtn = document.getElementById("album-play-btn");
+    const barEl = document.getElementById("album-autoplay-bar");
+
+    const stopAutoplay = () => {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+      if (playBtn && playBtn.isConnected) {
+        playBtn.textContent = "Pase automático";
+        playBtn.setAttribute("aria-pressed", "false");
+        playBtn.classList.remove("btn-crimson");
+        playBtn.classList.add("btn-gold");
+      }
+      if (barEl && barEl.isConnected) barEl.classList.remove("is-running");
+    };
+
+    const restartBarAnim = () => {
+      if (!barEl || !barEl.isConnected) return;
+      barEl.classList.remove("is-running");
+      void barEl.offsetWidth;
+      barEl.classList.add("is-running");
+    };
+
+    const updateAlbumView = (nextIdx, silent = false) => {
+      curIdx = Math.max(0, Math.min(totalSlides - 1, nextIdx));
+      if (!silent) window.AudioFX.click();
+      if (stageEl) {
+        stageEl.innerHTML = renderSlideHtml(curIdx);
+        stageEl.querySelectorAll("[data-album-jump-day]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = Number(btn.dataset.albumJumpDay || 1);
+            closeModal();
+            openAdventDay(target);
+          });
+        });
+        document.getElementById("album-open-gift-btn")?.addEventListener("click", (e) => {
+          stopAutoplay();
+          if (syncState.finalVerdictSolved) {
+            closeModal();
+            openAdventDay(24);
+          } else {
+            openSecretEnvelopePreviewModal(e.currentTarget);
+          }
+        });
+      }
+      if (counterEl) {
+        counterEl.textContent = `${String(curIdx + 1).padStart(2, "0")} / ${totalSlides}`;
+      }
+      if (prevBtn) prevBtn.disabled = curIdx <= 0;
+      if (nextBtn) nextBtn.disabled = curIdx >= totalSlides - 1;
+      document.querySelectorAll("[data-album-dot]").forEach((dot) => {
+        dot.classList.toggle("active", Number(dot.dataset.albumDot) === curIdx);
+      });
+      if (autoplayTimer) {
+        if (curIdx >= totalSlides - 1) stopAutoplay();
+        else restartBarAnim();
+      }
+    };
+
+    updateAlbumView(0, true);
+
+    prevBtn?.addEventListener("click", () => { stopAutoplay(); updateAlbumView(curIdx - 1); });
+    nextBtn?.addEventListener("click", () => { stopAutoplay(); updateAlbumView(curIdx + 1); });
+    playBtn?.addEventListener("click", () => {
+      if (autoplayTimer) {
+        stopAutoplay();
+        window.AudioFX.click();
+        return;
+      }
+      if (curIdx >= totalSlides - 1) updateAlbumView(0, true);
+      window.AudioFX.click();
+      playBtn.textContent = "Pausar pase";
+      playBtn.setAttribute("aria-pressed", "true");
+      playBtn.classList.remove("btn-gold");
+      playBtn.classList.add("btn-crimson");
+      restartBarAnim();
+      autoplayTimer = setInterval(() => {
+        if (!stageEl || !stageEl.isConnected) { stopAutoplay(); return; }
+        if (curIdx >= totalSlides - 1) { stopAutoplay(); return; }
+        updateAlbumView(curIdx + 1, false);
+      }, AUTOPLAY_MS);
+    });
+
+    document.querySelectorAll("[data-album-dot]").forEach((dot) => {
+      dot.addEventListener("click", () => {
+        stopAutoplay();
+        updateAlbumView(Number(dot.dataset.albumDot || 0));
+      });
+    });
+
+    let touchX0 = 0;
+    let touchY0 = 0;
+    stageEl?.addEventListener("touchstart", (e) => {
+      touchX0 = e.touches?.[0]?.clientX || 0;
+      touchY0 = e.touches?.[0]?.clientY || 0;
+    }, { passive: true });
+    stageEl?.addEventListener("touchend", (e) => {
+      const dx = (e.changedTouches?.[0]?.clientX || 0) - touchX0;
+      const dy = (e.changedTouches?.[0]?.clientY || 0) - touchY0;
+      if (Math.abs(dx) > 46 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        stopAutoplay();
+        if (dx < 0 && curIdx < totalSlides - 1) updateAlbumView(curIdx + 1);
+        else if (dx > 0 && curIdx > 0) updateAlbumView(curIdx - 1);
+      }
+    }, { passive: true });
+
+    const onKeyNav = (e) => {
+      if (e.key === "ArrowRight" && curIdx < totalSlides - 1) {
+        stopAutoplay();
+        updateAlbumView(curIdx + 1);
+      } else if (e.key === "ArrowLeft" && curIdx > 0) {
+        stopAutoplay();
+        updateAlbumView(curIdx - 1);
+      }
+    };
+    document.addEventListener("keydown", onKeyNav);
+    onModalCloseCleanup = () => {
+      stopAutoplay();
+      document.removeEventListener("keydown", onKeyNav);
+    };
   }
 
   function openImageLightbox(src, caption, triggerEl) {
@@ -3963,7 +4519,7 @@
     });
     document.getElementById("modal-pin-suspect-btn")?.addEventListener("click", (e) => {
       window.AudioFX.click();
-      const pinned = window.SyncEngine.togglePinnedClue(`suspect-${s.id}`);
+      const pinned = window.SyncEngine.togglePinnedClue(`suspect-${s.id}`, currentRole);
       const on = pinned.includes(`suspect-${s.id}`);
       e.currentTarget.setAttribute("aria-pressed", on ? "true" : "false");
       e.currentTarget.textContent = on ? "Fijada en Careo" : "Fijar en Careo";

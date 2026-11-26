@@ -66,8 +66,24 @@ window.SyncEngine = (() => {
       suspectNotes: {},    // { "s03": { miguel: { stance, note, at }, patri: { stance, note, at } } }
       hintsUnlocked: {},   // { "1": 0..3 }
       pinnedClues: [],     // ["day-1", "suspect-s03", ...]
+      lastActivity: {},    // { miguel: { kind, label, day, suspectId, at }, patri: { ... } }
       presence: {}
     };
+  }
+
+  function recordRoleActivity(role, kind, label, extra = {}) {
+    const rk = role || activeRole;
+    if (rk !== "miguel" && rk !== "patri") return null;
+    if (!state.lastActivity || typeof state.lastActivity !== "object") state.lastActivity = {};
+    const entry = {
+      kind: String(kind || "general"),
+      label: String(label || "").trim(),
+      day: extra.day ? Number(extra.day) : null,
+      suspectId: extra.suspectId ? String(extra.suspectId) : null,
+      at: Date.now()
+    };
+    state.lastActivity[rk] = entry;
+    return { rk, entry };
   }
 
   function healDualLockDays(out) {
@@ -106,6 +122,7 @@ window.SyncEngine = (() => {
     if (!out.discardedMap || typeof out.discardedMap !== "object" || Array.isArray(out.discardedMap)) out.discardedMap = {};
     if (!out.fieldDispatch || typeof out.fieldDispatch !== "object" || Array.isArray(out.fieldDispatch)) out.fieldDispatch = {};
     if (!out.suspectNotes || typeof out.suspectNotes !== "object" || Array.isArray(out.suspectNotes)) out.suspectNotes = {};
+    if (!out.lastActivity || typeof out.lastActivity !== "object" || Array.isArray(out.lastActivity)) out.lastActivity = {};
     if (typeof out.sharedNotes !== "string") out.sharedNotes = "";
 
     healDualLockDays(out);
@@ -205,6 +222,13 @@ window.SyncEngine = (() => {
         else if (le || re) outS[rk] = re || le;
       });
       if (Object.keys(outS).length) merged.suspectNotes[sid] = outS;
+    });
+
+    ["miguel", "patri"].forEach((rk) => {
+      const la = l.lastActivity?.[rk];
+      const ra = r.lastActivity?.[rk];
+      if (la && ra) merged.lastActivity[rk] = Number(la.at || 0) > Number(ra.at || 0) ? la : ra;
+      else if (la || ra) merged.lastActivity[rk] = ra || la;
     });
 
     const lNotesAt = Number(l.notesMeta?.updatedAt || 0);
@@ -326,6 +350,9 @@ window.SyncEngine = (() => {
     if (Array.isArray(merged.pinnedClues) && merged.pinnedClues.length) {
       patch.pinnedClues = merged.pinnedClues;
     }
+    ["miguel", "patri"].forEach((rk) => {
+      if (merged.lastActivity?.[rk]) patch[`lastActivity/${rk}`] = merged.lastActivity[rk];
+    });
     return patch;
   }
 
@@ -476,6 +503,14 @@ window.SyncEngine = (() => {
       }
     }
 
+    const numStr = String(dayNum).padStart(2, "0");
+    const act = recordRoleActivity(
+      role,
+      "day",
+      state.days[key].solved ? `Completó el Día ${numStr}` : `Validó su parte del Día ${numStr}`,
+      { day: dayNum }
+    );
+
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
@@ -501,8 +536,15 @@ window.SyncEngine = (() => {
           }
           if (committed && snap) {
             const val = snap.val();
-            if (val && val.solved && val.discardId) {
-              roomRef.child(`discardedMap/${val.discardId}`).set(true)
+            const postPatch = {};
+            if (val && val.solved && val.discardId) postPatch[`discardedMap/${val.discardId}`] = true;
+            if (act) {
+              postPatch[`lastActivity/${act.rk}`] = Object.assign({}, act.entry, {
+                label: val && val.solved ? `Completó el Día ${numStr}` : `Validó su parte del Día ${numStr}`
+              });
+            }
+            if (Object.keys(postPatch).length > 0) {
+              roomRef.update(postPatch)
                 .then(() => clearWriteOk(seq))
                 .catch(handleWriteError);
             } else {
@@ -514,17 +556,19 @@ window.SyncEngine = (() => {
         const patch = {};
         patch[`days/${key}`] = state.days[key];
         if (decoded.discardId) patch[`discardedMap/${decoded.discardId}`] = true;
+        if (act) patch[`lastActivity/${act.rk}`] = act.entry;
         roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
       }
     }
     notify();
   }
 
-  function unlockHint(dayNum) {
+  function unlockHint(dayNum, byRole) {
     const key = String(dayNum);
     const cur = Number(state.hintsUnlocked[key]) || 0;
     if (cur >= 3) return;
     state.hintsUnlocked[key] = cur + 1;
+    const act = recordRoleActivity(byRole || activeRole, "day", `Consultó pista ${cur + 1} en el Día ${String(dayNum).padStart(2, "0")}`, { day: dayNum });
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
@@ -534,23 +578,33 @@ window.SyncEngine = (() => {
         return Math.min(3, (Number(remoteCur) || 0) + 1);
       }, (err) => {
         if (err) handleWriteError(err);
-        else clearWriteOk(seq);
+        else if (act) {
+          roomRef.child(`lastActivity/${act.rk}`).set(act.entry)
+            .then(() => clearWriteOk(seq))
+            .catch(handleWriteError);
+        } else {
+          clearWriteOk(seq);
+        }
       });
     }
     notify();
   }
 
   function saveNotes(text, byRole) {
+    const rk = byRole || activeRole || "";
     state.sharedNotes = text;
-    state.notesMeta = { updatedBy: byRole || activeRole || "", updatedAt: Date.now() };
+    state.notesMeta = { updatedBy: rk, updatedAt: Date.now() };
+    const act = recordRoleActivity(rk, "notes", "Actualizó la Libreta Compartida");
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
-      roomRef.update({
+      const patch = {
         sharedNotes: text,
         notesMeta: state.notesMeta
-      }).then(() => clearWriteOk(seq)).catch(handleWriteError);
+      };
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
   }
 
@@ -559,12 +613,14 @@ window.SyncEngine = (() => {
     if (!state.fieldDispatch[key]) state.fieldDispatch[key] = {};
     const entry = { text: String(text || "").trim(), at: Date.now() };
     state.fieldDispatch[key][role] = entry;
+    const act = recordRoleActivity(role, "day", `Envió un dato en el Día ${String(dayNum).padStart(2, "0")}`, { day: dayNum });
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
       const patch = {};
       patch[`fieldDispatch/${key}/${role}`] = entry;
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
       roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
@@ -572,14 +628,22 @@ window.SyncEngine = (() => {
 
   function saveSuspectNote(suspectId, role, stance, note) {
     if (!state.suspectNotes[suspectId]) state.suspectNotes[suspectId] = {};
-    const entry = { stance: stance || "duda", note: String(note || "").trim(), at: Date.now() };
+    const cleanNote = String(note || "").trim();
+    const cleanStance = stance || "duda";
+    const entry = { stance: cleanStance, note: cleanNote, at: Date.now() };
     state.suspectNotes[suspectId][role] = entry;
+    const sp = Array.isArray(window.SUSPECTS_DATA) ? window.SUSPECTS_DATA.find((x) => x.id === suspectId) : null;
+    const spTag = sp ? `Ficha #${sp.num}` : "una ficha";
+    const stanceTxt = cleanStance === "sospecha" ? "Sospecha" : cleanStance === "inocente" ? "Inocente" : "Duda";
+    const actLabel = cleanNote ? `Anotó en ${spTag}` : `Valoró ${spTag} (${stanceTxt})`;
+    const act = recordRoleActivity(role, "suspect", actLabel, { suspectId });
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
       const patch = {};
       patch[`suspectNotes/${suspectId}/${role}`] = entry;
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
       roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
@@ -587,16 +651,19 @@ window.SyncEngine = (() => {
 
   function setFinalProposal(proposal) {
     state.finalProposal = proposal;
+    const act = recordRoleActivity(proposal?.byRole || activeRole, "day", "Envió propuesta de acusación del Careo", { day: 24 });
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
-      roomRef.update({ finalProposal: proposal }).then(() => clearWriteOk(seq)).catch(handleWriteError);
+      const patch = { finalProposal: proposal };
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
   }
 
-  function solveFinalVerdict(epilogue, innocentIdsToDiscard = []) {
+  function solveFinalVerdict(epilogue, innocentIdsToDiscard = [], byRole) {
     state.finalVerdictSolved = true;
     state.finalEpilogue = epilogue || null;
     state.finalProposal = null;
@@ -604,6 +671,7 @@ window.SyncEngine = (() => {
       if (id && !state.discardedIds.includes(id)) state.discardedIds.push(id);
       if (id) state.discardedMap[id] = true;
     });
+    const act = recordRoleActivity(byRole || activeRole, "day", "Cerró el Careo Final de Nochebuena", { day: 24 });
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
@@ -617,6 +685,7 @@ window.SyncEngine = (() => {
       (innocentIdsToDiscard || []).forEach((id) => {
         if (id) patch[`discardedMap/${id}`] = true;
       });
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
       roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
@@ -660,19 +729,33 @@ window.SyncEngine = (() => {
     return Object.keys(p.connections).length > 0;
   }
 
-  function togglePinnedClue(clueId) {
+  function togglePinnedClue(clueId, byRole) {
     const clean = String(clueId || "").trim();
     if (!clean) return [];
     const cur = Array.isArray(state.pinnedClues) ? state.pinnedClues.slice() : [];
     const idx = cur.indexOf(clean);
+    const added = idx < 0;
     if (idx >= 0) cur.splice(idx, 1);
     else cur.push(clean);
     state.pinnedClues = cur;
+    let act = null;
+    if (added) {
+      if (clean.startsWith("day-")) {
+        const dNum = Number(clean.replace("day-", ""));
+        act = recordRoleActivity(byRole || activeRole, "day", `Fijó la conclusión del Día ${String(dNum).padStart(2, "0")}`, { day: dNum });
+      } else if (clean.startsWith("suspect-")) {
+        const sid = clean.replace("suspect-", "");
+        const sp = Array.isArray(window.SUSPECTS_DATA) ? window.SUSPECTS_DATA.find((x) => x.id === sid) : null;
+        act = recordRoleActivity(byRole || activeRole, "suspect", `Fijó ${sp ? `Ficha #${sp.num}` : "una ficha"} en el Careo`, { suspectId: sid });
+      }
+    }
     saveLocal();
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
-      roomRef.update({ pinnedClues: cur }).then(() => clearWriteOk(seq)).catch(handleWriteError);
+      const patch = { pinnedClues: cur };
+      if (act) patch[`lastActivity/${act.rk}`] = act.entry;
+      roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
     notify();
     return cur;

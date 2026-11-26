@@ -634,3 +634,194 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Barra de hitos de la investigación en portada de Calendario */
+.cal-milestones-wrap {
+  margin-top: 12px;
+  padding: 10px 12px 9px;
+  border-radius: var(--vg-radius-md);
+  background: rgba(2, 10, 14, 0.42);
+  border: 1px solid rgba(251, 191, 36, 0.22);
+}
+
+.cal-milestones-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.cal-milestones-title {
+  font-family: var(--vg-font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: var(--vg-text-muted);
+  font-weight: 700;
+}
+
+.cal-milestones-next {
+  font-family: var(--vg-font-mono);
+  font-size: 0.66rem;
+  color: var(--adv-gold-soft);
+  font-weight: 700;
+}
+
+.cal-milestones-track {
+  position: relative;
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 6px 8px;
+}
+
+.cal-milestones-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #10B981, #F59E0B 68%, #FDE68A);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+  transition: width 360ms var(--vg-spring);
+}
+
+.cal-milestone-dot {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: #0F172A;
+  border: 1.5px solid rgba(148, 163, 184, 0.55);
+  transition: transform 200ms ease, background 200ms ease, border-color 200ms ease;
+}
+
+.cal-milestone-dot.is-reached {
+  background: #FDE68A;
+  border-color: #FFFBEB;
+  box-shadow: 0 0 9px rgba(251, 191, 36, 0.78);
+}
+
+.cal-milestone-dot.is-ready {
+  background: #EF4444;
+  border-color: #FEF08A;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.85);
+}
+
+.cal-milestones-labels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  text-align: center;
+}
+
+.cal-milestone-lbl {
+  font-family: var(--vg-font-mono);
+  font-size: 0.56rem;
+  color: var(--vg-text-muted);
+  line-height: 1.25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.cal-milestone-lbl strong {
+  color: #CBD5E1;
+  font-size: 0.6rem;
+}
+
+.cal-milestone-lbl.is-reached,
+.cal-milestone-lbl.is-reached strong {
+  color: #FDE68A;
+}
+
+.cal-milestone-lbl.is-ready,
+.cal-milestone-lbl.is-ready strong {
+  color: #FCA5A5;
+}
+
+/* Resumen interactivo de última actividad de tu pareja en portada */
+.partner-activity-bar {
+  margin-top: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--vg-radius-md);
+  border: 1px solid rgba(120, 215, 242, 0.28);
+  background: rgba(8, 28, 36, 0.58);
+  color: #E2E8F0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color 180ms ease, background 180ms ease, transform 150ms ease;
+}
+
+.partner-activity-bar:disabled {
+  cursor: default;
+  opacity: 0.92;
+}
+
+.partner-activity-bar:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+.partner-activity-bar.is-online {
+  border-color: rgba(52, 211, 153, 0.44);
+  background: rgba(6, 52, 42, 0.52);
+}
+
+.partner-act-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--adv-gold);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.55);
+}
+
+.partner-activity-bar.is-online .partner-act-dot {
+  background: #34D399;
+  box-shadow: 0 0 9px rgba(52, 211, 153, 0.8);
+}
+
+.partner-act-body {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: #E2E8F0;
+}
+
+.partner-act-body strong {
+  color: #FFFBEB;
+}
+
+.partner-act-time {
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  color: var(--adv-gold-soft);
+}
+
+.partner-act-go {
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--vg-radius-pill);
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  color: #FDE68A;
+  flex-shrink: 0;
+}
+
+.cal-empty-filter {
+  padding: 20px 16px;
+  text-align: center;
+  margin-top: 4px;
+}
