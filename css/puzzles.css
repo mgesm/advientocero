@@ -836,6 +836,14 @@ body.briefing-fs-active #admin-bar {
   margin-top: 8px;
 }
 
+.adv-range-wrap .btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  flex-shrink: 0;
+  font-size: 1.05rem;
+}
+
 .adv-range {
   -webkit-appearance: none;
   appearance: none;
@@ -934,7 +942,7 @@ body.briefing-fs-active #admin-bar {
 }
 
 /* =====================================================================
-   SOBRE SECRETO 3D DE NOCHEBUENA (DÍA 24) · PAPELERÍA, CINTA Y TEATRO 5 ACTOS
+   SOBRE SECRETO 3D DE NOCHEBUENA (DÍA 24) · PARALLAX 3D, SEDA Y TEATRO 5 ACTOS
    ===================================================================== */
 .secret-envelope-sealed {
   position: relative;
@@ -952,6 +960,7 @@ body.briefing-fs-active #admin-bar {
   width: min(312px, 100%);
   margin: 18px auto 16px;
   padding-bottom: 4px;
+  perspective: 1100px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -972,10 +981,12 @@ body.briefing-fs-active #admin-bar {
   aspect-ratio: 320 / 206;
   border-radius: 11px;
   transform-style: flat;
-  transition: transform 280ms var(--vg-spring);
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
-.env24-stage.is-idle .env24-envelope {
+.env24-stage.is-idle:not(.is-tilting) .env24-envelope {
   animation: env24FloatIdle 4.6s ease-in-out infinite;
 }
 
@@ -983,7 +994,7 @@ body.briefing-fs-active #admin-bar {
   transform: scale(0.975);
 }
 
-/* Destello diagonal de lámina dorada en reposo */
+/* Destello especular interactivo al mover dedo/ratón + barrido dorado periódico */
 .env24-idle-sheen {
   position: absolute;
   inset: 0;
@@ -991,13 +1002,16 @@ body.briefing-fs-active #admin-bar {
   border-radius: 11px;
   overflow: hidden;
   pointer-events: none;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 42%), rgba(254, 243, 199, 0.18), transparent 46%);
+  opacity: var(--go, 0.35);
+  transition: opacity 220ms ease;
 }
 
 .env24-idle-sheen::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(112deg, transparent 30%, rgba(254, 243, 199, 0.16) 49%, rgba(251, 191, 36, 0.08) 56%, transparent 72%);
+  background: linear-gradient(112deg, transparent 30%, rgba(254, 243, 199, 0.18) 49%, rgba(251, 191, 36, 0.08) 56%, transparent 72%);
   transform: translateX(-130%);
   animation: env24IdleSheen 5.8s ease-in-out infinite;
 }
@@ -1021,25 +1035,25 @@ body.briefing-fs-active #admin-bar {
   overflow: hidden;
 }
 
-/* 2) Carta de pergamino dorado alojada dentro del bolsillo */
+/* 2) Carta de pergamino marfil y oro con filigranas de esquina */
 .env24-letter-slip {
   position: absolute;
-  left: 6.5%;
-  right: 6.5%;
-  top: 8%;
-  bottom: 8%;
+  left: 6%;
+  right: 6%;
+  top: 7%;
+  bottom: 7%;
   z-index: 3;
-  border-radius: 9px;
-  padding: 13px 16px;
+  border-radius: 10px;
+  padding: 15px 16px 14px;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.92), transparent 58%),
-    linear-gradient(165deg, #FFFDF7 0%, #FEF3C7 54%, #FDE68A 100%);
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.96), transparent 62%),
+    linear-gradient(165deg, #FFFDF8 0%, #FEF3C7 52%, #FDE68A 100%);
   border: 1.5px solid #B45309;
   box-shadow:
-    0 14px 34px rgba(0, 0, 0, 0.62),
-    0 0 26px rgba(251, 191, 36, 0.28),
-    inset 0 0 0 3.5px rgba(180, 83, 9, 0.16),
-    inset 0 0 0 5px rgba(255, 255, 255, 0.55);
+    0 18px 40px rgba(0, 0, 0, 0.66),
+    0 0 32px rgba(251, 191, 36, 0.34),
+    inset 0 0 0 4px rgba(180, 83, 9, 0.16),
+    inset 0 0 0 6px rgba(255, 255, 255, 0.62);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1055,10 +1069,25 @@ body.briefing-fs-active #admin-bar {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(112deg, transparent 18%, rgba(255, 255, 255, 0.88) 48%, rgba(254, 240, 138, 0.4) 55%, transparent 76%);
+  background: linear-gradient(112deg, transparent 18%, rgba(255, 255, 255, 0.92) 48%, rgba(254, 240, 138, 0.44) 55%, transparent 76%);
   transform: translateX(-140%);
   pointer-events: none;
 }
+
+.env24-slip-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: rgba(146, 64, 14, 0.48);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+
+.env24-slip-corner.tl { top: 8px; left: 8px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.env24-slip-corner.tr { top: 8px; right: 8px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.env24-slip-corner.bl { bottom: 8px; left: 8px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.env24-slip-corner.br { bottom: 8px; right: 8px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
 
 .env24-slip-kicker {
   font-family: var(--vg-font-mono);
@@ -1072,10 +1101,10 @@ body.briefing-fs-active #admin-bar {
 
 .env24-slip-title {
   font-family: var(--vg-font-serif);
-  font-size: 1.14rem;
+  font-size: 1.16rem;
   font-weight: 700;
   color: #450A0A;
-  margin: 5px 0 7px;
+  margin: 5px 0 8px;
   line-height: 1.14;
 }
 
@@ -1094,7 +1123,7 @@ body.briefing-fs-active #admin-bar {
   background: linear-gradient(90deg, transparent, rgba(146, 64, 14, 0.42), transparent);
 }
 
-/* 3) Bolsillo frontal SVG (papel algodón carmesí + costuras doradas + sello postal) */
+/* 3) Bolsillo frontal SVG (papel algodón carmesí + costuras doradas) */
 .env24-pocket {
   position: absolute;
   inset: 0;
@@ -1102,6 +1131,7 @@ body.briefing-fs-active #admin-bar {
   border-radius: 11px;
   overflow: hidden;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .env24-pocket svg {
@@ -1110,33 +1140,54 @@ body.briefing-fs-active #admin-bar {
   display: block;
 }
 
-/* 4) Resplandor dorado interior + rayo anamórfico al abrir */
-.env24-inner-glow {
+/* 4) Haz volumétrico de luz dorada en abanico + rayo anamórfico al abrir */
+.env24-light-fan {
   position: absolute;
-  left: 6%;
-  right: 6%;
-  top: -22%;
-  height: 70%;
-  z-index: 5;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 82%, rgba(255, 251, 235, 0.96), rgba(251, 191, 36, 0.52) 42%, transparent 74%);
+  left: -26%;
+  right: -26%;
+  top: -88%;
+  height: 148%;
+  z-index: 2;
+  background:
+    conic-gradient(from 164deg at 50% 66%, transparent 0deg, rgba(254, 243, 199, 0.26) 12deg, transparent 22deg, rgba(251, 191, 36, 0.2) 32deg, transparent 42deg, rgba(254, 243, 199, 0.26) 54deg, transparent 66deg),
+    radial-gradient(ellipse 46% 42% at 50% 62%, rgba(255, 251, 235, 0.68) 0%, rgba(251, 191, 36, 0.28) 42%, transparent 74%);
+  mask-image: radial-gradient(ellipse 48% 46% at 50% 56%, #000 0%, rgba(0, 0, 0, 0.58) 50%, transparent 86%);
+  -webkit-mask-image: radial-gradient(ellipse 48% 46% at 50% 56%, #000 0%, rgba(0, 0, 0, 0.58) 50%, transparent 86%);
   opacity: 0;
-  transform: scale(0.28);
+  transform: scale(0.45);
+  transform-origin: 50% 68%;
   pointer-events: none;
 }
 
 .env24-anamorphic-beam {
   position: absolute;
-  left: -18%;
-  right: -18%;
+  left: -10%;
+  right: -10%;
   top: 2%;
-  height: 3px;
+  height: 2px;
   z-index: 8;
   border-radius: 99px;
-  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.65) 26%, #FFFBEB 50%, rgba(251, 191, 36, 0.65) 74%, transparent);
-  box-shadow: 0 0 18px 4px rgba(251, 191, 36, 0.55);
+  background: linear-gradient(90deg, transparent 4%, rgba(251, 191, 36, 0.62) 28%, #FFFBEB 50%, rgba(251, 191, 36, 0.62) 72%, transparent 96%);
+  box-shadow: 0 0 12px 2px rgba(251, 191, 36, 0.36);
   opacity: 0;
   transform: scaleX(0.08);
+  pointer-events: none;
+}
+
+.env24-shockring {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 88px;
+  height: 88px;
+  margin-left: -44px;
+  margin-top: -44px;
+  z-index: 10;
+  border-radius: 50%;
+  border: 2px solid rgba(254, 240, 138, 0.92);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.75);
+  opacity: 0;
+  transform: scale(0.5);
   pointer-events: none;
 }
 
@@ -1181,7 +1232,7 @@ body.briefing-fs-active #admin-bar {
   transform: rotateX(180deg);
 }
 
-/* 6) Cinta satinada dorada horizontal (sin tapar la caligrafía) + colas de seda bajo el lacre */
+/* 6) Cinta satinada dorada horizontal + colas de seda en golondrina bajo el lacre */
 .env24-ribbon-layer {
   position: absolute;
   inset: 0;
@@ -1196,9 +1247,9 @@ body.briefing-fs-active #admin-bar {
   top: 56%;
   height: 16px;
   margin-top: -8px;
-  background: linear-gradient(180deg, #92400E 0%, #FDE68A 22%, #F59E0B 52%, #FFFBEB 70%, #B45309 88%, #78350F 100%);
-  border-top: 0.8px solid rgba(255, 251, 235, 0.72);
-  border-bottom: 0.8px solid rgba(120, 53, 15, 0.8);
+  background: linear-gradient(180deg, #854D0E 0%, #FEF08A 22%, #F59E0B 50%, #FFFBEB 70%, #B45309 88%, #78350F 100%);
+  border-top: 0.8px solid rgba(255, 251, 235, 0.75);
+  border-bottom: 0.8px solid rgba(120, 53, 15, 0.82);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.58), 0 -1px 4px rgba(0, 0, 0, 0.28);
   will-change: transform, opacity;
 }
@@ -1206,11 +1257,35 @@ body.briefing-fs-active #admin-bar {
 .env24-ribbon-l {
   left: 0;
   width: 50.5%;
+  transform-origin: left center;
 }
 
 .env24-ribbon-r {
   right: 0;
   width: 50.5%;
+  transform-origin: right center;
+}
+
+.env24-ribbon-tail {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  width: 13px;
+  height: 33px;
+  margin-left: -6.5px;
+  background: linear-gradient(90deg, #92400E 0%, #FDE68A 30%, #F59E0B 62%, #78350F 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.52));
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+.env24-tail-l {
+  transform: translateX(-22px) rotate(36deg);
+}
+
+.env24-tail-r {
+  transform: translateX(22px) rotate(-36deg);
 }
 
 /* 7) Sello de lacre rojo 24 esculpido en relieve + grieta dorada */
@@ -1346,9 +1421,29 @@ body.briefing-fs-active #admin-bar {
   background:
     radial-gradient(circle at 18% 22%, rgba(251, 191, 36, 0.18), transparent 28%),
     radial-gradient(circle at 82% 28%, rgba(220, 38, 38, 0.16), transparent 32%),
-    radial-gradient(circle at 50% 54%, rgba(245, 158, 11, 0.14), transparent 46%),
+    radial-gradient(circle at 50% 54%, rgba(245, 158, 11, 0.15), transparent 46%),
     radial-gradient(circle at 26% 78%, rgba(16, 185, 129, 0.12), transparent 30%);
-  animation: env24BokehPulse 2.9s ease-in-out forwards;
+  animation: env24BokehPulse 3.4s ease-in-out forwards;
+}
+
+.env24-embers-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.env24-ember {
+  position: absolute;
+  left: var(--ex, 50%);
+  bottom: -12px;
+  width: var(--esz, 4px);
+  height: var(--esz, 4px);
+  border-radius: 50%;
+  background: #FEF08A;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.85);
+  opacity: 0;
+  animation: env24EmberDrift var(--edur, 2.8s) var(--edl, 0ms) ease-out forwards;
 }
 
 .env24-theater-kicker {
@@ -1368,7 +1463,7 @@ body.briefing-fs-active #admin-bar {
   font-weight: 700;
   color: #FFFBEB;
   text-shadow: 0 4px 18px rgba(0, 0, 0, 0.9);
-  margin-bottom: 132px;
+  margin-bottom: 136px;
   animation: cinemaFadeUp 460ms 60ms var(--vg-spring) both;
 }
 
@@ -1389,7 +1484,7 @@ body.briefing-fs-active #admin-bar {
 
 /* Coreografía 5 Actos dentro de .env24-theater .env24-stage.is-opening */
 .env24-stage.is-opening .env24-ambient-aura {
-  animation: env24AuraSwell 3.0s ease-out forwards;
+  animation: env24AuraSwell 3.2s ease-out forwards;
 }
 
 .env24-stage.is-opening .env24-idle-sheen {
@@ -1397,10 +1492,10 @@ body.briefing-fs-active #admin-bar {
 }
 
 .env24-stage.is-opening .env24-envelope {
-  animation: env24TheaterEntry 400ms cubic-bezier(0.16, 1, 0.3, 1) both, env24TheaterDrift 900ms 1540ms ease-in-out forwards;
+  animation: env24TheaterEntry 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Acto 2a (360-600ms): Tensión y grieta dorada */
+/* Acto 2a (360-600ms): Tensión, grieta dorada y onda de choque */
 .env24-stage.is-opening .env24-seal-halo {
   animation: env24SealFlash 560ms 300ms ease-out forwards;
 }
@@ -1409,7 +1504,11 @@ body.briefing-fs-active #admin-bar {
   animation: env24CrackZip 220ms 360ms cubic-bezier(0.14, 0.85, 0.25, 1) forwards, waxCrackFade 150ms 610ms ease-out forwards;
 }
 
-/* Acto 2b (600-960ms): Lacre partido rápido + cinta dorada deslizándose fuera ANTES de la solapa */
+.env24-stage.is-opening .env24-shockring {
+  animation: env24Shockwave 620ms 590ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Acto 2b (600-960ms): Lacre partido + cinta y colas de seda deslizándose ANTES de la solapa */
 .env24-stage.is-opening .env24-seal-tl {
   animation: env24SealStress 240ms 330ms ease-in-out, env24SealSplitTL 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -1419,18 +1518,26 @@ body.briefing-fs-active #admin-bar {
 }
 
 .env24-stage.is-opening .env24-ribbon-l {
-  animation: env24RibbonSlideL 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: env24RibbonSlideL 380ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-ribbon-r {
-  animation: env24RibbonSlideR 360ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: env24RibbonSlideR 380ms 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.env24-stage.is-opening .env24-tail-l {
+  animation: env24TailDropL 380ms 600ms ease-in forwards;
+}
+
+.env24-stage.is-opening .env24-tail-r {
+  animation: env24TailDropR 380ms 600ms ease-in forwards;
 }
 
 .env24-stage.is-opening .env24-shard {
   animation: env24ShardFly 720ms var(--dl, 600ms) cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Acto 3 (990-1690ms): Apertura 3D limpia de la solapa + resplandor interior + rayo */
+/* Acto 3 (990-1690ms): Apertura 3D limpia de la solapa + abanico de luz + rayo */
 .env24-stage.is-opening .env24-flap-3d {
   animation: env24FlapSwing 700ms 990ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -1439,8 +1546,8 @@ body.briefing-fs-active #admin-bar {
   animation: env24FlapDepthSwap 1ms 1330ms forwards;
 }
 
-.env24-stage.is-opening .env24-inner-glow {
-  animation: env24InnerGlowBloom 1250ms 1160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.env24-stage.is-opening .env24-light-fan {
+  animation: env24LightFanBloom 1450ms 1160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .env24-stage.is-opening .env24-anamorphic-beam {
@@ -1448,28 +1555,42 @@ body.briefing-fs-active #admin-bar {
 }
 
 .env24-stage.is-opening .env24-spark {
-  animation: env24SparkRise 1350ms var(--dl, 1200ms) ease-out forwards;
+  animation: env24SparkRise 1450ms var(--dl, 1200ms) ease-out forwards;
 }
 
-/* Acto 4 (1460-2420ms): Carta de pergamino deslizándose fuera y reposando luminosa */
+/* Acto 4 (1460-2960ms): Carta sale completa y avanza mientras el sobre retrocede suavemente */
 .env24-stage.is-opening .env24-letter-slip {
-  animation: env24LetterRise 960ms 1460ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: env24LetterRise 1100ms 1460ms cubic-bezier(0.16, 1, 0.3, 1) forwards, env24LetterFocus 650ms 2300ms ease-out forwards;
 }
 
 .env24-stage.is-opening .env24-letter-slip::after {
-  animation: env24FoilSweep 820ms 1920ms ease-out forwards;
+  animation: env24FoilSweep 860ms 1960ms ease-out forwards;
 }
 
-/* Tarjeta final revelada de lujo con filigranas, polvo dorado y vale tipo pergamino oscuro */
+.env24-stage.is-opening .env24-pocket,
+.env24-stage.is-opening .env24-back,
+.env24-stage.is-opening .env24-flap-stage {
+  animation-composition: add;
+}
+
+.env24-stage.is-opening .env24-pocket {
+  animation: env24PocketRecede 780ms 2120ms ease-in-out forwards;
+}
+
+.env24-stage.is-opening .env24-back {
+  animation: env24PocketRecede 780ms 2120ms ease-in-out forwards;
+}
+
+/* Tarjeta final revelada de lujo con filigranas, divisor estrella polar y vale iluminado */
 .gift-reveal-card {
   position: relative;
   padding: 24px 20px 22px;
-  border: 1.5px solid rgba(251, 191, 36, 0.72);
+  border: 1.5px solid rgba(251, 191, 36, 0.74);
   background:
-    radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.24), transparent 48%),
+    radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.26), transparent 48%),
     radial-gradient(circle at 86% 92%, rgba(185, 28, 28, 0.24), transparent 42%),
-    linear-gradient(155deg, rgba(127, 29, 29, 0.32), rgba(6, 22, 20, 0.97) 52%, rgba(146, 64, 14, 0.22));
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.72), 0 0 34px rgba(245, 158, 11, 0.24), inset 0 1px 0 rgba(254, 243, 199, 0.28);
+    linear-gradient(155deg, rgba(127, 29, 29, 0.34), rgba(6, 22, 20, 0.97) 52%, rgba(146, 64, 14, 0.22));
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.72), 0 0 36px rgba(245, 158, 11, 0.26), inset 0 1px 0 rgba(254, 243, 199, 0.32);
   overflow: hidden;
   animation: env24CardUnveil 620ms var(--vg-spring) both;
 }
@@ -1519,16 +1640,32 @@ body.briefing-fs-active #admin-bar {
   flex-shrink: 0;
 }
 
+.gift-star-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 4px;
+  color: rgba(253, 230, 138, 0.72);
+}
+
+.gift-star-divider::before,
+.gift-star-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(253, 230, 138, 0.45), transparent);
+}
+
 .gift-voucher {
   position: relative;
-  margin-top: 14px;
+  margin-top: 10px;
   padding: 18px 16px;
   border-radius: var(--vg-radius-md);
   border: 1.5px dashed rgba(252, 211, 77, 0.78);
   background:
-    radial-gradient(circle at 50% 0%, rgba(254, 243, 199, 0.12), transparent 56%),
+    radial-gradient(circle at 50% 0%, rgba(254, 243, 199, 0.14), transparent 56%),
     linear-gradient(160deg, rgba(20, 28, 36, 0.88), rgba(7, 14, 20, 0.95) 60%, rgba(120, 53, 15, 0.18));
-  box-shadow: inset 0 0 26px rgba(251, 191, 36, 0.11), 0 8px 20px rgba(0, 0, 0, 0.42);
+  box-shadow: inset 0 0 26px rgba(251, 191, 36, 0.12), 0 8px 20px rgba(0, 0, 0, 0.42);
   overflow: hidden;
 }
 
@@ -1554,25 +1691,27 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24BokehPulse {
   0% { opacity: 0; }
-  20% { opacity: 1; }
+  18% { opacity: 1; }
   88% { opacity: 1; }
   100% { opacity: 0.4; }
 }
 
+@keyframes env24EmberDrift {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  20% { opacity: 0.85; }
+  85% { opacity: 0.45; }
+  100% { opacity: 0; transform: translate(var(--edx, 18px), -82vh) scale(0.25); }
+}
+
 @keyframes env24AuraSwell {
   0% { opacity: 0.65; transform: scale(0.95); }
-  55% { opacity: 1; transform: scale(1.36); }
-  100% { opacity: 0.92; transform: scale(1.24); }
+  55% { opacity: 1; transform: scale(1.42); }
+  100% { opacity: 0.94; transform: scale(1.26); }
 }
 
 @keyframes env24TheaterEntry {
   from { opacity: 0; transform: scale(0.88) translateY(18px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-@keyframes env24TheaterDrift {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(26px); }
 }
 
 @keyframes env24SealBreath {
@@ -1582,8 +1721,13 @@ body.briefing-fs-active #admin-bar {
 
 @keyframes env24SealFlash {
   0% { opacity: 0.7; transform: scale(1); }
-  55% { opacity: 1; transform: scale(1.5); }
-  100% { opacity: 0; transform: scale(1.85); }
+  55% { opacity: 1; transform: scale(1.55); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+
+@keyframes env24Shockwave {
+  0% { opacity: 0.95; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(3.1); }
 }
 
 @keyframes env24SealStress {
@@ -1610,23 +1754,23 @@ body.briefing-fs-active #admin-bar {
 }
 
 @keyframes env24RibbonSlideL {
-  0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(-110%); opacity: 0; }
+  0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(-115%) rotate(-4deg); opacity: 0; }
 }
 
 @keyframes env24RibbonSlideR {
-  0% { transform: translateX(0); opacity: 1; }
-  100% { transform: translateX(110%); opacity: 0; }
+  0% { transform: translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateX(115%) rotate(4deg); opacity: 0; }
 }
 
-@keyframes env24RibbonSlideT {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-115%); opacity: 0; }
+@keyframes env24TailDropL {
+  0% { transform: translateX(-22px) rotate(36deg); opacity: 1; }
+  100% { transform: translate(-62px, 32px) rotate(54deg); opacity: 0; }
 }
 
-@keyframes env24RibbonSlideB {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(115%); opacity: 0; }
+@keyframes env24TailDropR {
+  0% { transform: translateX(22px) rotate(-36deg); opacity: 1; }
+  100% { transform: translate(62px, 32px) rotate(-54deg); opacity: 0; }
 }
 
 @keyframes env24FlapSwing {
@@ -1639,10 +1783,10 @@ body.briefing-fs-active #admin-bar {
   to { z-index: 2; }
 }
 
-@keyframes env24InnerGlowBloom {
-  0% { opacity: 0; transform: scale(0.28); }
-  42% { opacity: 1; transform: scale(1.12); }
-  100% { opacity: 0.78; transform: scale(1.28); }
+@keyframes env24LightFanBloom {
+  0% { opacity: 0; transform: scale(0.42); }
+  40% { opacity: 0.96; transform: scale(1.04); }
+  100% { opacity: 0.72; transform: scale(1.16); }
 }
 
 @keyframes env24BeamFlash {
@@ -1652,9 +1796,19 @@ body.briefing-fs-active #admin-bar {
 }
 
 @keyframes env24LetterRise {
-  0% { opacity: 0.92; transform: translateY(12px) scale(0.94); }
-  36% { opacity: 1; transform: translateY(-34%) scale(1.01); }
-  100% { opacity: 1; transform: translateY(-64%) scale(1.08); }
+  0% { opacity: 0.92; transform: translateY(12px) scale(0.94); z-index: 3; }
+  42% { opacity: 1; transform: translateY(-38%) scale(1.02); z-index: 3; }
+  100% { opacity: 1; transform: translateY(-68%) scale(1.08); z-index: 12; }
+}
+
+@keyframes env24LetterFocus {
+  0% { transform: translateY(-68%) scale(1.08); }
+  100% { transform: translateY(-48%) scale(1.14); }
+}
+
+@keyframes env24PocketRecede {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0.42; transform: translateY(28px) scale(0.95); }
 }
 
 @keyframes env24FoilSweep {
@@ -1671,7 +1825,7 @@ body.briefing-fs-active #admin-bar {
 @keyframes env24SparkRise {
   0% { opacity: 0; transform: translateY(0) scale(0.4); }
   24% { opacity: 1; transform: translateY(-28px) scale(1.08); }
-  100% { opacity: 0; transform: translateY(-124px) scale(0.28); }
+  100% { opacity: 0; transform: translateY(-128px) scale(0.28); }
 }
 
 @keyframes env24CardUnveil {

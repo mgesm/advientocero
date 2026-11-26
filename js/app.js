@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.19.0";
-  const CACHE_TAG = "adviento-cero-v2.19.0";
+  const APP_VERSION = "v2.20.0";
+  const CACHE_TAG = "adviento-cero-v2.20.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -12,6 +12,10 @@
   const UNSEALED_DOORS_KEY = "adviento_unsealed_doors_v1";
   const GIFT_ENVELOPE_OPEN_KEY = "adviento_gift_envelope_open_v1";
   const Store = window.SafeStorage || window.localStorage;
+
+  function scopedKey(baseKey) {
+    return window.DateGate?.isAdminEnabled?.() ? `${baseKey}_test` : baseKey;
+  }
 
   let overlayHistoryPushed = false;
   let modalHistoryPushed = false;
@@ -91,7 +95,7 @@
 
   function loadDraftsStorage() {
     const base = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
-    const loaded = loadJsonStorage(DRAFTS_KEY, base);
+    const loaded = loadJsonStorage(scopedKey(DRAFTS_KEY), base);
     const isPlainObj = (v) => Boolean(v && typeof v === "object" && !Array.isArray(v));
     return {
       schemaVersion: 2,
@@ -103,7 +107,7 @@
   }
 
   function saveDrafts() {
-    try { Store.setItem(DRAFTS_KEY, JSON.stringify(draftsStore)); } catch (_) {}
+    try { Store.setItem(scopedKey(DRAFTS_KEY), JSON.stringify(draftsStore)); } catch (_) {}
   }
 
   function flushPendingNotes() {
@@ -187,7 +191,7 @@
 
   function getUnsealedDoors() {
     try {
-      const raw = Store.getItem(UNSEALED_DOORS_KEY);
+      const raw = Store.getItem(scopedKey(UNSEALED_DOORS_KEY));
       if (!raw) return [];
       const arr = JSON.parse(raw);
       return Array.isArray(arr) ? arr.map(Number).filter(Number.isFinite) : [];
@@ -205,7 +209,7 @@
     if (!Number.isFinite(n)) return;
     const set = new Set(getUnsealedDoors());
     set.add(n);
-    try { Store.setItem(UNSEALED_DOORS_KEY, JSON.stringify([...set])); } catch (_) {}
+    try { Store.setItem(scopedKey(UNSEALED_DOORS_KEY), JSON.stringify([...set])); } catch (_) {}
   }
 
   function buildWaxSealSvg(dayNum, uid) {
@@ -685,7 +689,7 @@
     }
   }
 
-  function applyRoleSwitch(role) {
+  function applyRoleSwitch(role, opts = {}) {
     currentRole = role;
     Store.setItem(ROLE_KEY, role);
     closeIdentityOverlay();
@@ -698,7 +702,7 @@
     lastExpedienteSignature = "";
     renderAdminBar();
     renderActiveTab();
-    maybeShowFirstDedication();
+    if (!opts.skipDedication) maybeShowFirstDedication();
   }
 
   function setRole(role) {
@@ -963,6 +967,10 @@
           <div class="env24-back" aria-hidden="true"></div>
 
           <div class="env24-letter-slip" aria-hidden="true">
+            <span class="env24-slip-corner tl"></span>
+            <span class="env24-slip-corner tr"></span>
+            <span class="env24-slip-corner bl"></span>
+            <span class="env24-slip-corner br"></span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="#B45309" aria-hidden="true"><polygon points="12 1.5 14.5 9.2 22.5 12 14.5 14.8 12 22.5 9.5 14.8 1.5 12 9.5 9.2"/></svg>
             <div class="env24-slip-kicker">24 DE DICIEMBRE · SORPRESA</div>
             <div class="env24-slip-title">${esc(gift.voucherTitle || "Sobre de Nochebuena")}</div>
@@ -1017,8 +1025,9 @@
             </svg>
           </div>
 
-          <div class="env24-inner-glow" aria-hidden="true"></div>
+          <div class="env24-light-fan" aria-hidden="true"></div>
           <div class="env24-anamorphic-beam" aria-hidden="true"></div>
+          <div class="env24-shockring" aria-hidden="true"></div>
 
           <div class="env24-flap-stage" aria-hidden="true">
             <div class="env24-flap-3d">
@@ -1033,14 +1042,16 @@
                   </defs>
                   <polygon points="0,4 320,4 160,127" fill="rgba(0,0,0,0.48)"/>
                   <polygon points="0,0 320,0 160,121" fill="url(#e24FlapF_${uid})"/>
-                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.78" stroke-width="1.4"/>
-                  <polyline points="14,6 160,111 306,6" fill="none" stroke="#FDE68A" stroke-opacity="0.30" stroke-width="0.9" stroke-dasharray="3 3"/>
-                  <!-- Sello postal alpino 24 DIC en esquina superior derecha -->
-                  <g opacity="0.86">
-                    <rect x="266" y="10" width="38" height="30" rx="2" fill="rgba(5, 11, 18, 0.42)" stroke="#FDE68A" stroke-opacity="0.65" stroke-width="1" stroke-dasharray="2.5 2"/>
-                    <polygon points="285,15 279,26 291,26" fill="none" stroke="#FDE68A" stroke-width="1.1"/>
-                    <text x="285" y="36" text-anchor="middle" fill="#FEF3C7" font-family="ui-monospace, Consolas, monospace" font-size="6.4" font-weight="700" letter-spacing="0.8">24 DIC</text>
-                    <circle cx="258" cy="28" r="11" fill="none" stroke="#FDE68A" stroke-opacity="0.34" stroke-width="0.85" stroke-dasharray="2 2"/>
+                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.80" stroke-width="1.45"/>
+                  <polyline points="14,6 160,111 306,6" fill="none" stroke="#FDE68A" stroke-opacity="0.32" stroke-width="0.9" stroke-dasharray="3 3"/>
+                  <!-- Emblema alpino dorado simétrico centrado en la solapa (sin cortes de pliegue) -->
+                  <g opacity="0.88">
+                    <path d="M98 28 Q124 22 146 28" fill="none" stroke="#FDE68A" stroke-opacity="0.58" stroke-width="1"/>
+                    <path d="M222 28 Q196 22 174 28" fill="none" stroke="#FDE68A" stroke-opacity="0.58" stroke-width="1"/>
+                    <circle cx="116" cy="25.5" r="1.4" fill="#FEF08A"/>
+                    <circle cx="204" cy="25.5" r="1.4" fill="#FEF08A"/>
+                    <polygon points="160,14 162.4,21 169.4,23.4 162.4,25.8 160,32.8 157.6,25.8 150.6,23.4 157.6,21" fill="#FEF08A"/>
+                    <text x="160" y="47" text-anchor="middle" fill="#FEF3C7" fill-opacity="0.82" font-family="ui-monospace, Consolas, monospace" font-size="7.2" font-weight="700" letter-spacing="2.4">EDICIÓN ESPECIAL · 24 DIC</text>
                   </g>
                 </svg>
               </div>
@@ -1052,19 +1063,21 @@
                       <stop offset="100%" stop-color="#174D3F"/>
                     </linearGradient>
                     <pattern id="e24Damask_${uid}" width="16" height="16" patternUnits="userSpaceOnUse">
-                      <path d="M8 0 L16 8 L8 16 L0 8 Z" fill="none" stroke="#FDE68A" stroke-opacity="0.16" stroke-width="0.7"/>
+                      <path d="M8 0 L16 8 L8 16 L0 8 Z" fill="none" stroke="#FDE68A" stroke-opacity="0.18" stroke-width="0.7"/>
                     </pattern>
                   </defs>
                   <polygon points="0,0 320,0 160,121" fill="url(#e24FlapB_${uid})"/>
                   <polygon points="0,0 320,0 160,121" fill="url(#e24Damask_${uid})"/>
-                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.82" stroke-width="1.5"/>
-                  <polygon points="160,30 163.5,41 174.5,44.5 163.5,48 160,59 156.5,48 145.5,44.5 156.5,41" fill="#FEF08A" fill-opacity="0.88"/>
+                  <polyline points="2,1 160,120 318,1" fill="none" stroke="#FDE68A" stroke-opacity="0.84" stroke-width="1.5"/>
+                  <polygon points="160,30 163.5,41 174.5,44.5 163.5,48 160,59 156.5,48 145.5,44.5 156.5,41" fill="#FEF08A" fill-opacity="0.90"/>
                 </svg>
               </div>
             </div>
           </div>
 
           <div class="env24-ribbon-layer" aria-hidden="true">
+            <span class="env24-ribbon-tail env24-tail-l"></span>
+            <span class="env24-ribbon-tail env24-tail-r"></span>
             <span class="env24-ribbon-band env24-ribbon-l"></span>
             <span class="env24-ribbon-band env24-ribbon-r"></span>
           </div>
@@ -1112,6 +1125,9 @@
         </div>
         <h2 ${isPreview ? `id="adv-modal-title"` : ""} class="serif" style="font-size:1.65rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
         ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
+        <div class="gift-star-divider" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 14.5 9.5 22 12 14.5 14.5 12 22 9.5 14.5 2 12 9.5 9.5"/></svg>
+        </div>
         <div class="gift-voucher">
           <div class="mono" style="font-size:0.78rem;color:var(--adv-gold-soft);font-weight:700;margin-bottom:6px;">${esc(gift.voucherTitle)}</div>
           <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
@@ -1156,8 +1172,18 @@
     };
     cinemaActiveCleanup = cleanup;
 
+    const embers = Array.from({ length: 16 }, (_, i) => {
+      const ex = `${6 + ((i * 19 + 7) % 88)}%`;
+      const esz = `${3 + (i % 3)}px`;
+      const edx = `${(i % 2 === 0 ? 1 : -1) * (10 + (i % 4) * 8)}px`;
+      const edur = `${2.2 + (i % 5) * 0.25}s`;
+      const edl = `${(i % 6) * 140}ms`;
+      return `<span class="env24-ember" style="--ex:${ex};--esz:${esz};--edx:${edx};--edur:${edur};--edl:${edl};"></span>`;
+    }).join("");
+
     layer.innerHTML = `
       <div class="env24-theater-bokeh" aria-hidden="true"></div>
+      <div class="env24-embers-bg" aria-hidden="true">${embers}</div>
       <div class="env24-theater">
         <div class="env24-theater-kicker">NOCHEBUENA · 24 DE DICIEMBRE</div>
         <div class="env24-theater-headline">Abriendo el Sobre Secreto</div>
@@ -1176,16 +1202,47 @@
     };
 
     timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(96); }, 600));
-    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(64); }, 1720));
-    timers.push(setTimeout(() => { unveilOnce(); }, 2820));
-    timers.push(setTimeout(() => { layer.classList.add("closing"); }, 2940));
-    timers.push(setTimeout(() => { cleanup(false); }, 3240));
+    timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(68); }, 1750));
+    timers.push(setTimeout(() => { unveilOnce(); }, 2960));
+    timers.push(setTimeout(() => { layer.classList.add("closing"); }, 3080));
+    timers.push(setTimeout(() => { cleanup(false); }, 3400));
+  }
+
+  function wireEnv24ParallaxTilt(stageEl) {
+    if (!stageEl || isReducedMotionPref()) return;
+    const env = stageEl.querySelector(".env24-envelope");
+    if (!env) return;
+    const resetTilt = () => {
+      stageEl.classList.remove("is-tilting");
+      env.style.setProperty("--rx", "0deg");
+      env.style.setProperty("--ry", "0deg");
+      env.style.setProperty("--gx", "50%");
+      env.style.setProperty("--gy", "42%");
+      env.style.setProperty("--go", "0.35");
+    };
+    stageEl.addEventListener("pointermove", (e) => {
+      const r = stageEl.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const nx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width) * 2 - 1));
+      const ny = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height) * 2 - 1));
+      stageEl.classList.add("is-tilting");
+      env.style.setProperty("--rx", `${(-ny * 6.5).toFixed(2)}deg`);
+      env.style.setProperty("--ry", `${(nx * 7.5).toFixed(2)}deg`);
+      env.style.setProperty("--gx", `${Math.round(((nx + 1) / 2) * 100)}%`);
+      env.style.setProperty("--gy", `${Math.round(((ny + 1) / 2) * 100)}%`);
+      env.style.setProperty("--go", "0.9");
+    }, { passive: true });
+    stageEl.addEventListener("pointerleave", resetTilt, { passive: true });
+    stageEl.addEventListener("pointerup", resetTilt, { passive: true });
+    stageEl.addEventListener("pointercancel", resetTilt, { passive: true });
   }
 
   function wireSecretEnvelopeInteractive(rootEl, onOpened) {
     if (!rootEl) return;
     let started = false;
     const gift = window.GIFT_CONFIG?.finalGiftReveal;
+    const stage = rootEl.querySelector("[data-env24-stage]");
+    if (stage) wireEnv24ParallaxTilt(stage);
     const triggers = rootEl.querySelectorAll("[data-env24-trigger]");
     const handleOpen = () => {
       if (started || !gift) return;
@@ -1314,7 +1371,7 @@
       <button type="button" class="btn btn-sm btn-ghost" id="admin-exit-btn">Salir test</button>
     `;
 
-    document.getElementById("admin-switch-role-btn")?.addEventListener("click", () => applyRoleSwitch(otherRole));
+    document.getElementById("admin-switch-role-btn")?.addEventListener("click", () => applyRoleSwitch(otherRole, { skipDedication: true }));
     document.getElementById("admin-preview-rituals-btn")?.addEventListener("click", (e) => openRitualPreviewModal(e.currentTarget));
 
     document.getElementById("admin-sim-select")?.addEventListener("change", (e) => {
@@ -1341,6 +1398,7 @@
         window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash);
       }
       window.SyncEngine.init();
+      draftsStore = loadDraftsStorage();
       if (currentRole) window.SyncEngine.markPresence(currentRole);
       userPickedDay = false;
       selectDefaultDay();
@@ -1362,11 +1420,9 @@
         () => {
           flushPendingNotes();
           try {
-            Store.removeItem(DEDICATION_SEEN_KEY);
-            Store.removeItem(ROLE_KEY);
-            Store.removeItem(DRAFTS_KEY);
-            Store.removeItem(UNSEALED_DOORS_KEY);
-            Store.removeItem(GIFT_ENVELOPE_OPEN_KEY);
+            Store.removeItem(scopedKey(DRAFTS_KEY));
+            Store.removeItem(scopedKey(UNSEALED_DOORS_KEY));
+            Store.removeItem(scopedKey(GIFT_ENVELOPE_OPEN_KEY));
           } catch (_) {}
           celebratedLockDays.clear();
           expedienteTab = "case";
@@ -1722,7 +1778,8 @@
     const partnerDone = role === "miguel" ? Boolean(dState.patriSolved) : Boolean(dState.miguelSolved);
     const maxOpen = window.DateGate.getMaxOpenDay();
     const canGoNext = selectedDayNum < 24 && window.DateGate.isDayOpen(selectedDayNum + 1);
-    const draftVal = draftsStore.inputs[String(dayObj.day)] || "";
+    const draftRoleKey = `${dayObj.day}-${role}`;
+    const draftVal = draftsStore.inputs[draftRoleKey] ?? draftsStore.inputs[String(dayObj.day)] ?? "";
     const dispatchObj = syncState.fieldDispatch?.[String(dayObj.day)] || {};
     const partnerDispatch = dispatchObj[partnerKey];
     const myDispatch = dispatchObj[role];
@@ -1884,7 +1941,7 @@
       } else {
         const ep = syncState.finalEpilogue || {};
         const gift = window.GIFT_CONFIG?.finalGiftReveal;
-        const envelopeOpened = Store.getItem(GIFT_ENVELOPE_OPEN_KEY) === "1";
+        const envelopeOpened = Store.getItem(scopedKey(GIFT_ENVELOPE_OPEN_KEY)) === "1";
         const totalSolvedFinal = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
         const totalHintsFinal = Object.values(syncState.hintsUnlocked || {}).reduce((acc, v) => acc + (Number(v) || 0), 0);
         const ratedFinal = Object.keys(syncState.suspectNotes || {}).length;
@@ -2041,9 +2098,9 @@
           </div>
           <div id="widget-mount">${window.PuzzleEngine.renderWidgetHtml(dayObj.day, role, roleData.widget)}</div>
 
-          <details class="widget-scratchpad" ${(prevScratchOpen || draftsStore.scratch?.[String(dayObj.day)]) ? "open" : ""}>
+          <details class="widget-scratchpad" ${(prevScratchOpen || draftsStore.scratch?.[draftRoleKey] || draftsStore.scratch?.[String(dayObj.day)]) ? "open" : ""}>
             <summary>Bloc de cálculo local · Día ${String(dayObj.day).padStart(2, "0")} (solo este móvil)</summary>
-            <textarea id="widget-scratch-area" class="adv-textarea" style="min-height:78px;margin-top:8px;font-size:16px;" placeholder="Anota aquí pistas dictadas, cuentas o descartes rápidos para no necesitar papel...">${esc(draftsStore.scratch?.[String(dayObj.day)] || "")}</textarea>
+            <textarea id="widget-scratch-area" class="adv-textarea" style="min-height:78px;margin-top:8px;font-size:16px;" placeholder="Anota aquí pistas dictadas, cuentas o descartes rápidos para no necesitar papel...">${esc(draftsStore.scratch?.[draftRoleKey] ?? draftsStore.scratch?.[String(dayObj.day)] ?? "")}</textarea>
           </details>
 
           <details id="day-dispatch-details" ${prevDispatchOpen ? "open" : ""} style="margin-top:12px;border-top:1px dashed rgba(255,255,255,0.12);padding-top:10px;">
@@ -2116,8 +2173,9 @@
     document.getElementById("widget-scratch-area")?.addEventListener("input", (e) => {
       if (!draftsStore.scratch) draftsStore.scratch = {};
       const val = e.target.value;
-      if (val) draftsStore.scratch[String(dayObj.day)] = val;
-      else delete draftsStore.scratch[String(dayObj.day)];
+      if (val) draftsStore.scratch[draftKey] = val;
+      else delete draftsStore.scratch[draftKey];
+      delete draftsStore.scratch[String(dayObj.day)];
       saveDrafts();
     });
 
@@ -2164,7 +2222,7 @@
     const envCardEl = document.getElementById("secret-envelope-card");
     if (envCardEl && envCardEl.classList.contains("secret-envelope-sealed")) {
       wireSecretEnvelopeInteractive(envCardEl, () => {
-        try { Store.setItem(GIFT_ENVELOPE_OPEN_KEY, "1"); } catch (_) {}
+        try { Store.setItem(scopedKey(GIFT_ENVELOPE_OPEN_KEY), "1"); } catch (_) {}
         lastDaySignature = "";
         renderDayView(true);
       });
@@ -2229,7 +2287,8 @@
 
     const dayAnsInp = document.getElementById("day-answer-input");
     dayAnsInp?.addEventListener("input", () => {
-      draftsStore.inputs[String(dayObj.day)] = dayAnsInp.value;
+      draftsStore.inputs[draftKey] = dayAnsInp.value;
+      delete draftsStore.inputs[String(dayObj.day)];
       saveDrafts();
     });
 
@@ -2261,6 +2320,7 @@
         }
 
         clearKeyboardOpen();
+        delete draftsStore.inputs[draftKey];
         delete draftsStore.inputs[String(dayObj.day)];
         delete draftsStore.widgets[draftKey];
         saveDrafts();
@@ -3622,6 +3682,7 @@
       if (versionTapCount >= 5) {
         versionTapCount = 0;
         window.DateGate.enableAdmin(24);
+        draftsStore = loadDraftsStorage();
         window.SyncEngine.init();
         if (currentRole) window.SyncEngine.markPresence(currentRole);
         window.AudioFX.success();

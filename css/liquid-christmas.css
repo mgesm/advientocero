@@ -511,11 +511,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 @media (max-height: 480px) and (orientation: landscape) {
   .identity-cover {
-    max-height: 110px;
-    margin-bottom: 10px;
+    display: none;
   }
   .identity-modal {
-    padding: 16px;
+    padding: 14px 18px;
+  }
+  .identity-title {
+    font-size: 1.4rem;
+    margin: 4px 0 4px;
+  }
+  .identity-desc {
+    margin-bottom: 10px;
+    font-size: 0.8rem;
+  }
+  .identity-choice {
+    padding: 10px 12px;
+    gap: 4px;
   }
 }
 
