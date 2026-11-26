@@ -22,18 +22,18 @@ window.GIFT_CONFIG = {
     signature: "Con todo mi cariño, Miguel"
   },
 
-  // Sobre secreto oculto por defecto hasta definir el regalo real (pon enabled: true para mostrarlo el 24 de diciembre)
+  // Sobre secreto activado con texto de prueba (edítalo libremente aquí antes del 24 de diciembre)
   finalGiftReveal: {
-    enabled: false,
+    enabled: true,
     badge: "SOBRE SECRETO · 24 DE DICIEMBRE",
-    title: "Caso Cerrado — Y tu regalo real de Navidad",
+    title: "Caso Cerrado — Y vuestra sorpresa de Nochebuena",
     message: [
-      "Enhorabuena, inspectora. Has resuelto el misterio del Ventisquero paso a paso conmigo.",
+      "Enhorabuena, inspectora. Has resuelto el misterio del Ventisquero paso a paso conmigo del 1 al 24 de diciembre.",
       "Ahora que la tormenta ha pasado, el verdadero regalo te espera fuera de la pantalla:"
     ],
     // Personaliza aquí tu vale o pista física (ej. "Una escapada sorpresa...", "Mira debajo del árbol...")
-    voucherTitle: "VALE POR UNA SORPRESA DE NOCHEBUENA",
-    voucherDescription: "Edita este texto en config/gift-config.js con el regalo real, plan o pista donde hayas escondido el paquete físico para Patri.",
+    voucherTitle: "VALE DE PRUEBA · SORPRESA DE NOCHEBUENA",
+    voucherDescription: "Texto de prueba activo: aquí aparecerá vuestro regalo real de Navidad (escapada, cena especial o pista escondida en casa). Podrás personalizar este texto cuando quieras en config/gift-config.js.",
     footerNote: "Feliz Navidad, Patri. Gracias por ser mi mejor compañera de equipo."
   }
 };

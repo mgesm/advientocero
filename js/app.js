@@ -3,13 +3,14 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.15.0";
-  const CACHE_TAG = "adviento-cero-v2.15.0";
+  const APP_VERSION = "v2.16.0";
+  const CACHE_TAG = "adviento-cero-v2.16.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
   const PREFS_KEY = "adviento_prefs_v1";
   const UNSEALED_DOORS_KEY = "adviento_unsealed_doors_v1";
+  const GIFT_ENVELOPE_OPEN_KEY = "adviento_gift_envelope_open_v1";
   const Store = window.SafeStorage || window.localStorage;
 
   let overlayHistoryPushed = false;
@@ -141,6 +142,9 @@
   function showToast(text, actionLabel, onAction) {
     const host = document.getElementById("adv-toast-host");
     if (!host) return;
+    while (host.children.length >= 3) {
+      host.firstElementChild.remove();
+    }
     const item = document.createElement("div");
     item.className = "adv-toast";
     item.innerHTML = `<span>${esc(text)}</span>${actionLabel ? `<button type="button" class="btn btn-sm btn-gold">${esc(actionLabel)}</button>` : ""}`;
@@ -444,18 +448,18 @@
       return;
     }
     const dayObj = (window.ADVENT_DAYS || []).find((x) => x.day === d);
-    const navigateToDay = () => {
+    const navigateToDay = (silentClick = false) => {
       userPickedDay = true;
       selectedDayNum = d;
       lastDaySignature = "";
-      switchTab("day", { scrollToTop: true });
+      switchTab("day", { scrollToTop: true, force: true, silent: silentClick });
     };
     const alreadySolved = Boolean(syncState.days?.[String(d)]?.solved);
     if (dayObj && !alreadySolved && !isDoorUnsealed(d)) {
-      playDoorWaxUnseal(dayObj, navigateToDay);
+      playDoorWaxUnseal(dayObj, () => navigateToDay(true));
       return;
     }
-    navigateToDay();
+    navigateToDay(false);
   }
 
   function renderBriefingVideoHtml(videoId) {
@@ -955,6 +959,7 @@
       lastExpedienteSignature = "";
       renderAdminBar();
       renderActiveTab();
+      updateDockIndicator();
     });
 
     document.getElementById("admin-exit-btn")?.addEventListener("click", () => {
@@ -976,6 +981,7 @@
       lastExpedienteSignature = "";
       renderAdminBar();
       renderActiveTab();
+      updateDockIndicator();
     });
 
     document.getElementById("admin-reset-btn")?.addEventListener("click", () => {
@@ -990,6 +996,7 @@
             Store.removeItem(ROLE_KEY);
             Store.removeItem(DRAFTS_KEY);
             Store.removeItem(UNSEALED_DOORS_KEY);
+            Store.removeItem(GIFT_ENVELOPE_OPEN_KEY);
           } catch (_) {}
           celebratedLockDays.clear();
           expedienteTab = "case";
@@ -1098,6 +1105,34 @@
     const isStandalone = Boolean(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches));
     const showPwaTip = !isStandalone && !userPrefs.pwaBannerDismissed;
 
+    const myFlag = role === "miguel" ? "miguelSolved" : "patriSolved";
+    const partnerFlag = role === "miguel" ? "patriSolved" : "miguelSolved";
+    const partnerWaitingDays = [];
+    const meWaitingDays = [];
+    for (let dNum = 1; dNum <= maxOpen; dNum++) {
+      const ds = syncState.days?.[String(dNum)];
+      if (!ds || ds.solved) continue;
+      if (ds[partnerFlag] && !ds[myFlag]) partnerWaitingDays.push(dNum);
+      else if (ds[myFlag] && !ds[partnerFlag]) meWaitingDays.push(dNum);
+    }
+    const partnerBannerHtml = partnerWaitingDays.length
+      ? `
+        <div class="glass-card partner-waiting-banner">
+          <div style="flex:1;min-width:190px;font-size:0.8rem;line-height:1.42;color:#FEF3C7;">
+            <strong>${esc(partnerName)} ya validó su mitad del Día ${String(partnerWaitingDays[0]).padStart(2, "0")}.</strong> Solo faltas tú para abrir el Doble Candado.
+          </div>
+          <button type="button" class="btn btn-sm btn-gold" data-open-day="${partnerWaitingDays[0]}">Completar Día ${String(partnerWaitingDays[0]).padStart(2, "0")}</button>
+        </div>`
+      : meWaitingDays.length
+        ? `
+          <div class="glass-card partner-waiting-banner is-mine">
+            <div style="flex:1;min-width:190px;font-size:0.78rem;line-height:1.4;color:#BAE6FD;">
+              <strong>Tu parte del Día ${String(meWaitingDays[0]).padStart(2, "0")} está lista.</strong> Esperando a que ${esc(partnerName)} valide su móvil para abrir el Doble Candado.
+            </div>
+            <button type="button" class="btn btn-sm btn-frost" data-open-day="${meWaitingDays[0]}">Ver Día ${String(meWaitingDays[0]).padStart(2, "0")}</button>
+          </div>`
+        : "";
+
     container.innerHTML = `
       <div class="glass-card hero-dossier">
         <svg class="hero-star-watermark" width="96" height="96" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -1155,6 +1190,8 @@
           <button type="button" class="btn btn-sm btn-ghost" id="dismiss-pwa-banner" style="flex-shrink:0;">Ocultar</button>
         </div>
       ` : ""}
+
+      ${partnerBannerHtml}
 
       <div class="section-head" style="margin-bottom:10px;">
         <div>
@@ -1260,27 +1297,47 @@
     if (!force && sig === lastDaySignature && container.innerHTML.trim() !== "") {
       return;
     }
-    const prevDispatchOpen = Boolean(document.getElementById("day-dispatch-details")?.open);
-    const prevScratchOpen = Boolean(container.querySelector(".widget-scratchpad")?.open);
-    const prevDispatchDraft = document.getElementById("dispatch-input")?.value;
+    const sameDayRerender = Number(container.dataset.renderedDay || 0) === selectedDayNum;
+    const prevDispatchOpen = sameDayRerender && Boolean(document.getElementById("day-dispatch-details")?.open);
+    const prevScratchOpen = sameDayRerender && Boolean(container.querySelector(".widget-scratchpad")?.open);
+    const prevContextOpen = sameDayRerender && Boolean(document.getElementById("day-context-details")?.open);
+    const prevDispatchDraft = sameDayRerender ? document.getElementById("dispatch-input")?.value : undefined;
     const ae = document.activeElement;
-    const prevFocusState = ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
+    const prevFocusState = sameDayRerender && ae && container.contains(ae) && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && ae.id
       ? { id: ae.id, start: ae.selectionStart, end: ae.selectionEnd }
       : null;
     lastDaySignature = sig;
+    container.dataset.renderedDay = String(selectedDayNum);
 
     const dayObj = (window.ADVENT_DAYS || []).find((x) => x.day === selectedDayNum);
     if (!dayObj) return;
 
     if (!window.DateGate.isDayOpen(dayObj.day)) {
+      const countdown = window.DateGate.getCountdownText();
       container.innerHTML = `
-        <div class="glass-card" style="padding:26px;text-align:center;">
-          <div style="color:var(--adv-gold-soft);margin-bottom:10px;">${getSvg("lock")}</div>
+        <div class="glass-card" style="padding:26px 20px;text-align:center;">
+          <span class="badge badge-gold" style="margin-bottom:10px;">${esc(countdown)}</span>
+          <div style="color:var(--adv-gold-soft);margin:6px 0 8px;">${getSvg("lock")}</div>
           <h2 class="day-title">Puerta ${String(dayObj.day).padStart(2, "0")} precintada</h2>
-          <p class="day-story">Esta prueba se desbloqueará automáticamente el <strong>${dayObj.day} de diciembre</strong>.</p>
-          <button type="button" class="btn btn-primary" style="margin-top:16px;" data-back-cal>Volver al Calendario</button>
+          <p class="day-story">Esta prueba se desbloqueará automáticamente el <strong>${dayObj.day} de diciembre</strong>. Mientras tanto podéis ver el Vídeo Briefing en portada o repasar el Manual de Campo.</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+            <button type="button" class="btn btn-sm btn-primary" id="locked-go-briefing-btn">Ver Vídeo Briefing</button>
+            <button type="button" class="btn btn-sm btn-frost" id="locked-open-rules-btn">Manual de Campo</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-back-cal>Calendario</button>
+          </div>
         </div>`;
       container.querySelector("[data-back-cal]")?.addEventListener("click", () => switchTab("calendar"));
+      document.getElementById("locked-open-rules-btn")?.addEventListener("click", () => openRulesModal());
+      document.getElementById("locked-go-briefing-btn")?.addEventListener("click", () => {
+        switchTab("calendar", { scrollToTop: true });
+        setTimeout(() => {
+          const vid = document.getElementById("briefing-video-hero");
+          if (vid) {
+            vid.scrollIntoView({ behavior: "smooth", block: "center" });
+            vid.play().catch(() => {});
+          }
+        }, 120);
+      });
       return;
     }
 
@@ -1456,8 +1513,41 @@
       } else {
         const ep = syncState.finalEpilogue || {};
         const gift = window.GIFT_CONFIG?.finalGiftReveal;
-        const giftCardHtml = gift && gift.enabled === true ? `
-          <div class="glass-card gift-reveal-card">
+        const envelopeOpened = Store.getItem(GIFT_ENVELOPE_OPEN_KEY) === "1";
+        const totalSolvedFinal = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
+        const totalHintsFinal = Object.values(syncState.hintsUnlocked || {}).reduce((acc, v) => acc + (Number(v) || 0), 0);
+        const ratedFinal = Object.keys(syncState.suspectNotes || {}).length;
+        const rankLabel = totalHintsFinal <= 12
+          ? "Inspectora Jefe · Rango Oro"
+          : totalHintsFinal <= 30
+            ? "Equipo Forense · Rango Plata"
+            : "Detectives del Ventisquero · Rango Bronce";
+
+        const diplomaHtml = `
+          <div class="glass-card adv-diploma-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="badge badge-gold">RESUMEN DE VUESTRO ADVIENTO</span>
+              <span class="mono" style="font-size:0.72rem;color:#A7F3D0;">${esc(rankLabel)}</span>
+            </div>
+            <h3 class="serif" style="font-size:1.35rem;margin:8px 0 4px;">Miguel y Patri · Expediente Resuelto</h3>
+            <div class="adv-diploma-grid">
+              <div class="adv-diploma-stat">
+                <span class="adv-diploma-val">${totalSolvedFinal}/24</span>
+                <span class="adv-diploma-lbl">Puertas resueltas</span>
+              </div>
+              <div class="adv-diploma-stat">
+                <span class="adv-diploma-val">${totalHintsFinal}/72</span>
+                <span class="adv-diploma-lbl">Pistas usadas</span>
+              </div>
+              <div class="adv-diploma-stat">
+                <span class="adv-diploma-val">${ratedFinal}</span>
+                <span class="adv-diploma-lbl">Fichas anotadas</span>
+              </div>
+            </div>
+          </div>`;
+
+        const giftCardHtml = gift && gift.enabled === true ? (envelopeOpened ? `
+          <div class="glass-card gift-reveal-card" id="secret-envelope-card">
             <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
             <h2 class="serif" style="font-size:1.7rem;margin:10px 0 8px;">${esc(gift.title)}</h2>
             ${(gift.message || []).map((p) => `<p class="day-story" style="margin-bottom:8px;">${esc(p)}</p>`).join("")}
@@ -1466,7 +1556,14 @@
               <p style="font-size:0.9rem;line-height:1.55;color:var(--vg-text-primary);">${esc(gift.voucherDescription)}</p>
             </div>
             <p class="serif" style="margin-top:14px;font-size:1.1rem;font-style:italic;color:var(--adv-gold-soft);">${esc(gift.footerNote)}</p>
-          </div>` : "";
+          </div>` : `
+          <div class="glass-card secret-envelope-sealed" id="secret-envelope-card">
+            <div class="secret-envelope-seal" aria-hidden="true">24</div>
+            <span class="badge badge-gold">${getSvg("gift")} ${esc(gift.badge)}</span>
+            <h2 class="serif" style="font-size:1.55rem;margin:10px 0 6px;">Tenéis un Sobre Secreto de Nochebuena</h2>
+            <p class="day-story" style="margin-bottom:14px;">Con el expediente oficialmente cerrado, ya podéis romper el último sello de Navidad.</p>
+            <button type="button" class="btn btn-primary" id="open-secret-envelope-btn" style="width:100%;">Abrir Sobre Secreto</button>
+          </div>`) : "";
         const archiveRemaining = (() => {
           const dayDiscards = new Set(Object.values(syncState.days || {}).map((d) => d?.discardId).filter(Boolean));
           return (window.SUSPECTS_DATA || []).filter((s) => !dayDiscards.has(s.id));
@@ -1481,6 +1578,7 @@
               <button type="button" class="btn btn-sm btn-ghost" id="show-final-archive-btn">Ver evidencias finales</button>
             </div>
           </div>
+          ${diplomaHtml}
           <div id="final-archive-box" style="display:none;">
             ${window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, archiveRemaining) : ""}
           </div>${giftCardHtml}`;
@@ -1514,8 +1612,9 @@
           <div class="day-kicker-row">
             <span class="badge badge-gold">${esc(dayObj.kicker)}</span>
             <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-ghost" id="day-replay-ritual-btn" title="Volver a ver animación de apertura">Ver apertura</button>
               ${maxOpen > 1 ? `
-                <select id="day-quick-jump" class="adv-select" style="width:auto;min-height:44px;padding:6px 10px;font-size:16px;" aria-label="Saltar a puerta">
+                <select id="day-quick-jump" class="adv-select" style="width:auto;min-height:42px;padding:6px 10px;font-size:16px;" aria-label="Saltar a puerta">
                   ${Array.from({ length: maxOpen }, (_, i) => i + 1).map((dNum) => `<option value="${dNum}" ${dNum === selectedDayNum ? "selected" : ""}>Día ${String(dNum).padStart(2, "0")}</option>`).join("")}
                 </select>
               ` : ""}
@@ -1526,32 +1625,32 @@
           <h1 class="day-title">${esc(dayObj.title)}</h1>
           <p class="day-story">${esc(dayObj.story)}</p>
           ${dayObj.dossierContext ? `
-            <div class="context-brief-box">
-              <div class="mono context-brief-head">CONTEXTO DE LA DILIGENCIA · POR QUÉ INVESTIGAMOS ESTO HOY</div>
+            <details class="context-brief-box" id="day-context-details" ${prevContextOpen ? "open" : ""}>
+              <summary class="mono context-brief-head">CONTEXTO DE LA DILIGENCIA · MOTIVO Y COARTADA</summary>
               <ul class="context-brief-list">
                 <li><strong>Motivo de sospecha:</strong> ${esc(dayObj.dossierContext.focus)}</li>
                 <li><strong>Coartada en duda:</strong> ${esc(dayObj.dossierContext.alibi)}</li>
                 <li><strong>Objetivo de esta prueba:</strong> ${esc(dayObj.dossierContext.goal)}</li>
               </ul>
-              ${focusSuspect ? `
-                <button type="button" class="day-focus-suspect" data-day-focus-suspect="${esc(focusSuspect.id)}">
-                  <img src="${esc(focusSuspect.portrait)}" alt="${esc(focusSuspect.name)}" width="46" height="46" decoding="async">
-                  <div style="min-width:0;flex:1;">
-                    <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
-                      <strong style="font-size:0.9rem;color:#FFFBEB;">${esc(focusSuspect.name)}</strong>
-                      ${focusStatusBadge}
-                    </div>
-                    <div style="font-size:0.74rem;color:var(--vg-text-secondary);margin-top:2px;">${esc(focusSuspect.role)} · ${esc(focusSuspect.room)} · Toca para abrir ficha</div>
-                  </div>
-                </button>
-              ` : ""}
-            </div>
+            </details>
+          ` : ""}
+          ${focusSuspect ? `
+            <button type="button" class="day-focus-suspect" data-day-focus-suspect="${esc(focusSuspect.id)}" style="margin-top:10px;">
+              <img src="${esc(focusSuspect.portrait)}" alt="${esc(focusSuspect.name)}" width="46" height="46" decoding="async">
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
+                  <strong style="font-size:0.9rem;color:#FFFBEB;">${esc(focusSuspect.name)}</strong>
+                  ${focusStatusBadge}
+                </div>
+                <div style="font-size:0.74rem;color:var(--vg-text-secondary);margin-top:2px;">${esc(focusSuspect.role)} · ${esc(focusSuspect.room)} · Toca para abrir ficha</div>
+              </div>
+            </button>
           ` : ""}
         </div>
 
         <div class="cross-peek-bar">
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="suspects">Consulta: Sospechosos</button>
+            <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="suspects">Sospechosos</button>
             <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="map">Plano</button>
             <button type="button" class="btn btn-sm btn-ghost" data-peek-sheet="notes">Libreta</button>
           </div>
@@ -1698,17 +1797,24 @@
       btn.addEventListener("click", () => openImageLightbox(btn.dataset.lightboxImg, btn.dataset.lightboxCap, btn));
     });
 
+    document.getElementById("day-replay-ritual-btn")?.addEventListener("click", () => {
+      window.AudioFX.stopMorse?.();
+      playDoorWaxUnseal(dayObj, null, { previewOnly: true });
+    });
+
+    document.getElementById("open-secret-envelope-btn")?.addEventListener("click", () => {
+      try { Store.setItem(GIFT_ENVELOPE_OPEN_KEY, "1"); } catch (_) {}
+      window.AudioFX.waxSealBreak?.();
+      if (window.triggerGoldBurst) window.triggerGoldBurst(84);
+      lastDaySignature = "";
+      renderDayView(true);
+    });
+
     document.getElementById("day-quick-jump")?.addEventListener("change", (e) => {
       const target = Number(e.target.value);
       if (target >= 1 && target <= 24 && window.DateGate.isDayOpen(target)) {
-        userPickedDay = true;
-        selectedDayNum = target;
-        lastDaySignature = "";
         window.AudioFX.stopMorse?.();
-        window.SyncEngine.setViewingDay(selectedDayNum);
-        if (window.history?.pushState) window.history.pushState({ tab: "day", day: selectedDayNum }, "");
-        renderDayView(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        openAdventDay(target);
       }
     });
 
@@ -1716,14 +1822,8 @@
       btn.addEventListener("click", () => {
         const next = selectedDayNum + Number(btn.dataset.dayNav);
         if (next >= 1 && next <= 24 && window.DateGate.isDayOpen(next)) {
-          userPickedDay = true;
-          selectedDayNum = next;
-          lastDaySignature = "";
           window.AudioFX.stopMorse?.();
-          window.SyncEngine.setViewingDay(selectedDayNum);
-          if (window.history?.pushState) window.history.pushState({ tab: "day", day: selectedDayNum }, "");
-          renderDayView(true);
-          window.scrollTo({ top: 0, behavior: "smooth" });
+          openAdventDay(next);
         }
       });
     });
@@ -1977,14 +2077,35 @@
   function openCrossPeekModal(kind, triggerEl) {
     if (kind === "map") {
       const lore = window.CASE_LORE;
+      let peekFloor = expedienteFloor || "Planta 1";
+      const renderPeekMap = () => {
+        const zone = (lore.hotelZones || []).find((z) => z.floor === peekFloor);
+        const bpSlot = document.getElementById("peek-map-blueprint");
+        const txtSlot = document.getElementById("peek-map-zone-desc");
+        if (bpSlot) bpSlot.innerHTML = renderFloorBlueprintSvg(peekFloor);
+        if (txtSlot && zone) txtSlot.innerHTML = `<strong>${esc(zone.floor)} · ${esc(zone.zone)}:</strong> ${esc(zone.note)}`;
+        document.querySelectorAll("[data-peek-floor]").forEach((b) => b.classList.toggle("active", b.dataset.peekFloor === peekFloor));
+      };
       showModal(`
         <span class="badge badge-frost">CONSULTA RÁPIDA · PLANO DEL HOTEL</span>
-        <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:8px 0 10px;">Distribución por Plantas</h3>
-        <ul class="clue-list">
-          ${(lore.hotelZones || []).map((z) => `<li><strong>${esc(z.floor)} · ${esc(z.zone)}:</strong> ${esc(z.note)}</li>`).join("")}
-        </ul>
+        <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:8px 0 10px;">Plano Interactivo por Plantas</h3>
+        <div class="suspect-filters" style="margin-bottom:10px;">
+          ${["Planta 3", "Planta 2", "Planta 1", "Sótano / Anexo"].map((fl) => `
+            <button type="button" class="filter-chip ${peekFloor === fl ? "active" : ""}" data-peek-floor="${fl}">${fl}</button>
+          `).join("")}
+        </div>
+        <div id="peek-map-blueprint" class="floor-blueprint-wrap">${renderFloorBlueprintSvg(peekFloor)}</div>
+        <p id="peek-map-zone-desc" class="day-story" style="font-size:0.84rem;"></p>
         <button type="button" class="btn btn-primary" style="width:100%;margin-top:14px;" id="close-modal-btn">Volver al enigma</button>
       `, triggerEl);
+      renderPeekMap();
+      document.querySelectorAll("[data-peek-floor]").forEach((b) => {
+        b.addEventListener("click", () => {
+          peekFloor = b.dataset.peekFloor;
+          window.AudioFX.click();
+          renderPeekMap();
+        });
+      });
       document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
       return;
     }
@@ -3374,10 +3495,7 @@
     document.getElementById("modal-jump-day-btn")?.addEventListener("click", () => {
       window.AudioFX.click();
       closeModal();
-      selectedDayNum = linkedDayNum;
-      userPickedDay = true;
-      lastDaySignature = "";
-      switchTab("day", { scrollToTop: true });
+      openAdventDay(linkedDayNum);
     });
     document.getElementById("modal-pin-suspect-btn")?.addEventListener("click", (e) => {
       window.AudioFX.click();
@@ -3451,6 +3569,16 @@
     const partnerRole = currentRole === "miguel" ? "patri" : "miguel";
     const partnerName = partnerRole === "miguel" ? "Miguel" : "Patri";
     const pFlag = partnerRole === "miguel" ? "miguelSolved" : "patriSolved";
+
+    const bulkChangedDays = Object.keys(newSt.days || {}).filter((k) => {
+      const prevD = prevSyncSnap.days?.[k] || {};
+      const curD = newSt.days[k] || {};
+      return (!prevD.solved && curD.solved) || (!prevD[pFlag] && curD[pFlag]);
+    }).length;
+    if (bulkChangedDays >= 3) {
+      prevSyncSnap = JSON.parse(JSON.stringify(newSt));
+      return;
+    }
 
     Object.keys(newSt.days || {}).forEach((k) => {
       const prevD = prevSyncSnap.days?.[k] || {};

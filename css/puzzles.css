@@ -69,11 +69,47 @@
 }
 
 .context-brief-box {
-  margin-top: 14px;
-  padding: 12px 14px;
+  margin-top: 12px;
+  padding: 10px 13px;
   border-radius: var(--vg-radius-md);
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(251, 191, 36, 0.32);
+}
+
+details.context-brief-box > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+  user-select: none;
+}
+
+details.context-brief-box > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.context-brief-box > summary::after {
+  content: "Ver";
+  font-family: var(--vg-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--adv-gold-soft);
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  background: rgba(251, 191, 36, 0.10);
+  flex-shrink: 0;
+}
+
+details.context-brief-box[open] > summary::after {
+  content: "Ocultar";
+}
+
+details.context-brief-box[open] > summary {
+  margin-bottom: 8px;
 }
 
 .context-brief-head {
@@ -81,7 +117,6 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--adv-gold-soft);
-  margin-bottom: 8px;
 }
 
 .context-brief-list {
@@ -352,11 +387,20 @@
   overflow-x: auto;
   max-width: 100%;
 }
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  max-width: 100%;
-  overflow-x: auto;
+
+.nono-clue-btn {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px dashed rgba(147, 197, 253, 0.42);
+  background: rgba(15, 23, 42, 0.76);
+  color: #BAE6FD;
+  font-family: var(--vg-font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .nono-table {
@@ -485,28 +529,6 @@
   color: #7DD3FC;
   font-weight: 600;
   white-space: pre-line;
-}
-
-.nono-clue-btn {
-  min-width: 30px;
-  min-height: 30px;
-  padding: 2px 5px;
-  border-radius: 6px;
-  border: 1px dashed rgba(147, 197, 253, 0.45);
-  background: rgba(15, 23, 42, 0.65);
-  color: #93C5FD;
-  font-family: var(--vg-font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-@media (pointer: coarse) {
-  .nono-clue-btn {
-    min-width: 38px;
-    min-height: 38px;
-  }
 }
 
 .widget-scratchpad {
@@ -848,12 +870,92 @@ body.briefing-fs-active #admin-bar {
   border: 2px solid #FEF3C7;
 }
 
-/* Sobre de Regalo Final */
+/* Aviso cooperativo en portada (Doble Candado en espera) */
+.partner-waiting-banner {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.24), rgba(180, 83, 9, 0.22));
+}
+
+.partner-waiting-banner.is-mine {
+  border-color: rgba(120, 215, 242, 0.42);
+  background: rgba(14, 116, 144, 0.18);
+}
+
+/* Diploma / Resumen de vuestro Adviento (Día 24) */
+.adv-diploma-card {
+  padding: 18px;
+  border: 1px solid rgba(253, 230, 138, 0.48);
+  background: linear-gradient(155deg, rgba(6, 78, 59, 0.28), rgba(5, 11, 18, 0.92) 60%, rgba(180, 83, 9, 0.18));
+}
+
+.adv-diploma-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.adv-diploma-stat {
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(5, 11, 18, 0.68);
+  text-align: center;
+}
+
+.adv-diploma-val {
+  font-family: var(--vg-font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FEF3C7;
+  display: block;
+}
+
+.adv-diploma-lbl {
+  font-size: 0.68rem;
+  color: var(--vg-text-secondary);
+  display: block;
+  margin-top: 2px;
+}
+
+/* Sobre Secreto sellado interactivo + Revelación */
+.secret-envelope-sealed {
+  padding: 22px 18px;
+  text-align: center;
+  border: 1.5px solid rgba(251, 191, 36, 0.62);
+  background: linear-gradient(160deg, rgba(127, 29, 29, 0.34), rgba(7, 17, 25, 0.94) 55%, rgba(180, 83, 9, 0.22));
+  box-shadow: var(--adv-gold-glow);
+}
+
+.secret-envelope-seal {
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #EF4444, #991B1B 68%, #450A0A);
+  border: 2px solid #FDE68A;
+  box-shadow: 0 0 22px rgba(220, 38, 38, 0.52);
+  display: grid;
+  place-items: center;
+  color: #FEF3C7;
+  font-family: var(--vg-font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
 .gift-reveal-card {
   padding: 22px;
   border: 1.5px solid rgba(251, 191, 36, 0.60);
   background: linear-gradient(155deg, rgba(185, 28, 28, 0.24), rgba(6, 24, 20, 0.94) 55%, rgba(245, 158, 11, 0.16));
   box-shadow: var(--adv-gold-glow);
+  animation: cardFloatIn 380ms var(--vg-spring) both;
 }
 
 .gift-voucher {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.15.0";
+const CACHE_NAME = "adviento-cero-v2.16.0";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -42,6 +42,7 @@ const CRITICAL_PRECACHE_ASSETS = [
 const OPTIONAL_PRECACHE_ASSETS = [
   "./video-briefing/briefing.mp4",
   "./video-briefing/poster.jpg",
+  "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf",
   "./imagenes/icon.svg",
   "./imagenes/icon-192.png",
   "./imagenes/icon-512.png",
