@@ -17,6 +17,7 @@
       print-color-adjust: exact;
     }
     .page {
+      position: relative;
       width: 100%;
       max-width: 190mm;
       min-height: 274mm;
@@ -27,6 +28,54 @@
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
       page-break-after: always;
+    }
+    .page-corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      color: rgba(180, 83, 9, 0.42);
+      pointer-events: none;
+    }
+    .page-corner.tl { top: 4.5mm; left: 4.5mm; }
+    .page-corner.tr { top: 4.5mm; right: 4.5mm; transform: scaleX(-1); }
+    .page-corner.bl { bottom: 4.5mm; left: 4.5mm; transform: scaleY(-1); }
+    .page-corner.br { bottom: 4.5mm; right: 4.5mm; transform: scale(-1); }
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 3px;
+    }
+    .title-row h1 { margin-top: 0; }
+    .callout-crimson-flex {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .flow-step {
+      padding: 5.5px 7px;
+      border-radius: 5px;
+      background: #FFFFFF;
+      border: 1px solid #FDE68A;
+      font-size: 8.6px;
+      line-height: 1.38;
+      color: #374151;
+    }
+    .flow-step-num {
+      font-family: 'Courier Prime', monospace;
+      font-size: 7.8px;
+      font-weight: 700;
+      color: #B45309;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 2px;
     }
     .page:last-child { page-break-after: auto; }
     .page-body {
@@ -259,8 +308,9 @@
       align-items: center;
       padding: 10px 14px;
       border: 1.5px solid #064E3B;
-      border-radius: 6px;
-      background: #F9FAFB;
+      box-shadow: inset 0 0 0 2px #FFFFFF, inset 0 0 0 3px rgba(180, 83, 9, 0.32);
+      border-radius: 7px;
+      background: linear-gradient(155deg, #F8FCFA 0%, #FFFDF7 100%);
       margin-top: 7px;
     }
     .qr-wrap {
@@ -287,10 +337,17 @@
 <body>
   <!-- PÁGINA 1: QUÉ ES ADVIENTO CERO, ROLES Y MECÁNICA COOPERATIVA -->
   <section class="page">
+    <svg class="page-corner tl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner tr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner bl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner br" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
     <header class="masthead">
       <div>
         <div class="eyebrow">Regalo de Adviento · Edición Especial para Patri</div>
-        <h1>ADVIENTO CERO · Cómo funciona</h1>
+        <div class="title-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#B45309" aria-hidden="true"><polygon points="12 1.5 14.5 9.2 22.5 12 14.5 14.8 12 22.5 9.5 14.8 1.5 12 9.5 9.2"/></svg>
+          <h1>ADVIENTO CERO · Cómo funciona</h1>
+        </div>
       </div>
       <span class="issue-tag">1 AL 24 DE DICIEMBRE</span>
     </header>
@@ -350,7 +407,7 @@
           <h2>3. Las 4 Pestañas de la App</h2>
           <ul class="kv-list">
             <li><strong>Calendario (1–24):</strong> Portada con el <strong>Vídeo Briefing</strong>, barra de hitos, las 24 puertas con ritual de apertura propio y actividad en vivo de ambos móviles.</li>
-            <li><strong>Día Activo:</strong> Tu prueba de la jornada, sus herramientas táctiles y un botón de <strong>3 pistas progresivas</strong> por si alguna noche os atascáis.</li>
+            <li><strong>Día Activo:</strong> Tu prueba diaria, sus herramientas táctiles, <strong>bloc local</strong> (sin papel ni boli), parte de enlace y <strong>3 pistas progresivas</strong>.</li>
             <li><strong>Sospechosos:</strong> Fichas con retrato, valoraciones de pareja, comparador lado a lado y vuestra <strong>libreta compartida</strong>.</li>
             <li><strong>Expediente:</strong> Cuatro apartados con el <em>Atestado</em>, <em>Pistas</em> (buscador, chinchetas y cronología), <em>Hotel</em> (plano y escenas) y <em>Ajustes</em>.</li>
           </ul>
@@ -361,17 +418,26 @@
           <ul class="kv-list">
             <li><strong>Prohibido mirar la otra pantalla:</strong> La magia está en describir símbolos, mapas, horas o cifras en voz alta en el sofá o por llamada.</li>
             <li><strong>Sin trampas ni spoilers:</strong> Yo tampoco conozco la solución de los enigmas ni quién está detrás del misterio; jugamos los dos a ciegas desde el primer día.</li>
-            <li><strong>Con volumen activado:</strong> Sube el sonido del iPhone para disfrutar el Vídeo Briefing, el código Morse real y la firma sonora de cada puerta.</li>
+            <li><strong>Con volumen activado:</strong> Quita el silencio lateral del iPhone y sube el volumen para disfrutar el Vídeo Briefing, el Morse real y la firma sonora de cada puerta.</li>
             <li><strong>A vuestro ritmo y sin cobertura:</strong> Pensado para pocos minutos cada noche; el progreso se sincroniza en la nube y funciona también offline.</li>
           </ul>
         </div>
       </div>
 
-      <div class="callout-crimson" style="margin-bottom:0;">
-        <h2 style="color:#991B1B;margin-bottom:3px;">El Gran Final de Nochebuena (24 de diciembre)</h2>
-        <p>
-          A lo largo del calendario iréis descartando inocentes hasta llegar al <strong>24 de diciembre con los 3 sospechosos finalistas</strong>. En el Careo Final de Nochebuena cerraréis juntos la acusación justificada para desprecintar el epílogo completo, vuestro <strong>Álbum de Recuerdos del Mes</strong> y el <strong>Sobre Secreto de Nochebuena</strong>.
-        </p>
+      <div class="callout-crimson callout-crimson-flex" style="margin-bottom:0;">
+        <div>
+          <h2 style="color:#991B1B;margin-bottom:3px;">El Gran Final de Nochebuena (24 de diciembre)</h2>
+          <p>
+            A lo largo del calendario iréis descartando inocentes hasta llegar al <strong>24 de diciembre con los 3 sospechosos finalistas</strong>. En el Careo Final de Nochebuena cerraréis juntos la acusación justificada para desprecintar el epílogo completo, vuestro <strong>Álbum de Recuerdos del Mes</strong> y el <strong>Sobre Secreto de Nochebuena</strong>.
+          </p>
+        </div>
+        <svg width="46" height="46" viewBox="0 0 60 60" aria-hidden="true" style="flex-shrink:0;">
+          <circle cx="30" cy="30" r="27" fill="#991B1B" stroke="#B45309" stroke-width="1.6"/>
+          <circle cx="30" cy="30" r="21" fill="none" stroke="#FDE68A" stroke-opacity="0.85" stroke-width="1" stroke-dasharray="2.5 2"/>
+          <polygon points="30,11 31.2,14.2 34.4,15.4 31.2,16.6 30,19.8 28.8,16.6 25.6,15.4 28.8,14.2" fill="#FEF08A"/>
+          <text x="30" y="37" text-anchor="middle" fill="#FFFBEB" font-family="Cormorant Garamond, Georgia, serif" font-size="20" font-weight="700">24</text>
+          <text x="30" y="45" text-anchor="middle" fill="#FDE68A" font-family="Courier Prime, monospace" font-size="4.4" font-weight="700" letter-spacing="0.9">NOCHEBUENA</text>
+        </svg>
       </div>
     </div>
 
@@ -383,6 +449,10 @@
 
   <!-- PÁGINA 2: EJEMPLO INVENTADO DE DINÁMICA + QR DE ACCESO -->
   <section class="page">
+    <svg class="page-corner tl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner tr" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner bl" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
+    <svg class="page-corner br" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M1 14 V2 Q1 1 2 1 H14"/><path d="M5 10 V5 H10" stroke-opacity="0.55"/></svg>
     <header class="masthead" style="border-color:#991B1B;">
       <div>
         <div class="eyebrow" style="color:#991B1B;">Ejemplo Práctico de Entrenamiento · Datos Totalmente Ficticios</div>
@@ -439,12 +509,21 @@
       </div>
 
       <div class="flow-box" style="margin-bottom:0;">
-        <h3 style="color:#92400E;">Cómo lo resolveríais hablando en 2 minutos:</h3>
-        <p>
-          <strong>1.</strong> Patri le dice a Miguel que su billete corresponde al tren <strong>Nocturno 07</strong>. &nbsp;
-          <strong>2.</strong> Miguel consulta la tabla: el Nocturno 07 cumple la regla (Andén C, 22:10 h, Reloj <code>340</code>), calcula <code>340 + 15 = 355 kHz</code> y le canta el dato. &nbsp;
-          <strong>3.</strong> Patri mueve el dial hasta <strong>355 kHz</strong>, lee la palabra revelada (<code>NORTE</code>) e introduce la clave conjunta <code>07NORTE</code> para superar el día (en puertas de <em>Doble Candado</em>, cada uno valida además su propia mitad).
-        </p>
+        <h3 style="color:#92400E;">Cómo lo resolveríamos hablando en 2 minutos:</h3>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <span class="flow-step-num">01 · TÚ ME DICES</span>
+            Me cuentas que tu billete corresponde al tren <strong>Nocturno 07</strong> y qué fórmula pide la nota.
+          </div>
+          <div class="flow-step">
+            <span class="flow-step-num">02 · YO CONSULTO ARCHIVO</span>
+            Compruebo la tabla (Andén C, 22:10 h, Reloj <code>340</code>), sumo <code>+15</code> y te canto <strong>355 kHz</strong>.
+          </div>
+          <div class="flow-step">
+            <span class="flow-step-num">03 · TÚ VALIDAS</span>
+            Sintonizas <strong>355 kHz</strong>, lees <code>NORTE</code> y validas <code>07NORTE</code> (en <em>Doble Candado</em>, cada uno firma su mitad).
+          </div>
+        </div>
       </div>
 
       <div>
@@ -468,7 +547,7 @@
       <div class="callout-video" style="margin-bottom:0;">
         <h3 style="color:#064E3B;margin-bottom:2px;">Consejo para disfrutarlo al máximo</h3>
         <p>
-          Durante el mes podéis marcar vuestra postura (<em>Sospecha, Duda o Inocente</em>) en cada ficha, fijar pistas con <strong>chincheta</strong> y comparar hasta 3 sospechosos lado a lado. Todo lo que anotéis se guarda al instante para ambos móviles.
+          Durante el mes podéis marcar vuestra postura (<em>Sospecha, Duda o Inocente</em>) en cada ficha, fijar pistas con <strong>chincheta</strong> y comparar hasta 3 sospechosos lado a lado. Si jugáis de noche en la cama o el sofá, en <em>Expediente → Ajustes</em> tenéis modo <strong>Lectura Nocturna</strong> y <strong>Texto +15%</strong>.
         </p>
       </div>
 

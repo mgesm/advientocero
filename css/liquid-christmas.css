@@ -1732,6 +1732,7 @@ body.pref-reduced-motion * {
 
 .serif {
   font-family: var(--vg-font-serif);
+  font-variant-numeric: lining-nums;
 }
 
 .sr-only {
