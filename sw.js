@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.25.0";
+const CACHE_NAME = "adviento-cero-v2.26.0";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",
@@ -37,7 +37,6 @@ const CRITICAL_PRECACHE_ASSETS = [
 ];
 
 const OPTIONAL_PRECACHE_ASSETS = [
-  "./video-briefing/briefing.mp4",
   "./video-briefing/poster.jpg",
   "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf",
   "./imagenes/icon.svg",
@@ -111,19 +110,19 @@ function inferRangeMime(url, fallback) {
 }
 
 async function handleRangeRequest(req, cachedResponse) {
-  const blob = await cachedResponse.blob();
-  const total = blob.size;
+  const buf = await cachedResponse.arrayBuffer();
+  const total = buf.byteLength;
   const rangeHeader = req.headers.get("range") || "";
   const match = /bytes=(\d+)-(\d*)/.exec(rangeHeader);
   const start = match ? Number(match[1]) : 0;
   const end = match && match[2] ? Math.min(total - 1, Number(match[2])) : total - 1;
-  if (start >= total || start > end) {
+  if (total === 0 || start >= total || start > end) {
     return new Response(null, {
       status: 416,
       headers: { "Content-Range": `bytes */${total}` }
     });
   }
-  const sliced = blob.slice(start, end + 1);
+  const sliced = buf.slice(start, end + 1);
   return new Response(sliced, {
     status: 206,
     statusText: "Partial Content",
@@ -131,7 +130,7 @@ async function handleRangeRequest(req, cachedResponse) {
       "Content-Type": inferRangeMime(req.url, cachedResponse.headers.get("Content-Type")),
       "Content-Range": `bytes ${start}-${end}/${total}`,
       "Accept-Ranges": "bytes",
-      "Content-Length": String(sliced.size)
+      "Content-Length": String(sliced.byteLength)
     }
   });
 }
@@ -185,7 +184,9 @@ self.addEventListener("fetch", (event) => {
           event.waitUntil(safeCachePut(CACHE_NAME, req, res));
         }
         return res;
-      }).catch(() => caches.match(req, { ignoreSearch: true }))
+      }).catch(() =>
+        caches.match(req, { ignoreSearch: true }).then((cached) => cached || new Response("", { status: 503, statusText: "Offline" }))
+      )
     );
     return;
   }

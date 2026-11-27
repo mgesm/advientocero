@@ -77,7 +77,11 @@ window.DateGate = (() => {
     const now = new Date();
     const dec1 = new Date(TARGET_YEAR, 11, 1, 0, 0, 0);
     const diff = dec1.getTime() - now.getTime();
-    if (diff <= 0) return "Calendario de Adviento activo";
+    if (diff <= 0) {
+      return getSimulatedDay() === 0
+        ? "Apertura el 1 de diciembre (simulación pre-diciembre)"
+        : "Calendario de Adviento activo";
+    }
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
     const mins = Math.floor((diff / (1000 * 60)) % 60);

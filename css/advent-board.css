@@ -220,16 +220,6 @@
   gap: 10px;
 }
 
-@media (max-width: 380px) {
-  .advent-grid {
-    gap: 8px;
-  }
-  .door-card {
-    min-height: 102px;
-    padding: 9px;
-  }
-}
-
 @media (min-width: 560px) {
   .advent-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -261,6 +251,16 @@
   touch-action: manipulation;
   overflow: hidden;
   transition: transform 180ms var(--vg-spring), border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+@media (max-width: 380px) {
+  .advent-grid {
+    gap: 8px;
+  }
+  .door-card {
+    min-height: 102px;
+    padding: 9px;
+  }
 }
 
 .door-card::after {
@@ -709,13 +709,16 @@
 }
 
 .cal-milestones-labels {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  text-align: center;
+  position: relative;
+  height: 26px;
+  margin: 0 6px;
 }
 
 .cal-milestone-lbl {
+  position: absolute;
+  top: 0;
+  left: var(--mpos, 0%);
+  transform: translateX(-50%);
   font-family: var(--vg-font-mono);
   font-size: 0.56rem;
   color: var(--vg-text-muted);
@@ -724,6 +727,12 @@
   flex-direction: column;
   align-items: center;
   gap: 1px;
+  white-space: nowrap;
+}
+
+.cal-milestone-lbl:last-child {
+  transform: translateX(-100%);
+  align-items: flex-end;
 }
 
 .cal-milestone-lbl strong {

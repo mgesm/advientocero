@@ -66,6 +66,7 @@ window.SyncEngine = (() => {
       suspectNotes: {},    // { "s03": { miguel: { stance, note, at }, patri: { stance, note, at } } }
       hintsUnlocked: {},   // { "1": 0..3 }
       pinnedClues: [],     // ["day-1", "suspect-s03", ...]
+      pinnedCluesUpdatedAt: 0,
       lastActivity: {},    // { miguel: { kind, label, day, suspectId, at }, patri: { ... } }
       presence: {}
     };
@@ -147,6 +148,7 @@ window.SyncEngine = (() => {
       : out.pinnedClues && typeof out.pinnedClues === "object"
         ? Array.from(new Set(Object.values(out.pinnedClues).map((x) => String(x || "").trim()).filter(Boolean)))
         : [];
+    out.pinnedCluesUpdatedAt = Number(out.pinnedCluesUpdatedAt) || 0;
     return out;
   }
 
@@ -182,7 +184,18 @@ window.SyncEngine = (() => {
     merged.discardedIds = Array.from(mergedIds);
     merged.discardedMap = {};
     merged.discardedIds.forEach((id) => { merged.discardedMap[id] = true; });
-    merged.pinnedClues = Array.from(new Set([...(l.pinnedClues || []), ...(r.pinnedClues || [])]));
+    const lPinAt = Number(l.pinnedCluesUpdatedAt || 0);
+    const rPinAt = Number(r.pinnedCluesUpdatedAt || 0);
+    if (lPinAt && (!rPinAt || lPinAt > rPinAt)) {
+      merged.pinnedClues = (l.pinnedClues || []).slice();
+      merged.pinnedCluesUpdatedAt = lPinAt;
+    } else if (rPinAt && (!lPinAt || rPinAt >= lPinAt)) {
+      merged.pinnedClues = (r.pinnedClues || []).slice();
+      merged.pinnedCluesUpdatedAt = rPinAt;
+    } else {
+      merged.pinnedClues = Array.from(new Set([...(l.pinnedClues || []), ...(r.pinnedClues || [])]));
+      merged.pinnedCluesUpdatedAt = Math.max(lPinAt, rPinAt);
+    }
 
     merged.finalVerdictSolved = Boolean(l.finalVerdictSolved || r.finalVerdictSolved);
     merged.finalEpilogue = r.finalEpilogue || l.finalEpilogue || null;
@@ -237,8 +250,21 @@ window.SyncEngine = (() => {
       merged.sharedNotes = l.sharedNotes;
       merged.notesMeta = l.notesMeta;
     } else if (rNotesAt && (!lNotesAt || rNotesAt >= lNotesAt)) {
-      merged.sharedNotes = r.sharedNotes;
-      merged.notesMeta = r.notesMeta;
+      if (!lNotesAt && l.sharedNotes && l.sharedNotes.trim()) {
+        if (!r.sharedNotes || !r.sharedNotes.trim()) {
+          merged.sharedNotes = l.sharedNotes;
+          merged.notesMeta = { updatedBy: r.notesMeta?.updatedBy || activeRole || "", updatedAt: Math.max(rNotesAt + 1, Date.now()) };
+        } else if (r.sharedNotes !== l.sharedNotes && !r.sharedNotes.includes(l.sharedNotes)) {
+          merged.sharedNotes = `${r.sharedNotes}\n\n[Restaurado de copia]\n${l.sharedNotes}`;
+          merged.notesMeta = { updatedBy: r.notesMeta?.updatedBy || activeRole || "", updatedAt: Math.max(rNotesAt + 1, Date.now()) };
+        } else {
+          merged.sharedNotes = r.sharedNotes;
+          merged.notesMeta = r.notesMeta;
+        }
+      } else {
+        merged.sharedNotes = r.sharedNotes;
+        merged.notesMeta = r.notesMeta;
+      }
     } else if (!r.sharedNotes && l.sharedNotes) {
       merged.sharedNotes = l.sharedNotes;
       merged.notesMeta = l.notesMeta || null;
@@ -349,6 +375,10 @@ window.SyncEngine = (() => {
     }
     if (Array.isArray(merged.pinnedClues) && merged.pinnedClues.length) {
       patch.pinnedClues = merged.pinnedClues;
+      if (merged.pinnedCluesUpdatedAt) patch.pinnedCluesUpdatedAt = merged.pinnedCluesUpdatedAt;
+    } else if (merged.pinnedCluesUpdatedAt) {
+      patch.pinnedClues = null;
+      patch.pinnedCluesUpdatedAt = merged.pinnedCluesUpdatedAt;
     }
     ["miguel", "patri"].forEach((rk) => {
       if (merged.lastActivity?.[rk]) patch[`lastActivity/${rk}`] = merged.lastActivity[rk];
@@ -458,6 +488,7 @@ window.SyncEngine = (() => {
                 clearWriteOk(seq);
               }
             }
+            notify();
           }
         }, (err) => {
           handleWriteError(err);
@@ -550,6 +581,8 @@ window.SyncEngine = (() => {
             } else {
               clearWriteOk(seq);
             }
+          } else {
+            clearWriteOk(seq);
           }
         });
       } else if (decoded) {
@@ -606,6 +639,7 @@ window.SyncEngine = (() => {
       if (act) patch[`lastActivity/${act.rk}`] = act.entry;
       roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
+    notify();
   }
 
   function sendFieldDispatch(dayNum, role, text) {
@@ -738,6 +772,7 @@ window.SyncEngine = (() => {
     if (idx >= 0) cur.splice(idx, 1);
     else cur.push(clean);
     state.pinnedClues = cur;
+    state.pinnedCluesUpdatedAt = Date.now();
     let act = null;
     if (added) {
       if (clean.startsWith("day-")) {
@@ -753,7 +788,10 @@ window.SyncEngine = (() => {
     setDirty(true);
     const seq = ++writeSeq;
     if (mode === "firebase" && roomRef) {
-      const patch = { pinnedClues: cur };
+      const patch = {
+        pinnedClues: cur.length ? cur : null,
+        pinnedCluesUpdatedAt: state.pinnedCluesUpdatedAt
+      };
       if (act) patch[`lastActivity/${act.rk}`] = act.entry;
       roomRef.update(patch).then(() => clearWriteOk(seq)).catch(handleWriteError);
     }
@@ -767,7 +805,13 @@ window.SyncEngine = (() => {
     Object.keys(obj).forEach((k) => {
       if (k === "__proto__" || k === "constructor" || k === "prototype") return;
       const v = obj[k];
-      out[k] = (v && typeof v === "object" && !Array.isArray(v)) ? sanitizePlainObject(v) : v;
+      if (Array.isArray(v)) {
+        out[k] = v.map((item) => (item && typeof item === "object" && !Array.isArray(item)) ? sanitizePlainObject(item) : item);
+      } else if (v && typeof v === "object") {
+        out[k] = sanitizePlainObject(v);
+      } else {
+        out[k] = v;
+      }
     });
     return out;
   }
@@ -777,8 +821,12 @@ window.SyncEngine = (() => {
       throw new Error("Formato de estado inválido.");
     }
     const clean = sanitizePlainObject(rawState);
-    if (!clean.days || typeof clean.days !== "object") {
+    if (!clean.days || typeof clean.days !== "object" || Array.isArray(clean.days)) {
       throw new Error("El archivo no contiene datos válidos de los días.");
+    }
+    if (Array.isArray(clean.pinnedClues) && clean.pinnedClues.length && !clean.pinnedCluesUpdatedAt) {
+      clean.pinnedClues = Array.from(new Set([...(state.pinnedClues || []), ...clean.pinnedClues]));
+      clean.pinnedCluesUpdatedAt = Math.max(Date.now(), Number(state.pinnedCluesUpdatedAt || 0) + 1);
     }
     state = mergeMonotone(clean, state);
     saveLocal();

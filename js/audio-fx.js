@@ -4,6 +4,7 @@
 
 window.SafeStorage = (() => {
   const mem = new Map();
+  const memFallbackKeys = new Set();
   let quotaWarned = false;
   let quotaHandler = null;
 
@@ -17,8 +18,12 @@ window.SafeStorage = (() => {
 
   return {
     getItem(key) {
+      if (memFallbackKeys.has(key)) {
+        return mem.has(key) ? mem.get(key) : null;
+      }
       try {
-        return window.localStorage.getItem(key);
+        const val = window.localStorage.getItem(key);
+        return val !== null ? val : (mem.has(key) ? mem.get(key) : null);
       } catch (_) {
         return mem.has(key) ? mem.get(key) : null;
       }
@@ -28,14 +33,17 @@ window.SafeStorage = (() => {
       mem.set(key, s);
       try {
         window.localStorage.setItem(key, s);
+        memFallbackKeys.delete(key);
         return true;
       } catch (err) {
+        memFallbackKeys.add(key);
         notifyQuota(err);
         return false;
       }
     },
     removeItem(key) {
       mem.delete(key);
+      memFallbackKeys.delete(key);
       try {
         window.localStorage.removeItem(key);
       } catch (_) {}
@@ -51,7 +59,15 @@ window.AudioFX = (() => {
   let muted = window.SafeStorage.getItem("adviento_muted") === "1";
   let morseRunId = 0;
   let wakeSentinel = null;
+  let hasUserGesture = false;
   const visualCueHandlers = new Set();
+
+  const markUserGesture = () => { hasUserGesture = true; };
+  if (typeof window !== "undefined") {
+    window.addEventListener("pointerdown", markUserGesture, { once: true, capture: true, passive: true });
+    window.addEventListener("touchstart", markUserGesture, { once: true, capture: true, passive: true });
+    window.addEventListener("keydown", markUserGesture, { once: true, capture: true, passive: true });
+  }
 
   function emitVisualCue(kind, text) {
     if (!muted) return;
@@ -90,7 +106,8 @@ window.AudioFX = (() => {
   }
 
   function haptic(pattern) {
-    if (muted || isReducedMotion()) return;
+    if (muted || isReducedMotion() || !hasUserGesture) return;
+    if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
     try {
       if (navigator.vibrate) navigator.vibrate(pattern);
     } catch (_) {}
@@ -113,6 +130,7 @@ window.AudioFX = (() => {
   }
 
   function unlockAudioOnce() {
+    hasUserGesture = true;
     const c = ensureCtx(true);
     if (c && c.state !== "running") {
       c.resume().catch(() => {});

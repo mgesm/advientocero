@@ -83,7 +83,7 @@ details.context-brief-box > summary {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  min-height: 36px;
+  min-height: 44px;
   user-select: none;
 }
 
@@ -408,23 +408,6 @@ details.context-brief-box[open] > summary {
   border-spacing: 4px;
 }
 
-@media (max-width: 400px) {
-  .nono-table {
-    border-spacing: 3px;
-  }
-  .nono-clue-row {
-    font-size: 0.66rem;
-    padding-right: 4px;
-  }
-  .nono-clue-col {
-    font-size: 0.65rem;
-  }
-  .nono-cell {
-    width: 36px;
-    height: 36px;
-  }
-}
-
 .nono-clue-col {
   font-family: var(--vg-font-mono);
   font-size: 0.7rem;
@@ -455,6 +438,23 @@ details.context-brief-box[open] > summary {
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
+}
+
+@media (max-width: 400px) {
+  .nono-table {
+    border-spacing: 3px;
+  }
+  .nono-clue-row {
+    font-size: 0.66rem;
+    padding-right: 4px;
+  }
+  .nono-clue-col {
+    font-size: 0.65rem;
+  }
+  .nono-cell {
+    width: 36px;
+    height: 36px;
+  }
 }
 
 .nono-cell.on {
@@ -1488,6 +1488,27 @@ body.briefing-fs-active #admin-bar {
   animation: cinemaFadeUp 500ms 180ms ease both;
 }
 
+@media (max-height: 500px) {
+  .env24-theater {
+    transform: scale(0.72);
+    transform-origin: center center;
+  }
+  .env24-theater-kicker {
+    margin-bottom: 2px;
+  }
+  .env24-theater-headline {
+    font-size: 1.25rem;
+    margin-bottom: 112px;
+  }
+  .env24-theater .env24-stage {
+    width: min(290px, 72vw);
+    margin: 0 auto 10px;
+  }
+  .env24-theater-sub {
+    margin-top: 12px;
+  }
+}
+
 /* Coreografía 5 Actos dentro de .env24-theater .env24-stage.is-opening */
 .env24-stage.is-opening .env24-ambient-aura {
   animation: env24AuraSwell 3.2s ease-out forwards;
@@ -2138,18 +2159,16 @@ body.briefing-fs-active #admin-bar {
   display: grid;
   grid-template-columns: repeat(25, minmax(0, 1fr));
   gap: 3px;
-  margin: 12px 0;
+  margin: 12px 0 6px;
   align-items: center;
+  pointer-events: none;
 }
 
 .album-dot {
-  height: 14px;
-  padding: 0;
-  border: none;
+  display: block;
+  height: 6px;
   border-radius: 99px;
   background: rgba(148, 163, 184, 0.28);
-  cursor: pointer;
-  touch-action: manipulation;
   transition: transform 150ms ease, background 150ms ease;
 }
 
@@ -2163,8 +2182,29 @@ body.briefing-fs-active #admin-bar {
 
 .album-dot.active {
   background: #FEF08A;
-  transform: scaleY(1.38);
+  transform: scaleY(1.65);
   box-shadow: 0 0 8px rgba(251, 191, 36, 0.85);
+}
+
+.album-scrubber-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 12px;
+}
+
+.album-scrubber-lbl {
+  font-family: var(--vg-font-mono);
+  font-size: 0.66rem;
+  color: var(--vg-text-muted);
+  white-space: nowrap;
+}
+
+.album-scrubber {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  accent-color: var(--adv-gold);
 }
 
 .album-controls-row {

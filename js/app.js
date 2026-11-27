@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.25.0";
-  const CACHE_TAG = "adviento-cero-v2.25.0";
+  const APP_VERSION = "v2.26.0";
+  const CACHE_TAG = "adviento-cero-v2.26.0";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -50,9 +50,11 @@
   let expedienteTab = "case";
   let expedienteFloor = "Planta 1";
   let expSearchQuery = "";
+  let expSearchShowAll = false;
   let timelineFloorFilter = "all";
   let offlinePackStatus = "";
   let notesUndoSnapshot = null;
+  let pendingRemoteNotes = null;
   const celebratedLockDays = new Set();
   let cinemaActiveCleanup = null;
 
@@ -79,6 +81,63 @@
   let lastExpedienteSignature = "";
 
   const esc = (s) => window.PuzzleEngine.escapeHtml(s);
+  const normSearch = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  function sanitizePlainObj(obj, depth = 0) {
+    if (!obj || typeof obj !== "object" || Array.isArray(obj) || depth > 5) return {};
+    const out = {};
+    Object.keys(obj).forEach((k) => {
+      if (k === "__proto__" || k === "constructor" || k === "prototype") return;
+      const v = obj[k];
+      if (v && typeof v === "object" && !Array.isArray(v)) {
+        out[k] = sanitizePlainObj(v, depth + 1);
+      } else if (Array.isArray(v)) {
+        out[k] = v.map((item) => (item && typeof item === "object" && !Array.isArray(item)) ? sanitizePlainObj(item, depth + 1) : item);
+      } else {
+        out[k] = v;
+      }
+    });
+    return out;
+  }
+
+  function sanitizeDraftsStore(raw) {
+    const baseVerdict = { suspect: "", reason: "", poison: "", method: "", updatedAt: 0 };
+    const clean = sanitizePlainObj(raw);
+    const isPlainObj = (v) => Boolean(v && typeof v === "object" && !Array.isArray(v));
+    const rawInputs = isPlainObj(clean.inputs) ? clean.inputs : {};
+    const inputs = {};
+    Object.keys(rawInputs).forEach((k) => {
+      if (typeof rawInputs[k] === "string") inputs[k] = rawInputs[k];
+    });
+    const rawScratch = isPlainObj(clean.scratch) ? clean.scratch : {};
+    const scratch = {};
+    Object.keys(rawScratch).forEach((k) => {
+      if (typeof rawScratch[k] === "string") scratch[k] = rawScratch[k];
+    });
+    const rawWidgets = isPlainObj(clean.widgets) ? clean.widgets : {};
+    const widgets = {};
+    Object.keys(rawWidgets).forEach((k) => {
+      if (isPlainObj(rawWidgets[k])) widgets[k] = rawWidgets[k];
+    });
+    const rawVerdict = isPlainObj(clean.verdict) ? clean.verdict : {};
+    const verdict = {
+      suspect: typeof rawVerdict.suspect === "string" ? rawVerdict.suspect : baseVerdict.suspect,
+      reason: typeof rawVerdict.reason === "string" ? rawVerdict.reason : baseVerdict.reason,
+      poison: typeof rawVerdict.poison === "string" ? rawVerdict.poison : baseVerdict.poison,
+      method: typeof rawVerdict.method === "string" ? rawVerdict.method : baseVerdict.method,
+      updatedAt: Number.isFinite(Number(rawVerdict.updatedAt)) ? Number(rawVerdict.updatedAt) : 0
+    };
+    return { schemaVersion: 2, inputs, widgets, scratch, verdict };
+  }
+
+  function sanitizeUserPrefs(raw, basePrefs) {
+    const base = Object.assign({ fontBoost: false, nightSoft: false, reducedMotion: false, highContrastOutdoor: false, pwaBannerDismissed: false }, basePrefs || {});
+    const clean = sanitizePlainObj(raw);
+    ["fontBoost", "nightSoft", "reducedMotion", "highContrastOutdoor", "pwaBannerDismissed"].forEach((k) => {
+      if (typeof clean[k] === "boolean") base[k] = clean[k];
+    });
+    return base;
+  }
 
   function loadJsonStorage(key, fallback) {
     try {
@@ -88,23 +147,16 @@
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
         return Object.assign({}, fallback);
       }
-      return Object.assign({}, fallback, parsed);
+      return Object.assign({}, fallback, sanitizePlainObj(parsed));
     } catch (_) {
       return Object.assign({}, fallback);
     }
   }
 
   function loadDraftsStorage() {
-    const base = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
+    const base = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "", updatedAt: 0 } };
     const loaded = loadJsonStorage(scopedKey(DRAFTS_KEY), base);
-    const isPlainObj = (v) => Boolean(v && typeof v === "object" && !Array.isArray(v));
-    return {
-      schemaVersion: 2,
-      inputs: isPlainObj(loaded.inputs) ? loaded.inputs : {},
-      widgets: isPlainObj(loaded.widgets) ? loaded.widgets : {},
-      scratch: isPlainObj(loaded.scratch) ? loaded.scratch : {},
-      verdict: Object.assign({}, base.verdict, isPlainObj(loaded.verdict) ? loaded.verdict : {})
-    };
+    return sanitizeDraftsStore(loaded);
   }
 
   function saveDrafts() {
@@ -115,6 +167,7 @@
     if (!noteTimer) return;
     clearTimeout(noteTimer);
     noteTimer = null;
+    if (pendingRemoteNotes !== null) return;
     const ta = document.getElementById("shared-notes-area");
     if (ta && currentRole) {
       window.SyncEngine.saveNotes(ta.value, currentRole);
@@ -125,7 +178,6 @@
     document.documentElement.classList.toggle("font-boost", Boolean(userPrefs.fontBoost));
     document.body.classList.remove("font-boost");
     document.body.classList.toggle("night-reading-soft", Boolean(userPrefs.nightSoft));
-    document.body.classList.remove("Pref-reduced-motion");
     document.body.classList.toggle("pref-reduced-motion", Boolean(userPrefs.reducedMotion));
     document.body.classList.toggle("high-contrast-outdoor", Boolean(userPrefs.highContrastOutdoor));
     if ((userPrefs.reducedMotion || userPrefs.highContrastOutdoor) && window.clearSnow) window.clearSnow();
@@ -327,7 +379,11 @@
     layer.classList.add("active");
     window.AudioFX.waxSealBreak?.();
 
-    layer.onclick = () => cleanup(true);
+    const openedAt = Date.now();
+    layer.onclick = () => {
+      if (Date.now() - openedAt < 400) return;
+      cleanup(true);
+    };
     timers.push(setTimeout(revealOnce, 1020));
     timers.push(setTimeout(() => layer.classList.add("closing"), 1280));
     timers.push(setTimeout(() => cleanup(false), 1540));
@@ -439,13 +495,17 @@
     layer.classList.remove("closing");
     layer.classList.add("active");
 
-    layer.onclick = () => cleanup();
+    const openedAt = Date.now();
+    layer.onclick = () => {
+      if (Date.now() - openedAt < 400) return;
+      cleanup();
+    };
     timers.push(setTimeout(() => { if (window.triggerGoldBurst) window.triggerGoldBurst(52); }, 480));
     timers.push(setTimeout(() => layer.classList.add("closing"), 1750));
     timers.push(setTimeout(() => cleanup(), 2020));
   }
 
-  function openAdventDay(dayNum) {
+  function openAdventDay(dayNum, opts = {}) {
     const d = Number(dayNum || 1);
     if (!window.DateGate.isDayOpen(d)) {
       window.AudioFX.error();
@@ -457,7 +517,7 @@
       userPickedDay = true;
       selectedDayNum = d;
       lastDaySignature = "";
-      switchTab("day", { scrollToTop: true, force: true, silent: silentClick });
+      switchTab("day", { scrollToTop: true, force: true, silent: silentClick, replaceHistory: Boolean(opts.replaceHistory) });
     };
     const alreadySolved = Boolean(syncState.days?.[String(d)]?.solved);
     if (dayObj && !alreadySolved && !isDoorUnsealed(d)) {
@@ -713,7 +773,8 @@
         `¿Cambiar al terminal de ${targetName}?`,
         `Este dispositivo mostrará las pistas privadas y artefactos exclusivos de ${targetName}. Si estás jugando en pareja, evita cambiar para no ver sus datos sin querer.`,
         `Cambiar a ${targetName}`,
-        () => applyRoleSwitch(role)
+        () => applyRoleSwitch(role),
+        { reuseHistory: overlayHistoryPushed }
       );
       return;
     }
@@ -726,9 +787,7 @@
     clearKeyboardOpen();
     window.AudioFX.stopMorse?.();
     tabScrollY[activeTab] = window.scrollY;
-    if (activeTab === "day" || activeTab === "expediente") {
-      pauseBriefingVideos();
-    }
+    pauseBriefingVideos();
     activeTab = tab;
     if (!opts.silent) window.AudioFX.click();
 
@@ -756,8 +815,12 @@
       window.scrollTo({ top: tabScrollY[tab] || 0, behavior: "auto" });
     }
 
-    if (!opts.fromHistory && window.history?.pushState) {
-      window.history.pushState({ tab, day: selectedDayNum }, "");
+    if (!opts.fromHistory) {
+      if (opts.replaceHistory && window.history?.replaceState) {
+        window.history.replaceState({ tab, day: selectedDayNum }, "");
+      } else if (window.history?.pushState) {
+        window.history.pushState({ tab, day: selectedDayNum }, "");
+      }
     }
   }
 
@@ -770,6 +833,12 @@
 
   function getDayStatus(dayNum) {
     const ds = syncState.days?.[String(dayNum)] || {};
+    if (dayNum === 24) {
+      if (syncState.finalVerdictSolved) return "solved";
+      if (!window.DateGate.isDayOpen(24)) return "locked";
+      if (ds.solved || ds.miguelSolved || ds.patriSolved) return "waiting";
+      return "available";
+    }
     if (ds.solved) return "solved";
     if (!window.DateGate.isDayOpen(dayNum)) return "locked";
     if (ds.miguelSolved || ds.patriSolved) return "waiting";
@@ -790,7 +859,10 @@
   function isMyDayPartPending(dayObj, role) {
     if (!dayObj || !window.DateGate.isDayOpen(dayObj.day)) return false;
     const ds = syncState.days?.[String(dayObj.day)] || {};
-    if (dayObj.day === 24 && syncState.finalVerdictSolved) return false;
+    if (dayObj.day === 24) {
+      if (syncState.finalVerdictSolved) return false;
+      if (ds.solved) return true;
+    }
     if (ds.solved) return false;
     const myDone = role === "miguel" ? Boolean(ds.miguelSolved) : Boolean(ds.patriSolved);
     if (dayObj.mode === "dual-lock" || myDone) {
@@ -1249,20 +1321,21 @@
       </div>`;
   }
 
-  function playSecretEnvelopeTheater(gift, onUnveil) {
+  function playSecretEnvelopeTheater(gift, onUnveil, opts = {}) {
     const layer = document.getElementById("cinema-fx-layer");
     if (typeof window.AudioFX.envelopeOpenSymphony === "function") {
       window.AudioFX.envelopeOpenSymphony();
     } else {
       window.AudioFX.waxSealBreak?.();
     }
-    if (!layer || isReducedMotionPref()) {
+    if (!layer || (isReducedMotionPref() && !opts.forcePlay)) {
       if (window.triggerGoldBurst) window.triggerGoldBurst(72);
       if (typeof onUnveil === "function") onUnveil();
       return;
     }
 
-    if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup();
+    if (typeof cinemaActiveCleanup === "function") cinemaActiveCleanup(false);
+    window.DoorRituals?.stop?.();
     let unveiled = false;
     let finished = false;
     const timers = [];
@@ -1281,6 +1354,9 @@
       layer.innerHTML = "";
       layer.onclick = null;
       if (cinemaActiveCleanup === cleanup) cinemaActiveCleanup = null;
+      if (!unveiled && typeof opts.onCancel === "function") {
+        try { opts.onCancel(); } catch (_) {}
+      }
     };
     cinemaActiveCleanup = cleanup;
 
@@ -1360,7 +1436,12 @@
       if (started || !gift) return;
       started = true;
       triggers.forEach((b) => { b.disabled = true; });
-      playSecretEnvelopeTheater(gift, onOpened);
+      playSecretEnvelopeTheater(gift, onOpened, {
+        onCancel: () => {
+          started = false;
+          triggers.forEach((b) => { b.disabled = false; });
+        }
+      });
     };
     triggers.forEach((b) => b.addEventListener("click", handleOpen));
   }
@@ -1398,9 +1479,33 @@
     const maxOpen = window.DateGate.getMaxOpenDay();
     let hasPending = false;
     for (let d = 1; d <= maxOpen; d++) {
-      if (!syncState.days?.[String(d)]?.solved) { hasPending = true; break; }
+      if (d === 24) {
+        if (!syncState.finalVerdictSolved) { hasPending = true; break; }
+      } else if (!syncState.days?.[String(d)]?.solved) {
+        hasPending = true;
+        break;
+      }
     }
     dot.classList.toggle("visible", hasPending);
+  }
+
+  function resetSessionUiState() {
+    celebratedLockDays.clear();
+    compareIds = [];
+    expSearchQuery = "";
+    expSearchShowAll = false;
+    timelineFloorFilter = "all";
+    expedienteFloor = "Planta 1";
+    notesUndoSnapshot = null;
+    pendingRemoteNotes = null;
+    partnerToastBaselineReady = false;
+    prevSyncSnap = null;
+    lastKnownMaxOpenDay = window.DateGate.getMaxOpenDay();
+    lastAdminSignature = "";
+    lastCalendarSignature = "";
+    lastDaySignature = "";
+    lastSuspectsSignature = "";
+    lastExpedienteSignature = "";
   }
 
   function openRitualPreviewModal(triggerEl) {
@@ -1508,22 +1613,17 @@
 
     document.getElementById("admin-exit-btn")?.addEventListener("click", () => {
       window.DateGate.disableAdmin();
-      lastKnownMaxOpenDay = window.DateGate.getMaxOpenDay();
       if (window.location.search.includes("admin=") && window.history?.replaceState) {
         const u = new URL(window.location.href);
         u.searchParams.delete("admin");
         window.history.replaceState(window.history.state, "", u.pathname + u.search + u.hash);
       }
+      resetSessionUiState();
       window.SyncEngine.init();
       draftsStore = loadDraftsStorage();
       if (currentRole) window.SyncEngine.markPresence(currentRole);
       userPickedDay = false;
       selectDefaultDay();
-      lastAdminSignature = "";
-      lastCalendarSignature = "";
-      lastDaySignature = "";
-      lastSuspectsSignature = "";
-      lastExpedienteSignature = "";
       renderAdminBar();
       renderActiveTab();
       updateDockIndicator();
@@ -1541,7 +1641,7 @@
             Store.removeItem(scopedKey(UNSEALED_DOORS_KEY));
             Store.removeItem(scopedKey(GIFT_ENVELOPE_OPEN_KEY));
           } catch (_) {}
-          celebratedLockDays.clear();
+          resetSessionUiState();
           expedienteTab = "case";
           suspectsTab = "cards";
           suspectSort = "recent";
@@ -1550,7 +1650,7 @@
           suspectStanceFilter = "all";
           suspectFiltersExtraOpen = false;
           currentRole = "";
-          draftsStore = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "" } };
+          draftsStore = { schemaVersion: 2, inputs: {}, widgets: {}, scratch: {}, verdict: { suspect: "", reason: "", poison: "", method: "", updatedAt: 0 } };
           const ta = document.getElementById("shared-notes-area");
           if (ta) ta.value = "";
           suspectFilter = "all";
@@ -1559,16 +1659,9 @@
           suspectSearch = "";
           calendarFilter = "all";
           userPickedDay = false;
-          prevSyncSnap = null;
           selectDefaultDay();
-          lastAdminSignature = "";
-          lastCalendarSignature = "";
-          lastDaySignature = "";
-          lastSuspectsSignature = "";
-          lastExpedienteSignature = "";
           window.SyncEngine.resetAll();
-          closeModal();
-          switchTab("calendar", { silent: true, force: true });
+          switchTab("calendar", { silent: true, force: true, replaceHistory: true });
           openIdentityOverlay(false);
         }
       );
@@ -1606,19 +1699,20 @@
     }
     lastCalendarSignature = calSig;
 
+    const allAdventDays = window.ADVENT_DAYS || [];
     const solvedCount = Object.values(syncState.days || {}).filter((d) => d && d.solved).length;
-    const effectiveSolved = syncState.finalVerdictSolved ? 24 : solvedCount;
+    const solvedDoorsCount = allAdventDays.filter((d) => getDayStatus(d.day) === "solved").length;
+    const effectiveSolved = syncState.finalVerdictSolved ? 24 : solvedDoorsCount;
     const activeSuspects = syncState.finalVerdictSolved ? 1 : 25 - (syncState.discardedIds?.length || 0);
     const gift = window.GIFT_CONFIG;
 
     let ctaTargetDay = maxOpen;
     for (let d = 1; d <= maxOpen; d++) {
-      if (!syncState.days?.[String(d)]?.solved) { ctaTargetDay = d; break; }
+      if (d === 24 ? !syncState.finalVerdictSolved : !syncState.days?.[String(d)]?.solved) { ctaTargetDay = d; break; }
     }
 
     const myFlag = role === "miguel" ? "miguelSolved" : "patriSolved";
     const partnerFlag = role === "miguel" ? "patriSolved" : "miguelSolved";
-    const allAdventDays = window.ADVENT_DAYS || [];
     const myPendingDays = allAdventDays.filter((d) => isMyDayPartPending(d, role));
     const waitingPartnerDays = allAdventDays.filter((d) => {
       if (!window.DateGate.isDayOpen(d.day)) return false;
@@ -1650,8 +1744,12 @@
       if (st === "available") { icon = getSvg("unlock"); statusLabel = "Abrir hoy"; }
       else if (st === "waiting") {
         icon = getSvg("hourglass");
-        const myDone = role === "miguel" ? Boolean(ds.miguelSolved) : Boolean(ds.patriSolved);
-        statusLabel = myDone ? `Falta ${partnerName}` : "Faltas tú";
+        if (d.day === 24 && ds.solved && !syncState.finalVerdictSolved) {
+          statusLabel = "Careo pendiente";
+        } else {
+          const myDone = role === "miguel" ? Boolean(ds.miguelSolved) : Boolean(ds.patriSolved);
+          statusLabel = myDone ? `Falta ${partnerName}` : "Faltas tú";
+        }
       } else if (st === "solved") { icon = getSvg("check"); statusLabel = "Descubierta"; }
 
       return `
@@ -1730,7 +1828,7 @@
           ${milestones.map((m) => {
             const reached = m.target === 24 ? Boolean(syncState.finalVerdictSolved) : effectiveSolved >= m.target;
             const readyCareo = m.target === 24 && !syncState.finalVerdictSolved && effectiveSolved >= 23;
-            return `<span class="cal-milestone-lbl ${reached ? "is-reached" : ""} ${readyCareo ? "is-ready" : ""}"><strong>${m.short}</strong> ${esc(m.label)}</span>`;
+            return `<span class="cal-milestone-lbl ${reached ? "is-reached" : ""} ${readyCareo ? "is-ready" : ""}" style="--mpos:${m.pos}%;"><strong>${m.short}</strong> ${esc(m.label)}</span>`;
           }).join("")}
         </div>
       </div>`;
@@ -1758,7 +1856,7 @@
           <p class="day-story" style="margin-bottom:10px;">
             ${calendarFilter === "mine"
               ? (waitingPartnerDays.length > 0
-                ? `Vas al día con tu terminal. Solo falta la parte de ${esc(partnerName)} en ${waitingPartnerDays.length === 1 ? `el Día ${String(waitingPartnerDays[0]).padStart(2, "0")}` : `${waitingPartnerDays.length} puertas`}.`
+                ? `Vas al día con tu terminal. Solo falta la parte de ${esc(partnerName)} en ${waitingPartnerDays.length === 1 ? `el Día ${String(waitingPartnerDays[0].day).padStart(2, "0")}` : `${waitingPartnerDays.length} puertas`}.`
                 : `Vas completamente al día con tus enigmas abiertos.`)
               : calendarFilter === "solved"
                 ? `Aún no habéis completado ninguna puerta. Toca el Día 01 para empezar la investigación.`
@@ -1849,7 +1947,7 @@
           <button type="button" class="filter-chip ${calendarFilter === "all" ? "active" : ""}" data-cal-filter="all">Todas (24)</button>
           <button type="button" class="filter-chip ${calendarFilter === "mine" ? "active" : ""}" data-cal-filter="mine">Mis pendientes (${myPendingDays.length})</button>
           ${waitingPartnerDays.length > 0 ? `<button type="button" class="filter-chip ${calendarFilter === "waiting_partner" ? "active" : ""}" data-cal-filter="waiting_partner">Falta ${esc(partnerName)} (${waitingPartnerDays.length})</button>` : ""}
-          <button type="button" class="filter-chip ${calendarFilter === "solved" ? "active" : ""}" data-cal-filter="solved">Resueltas (${solvedCount})</button>
+          <button type="button" class="filter-chip ${calendarFilter === "solved" ? "active" : ""}" data-cal-filter="solved">Resueltas (${solvedDoorsCount})</button>
         </div>
       ` : ""}
 
@@ -1967,6 +2065,7 @@
     if (!force && sig === lastDaySignature && container.innerHTML.trim() !== "") {
       return;
     }
+    window.AudioFX.stopMorse?.();
     const sameDayRerender = Number(container.dataset.renderedDay || 0) === selectedDayNum;
     const prevDispatchOpen = sameDayRerender && Boolean(document.getElementById("day-dispatch-details")?.open);
     const prevScratchOpen = sameDayRerender && Boolean(container.querySelector(".widget-scratchpad")?.open);
@@ -2106,20 +2205,39 @@
         } else {
           const showdownHtml = window.DayArtifacts?.renderFinalShowdown ? window.DayArtifacts.renderFinalShowdown(role, remaining) : "";
           const prop = syncState.finalProposal;
-          const effVerdict = {
-            suspect: draftsStore.verdict.suspect || prop?.suspectId || "",
-            reason: draftsStore.verdict.reason || prop?.reason || "",
-            poison: draftsStore.verdict.poison || prop?.poison || "",
-            method: draftsStore.verdict.method || prop?.method || ""
-          };
           const isPartnerProposal = Boolean(prop && prop.byRole && prop.byRole !== role);
           const isMyProposal = Boolean(prop && prop.byRole === role);
+          const propTs = Number(prop?.proposedAt || 0);
+          const localTs = Number(draftsStore.verdict?.updatedAt || 0);
+          const usePartnerProp = Boolean(isPartnerProposal && propTs > localTs);
+          const effVerdict = usePartnerProp
+            ? {
+                suspect: prop.suspectId || "",
+                reason: prop.reason || "",
+                poison: prop.poison || "",
+                method: prop.method || ""
+              }
+            : {
+                suspect: draftsStore.verdict.suspect || prop?.suspectId || "",
+                reason: draftsStore.verdict.reason || prop?.reason || "",
+                poison: draftsStore.verdict.poison || prop?.poison || "",
+                method: draftsStore.verdict.method || prop?.method || ""
+              };
+          const propSuspectObj = prop?.suspectId ? (window.SUSPECTS_DATA || []).find((s) => s.id === prop.suspectId) : null;
           const reasons = [
             { id: "viales-spa", txt: "Alcaloides positivos en frascos del spa y estancia sin testigos en Cabina 2" },
             { id: "huella-coartada", txt: "Huella AFIS W-14 en el disyuntor, llave KEY-DIR-01 y coartada rota (los otros dos confirmados)" },
             { id: "ip-suite", txt: "Transferencia bancaria programada en diferido con ausencia de red en Suite 303" },
             { id: "llave-servicio", txt: "Tarjeta electrónica de servicio usada en Hab. 206 durante el brindis" }
           ];
+          const propDiffersFromForm = Boolean(
+            isPartnerProposal && (
+              effVerdict.suspect !== (prop.suspectId || "") ||
+              effVerdict.reason !== (prop.reason || "") ||
+              effVerdict.poison !== (prop.poison || "") ||
+              effVerdict.method !== (prop.method || "")
+            )
+          );
           finalTrialHtml = `
             ${showdownHtml}
             <div class="glass-card answer-card" style="border:var(--vg-border-crimson);">
@@ -2128,7 +2246,8 @@
               <p class="day-story" style="margin-bottom:12px;">Cruzad el laboratorio de Miguel y las coartadas de Patri para señalar al culpable y justificar la detención:</p>
               ${isPartnerProposal ? `
                 <div class="feedback-banner success" style="margin-bottom:12px;">
-                  <strong>${prop.byRole === "miguel" ? "Miguel" : "Patri"}</strong> ha enviado esta propuesta de acusación y pide tu segunda firma para ejecutar el arresto.
+                  <div><strong>${prop.byRole === "miguel" ? "Miguel" : "Patri"}</strong> ha enviado esta propuesta de acusación y pide tu segunda firma para ejecutar el arresto${propSuspectObj ? ` (<strong>${esc(propSuspectObj.name)}</strong> · ${esc(prop.poison || "")} / ${esc(prop.method || "")})` : ""}.</div>
+                  ${propDiffersFromForm ? `<button type="button" id="fv-load-proposal-btn" class="btn btn-sm btn-gold" style="margin-top:8px;">Cargar propuesta de ${prop.byRole === "miguel" ? "Miguel" : "Patri"}</button>` : ""}
                 </div>
               ` : isMyProposal ? `
                 <div class="feedback-banner info" style="margin-bottom:12px;background:rgba(56,189,248,0.12);border:var(--vg-border-frost);color:#BAE6FD;">
@@ -2175,7 +2294,7 @@
                   <input id="fv-method" type="text" class="adv-input" value="${esc(effVerdict.method)}" placeholder="Ej. palabra clave de la maniobra" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" required>
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                  ${!isPartnerProposal ? `<button type="button" id="fv-propose-btn" class="btn btn-frost" style="flex:1;min-width:170px;">Proponer a ${partnerName}</button>` : ""}
+                  <button type="button" id="fv-propose-btn" class="btn btn-frost" style="flex:1;min-width:170px;">${isPartnerProposal ? "Enviar contrapropuesta" : `Proponer a ${partnerName}`}</button>
                   <button type="submit" id="fv-submit-btn" class="btn btn-primary" style="flex:1;min-width:190px;">${isPartnerProposal ? "Firmar y Ejecutar Orden" : "Ejecutar Orden de Detención"}</button>
                 </div>
               </form>
@@ -2445,11 +2564,24 @@
         `, btn);
         const wrap = document.getElementById("artifact-zoom-wrap");
         const zBtn = document.getElementById("art-zoom-btn");
+        let baseW = 0;
+        let baseH = 0;
         zBtn?.addEventListener("click", () => {
           artScale = artScale === 1 ? 1.5 : 1;
           if (wrap) {
-            wrap.style.transform = artScale === 1 ? "" : `scale(${artScale})`;
-            wrap.style.width = artScale === 1 ? "" : `${Math.round(100 / artScale * 100)}%`;
+            if (artScale === 1) {
+              wrap.style.transform = "";
+              wrap.style.width = "";
+              wrap.style.marginBottom = "";
+              wrap.style.marginRight = "";
+            } else {
+              baseW = wrap.offsetWidth || 300;
+              baseH = wrap.offsetHeight || 200;
+              wrap.style.width = `${baseW}px`;
+              wrap.style.transform = `scale(${artScale})`;
+              wrap.style.marginBottom = `${Math.round(baseH * (artScale - 1))}px`;
+              wrap.style.marginRight = `${Math.round(baseW * (artScale - 1))}px`;
+            }
           }
           zBtn.textContent = artScale === 1 ? "Ampliar 1.5x" : "Restablecer 1x";
         });
@@ -2476,7 +2608,7 @@
     }
     document.getElementById("replay-secret-envelope-btn")?.addEventListener("click", () => {
       const g = window.GIFT_CONFIG?.finalGiftReveal;
-      if (g) playSecretEnvelopeTheater(g);
+      if (g) playSecretEnvelopeTheater(g, null, { forcePlay: true });
     });
 
     document.getElementById("day-quick-jump")?.addEventListener("change", (e) => {
@@ -2505,7 +2637,13 @@
       e.preventDefault();
       const inp = document.getElementById("dispatch-input");
       if (!inp) return;
-      window.SyncEngine.sendFieldDispatch(dayObj.day, role, inp.value);
+      const clean = inp.value.trim();
+      if (!clean) {
+        window.AudioFX.error();
+        showToast("Escribe un dato antes de enviarlo.");
+        return;
+      }
+      window.SyncEngine.sendFieldDispatch(dayObj.day, role, clean);
       clearKeyboardOpen();
       showToast(`Dato remitido a ${partnerName}.`);
     });
@@ -2593,6 +2731,7 @@
       btn.addEventListener("click", () => {
         window.AudioFX.click();
         draftsStore.verdict.suspect = btn.dataset.fvSuspect;
+        draftsStore.verdict.updatedAt = Date.now();
         saveDrafts();
         container.querySelectorAll("[data-fv-suspect]").forEach((b) => {
           const on = b === btn;
@@ -2606,6 +2745,7 @@
       btn.addEventListener("click", () => {
         window.AudioFX.click();
         draftsStore.verdict.reason = btn.dataset.fvReason;
+        draftsStore.verdict.updatedAt = Date.now();
         saveDrafts();
         container.querySelectorAll("[data-fv-reason]").forEach((b) => {
           const on = b === btn;
@@ -2617,18 +2757,38 @@
 
     document.getElementById("fv-poison")?.addEventListener("input", (e) => {
       draftsStore.verdict.poison = e.target.value;
+      draftsStore.verdict.updatedAt = Date.now();
       saveDrafts();
     });
     document.getElementById("fv-method")?.addEventListener("input", (e) => {
       draftsStore.verdict.method = e.target.value;
+      draftsStore.verdict.updatedAt = Date.now();
       saveDrafts();
+    });
+
+    document.getElementById("fv-load-proposal-btn")?.addEventListener("click", () => {
+      const p = syncState.finalProposal;
+      if (!p) return;
+      window.AudioFX.click();
+      draftsStore.verdict = {
+        suspect: p.suspectId || "",
+        reason: p.reason || "",
+        poison: p.poison || "",
+        method: p.method || "",
+        updatedAt: Number(p.proposedAt || Date.now())
+      };
+      saveDrafts();
+      lastDaySignature = "";
+      renderDayView(true);
     });
 
     document.getElementById("final-verdict-form")?.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (isSubmitting) return;
-      const sVal = draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
-      const rVal = draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
+      const selSuspectBtn = container.querySelector("[data-fv-suspect].selected");
+      const selReasonBtn = container.querySelector("[data-fv-reason].selected");
+      const sVal = selSuspectBtn?.dataset.fvSuspect || draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
+      const rVal = selReasonBtn?.dataset.fvReason || draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
       const pVal = document.getElementById("fv-poison")?.value || "";
       const mVal = document.getElementById("fv-method")?.value || "";
       const fb = document.getElementById("final-feedback");
@@ -2693,8 +2853,10 @@
 
     document.getElementById("fv-propose-btn")?.addEventListener("click", () => {
       if (isSubmitting) return;
-      const sVal = draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
-      const rVal = draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
+      const selSuspectBtn = container.querySelector("[data-fv-suspect].selected");
+      const selReasonBtn = container.querySelector("[data-fv-reason].selected");
+      const sVal = selSuspectBtn?.dataset.fvSuspect || draftsStore.verdict.suspect || syncState.finalProposal?.suspectId || "";
+      const rVal = selReasonBtn?.dataset.fvReason || draftsStore.verdict.reason || syncState.finalProposal?.reason || "";
       const pVal = document.getElementById("fv-poison")?.value?.trim() || "";
       const mVal = document.getElementById("fv-method")?.value?.trim() || "";
       const fb = document.getElementById("final-feedback");
@@ -2704,13 +2866,16 @@
         return;
       }
       window.AudioFX.click();
+      const nowTs = Date.now();
+      draftsStore.verdict = { suspect: sVal, reason: rVal, poison: pVal, method: mVal, updatedAt: nowTs };
+      saveDrafts();
       window.SyncEngine.setFinalProposal({
         byRole: role,
         suspectId: sVal,
         reason: rVal,
         poison: pVal,
         method: mVal,
-        proposedAt: Date.now()
+        proposedAt: nowTs
       });
       showToast(`Propuesta enviada a ${partnerName} para su segunda firma.`);
     });
@@ -2742,10 +2907,11 @@
   }
 
   function getRoomFloor(roomStr) {
-    const r = String(roomStr || "").toLowerCase();
-    if (/(301|302|303|304|305)/.test(r)) return "Planta 3";
-    if (/(201|202|203|204|205|206|207|208)/.test(r)) return "Planta 2";
-    if (/(101|102|105|106|107|108)/.test(r)) return "Planta 1";
+    const r = normSearch(roomStr);
+    if (/(301|302|303|304|305|planta\s*3)/.test(r)) return "Planta 3";
+    if (/(201|202|203|204|205|206|207|208|planta\s*2)/.test(r)) return "Planta 2";
+    if (/(101|102|103|104|105|106|107|108|planta\s*1)/.test(r)) return "Planta 1";
+    if (/(sotano|anexo|caldera|bodega|cocina|servicio|cabana|spa|garaje)/.test(r)) return "Sótano / Anexo";
     return "Sótano / Anexo";
   }
 
@@ -2878,7 +3044,7 @@
     const clearBtn = document.getElementById("suspect-search-clear");
     if (clearBtn) clearBtn.style.display = suspectSearch.trim() ? "inline-flex" : "none";
 
-    const q = suspectSearch.trim().toLowerCase();
+    const q = normSearch(suspectSearch.trim());
     let visibleCount = 0;
     container.querySelectorAll("[data-suspect-id]").forEach((card) => {
       const isOut = card.dataset.discarded === "1";
@@ -2887,7 +3053,7 @@
       const hasNote = card.dataset.hasNote === "1";
       const isPinned = card.dataset.pinned === "1";
       const isSuspected = card.dataset.suspected === "1";
-      const hay = (card.dataset.search || "").toLowerCase();
+      const hay = normSearch(card.dataset.search || "");
       const hideStatus = (suspectFilter === "pending" && isOut) || (suspectFilter === "discarded" && !isOut);
       const hideGroup = suspectGroupFilter !== "all" && grp !== suspectGroupFilter;
       const hideFloor = suspectFloorFilter !== "all" && flr !== suspectFloorFilter;
@@ -2931,10 +3097,17 @@
       if (existingTa) {
         const remoteNotes = syncState.sharedNotes || "";
         if (document.activeElement !== existingTa) {
-          if (existingTa.value !== remoteNotes) existingTa.value = remoteNotes;
+          if (pendingRemoteNotes === null && !noteTimer && existingTa.value !== remoteNotes) {
+            existingTa.value = remoteNotes;
+          }
         } else if (remoteNotes !== existingTa.value && remoteNotes.length > 0) {
+          clearTimeout(noteTimer);
+          noteTimer = null;
+          pendingRemoteNotes = remoteNotes;
           const conflictBox = document.getElementById("notes-remote-conflict");
           if (conflictBox) conflictBox.style.display = "flex";
+          const stLbl = document.getElementById("notes-status");
+          if (stLbl) stLbl.textContent = "Conflicto pendiente · pulsa Fusionar";
         }
       }
       updateSyncBadgesOnly();
@@ -2942,11 +3115,16 @@
     }
 
     lastSuspectsSignature = sig;
+    const hadPendingNoteTimer = Boolean(noteTimer);
     clearTimeout(noteTimer);
     noteTimer = null;
 
     const preservedNotes = existingTa ? existingTa.value : (syncState.sharedNotes || "");
+    const remoteAtRebuild = syncState.sharedNotes || "";
     const wasFocused = Boolean(existingTa && document.activeElement === existingTa);
+    if (wasFocused && remoteAtRebuild !== preservedNotes && remoteAtRebuild.length > 0 && pendingRemoteNotes === null && !hadPendingNoteTimer) {
+      pendingRemoteNotes = remoteAtRebuild;
+    }
     const taSel = wasFocused ? { start: existingTa.selectionStart, end: existingTa.selectionEnd } : null;
 
     const discarded = syncState.discardedIds || [];
@@ -3094,7 +3272,7 @@
                 ? `<span class="badge badge-crimson" style="padding:2px 7px;font-size:0.65rem;">${isExonerated && !isOut ? "EXONERADO" : "DESCARTADO"}</span>`
                 : `<span class="badge badge-frost" style="padding:2px 7px;font-size:0.65rem;">SOSPECHOSO</span>`;
             return `
-              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-has-note="${hasAnyNote ? "1" : "0"}" data-pinned="${isPinned ? "1" : "0"}" data-suspected="${isSuspected ? "1" : "0"}" data-search="${esc(`${s.name} ${s.role} ${s.room} ${s.alibiClaim} ${s.motiveHint}`)}">
+              <button type="button" class="suspect-card ${(isOut || isExonerated) ? "is-discarded" : ""} ${isCulprit ? "is-culprit-final" : ""}" data-suspect-id="${esc(s.id)}" data-discarded="${(isOut || isExonerated) ? "1" : "0"}" data-group="${esc(s.group)}" data-floor="${esc(floor)}" data-has-note="${hasAnyNote ? "1" : "0"}" data-pinned="${isPinned ? "1" : "0"}" data-suspected="${isSuspected ? "1" : "0"}" data-search="${esc(`#${s.num} ${s.num} ${s.name} ${s.role} ${s.room} ${s.alibiClaim} ${s.motiveHint}`)}">
                 <div class="suspect-avatar-wrap">
                   <img src="${esc(s.portrait)}" alt="${esc(s.name)}" class="suspect-avatar" width="78" height="78" loading="lazy" decoding="async">
                   ${(isOut || isExonerated) ? `<div class="suspect-stamp">${isExonerated && !isOut ? "Exonerado" : "Descartado"}</div>` : ""}
@@ -3134,7 +3312,7 @@
           <strong>Libreta Compartida (Miguel y Patri)</strong>
           <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);" id="notes-status">${syncMode === "firebase" ? "Sincronizada en nube" : "Guardado local"}</span>
         </div>
-        <div id="notes-remote-conflict" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(251,191,36,0.14);border:var(--vg-border-gold);justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:0.78rem;">
+        <div id="notes-remote-conflict" style="display:${pendingRemoteNotes !== null ? "flex" : "none"};margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(251,191,36,0.14);border:var(--vg-border-gold);justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:0.78rem;">
           <span>Tu pareja acaba de actualizar la libreta.</span>
           <button type="button" class="btn btn-sm btn-gold" id="notes-merge-btn">Fusionar cambios</button>
         </div>
@@ -3269,17 +3447,20 @@
         }
       } catch (_) {}
     }
-    ta?.addEventListener("input", () => {
+    const scheduleNotesSave = (snapshotBeforeWipe) => {
+      if (!ta || pendingRemoteNotes !== null) {
+        if (statusLbl && pendingRemoteNotes !== null) statusLbl.textContent = "Conflicto pendiente · pulsa Fusionar";
+        return;
+      }
       if (statusLbl) statusLbl.textContent = "Guardando...";
-      const snapshotBeforeWipe = prevNotesBeforeEdit;
-      prevNotesBeforeEdit = ta.value;
       clearTimeout(noteTimer);
       noteTimer = setTimeout(() => {
         noteTimer = null;
+        if (pendingRemoteNotes !== null) return;
         window.SyncEngine.saveNotes(ta.value, currentRole);
         const nowStr = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
         if (statusLbl) statusLbl.textContent = `${syncMode === "firebase" ? "Guardado en nube" : "Guardado local"} · ${nowStr}`;
-        if (snapshotBeforeWipe.trim().length >= 20 && ta.value.trim().length === 0) {
+        if (snapshotBeforeWipe && snapshotBeforeWipe.trim().length >= 20 && ta.value.trim().length === 0) {
           notesUndoSnapshot = snapshotBeforeWipe;
           showToast("Libreta vaciada.", "Deshacer", () => {
             if (!notesUndoSnapshot) return;
@@ -3290,16 +3471,33 @@
           });
         }
       }, 450);
+    };
+
+    if (hadPendingNoteTimer && ta && pendingRemoteNotes === null && ta.value !== (syncState.sharedNotes || "")) {
+      scheduleNotesSave("");
+    }
+
+    ta?.addEventListener("input", () => {
+      const snapshotBeforeWipe = prevNotesBeforeEdit;
+      prevNotesBeforeEdit = ta.value;
+      scheduleNotesSave(snapshotBeforeWipe);
     });
 
     document.getElementById("notes-merge-btn")?.addEventListener("click", () => {
       if (!ta) return;
-      const remote = syncState.sharedNotes || "";
+      clearTimeout(noteTimer);
+      noteTimer = null;
+      const remote = pendingRemoteNotes !== null ? pendingRemoteNotes : (syncState.sharedNotes || "");
+      pendingRemoteNotes = null;
       if (remote && !ta.value.includes(remote)) {
         ta.value = `${ta.value.trim()}\n\n--- Nota de pareja ---\n${remote}`.trim();
-        window.SyncEngine.saveNotes(ta.value, currentRole);
       }
-      document.getElementById("notes-remote-conflict").style.display = "none";
+      prevNotesBeforeEdit = ta.value;
+      window.SyncEngine.saveNotes(ta.value, currentRole);
+      const conflictBox = document.getElementById("notes-remote-conflict");
+      if (conflictBox) conflictBox.style.display = "none";
+      const nowStr = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+      if (statusLbl) statusLbl.textContent = `${syncMode === "firebase" ? "Cambios fusionados" : "Guardado local"} · ${nowStr}`;
     });
   }
 
@@ -3498,26 +3696,38 @@
       <div class="glass-card" style="padding:18px;">
         <h3 style="font-size:1rem;margin-bottom:10px;">Cronología Forense · Noche del 30 de Noviembre</h3>
         <div class="suspect-filters" role="group" aria-label="Filtrar cronología por planta" style="margin-bottom:8px;">
-          ${["all", "Planta 1", "Planta 2", "Planta 3", "Sótano / Anexo"].map((tf) => `
-            <button type="button" class="filter-chip ${timelineFloorFilter === tf ? "active" : ""}" data-timeline-floor="${tf}">${tf === "all" ? "Todas" : tf}</button>
+          ${[
+            { id: "all", label: "Todas" },
+            { id: "Planta 1", label: "Planta 1" },
+            { id: "Planta 2", label: "Planta 2" },
+            { id: "Planta 3", label: "Planta 3" },
+            { id: "Sótano / Anexo", label: "Sótano / Anexo" },
+            { id: "Diligencia", label: "Diligencias" }
+          ].map((tf) => `
+            <button type="button" class="filter-chip ${timelineFloorFilter === tf.id ? "active" : ""}" data-timeline-floor="${tf.id}">${tf.label}</button>
           `).join("")}
         </div>
         <div class="timeline-list">
-          ${[
-            { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m.", day: null },
-            { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador.", day: null },
-            { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador.", day: null },
-            { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño.", day: null },
-            ...solvedDaysArr.map((d) => {
-              const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
-              const flr = susp ? getRoomFloor(susp.room) : "Diligencia";
-              return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}`, day: d.day };
-            })
-          ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter)
-           .map((ev) => ev.day
-             ? `<button type="button" class="timeline-node timeline-node-btn" data-jump-timeline-day="${ev.day}"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</button>`
-             : `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`
-           ).join("")}
+          ${(() => {
+            const timelineNodes = [
+              { time: "19:00 h", floor: "Sótano / Anexo", text: "Ventisca crítica: carretera cortada y teleférico bloqueado en cota 1.940 m.", day: null },
+              { time: "23:32–23:36 h", floor: "Planta 1", text: "Manipulación previa en pasillo técnico de Planta 1 antes del brindis del Salón Mirador.", day: null },
+              { time: "23:38–23:42 h", floor: "Planta 1", text: "Apagón eléctrico exacto de 4 minutos durante el brindis en el Salón Mirador.", day: null },
+              { time: "23:55 h", floor: "Planta 1", text: "Hallazgo sin vida de Arturo Valdivieso junto al abeto navideño.", day: null },
+              ...solvedDaysArr.map((d) => {
+                const susp = d.discardId ? (window.SUSPECTS_DATA || []).find((s) => s.id === d.discardId) : null;
+                const flr = susp ? getRoomFloor(susp.room) : "Diligencia";
+                return { time: `Día ${String(d.day).padStart(2, "0")}`, floor: flr, text: `${d.forensicTag || "Diligencia"}: ${d.conclusion}`, day: d.day };
+              })
+            ].filter((ev) => timelineFloorFilter === "all" || ev.floor === timelineFloorFilter);
+            if (!timelineNodes.length) {
+              return `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);padding:8px 0;">Aún no hay hitos registrados en «${esc(timelineFloorFilter)}».</div>`;
+            }
+            return timelineNodes.map((ev) => ev.day
+              ? `<button type="button" class="timeline-node timeline-node-btn" data-jump-timeline-day="${ev.day}"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</button>`
+              : `<div class="timeline-node"><strong>${esc(ev.time)}</strong> <span class="mono" style="font-size:0.68rem;color:var(--adv-gold-soft);">[${esc(ev.floor)}]</span> — ${esc(ev.text)}</div>`
+            ).join("");
+          })()}
         </div>
         ${openInquiries.length ? `
           <div class="feedback-banner success" style="margin-top:10px;border-color:rgba(251,191,36,0.45);background:rgba(251,191,36,0.10);color:#FEF3C7;">
@@ -3648,18 +3858,21 @@
       const clr = document.getElementById("exp-search-clear");
       if (clr) clr.style.display = expSearchQuery.trim() ? "inline-flex" : "none";
       if (!box) return;
-      const q = expSearchQuery.trim().toLowerCase();
+      const q = normSearch(expSearchQuery.trim());
       if (!q) {
         box.innerHTML = "";
         return;
       }
+      const daysByNum = new Map((window.ADVENT_DAYS || []).map((d) => [Number(d.day), d]));
       const hits = [];
       solvedDaysArr.forEach((d) => {
-        const txt = `Puerta ${String(d.day).padStart(2, "0")} [${d.forensicTag || ""}]: ${d.conclusion || ""}`;
-        if (txt.toLowerCase().includes(q)) hits.push({ kind: "day", label: `Día ${String(d.day).padStart(2, "0")}`, text: txt, day: d.day });
+        const dayObj = daysByNum.get(Number(d.day));
+        const dayTitle = dayObj?.title || "";
+        const txt = `Puerta ${String(d.day).padStart(2, "0")}${dayTitle ? ` · ${dayTitle}` : ""} [${d.forensicTag || ""}]: ${d.conclusion || ""}`;
+        if (normSearch(txt).includes(q)) hits.push({ kind: "day", label: `Día ${String(d.day).padStart(2, "0")}`, text: txt, day: d.day });
       });
       discoveredSuspects.forEach((sp) => {
-        const hay = `${sp.name} ${sp.role} ${sp.room} ${sp.motiveHint} ${sp.alibiClaim}`.toLowerCase();
+        const hay = normSearch(`#${sp.num} ${sp.num} ${sp.name} ${sp.role} ${sp.room} ${sp.motiveHint} ${sp.alibiClaim}`);
         if (hay.includes(q)) {
           hits.push({ kind: "suspect", label: `Ficha #${sp.num} ${sp.name}`, text: `${sp.room} — ${sp.alibiClaim}`, sid: sp.id });
         }
@@ -3667,7 +3880,7 @@
       Object.entries(syncState.fieldDispatch || {}).forEach(([dKey, entry]) => {
         ["miguel", "patri"].forEach((rk) => {
           const msg = entry?.[rk]?.text;
-          if (msg && msg.toLowerCase().includes(q)) {
+          if (msg && normSearch(msg).includes(q)) {
             hits.push({ kind: "day", label: `Parte Día ${String(dKey).padStart(2, "0")} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: msg, day: Number(dKey) });
           }
         });
@@ -3676,28 +3889,46 @@
         const sp = (window.SUSPECTS_DATA || []).find((x) => x.id === sid);
         ["miguel", "patri"].forEach((rk) => {
           const n = entry?.[rk]?.note;
-          if (n && n.toLowerCase().includes(q)) {
+          if (n && normSearch(n).includes(q)) {
             hits.push({ kind: "suspect", label: `Apunte ${sp ? sp.name : sid} (${rk === "miguel" ? "Miguel" : "Patri"})`, text: n, sid });
           }
         });
       });
-      if ((syncState.sharedNotes || "").toLowerCase().includes(q)) {
+      if (normSearch(syncState.sharedNotes || "").includes(q)) {
         hits.push({ kind: "notes", label: "Libreta Compartida", text: (syncState.sharedNotes || "").slice(0, 140) });
       }
+      const shownHits = expSearchShowAll ? hits : hits.slice(0, 12);
+      const moreBar = hits.length > 12
+        ? `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;">
+            <span class="mono" style="font-size:0.7rem;color:var(--vg-text-muted);">Mostrando ${shownHits.length} de ${hits.length} coincidencias</span>
+            <button type="button" class="btn btn-sm btn-ghost" id="exp-search-toggle-all">${expSearchShowAll ? "Mostrar solo 12" : `Ver todas (${hits.length})`}</button>
+          </div>`
+        : "";
       box.innerHTML = hits.length
-        ? hits.slice(0, 12).map((h, i) => `
+        ? shownHits.map((h, i) => `
             <button type="button" class="search-result-btn" data-hit-idx="${i}">
               <div><strong>${esc(h.label)}:</strong> ${esc(h.text)}</div>
               <span class="search-result-arrow">Abrir</span>
-            </button>`).join("")
+            </button>`).join("") + moreBar
         : `<div class="mono" style="font-size:0.74rem;color:var(--vg-text-muted);">Sin coincidencias para "${esc(expSearchQuery)}".</div>`;
+
+      document.getElementById("exp-search-toggle-all")?.addEventListener("click", () => {
+        window.AudioFX.click();
+        expSearchShowAll = !expSearchShowAll;
+        renderExpSearchResults();
+      });
 
       box.querySelectorAll("[data-hit-idx]").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const hit = hits[Number(btn.dataset.hitIdx)];
+          const hit = shownHits[Number(btn.dataset.hitIdx)];
           if (!hit) return;
           window.AudioFX.click();
           if (hit.kind === "day" && hit.day) {
+            if (!window.DateGate.isDayOpen(hit.day)) {
+              window.AudioFX.error();
+              showToast(`La Puerta ${String(hit.day).padStart(2, "0")} aún está precintada.`);
+              return;
+            }
             selectedDayNum = hit.day;
             userPickedDay = true;
             lastDaySignature = "";
@@ -3716,10 +3947,12 @@
 
     document.getElementById("exp-search-input")?.addEventListener("input", (e) => {
       expSearchQuery = e.target.value;
+      expSearchShowAll = false;
       renderExpSearchResults();
     });
     document.getElementById("exp-search-clear")?.addEventListener("click", () => {
       expSearchQuery = "";
+      expSearchShowAll = false;
       const inp = document.getElementById("exp-search-input");
       if (inp) inp.value = "";
       renderExpSearchResults();
@@ -3876,11 +4109,25 @@
         const incomingSync = parsed.syncState && typeof parsed.syncState === "object" ? parsed.syncState : parsed;
         window.SyncEngine.importBackupState(incomingSync);
         if (parsed.draftsStore && typeof parsed.draftsStore === "object" && !Array.isArray(parsed.draftsStore)) {
-          draftsStore = Object.assign(loadDraftsStorage(), parsed.draftsStore);
+          const curDrafts = loadDraftsStorage();
+          const cleanDrafts = sanitizeDraftsStore(parsed.draftsStore);
+          draftsStore = {
+            schemaVersion: 2,
+            inputs: Object.assign({}, curDrafts.inputs, cleanDrafts.inputs),
+            widgets: Object.assign({}, curDrafts.widgets, cleanDrafts.widgets),
+            scratch: Object.assign({}, curDrafts.scratch, cleanDrafts.scratch),
+            verdict: {
+              suspect: cleanDrafts.verdict.suspect || curDrafts.verdict.suspect,
+              reason: cleanDrafts.verdict.reason || curDrafts.verdict.reason,
+              poison: cleanDrafts.verdict.poison || curDrafts.verdict.poison,
+              method: cleanDrafts.verdict.method || curDrafts.verdict.method,
+              updatedAt: Math.max(curDrafts.verdict.updatedAt || 0, cleanDrafts.verdict.updatedAt || 0)
+            }
+          };
           saveDrafts();
         }
         if (parsed.userPrefs && typeof parsed.userPrefs === "object" && !Array.isArray(parsed.userPrefs)) {
-          userPrefs = Object.assign(userPrefs, parsed.userPrefs);
+          userPrefs = sanitizeUserPrefs(parsed.userPrefs, userPrefs);
           applyUserPrefs();
         }
         showToast("Backup JSON restaurado y fusionado sin pérdida de progreso.");
@@ -3898,22 +4145,37 @@
       }
       try {
         const cache = await caches.open(CACHE_TAG);
-        const criticalExtras = [
-          "./video-briefing/briefing.mp4",
+        const criticalShell = [
+          "./",
+          "./index.html",
+          "./css/liquid-christmas.css",
+          "./data/days.js",
+          "./data/suspects.js",
+          "./js/app.js",
+          "./js/sync-engine.js",
           "./video-briefing/poster.jpg",
+          "./video-briefing/briefing.mp4",
           "./imprimibles/PRESENTACION_ADVIENTO_CERO.pdf"
         ];
-        for (const asset of criticalExtras) {
-          const hit = await cache.match(asset, { ignoreSearch: true });
+        let missingShell = 0;
+        for (const asset of criticalShell) {
+          let hit = await cache.match(asset, { ignoreSearch: true });
           if (!hit) {
             try {
               const resp = await fetch(asset);
-              if (resp && resp.ok) await cache.put(asset, resp);
+              if (resp && resp.ok) {
+                await cache.put(asset, resp);
+                hit = resp;
+              }
             } catch (_) {}
           }
+          if (!hit && !asset.endsWith(".mp4") && !asset.endsWith(".pdf")) missingShell += 1;
         }
+        const videoReady = Boolean(await cache.match("./video-briefing/briefing.mp4", { ignoreSearch: true }));
         const keys = await cache.keys();
-        offlinePackStatus = `Paquete offline verificado (${keys.length} recursos listos sin cobertura).`;
+        offlinePackStatus = missingShell === 0
+          ? `Paquete offline verificado (${keys.length} recursos listos${videoReady ? " · vídeo incluido" : " · vídeo bajo demanda"}).`
+          : `Paquete parcial (${keys.length} recursos, faltan ${missingShell} archivos base).`;
       } catch (_) {
         offlinePackStatus = "No se pudo verificar completamente la caché offline.";
       }
@@ -3938,17 +4200,16 @@
       if (versionTapCount >= 5) {
         versionTapCount = 0;
         window.DateGate.enableAdmin(24);
+        resetSessionUiState();
         draftsStore = loadDraftsStorage();
         window.SyncEngine.init();
         if (currentRole) window.SyncEngine.markPresence(currentRole);
         window.AudioFX.success();
         userPickedDay = false;
         selectDefaultDay();
-        lastCalendarSignature = "";
-        lastDaySignature = "";
-        lastSuspectsSignature = "";
         renderAdminBar();
         renderActiveTab();
+        updateDockIndicator();
       }
     });
   }
@@ -3980,12 +4241,16 @@
     const modal = document.getElementById("adv-modal");
     const body = document.getElementById("adv-modal-body");
     if (!modal || !body) return;
+    openModalSuspectId = null;
     if (typeof onModalCloseCleanup === "function") {
       try { onModalCloseCleanup(); } catch (_) {}
       onModalCloseCleanup = null;
     }
     if (!opts.preserveFocus) {
-      lastFocusedEl = triggerEl || document.activeElement;
+      const candidate = triggerEl || document.activeElement;
+      if (candidate && !body.contains(candidate)) {
+        lastFocusedEl = candidate;
+      }
     }
     body.innerHTML = `
       <div class="adv-modal-topstrip">
@@ -4224,7 +4489,7 @@
       const solved = isLast
         ? Boolean(syncState.finalVerdictSolved)
         : Boolean(syncState.days?.[String(dObj?.day)]?.solved || (dObj?.day === 24 && syncState.finalVerdictSolved));
-      return `<button type="button" class="album-dot ${solved ? "is-solved" : ""} ${isLast ? "is-final" : ""} ${i === curIdx ? "active" : ""}" data-album-dot="${i}" aria-label="${isLast ? "Postal final" : `Día ${i + 1}`}"></button>`;
+      return `<span class="album-dot ${solved ? "is-solved" : ""} ${isLast ? "is-final" : ""} ${i === curIdx ? "active" : ""}" data-album-dot="${i}"></span>`;
     }).join("");
 
     showModal(`
@@ -4239,7 +4504,12 @@
       <div class="album-autoplay-bar" id="album-autoplay-bar" aria-hidden="true"><span></span></div>
       <div class="album-stage" id="album-stage">${renderSlideHtml(curIdx)}</div>
 
-      <div class="album-dots-strip" role="tablist" aria-label="Seleccionar día del álbum">${dotsHtml}</div>
+      <div class="album-dots-strip" aria-hidden="true">${dotsHtml}</div>
+      <div class="album-scrubber-wrap">
+        <span class="album-scrubber-lbl">Día 01</span>
+        <input type="range" id="album-scrubber" class="adv-range album-scrubber" min="1" max="${totalSlides}" value="1" aria-label="Recorrer recuerdos del álbum">
+        <span class="album-scrubber-lbl">Final</span>
+      </div>
 
       <div class="album-controls-row">
         <button type="button" class="btn btn-sm btn-ghost" id="album-prev-btn">Anterior</button>
@@ -4254,6 +4524,7 @@
     const nextBtn = document.getElementById("album-next-btn");
     const playBtn = document.getElementById("album-play-btn");
     const barEl = document.getElementById("album-autoplay-bar");
+    const scrubberEl = document.getElementById("album-scrubber");
 
     const stopAutoplay = () => {
       if (autoplayTimer) {
@@ -4284,15 +4555,15 @@
         stageEl.querySelectorAll("[data-album-jump-day]").forEach((btn) => {
           btn.addEventListener("click", () => {
             const target = Number(btn.dataset.albumJumpDay || 1);
-            closeModal();
-            openAdventDay(target);
+            closeModal(true);
+            openAdventDay(target, { replaceHistory: true });
           });
         });
         document.getElementById("album-open-gift-btn")?.addEventListener("click", (e) => {
           stopAutoplay();
           if (syncState.finalVerdictSolved) {
-            closeModal();
-            openAdventDay(24);
+            closeModal(true);
+            openAdventDay(24, { replaceHistory: true });
             setTimeout(() => {
               document.getElementById("secret-envelope-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 160);
@@ -4303,6 +4574,9 @@
       }
       if (counterEl) {
         counterEl.textContent = `${String(curIdx + 1).padStart(2, "0")} / ${totalSlides}`;
+      }
+      if (scrubberEl && Number(scrubberEl.value) !== curIdx + 1) {
+        scrubberEl.value = String(curIdx + 1);
       }
       if (prevBtn) prevBtn.disabled = curIdx <= 0;
       if (nextBtn) nextBtn.disabled = curIdx >= totalSlides - 1;
@@ -4319,6 +4593,10 @@
 
     prevBtn?.addEventListener("click", () => { stopAutoplay(); updateAlbumView(curIdx - 1); });
     nextBtn?.addEventListener("click", () => { stopAutoplay(); updateAlbumView(curIdx + 1); });
+    scrubberEl?.addEventListener("input", () => {
+      stopAutoplay();
+      updateAlbumView(Number(scrubberEl.value || 1) - 1, true);
+    });
     playBtn?.addEventListener("click", () => {
       if (autoplayTimer) {
         stopAutoplay();
@@ -4337,13 +4615,6 @@
         if (curIdx >= totalSlides - 1) { stopAutoplay(); return; }
         updateAlbumView(curIdx + 1, false);
       }, AUTOPLAY_MS);
-    });
-
-    document.querySelectorAll("[data-album-dot]").forEach((dot) => {
-      dot.addEventListener("click", () => {
-        stopAutoplay();
-        updateAlbumView(Number(dot.dataset.albumDot || 0));
-      });
     });
 
     let touchX0 = 0;
@@ -4413,7 +4684,7 @@
       <span class="badge badge-frost">MANUAL DE CAMPO · ADVIENTO CERO</span>
       <h2 id="adv-modal-title" class="serif" style="font-size:1.6rem;margin:10px 0 10px;">Cómo Investigar en Pareja</h2>
       <ul class="clue-list">
-        <li><strong>Terminales asimétricos:</strong> Miguel (Análisis Digital) y Patri (Campo y Testigos) ven pistas distintas del mismo día. No miréis la pantalla del otro.</li>
+        <li><strong>Terminales asimétricos:</strong> Miguel (Análisis y Archivo) y Patri (Campo y Testigos) ven pistas distintas del mismo día. No miréis la pantalla del otro.</li>
         <li><strong>Doble Candado vs Clave Conjunta:</strong> En algunos días cada uno valida su código propio; en otros introducís la conclusión común tras contrastar vuestros datos.</li>
         <li><strong>Validación flexible:</strong> Las respuestas ignoran mayúsculas, minúsculas, tildes y espacios extra.</li>
         <li><strong>22 descartes + 3 finalistas:</strong> Dos días del calendario retienen diligencias clave sin descartar a nadie, dejando 3 finalistas para el Careo Final justificado del Día 24.</li>
@@ -4433,7 +4704,7 @@
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
   }
 
-  function openConfirmModal(title, message, confirmLabel, onConfirm) {
+  function openConfirmModal(title, message, confirmLabel, onConfirm, opts = {}) {
     showModal(`
       <span class="badge badge-crimson">CONFIRMACIÓN</span>
       <h3 id="adv-modal-title" class="serif" style="font-size:1.45rem;margin:10px 0 8px;">${esc(title)}</h3>
@@ -4442,10 +4713,10 @@
         <button type="button" class="btn btn-ghost" style="flex:1;" id="close-modal-btn">Cancelar</button>
         <button type="button" class="btn btn-primary" style="flex:1;" id="confirm-modal-btn">${esc(confirmLabel)}</button>
       </div>
-    `);
-    document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
+    `, null, { fromHistory: Boolean(opts.reuseHistory) });
+    document.getElementById("close-modal-btn")?.addEventListener("click", () => closeModal(Boolean(opts.reuseHistory)));
     document.getElementById("confirm-modal-btn")?.addEventListener("click", () => {
-      closeModal();
+      closeModal(Boolean(opts.reuseHistory));
       if (typeof onConfirm === "function") onConfirm();
     });
   }
@@ -4482,7 +4753,6 @@
       return;
     }
 
-    openModalSuspectId = suspectId;
     showModal(`
       <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px;">
         <button type="button" class="portrait-zoom-btn" id="modal-portrait-zoom-btn" aria-label="Ampliar retrato de ${esc(s.name)}">
@@ -4524,6 +4794,7 @@
       </div>
       <button type="button" class="btn btn-ghost" style="width:100%;margin-top:10px;" id="close-modal-btn">Cerrar ficha</button>
     `, triggerEl, { preserveFocus, fromHistory: preserveFocus });
+    openModalSuspectId = suspectId;
 
     let chosenStance = mySNote.stance || "duda";
     const saveStateEl = document.getElementById("suspect-save-state");
@@ -4547,8 +4818,8 @@
     });
     document.getElementById("modal-jump-day-btn")?.addEventListener("click", () => {
       window.AudioFX.click();
-      closeModal();
-      openAdventDay(linkedDayNum);
+      closeModal(true);
+      openAdventDay(linkedDayNum, { replaceHistory: true });
     });
     document.getElementById("modal-pin-suspect-btn")?.addEventListener("click", (e) => {
       window.AudioFX.click();
@@ -4583,8 +4854,9 @@
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
   }
 
-  function openDedicationModal(triggerEl) {
+  function openDedicationModal(triggerEl, opts = {}) {
     const g = window.GIFT_CONFIG.openingDedication;
+    const closeLabel = opts.isFirstTime ? "Empezar a investigar" : "Cerrar dedicatoria";
     showModal(`
       <span class="badge badge-gold">${esc(g.badge)}</span>
       <h2 id="adv-modal-title" class="serif" style="font-size:1.75rem;margin:10px 0 12px;">${esc(g.title)}</h2>
@@ -4593,7 +4865,7 @@
         <span>${esc(g.signature)}</span>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="#EF4444" stroke="#FCA5A5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </p>
-      <button type="button" class="btn btn-primary" style="width:100%;margin-top:16px;" id="close-modal-btn">Empezar a investigar</button>
+      <button type="button" class="btn btn-primary" style="width:100%;margin-top:16px;" id="close-modal-btn">${closeLabel}</button>
     `, triggerEl);
     document.getElementById("close-modal-btn")?.addEventListener("click", closeModal);
   }
@@ -4604,7 +4876,7 @@
       if (Store.getItem(DEDICATION_SEEN_KEY) === "1") return;
       Store.setItem(DEDICATION_SEEN_KEY, "1");
     } catch (_) {}
-    openDedicationModal();
+    openDedicationModal(null, { isFirstTime: true });
   }
 
   let partnerToastBaselineReady = false;
@@ -4762,7 +5034,11 @@
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        if (document.getElementById("adv-modal")?.classList.contains("open")) {
+        if (typeof cinemaActiveCleanup === "function") {
+          cinemaActiveCleanup(false);
+        } else if (window.DoorRituals?.isActive?.()) {
+          window.DoorRituals.dismiss();
+        } else if (document.getElementById("adv-modal")?.classList.contains("open")) {
           closeModal();
         } else if (document.getElementById("identity-overlay")?.classList.contains("open") && currentRole) {
           closeIdentityOverlay();
@@ -4863,7 +5139,11 @@
         return;
       }
       if (document.getElementById("adv-modal")?.classList.contains("open")) {
+        const hadOwnModalEntry = modalHistoryPushed;
         closeModal(true);
+        if (!hadOwnModalEntry && overlayHistoryPushed) {
+          overlayHistoryPushed = false;
+        }
         return;
       }
       if (document.getElementById("identity-overlay")?.classList.contains("open") && currentRole) {

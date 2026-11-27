@@ -865,10 +865,14 @@ window.DoorRituals = (() => {
       layer.setAttribute("aria-hidden", "true");
       layer.innerHTML = "";
       layer.onclick = null;
-      if (activeCleanup === cleanup) activeCleanup = null;
+      if (activeCleanup === cleanup) {
+        activeCleanup = null;
+        activePreviewMode = false;
+      }
       if (typeof opts.onDone === "function") opts.onDone();
     };
     activeCleanup = cleanup;
+    activePreviewMode = previewOnly;
 
     const numStr = String(dNum).padStart(2, "0");
     const cat = CATALOG.find((c) => c.day === dNum) || CATALOG[0];
@@ -894,7 +898,11 @@ window.DoorRituals = (() => {
       timers.push(setTimeout(() => window.triggerGoldBurst(92), 960));
     }
 
-    layer.onclick = () => cleanup(!previewOnly);
+    const openedAt = Date.now();
+    layer.onclick = () => {
+      if (Date.now() - openedAt < 400) return;
+      cleanup(!previewOnly);
+    };
     const revealAt = dNum === 24 ? 2250 : 1040;
     const closeAt = dNum === 24 ? 2680 : 1340;
     const endAt = closeAt + 260;
@@ -904,13 +912,25 @@ window.DoorRituals = (() => {
     timers.push(setTimeout(() => cleanup(false), endAt));
   }
 
+  let activePreviewMode = false;
+
   function stop() {
     if (typeof activeCleanup === "function") activeCleanup(false);
+  }
+
+  function dismiss() {
+    if (typeof activeCleanup === "function") activeCleanup(!activePreviewMode);
+  }
+
+  function isActive() {
+    return typeof activeCleanup === "function";
   }
 
   return {
     CATALOG,
     play,
-    stop
+    stop,
+    dismiss,
+    isActive
   };
 })();

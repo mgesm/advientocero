@@ -499,14 +499,23 @@ window.PuzzleEngine = (() => {
       cells.forEach((b, i) => {
         const val = data.sudoku[i] || "·";
         const notes = Array.isArray(data.sudokuNotes) ? (data.sudokuNotes[i] || "") : "";
+        const rNum = Number(b.dataset.r) + 1;
+        const cNum = Number(b.dataset.c) + 1;
         if (val !== "·") {
           b.classList.remove("has-notes");
           b.dataset.notes = "";
           b.textContent = val;
+          b.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, valor ${val}`);
         } else if (notes) {
           b.dataset.notes = notes;
           b.classList.add("has-notes");
           b.textContent = notes.split(",").join(" ");
+          b.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, candidatos ${notes.split(",").join(" ")}`);
+        } else {
+          b.classList.remove("has-notes");
+          b.dataset.notes = "";
+          b.textContent = "·";
+          b.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, vacía`);
         }
       });
     }
@@ -556,7 +565,6 @@ window.PuzzleEngine = (() => {
       const btns = container.querySelectorAll('[data-action="toggle-valve"]');
       btns.forEach((b, i) => {
         const open = Boolean(data.valves[i]);
-        b.classList.toggle("open", open);
         b.classList.toggle("open", open);
         b.setAttribute("aria-pressed", open ? "true" : "false");
         b.innerHTML = `V${i + 1}<br><span>${open ? "ABIERTA" : "CERRADA"}</span>`;
@@ -929,7 +937,15 @@ window.PuzzleEngine = (() => {
       } else if (act === "reset-board") {
         window.AudioFX.click();
         const board = btn.dataset.board;
-        const prevSnap = serializeWidgetState(container);
+        let hadEntries = false;
+        if (board === "sudoku4") {
+          hadEntries = Array.from(container.querySelectorAll('[data-action="cycle-sudoku"]')).some((c) => c.textContent.trim() !== "·" || Boolean(c.dataset.notes));
+        } else if (board === "nonogram") {
+          hadEntries = Array.from(container.querySelectorAll('[data-action="toggle-nono"]')).some((c) => c.classList.contains("on") || c.classList.contains("x-mark"));
+        } else if (board === "logic3x3") {
+          hadEntries = Array.from(container.querySelectorAll('[data-action="cycle-logic"]')).some((c) => c.textContent.trim() !== "·");
+        }
+        const prevSnap = hadEntries ? serializeWidgetState(container) : null;
         if (board === "sudoku4") {
           activePencilCell = null;
           pencilMode = false;
@@ -942,10 +958,13 @@ window.PuzzleEngine = (() => {
           const pBar = container.querySelector('[id^="sudoku-pencil-bar-"]');
           if (pBar) pBar.style.display = "none";
           container.querySelectorAll('[data-action="cycle-sudoku"]').forEach((c) => {
+            const rNum = Number(c.dataset.r) + 1;
+            const cNum = Number(c.dataset.c) + 1;
             c.classList.remove("has-notes");
             c.dataset.notes = "";
             c.style.outline = "";
             c.textContent = "·";
+            c.setAttribute("aria-label", `Casilla fila ${rNum} columna ${cNum}, vacía`);
           });
         } else if (board === "nonogram") {
           container.querySelectorAll('[data-action="toggle-nono"]').forEach((c) => { c.classList.remove("on", "x-mark"); c.textContent = ""; });
