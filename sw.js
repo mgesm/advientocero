@@ -1,4 +1,4 @@
-const CACHE_NAME = "adviento-cero-v2.26.2";
+const CACHE_NAME = "adviento-cero-v2.26.3";
 const CRITICAL_PRECACHE_ASSETS = [
   "./",
   "./index.html",

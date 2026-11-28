@@ -1,7 +1,7 @@
 # ADVIENTO CERO — EXPEDIENTE DE CONTEXTO EN VIVO (CERO SPOILERS)
 
 > **Documento Maestro de Arquitectura, Sistema de Diseño y Operación**
-> **Versión Actual:** v2.26.2 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
+> **Versión Actual:** v2.26.3 | **Repositorio:** [https://github.com/mgesm/advientocero](https://github.com/mgesm/advientocero)
 > **Ubicación Local:** `C:\Users\migue\.gemini\antigravity\scratch\advientocero\`
 
 ---
@@ -26,7 +26,7 @@
   * **Fallback Offline:** Caché automática en `localStorage` (`adviento_cero_state_v1`) cuando no hay credenciales de Firebase configuradas o falla la conexión.
 * **Control de Fechas y Modo Test (`js/date-gate.js`):**
   * Apertura progresiva real del **1 al 24 de diciembre de 2026** (permitiendo ponerse al día si se salta alguna jornada).
-  * **Modo Test Oculto:** Activable mediante `?admin=ventisquero` o tocando **5 veces** el número de versión en la pestaña *Expediente*. Permite simular cualquier día y resetear el progreso antes del regalo sin revelar spoilers.
+  * **Modo Test Oculto:** Activable exclusivamente mediante el parámetro de administrador `?admin=ventisquero`. Permite simular cualquier día y resetear el progreso antes del regalo sin revelar spoilers.
 
 ---
 
@@ -61,5 +61,5 @@ Hereda las reglas de ergonomía y cero emojis de VESTIGO (`vestigo-design-guardi
 | `js/audio-fx.js` | Síntesis Web Audio API (24 firmas sonoras + Doble Candado), pulso visual silencioso, Wake Lock y señal Morse |
 | `js/door-rituals.js` + `css/door-rituals.css` | 24 rituales cinematográficos SVG individuales de apertura de puerta y catálogo de previsualización en Modo Test |
 | `js/app.js` | Controlador principal, consulta cruzada, comparador, cronología, buscador, confort visual y libreta |
-| `sw.js` | Precaché offline PWA (`adviento-cero-v2.26.2`) |
+| `sw.js` | Precaché offline PWA (`adviento-cero-v2.26.3`) |
 | `scripts/verify_integrity.ps1` | Auditoría automatizada (cero emojis BMP+astrales, UTF-8 sin BOM, 24 descartes únicos, hashes válidos) |

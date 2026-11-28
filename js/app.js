@@ -3,8 +3,8 @@
  */
 
 (() => {
-  const APP_VERSION = "v2.26.2";
-  const CACHE_TAG = "adviento-cero-v2.26.2";
+  const APP_VERSION = "v2.26.3";
+  const CACHE_TAG = "adviento-cero-v2.26.3";
   const ROLE_KEY = "adviento_player_role";
   const DEDICATION_SEEN_KEY = "adviento_dedication_seen_v1";
   const DRAFTS_KEY = "adviento_drafts_v1";
@@ -61,8 +61,6 @@
   let syncState = window.SyncEngine.getState();
   let syncMode = window.SyncEngine.getMode();
   let prevSyncSnap = null;
-  let versionTapCount = 0;
-  let versionTapTimer = null;
   let noteTimer = null;
   let isSubmitting = false;
   let openModalSuspectId = null;
@@ -3819,10 +3817,8 @@
       <div class="day-workspace">
         ${subtabsHtml}
         ${activePanelHtml}
-        <div style="text-align:center;padding:8px 0;">
-          <button type="button" id="version-secret-trigger" class="mono" style="min-height:44px;padding:8px 12px;background:none;border:none;color:var(--vg-text-muted);font-size:0.74rem;cursor:pointer;">
-            ${APP_VERSION} · ADVIENTO CERO · MODO CERO SPOILERS
-          </button>
+        <div class="mono" style="text-align:center;padding:12px 0;color:var(--vg-text-muted);font-size:0.74rem;">
+          ${APP_VERSION} · ADVIENTO CERO · MODO CERO SPOILERS
         </div>
       </div>
     `;
@@ -4190,26 +4186,6 @@
         showToast("Resumen sin spoilers copiado al portapapeles.");
       } catch (_) {
         showToast(summary);
-      }
-    });
-
-    document.getElementById("version-secret-trigger")?.addEventListener("click", () => {
-      versionTapCount += 1;
-      clearTimeout(versionTapTimer);
-      versionTapTimer = setTimeout(() => { versionTapCount = 0; }, 2200);
-      if (versionTapCount >= 5) {
-        versionTapCount = 0;
-        window.DateGate.enableAdmin(24);
-        resetSessionUiState();
-        draftsStore = loadDraftsStorage();
-        window.SyncEngine.init();
-        if (currentRole) window.SyncEngine.markPresence(currentRole);
-        window.AudioFX.success();
-        userPickedDay = false;
-        selectDefaultDay();
-        renderAdminBar();
-        renderActiveTab();
-        updateDockIndicator();
       }
     });
   }
